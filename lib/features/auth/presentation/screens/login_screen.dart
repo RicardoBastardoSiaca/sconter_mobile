@@ -1,0 +1,333 @@
+
+import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:turnaround_mobile/config/theme/app_theme.dart';
+
+import '../../../shared/widgets/widgets.dart';
+import '../providers/providers.dart';
+import '../widgets/widgets.dart';
+
+
+class LoginScreen extends StatelessWidget {
+  const LoginScreen({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      backgroundColor:scaffoldBackgroundColor,
+      body:SafeArea(
+        child: SingleChildScrollView(
+          physics: BouncingScrollPhysics(),
+          child: Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 50, vertical: 20),
+            child: SizedBox(
+              height: MediaQuery.of(context).size.height *.9,
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Logo(),
+              
+                  _LoginForm(),
+              
+                  Labels(),
+              
+                  Text('Terminos y condiciones', style: TextStyle(fontWeight: FontWeight.w200),),
+                  // _Form()
+                ],
+              ),
+            ),
+          ),
+        ),
+      )
+    );
+  }
+}
+
+
+
+class _LoginForm extends ConsumerWidget {
+  const _LoginForm();
+
+  @override
+
+  Widget build(BuildContext context, WidgetRef ref) {
+  final loginForm = ref.watch(loginFormProvider);
+    final colors = Theme.of(context).colorScheme;
+    return Column(
+      children: [
+        CustomTextFormField(
+          // label: 'Correo',
+          keyboardType: TextInputType.emailAddress,
+          hint: 'Correo',
+          prefixIcon: Icon(Icons.email_outlined, color: colors.primary, size: 20,),
+          onChanged: (value) => ref.read(loginFormProvider.notifier).onEmailChanged(value),
+          errorMessage: loginForm.isFormPosted 
+            ? loginForm.email.errorMessage
+            : null,
+        ),
+        CustomTextFormField(
+          // label: 'Contraseña',
+          obscureText: true,
+          hint: 'Contraseña',
+          prefixIcon: Icon(Icons.lock_outline, color: colors.primary, size: 20, ),
+          onChanged: (value) => ref.read(loginFormProvider.notifier).onPasswordChanged(value),
+          errorMessage: loginForm.isFormPosted 
+            ? loginForm.password.errorMessage
+            : null,
+        ),
+        CustomFilledButton(
+          text: 'Ingresar',
+          buttonColor: colors.primary,
+          onPressed: () => ref.read(loginFormProvider.notifier).onFormSubmit(),
+        )
+      ],
+    );
+  }
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+// *********************************************************************************************************************
+// *********************************************************************************************************************
+// *********************************************************************************************************************
+
+
+// import 'package:flutter/material.dart';
+// import 'package:flutter_svg/svg.dart';
+
+// import '../../../shared/widgets/widgets.dart';
+
+// class LoginScreen extends StatelessWidget {
+//   const LoginScreen({super.key});
+
+//   @override
+//   Widget build(BuildContext context) {
+//     return const Background(
+//       child: SingleChildScrollView(
+//         child: Responsive(
+//           mobile: MobileLoginScreen(), 
+//           desktop: Placeholder()
+//         ),
+//       ),
+//     );
+//   }
+// }
+
+// class MobileLoginScreen extends StatelessWidget {
+//   const MobileLoginScreen({
+//     super.key,
+//   });
+
+//   @override
+//   Widget build(BuildContext context) {
+//     return Column(
+//       mainAxisAlignment: MainAxisAlignment.center,
+//       children: <Widget>[
+//         LoginScreenTopImage(),
+
+//         Row(
+//           children: [
+//             // SvgPicture.asset("assets/icons/logo-trc.svg") ,
+//             const Spacer(),
+//             const Expanded(
+//               flex: 8,
+//               child: Text('Hola'),
+//             ),
+//             const Spacer(),
+//           ],
+//         ),
+//       ],
+//     );
+//   }
+// }
+
+
+// class LoginScreenTopImage extends StatelessWidget {
+
+//   static const double defaultPadding = 16.0;
+//   const LoginScreenTopImage({
+//     super.key,
+//   });
+
+//   @override
+//   Widget build(BuildContext context) {
+//     return Column(
+//       children: [
+//         Row(
+//           children: [
+//             const Spacer(),
+//             Expanded(
+//               flex: 8,
+//               child: SvgPicture.asset("assets/icons/logo-trc.svg", height: 90, width: 90,),
+//             ),
+//             const Spacer(),
+//           ],
+//         ),
+//         const SizedBox(height: defaultPadding * 2),
+//         const Text(
+//           "LOGIN",
+//           style: TextStyle(fontWeight: FontWeight.bold),
+//         ),
+//         const SizedBox(height: defaultPadding * 2),
+//       ],
+//     );
+//   }
+// }
+
+
+// *********************************************************************************************************************
+// *********************************************************************************************************************
+// *********************************************************************************************************************
+
+
+
+
+// import 'package:flutter/material.dart';
+// import 'package:go_router/go_router.dart';
+// import 'package:turnaround_mobile/features/shared/shared.dart';
+
+
+// class LoginScreen extends StatelessWidget {
+//   const LoginScreen({super.key});
+
+//   @override
+//   Widget build(BuildContext context) {
+
+//     final size = MediaQuery.of(context).size;
+//     final scaffoldBackgroundColor = Theme.of(context).scaffoldBackgroundColor;
+
+//     return GestureDetector(
+//       onTap: () => FocusManager.instance.primaryFocus?.unfocus(),
+//       child: Scaffold(
+//         body: GeometricalBackground( 
+//           child: SingleChildScrollView(
+//             physics: const ClampingScrollPhysics(),
+//             child: Column(
+//               crossAxisAlignment: CrossAxisAlignment.center,
+//               children: [
+//                 const SizedBox( height: 80 ),
+//                 // Icon Banner
+//                 const Icon( 
+//                   Icons.production_quantity_limits_rounded, 
+//                   color: Colors.white,
+//                   size: 100,
+//                 ),
+//                 const SizedBox( height: 80 ),
+    
+//                 Container(
+//                   height: size.height - 260, // 80 los dos sizebox y 100 el ícono
+//                   width: double.infinity,
+//                   decoration: BoxDecoration(
+//                     color: scaffoldBackgroundColor,
+//                     borderRadius: const BorderRadius.only(topLeft: Radius.circular(100)),
+//                   ),
+//                   child: const _LoginForm(),
+//                 )
+//               ],
+//             ),
+//           )
+//         )
+//       ),
+//     );
+//   }
+// }
+
+// class _LoginForm extends StatelessWidget {
+//   const _LoginForm();
+
+//   @override
+//   Widget build(BuildContext context) {
+
+//     final textStyles = Theme.of(context).textTheme;
+
+//     return Padding(
+//       padding: const EdgeInsets.symmetric(horizontal: 50),
+//       child: Column(
+//         children: [
+//           const SizedBox( height: 50 ),
+//           Text('Login', style: textStyles.titleLarge ),
+//           const SizedBox( height: 90 ),
+
+//           const CustomTextFormField(
+//             label: 'Correo',
+//             keyboardType: TextInputType.emailAddress,
+//           ),
+//           const SizedBox( height: 30 ),
+
+//           const CustomTextFormField(
+//             label: 'Contraseña',
+//             obscureText: true,
+//           ),
+    
+//           const SizedBox( height: 30 ),
+
+//           SizedBox(
+//             width: double.infinity,
+//             height: 60,
+//             child: CustomFilledButton(
+//               text: 'Ingresar',
+//               buttonColor: Colors.black,
+//               onPressed: (){
+
+//               },
+//             )
+//           ),
+
+//           const Spacer( flex: 2 ),
+
+//           Row(
+//             mainAxisAlignment: MainAxisAlignment.center,
+//             children: [
+//               const Text('¿No tienes cuenta?'),
+//               TextButton(
+//                 onPressed: ()=> context.push('/register'), 
+//                 child: const Text('Crea una aquí')
+//               )
+//             ],
+//           ),
+
+//           const Spacer( flex: 1),
+//         ],
+//       ),
+//     );
+//   }
+// }
