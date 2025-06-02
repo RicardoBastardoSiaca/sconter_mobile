@@ -2,6 +2,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:turnaround_mobile/config/theme/app_theme.dart';
+import 'package:turnaround_mobile/features/auth/presentation/providers/auth_provider.dart';
 
 import '../../../shared/widgets/widgets.dart';
 import '../providers/providers.dart';
@@ -48,11 +49,34 @@ class LoginScreen extends StatelessWidget {
 class _LoginForm extends ConsumerWidget {
   const _LoginForm();
 
+  void showSnackBar(BuildContext context, String errorMessage) {
+    // final snackBar = SnackBar(
+    //   content: Text(errorMessage),
+    //   backgroundColor: Colors.red,
+    // );
+    ScaffoldMessenger.of(context).hideCurrentSnackBar();
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: Text(errorMessage),
+        // backgroundColor: Colors.red,
+      )
+    );
+  }
+
   @override
 
   Widget build(BuildContext context, WidgetRef ref) {
-  final loginForm = ref.watch(loginFormProvider);
+
+    final loginForm = ref.watch(loginFormProvider);
+
+    ref.listen(authProvider, (previous, next) {
+      if ( next.errorMessage.isEmpty ) return;
+
+      showSnackBar(context, next.errorMessage);
+      // Navigator.pushReplacementNamed(context, 'home');
+    });
     final colors = Theme.of(context).colorScheme;
+    
     return Column(
       children: [
         CustomTextFormField(
@@ -83,6 +107,8 @@ class _LoginForm extends ConsumerWidget {
       ],
     );
   }
+  
+  
 }
 
 
