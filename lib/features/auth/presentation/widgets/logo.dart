@@ -2,7 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 
 class Logo extends StatelessWidget {
-  const Logo({super.key});
+  final double? height;
+  const Logo({super.key, this.height = 140});
 
   @override
   Widget build(BuildContext context) {
@@ -11,7 +12,7 @@ class Logo extends StatelessWidget {
         children: [
           // Image(image: AssetImage("assets/icons/logo-trc.svg")),
           SizedBox(height: 50,),
-          SvgPicture.asset("assets/icons/logo-trc-tagline-2.svg", height: 140,),
+          SvgPicture.asset("assets/icons/logo-trc-tagline-2.svg", height: height,),
           SizedBox(height: 20,),
           // Text('TRC', style: TextStyle(fontSize: 20),)
       ]),

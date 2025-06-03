@@ -57,7 +57,12 @@ class _LoginForm extends ConsumerWidget {
     ScaffoldMessenger.of(context).hideCurrentSnackBar();
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
-        content: Text(errorMessage),
+        padding: const EdgeInsets.all(25),
+        // margin: const EdgeInsets.all(15),
+        behavior: SnackBarBehavior.floating,
+        elevation: 100,
+        content: Center(child: Text(errorMessage)),
+
         // backgroundColor: Colors.red,
       )
     );
@@ -102,7 +107,9 @@ class _LoginForm extends ConsumerWidget {
         CustomFilledButton(
           text: 'Ingresar',
           buttonColor: colors.primary,
-          onPressed: () => ref.read(loginFormProvider.notifier).onFormSubmit(),
+          onPressed: loginForm.isPosting
+            ? null 
+            : ref.read(loginFormProvider.notifier).onFormSubmit,
         )
       ],
     );

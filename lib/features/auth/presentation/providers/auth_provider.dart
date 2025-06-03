@@ -2,27 +2,39 @@
 
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:turnaround_mobile/features/auth/domain/domain.dart';
+import 'package:turnaround_mobile/features/shared/infrastructure/services/key_value_storage_service.dart';
+import 'package:turnaround_mobile/features/shared/infrastructure/services/key_value_storage_service_impl.dart';
 
 import '../../infrastructure/infrastructure.dart';
 
 
 
 // ! PROVIDER
-final authProvider = StateNotifierProvider.autoDispose<AuthNotifier, AuthState>((ref) {
+final authProvider = StateNotifierProvider<AuthNotifier, AuthState>((ref) {
 
   final authRepository = AuthRepositoryImpl();
+  final KeyValueStorageService keyValueStorageService = KeyValueStorageServiceImpl();
+
   return AuthNotifier(
-    authRepository: authRepository
+    authRepository: authRepository,
+    keyValueStorageService: keyValueStorageService
   );
 });
 
 
 //! NOTIFIER
 class AuthNotifier extends StateNotifier<AuthState> {
+
   final AuthRepository authRepository ;
+  final KeyValueStorageService keyValueStorageService;
+  
   AuthNotifier({
-    required this.authRepository
-  }): super( AuthState() );
+    required this.authRepository,
+    required this.keyValueStorageService
+  }): super( AuthState() ){
+    // Cuando se crea la primera instancia
+    checkAuthStatus();
+  }
 
   Future<void> loginUser ( String email, String password ) async {
 
@@ -35,7 +47,7 @@ class AuthNotifier extends StateNotifier<AuthState> {
     } on CustomError catch (e) {
       logout( e.message );
     } catch (e) {
-      logout( 'Algo salio mal' );
+      logout( );
     }
 
     // final loginResponse = await authRepository.login(email, password);
@@ -46,22 +58,38 @@ class AuthNotifier extends StateNotifier<AuthState> {
     
   }
 
-  void checkAuthStatus (  ) {
+  void checkAuthStatus (  ) async{
+    final token = await keyValueStorageService.getValue<String>('token');
 
+    if( token == null ) return logout();
+
+    try {
+      final user = await authRepository.checkAuthStatus(token);
+      _setLoggedCredentials(user);
+
+    } catch (e) {
+      logout();
+    }
   }
 
   Future<void> logout ( [String errorMessage = ''] ) async {
+
+    await keyValueStorageService.removeKey('token');
+    
     state = state.copyWith( 
       authStatus: AuthStatus.notAuthenticated, 
-      loginResponse: null, 
+      authResponse: null, 
       errorMessage: errorMessage, 
     );
   }
-  _setLoggedCredentials ( AuthResponse loginResponse ) {
-    // TODO: guardar el token en el dispositivo
+  _setLoggedCredentials ( AuthResponse authResponse ) async  {
+
+    await keyValueStorageService.setKeyValue('token', authResponse.token);
+
     state = state.copyWith( 
-      loginResponse: loginResponse, 
+      authResponse: authResponse, 
       authStatus: AuthStatus.authenticated, 
+      errorMessage: ''
     );
   }
 }
@@ -88,11 +116,11 @@ class AuthState {
   copyWith({
     AuthStatus? authStatus,
     String? errorMessage,
-    AuthResponse? loginResponse
+    AuthResponse? authResponse
   }) => AuthState(
     authStatus: authStatus ?? this.authStatus,
     errorMessage: errorMessage ?? this.errorMessage,
-    loginResponse: loginResponse ?? this.loginResponse
+    loginResponse: authResponse ?? loginResponse
   );
 }
 

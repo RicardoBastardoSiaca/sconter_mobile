@@ -39,12 +39,13 @@ class LoginFormNotifier extends StateNotifier<LoginFormState> {
     );
   }
   
-  onFormSubmit(){
+  onFormSubmit() async {
     _touchEveryField();
     if( !state.isValid){ return ; }
-    // state = state.copyWith(isPosting: true);
+    state = state.copyWith(isPosting: true);
     // print(state);
-    loginUserCallback( state.email.value, state.password.value );
+    await loginUserCallback( state.email.value, state.password.value );
+    state = state.copyWith(isPosting: false);
   }
 
   _touchEveryField(){
