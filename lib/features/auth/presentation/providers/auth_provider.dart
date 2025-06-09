@@ -113,6 +113,8 @@ class AuthState {
     this.loginResponse
   });
 
+  // get accessToken => null;
+
   copyWith({
     AuthStatus? authStatus,
     String? errorMessage,

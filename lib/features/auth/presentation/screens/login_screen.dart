@@ -94,8 +94,10 @@ class _LoginForm extends ConsumerWidget {
             ? loginForm.email.errorMessage
             : null,
         ),
+
         CustomTextFormField(
           // label: 'Contraseña',
+          onFieldSubmitted: ( _ ) => ref.read(loginFormProvider.notifier).onFormSubmit(),
           obscureText: true,
           hint: 'Contraseña',
           prefixIcon: Icon(Icons.lock_outline, color: colors.primary, size: 20, ),
@@ -104,6 +106,7 @@ class _LoginForm extends ConsumerWidget {
             ? loginForm.password.errorMessage
             : null,
         ),
+
         CustomFilledButton(
           text: 'Ingresar',
           buttonColor: colors.primary,

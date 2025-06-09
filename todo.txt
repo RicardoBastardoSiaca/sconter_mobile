@@ -3,10 +3,6 @@
 ************************************************************************************************
 // Animation for the main menu
 
-
-
-
-
 Revisar icao hex de trc
 
 
@@ -16,3 +12,22 @@ Revisar icao hex de trc
 
 
 // For complete copyright and license terms please see the LICENSE at the root of this distribution.
+
+
+************************************************************************************************
+IDEAS
+************************************************************************************************
+FutureBuilder para cargar datos de la API
+
+SilverAppBar para vista de contro de actividades
+CircleAvatar para el usuario
+
+FittedBox para el logo de la app
+Layout builder para distintas resoluciones
+splashscreen
+
+googlefonts pub
+
+fluuter lanched icon
+
+

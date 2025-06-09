@@ -1,7 +1,7 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:turnaround_mobile/features/auth/auth.dart';
-import 'package:turnaround_mobile/features/products/presentation/screens/products_screen.dart';
+import 'package:turnaround_mobile/features/turnarounds/presentation/screens/turnaround_main_screen.dart';
 
 import '../../features/auth/presentation/providers/auth_provider.dart';
 import 'app_router_notifier.dart';
@@ -15,6 +15,9 @@ return GoRouter(
   initialLocation: '/splash',
   refreshListenable: goRouterNotifier,
   routes: [
+
+
+
     //* Primara Pantalla Splash 
     GoRoute(
       path: '/splash',
@@ -25,17 +28,18 @@ return GoRouter(
       path: '/login',
       builder: (context, state) => const LoginScreen(),
     ),
-    GoRoute(
-      path: '/register',
-      builder: (context, state) => const RegisterScreen(),
-    ),
 
     ///* Product Routes
     GoRoute(
       path: '/',
-      builder: (context, state) => const ProductsScreen(),
+      builder: (context, state) => const TurnaroundMainScreen(),
     ),
   ],
+
+
+
+
+
 
 // state.params ahora es state.pathParameters
 
