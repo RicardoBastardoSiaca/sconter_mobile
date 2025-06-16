@@ -1,13 +1,10 @@
-
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:turnaround_mobile/config/theme/app_theme.dart';
 import 'package:turnaround_mobile/features/auth/presentation/providers/auth_provider.dart';
 
 import '../../../shared/widgets/widgets.dart';
 import '../providers/providers.dart';
 import '../widgets/widgets.dart';
-
 
 class LoginScreen extends StatelessWidget {
   const LoginScreen({super.key});
@@ -15,36 +12,37 @@ class LoginScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor:scaffoldBackgroundColor,
-      body:SafeArea(
+      // backgroundColor:scaffoldBackgroundColor,
+      body: SafeArea(
         child: SingleChildScrollView(
           physics: BouncingScrollPhysics(),
           child: Padding(
             padding: const EdgeInsets.symmetric(horizontal: 50, vertical: 20),
             child: SizedBox(
-              height: MediaQuery.of(context).size.height *.9,
+              height: MediaQuery.of(context).size.height * .9,
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
                   Logo(),
-              
+
                   _LoginForm(),
-              
+
                   Labels(),
-              
-                  Text('Terminos y condiciones', style: TextStyle(fontWeight: FontWeight.w200),),
+
+                  Text(
+                    'Terminos y condiciones',
+                    style: TextStyle(fontWeight: FontWeight.w200),
+                  ),
                   // _Form()
                 ],
               ),
             ),
           ),
         ),
-      )
+      ),
     );
   }
 }
-
-
 
 class _LoginForm extends ConsumerWidget {
   const _LoginForm();
@@ -64,61 +62,64 @@ class _LoginForm extends ConsumerWidget {
         content: Center(child: Text(errorMessage)),
 
         // backgroundColor: Colors.red,
-      )
+      ),
     );
   }
 
   @override
-
   Widget build(BuildContext context, WidgetRef ref) {
-
     final loginForm = ref.watch(loginFormProvider);
 
     ref.listen(authProvider, (previous, next) {
-      if ( next.errorMessage.isEmpty ) return;
+      if (next.errorMessage.isEmpty) return;
 
       showSnackBar(context, next.errorMessage);
       // Navigator.pushReplacementNamed(context, 'home');
     });
     final colors = Theme.of(context).colorScheme;
-    
+
     return Column(
       children: [
         CustomTextFormField(
           // label: 'Correo',
           keyboardType: TextInputType.emailAddress,
           hint: 'Correo',
-          prefixIcon: Icon(Icons.email_outlined, color: colors.primary, size: 20,),
-          onChanged: (value) => ref.read(loginFormProvider.notifier).onEmailChanged(value),
-          errorMessage: loginForm.isFormPosted 
-            ? loginForm.email.errorMessage
-            : null,
+          prefixIcon: Icon(
+            Icons.email_outlined,
+            color: colors.primary,
+            size: 20,
+          ),
+          onChanged: (value) =>
+              ref.read(loginFormProvider.notifier).onEmailChanged(value),
+          errorMessage: loginForm.isFormPosted
+              ? loginForm.email.errorMessage
+              : null,
         ),
 
         CustomTextFormField(
           // label: 'Contraseña',
-          onFieldSubmitted: ( _ ) => ref.read(loginFormProvider.notifier).onFormSubmit(),
+          onFieldSubmitted: (_) =>
+              ref.read(loginFormProvider.notifier).onFormSubmit(),
           obscureText: true,
           hint: 'Contraseña',
-          prefixIcon: Icon(Icons.lock_outline, color: colors.primary, size: 20, ),
-          onChanged: (value) => ref.read(loginFormProvider.notifier).onPasswordChanged(value),
-          errorMessage: loginForm.isFormPosted 
-            ? loginForm.password.errorMessage
-            : null,
+          prefixIcon: Icon(Icons.lock_outline, color: colors.primary, size: 20),
+          onChanged: (value) =>
+              ref.read(loginFormProvider.notifier).onPasswordChanged(value),
+          errorMessage: loginForm.isFormPosted
+              ? loginForm.password.errorMessage
+              : null,
         ),
 
         CustomFilledButton(
           text: 'Ingresar',
           buttonColor: colors.primary,
           onPressed: loginForm.isPosting
-            ? null 
-            : ref.read(loginFormProvider.notifier).onFormSubmit,
-        )
+              ? null
+              : ref.read(loginFormProvider.notifier).onFormSubmit,
+        ),
       ],
     );
   }
-  
-  
 }
 
 

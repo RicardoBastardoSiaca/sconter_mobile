@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_svg/svg.dart';
+import 'package:go_router/go_router.dart';
+import 'package:intl/intl.dart';
 
 import '../../../shared/shared.dart';
 import '../../domain/domain.dart';
@@ -17,7 +19,7 @@ class TurnaroundMainScreen extends StatelessWidget {
       // backgroundColor: Color.fromRGBO(58, 66, 86, 1.0),
       drawer: SideMenu(scaffoldKey: scaffoldKey),
       appBar: AppBar(
-        title: const Text('Turnaround'),
+        title: const Text('Turnaround 2'),
         // user icon menu
         actions: [
           IconButton(onPressed: () {}, icon: const Icon(Icons.search_rounded)),
@@ -61,18 +63,75 @@ class _TuraroundMainViewState extends ConsumerState {
     if (turnaroundsState.isLoading) {
       return const Center(child: CircularProgressIndicator());
     }
-    return Builder(
-      builder: (context) {
-        return ListView.builder(
-          scrollDirection: Axis.vertical,
-          shrinkWrap: true,
-          itemCount: turnaroundsState.turnarounds.length,
-          itemBuilder: (context, index) {
-            final turnaround = turnaroundsState.turnarounds[index];
-            return _ListTileCard(turnaround: turnaround);
+    return Column(
+      children: [
+        // Date Filter
+        const SizedBox(height: 10),
+        _DateFilter(),
+        const SizedBox(height: 10),
+        Builder(
+          builder: (context) {
+            return ListView.builder(
+              scrollDirection: Axis.vertical,
+              shrinkWrap: true,
+              itemCount: turnaroundsState.turnarounds.length,
+              itemBuilder: (context, index) {
+                final turnaround = turnaroundsState.turnarounds[index];
+                return _ListTileCard(turnaround: turnaround);
+              },
+            );
           },
-        );
-      },
+        ),
+      ],
+    );
+  }
+}
+
+class _DateFilter extends StatefulWidget {
+  const _DateFilter();
+
+  @override
+  State<_DateFilter> createState() => _DateFilterState();
+}
+
+class _DateFilterState extends State<_DateFilter> {
+  DateTime selectedDate = DateTime.now();
+  DateFormat inputFormat = DateFormat('dd/MM/yyyy HH:mm');
+
+  Future<void> _selectDate(BuildContext context) async {
+    final DateTime? picked = await showDatePicker(
+      context: context,
+      initialDate: selectedDate,
+      firstDate: DateTime(2015, 8),
+      lastDate: DateTime(2101),
+    );
+    if (picked != null && picked != selectedDate) {
+      setState(() {
+        selectedDate = picked;
+      });
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.center,
+
+      children: [
+        IconButton(
+          onPressed: () {},
+          icon: Icon(Icons.arrow_back_ios_outlined, size: 20),
+        ),
+        Text(
+          // "${selectedDate.toLocal()}".split(' ')[0],
+          inputFormat.format(selectedDate).split(' ')[0],
+          style: TextStyle(fontSize: 20),
+        ),
+        IconButton(
+          onPressed: () {},
+          icon: Icon(Icons.arrow_forward_ios_rounded, size: 20),
+        ),
+      ],
     );
   }
 }
@@ -88,24 +147,99 @@ class _ListTileCard extends StatefulWidget {
 class _ListTileCardState extends State<_ListTileCard> {
   @override
   Widget build(BuildContext context) {
-    return Card(
-      elevation: 4.0,
+    return GestureDetector(
+      child: Card(
+        elevation: 4.0,
 
-      margin: EdgeInsets.symmetric(horizontal: 10.0, vertical: 6.0),
-      child: Container(
-        decoration: BoxDecoration(
-          // color: Color.fromRGBO(64, 75, 96, .9),
-          borderRadius: BorderRadius.circular(15.0),
+        margin: EdgeInsets.symmetric(horizontal: 10.0, vertical: 6.0),
+        child: Container(
+          decoration: BoxDecoration(
+            // color: Color.fromRGBO(64, 75, 96, .9),
+            borderRadius: BorderRadius.circular(15.0),
+          ),
+          child: _CustomListCardTile(turnaround: widget.turnaround),
         ),
-        child: _CustomListCardTile(turnaround: widget.turnaround),
       ),
+      onTap: () {
+        // *********************************************************************************************************************
+        showModalBottomSheet<void>(
+          context: context,
+          backgroundColor: Colors.transparent,
+          sheetAnimationStyle: AnimationStyle(
+            duration: Duration(milliseconds: 400),
+            reverseDuration: Duration(milliseconds: 300),
+          ),
+          builder: (BuildContext context) {
+            return ClipRRect(
+              borderRadius: const BorderRadius.all(Radius.circular(16.0)),
+              child: Container(
+                decoration: BoxDecoration(
+                  borderRadius: BorderRadius.only(
+                    topLeft: Radius.circular(16.0),
+                    topRight: Radius.circular(16.0),
+                  ),
+                  color: Colors.white,
+                  boxShadow: [
+                    BoxShadow(color: Colors.transparent, spreadRadius: 3),
+                  ],
+                ),
+                // color: Colors.white,
+                margin: EdgeInsets.symmetric(horizontal: 15),
+                child: Padding(
+                  padding: const EdgeInsets.symmetric(
+                    vertical: 0.0,
+                    horizontal: 5.0,
+                  ),
+                  child: Column(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      // ListTile(trailing: Icon(Icons.close)),
+                      ListTile(
+                        leading: Icon(Icons.fact_check_outlined),
+                        title: Text('Control de actividades'),
+                        onTap: () {
+                          // push
+                          context.push('/control-actividades');
+                          // close bottom sheet
+                          Navigator.pop(context);
+                        },
+                      ),
+                      ListTile(
+                        leading: Icon(Icons.lock_clock_outlined),
+                        title: Text('Cerrar Turnaround'),
+                        onTap: () {
+                          // push
+                          // context.push('/control-actividades');
+                          // close bottom sheet
+                          Navigator.pop(context);
+                        },
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+            );
+          },
+        );
+        // *********************************************************************************************************************
+      },
     );
+  }
+}
+
+class _BottomSheetMenu extends StatelessWidget {
+  final TurnaroundMain turnaround;
+  const _BottomSheetMenu({required this.turnaround});
+
+  @override
+  Widget build(BuildContext context) {
+    return Container();
   }
 }
 
 class _CustomListCardTile extends StatelessWidget {
   final TurnaroundMain turnaround;
-  const _CustomListCardTile({super.key, required this.turnaround});
+  const _CustomListCardTile({required this.turnaround});
 
   @override
   Widget build(BuildContext context) {
@@ -143,7 +277,7 @@ class _CustomListCardTile extends StatelessWidget {
               child: !(turnaround.fkVuelo.lugarDestino == null)
                   ? _CardFligthInfo(
                       turnaround: turnaround,
-                      isInbound: true,
+                      isInbound: false,
                       display: !(turnaround.fkVuelo.lugarDestino == null),
                       numeroVuelo: !(turnaround.fkVuelo.lugarDestino == null)
                           ? turnaround.fkVuelo.numeroVueloOut ?? ''
@@ -173,7 +307,6 @@ class _CardFligthInfo extends StatelessWidget {
   final TurnaroundMain turnaround;
 
   const _CardFligthInfo({
-    super.key,
     required this.turnaround,
     required this.isInbound,
     required this.display,
@@ -184,13 +317,14 @@ class _CardFligthInfo extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final TextTheme textTheme = Theme.of(context).textTheme;
     return Row(
       children: [
         // SVG of the flight (inbound or outbound)
         if (isInbound)
-          SvgPicture.asset("assets/icons/departure-icon.svg", height: 40),
+          SvgPicture.asset("assets/icons/arrival-icon.svg", height: 30),
         if (!isInbound)
-          SvgPicture.asset("assets/icons/arrival-icon.svg", height: 40),
+          SvgPicture.asset("assets/icons/departure-icon.svg", height: 30),
         Padding(
           padding: const EdgeInsets.all(4.0),
           child: Column(
@@ -204,22 +338,9 @@ class _CardFligthInfo extends StatelessWidget {
                 ),
               ),
               // Ruta
-              Text(
-                ruta,
-                style: const TextStyle(
-                  fontSize: 16,
-                  // fontWeight: FontWeight.bold,
-                ),
-              ),
+              Text(ruta, style: textTheme.bodyLarge),
               // Hora
-              if (isInbound)
-                Text(
-                  hora,
-                  style: const TextStyle(
-                    fontSize: 16,
-                    // fontWeight: FontWeight.bold,
-                  ),
-                ),
+              if (isInbound) Text(hora, style: textTheme.bodyLarge),
               // Hora
               if (!isInbound)
                 Text(
@@ -244,52 +365,8 @@ class _CardFligthInfo extends StatelessWidget {
   }
 }
 
-// class _CustomListTile extends StatelessWidget {
-//   final TurnaroundMain turnaround;
-//   const _CustomListTile({required this.turnaround});
-
-//   @override
-//   Widget build(BuildContext context) {
-//     return ListTile(
-//         contentPadding: EdgeInsets.symmetric(horizontal: 20.0, vertical: 10.0),
-//         // Leading Image
-//         leading: Image.network(turnaround.fkVuelo.fkAerolinea.imagen ?? "", width: 40.0),
-//         // Container(
-//         //   padding: EdgeInsets.only(right: 12.0),
-//         //   decoration: new BoxDecoration(
-//         //       border: new Border(
-//         //           right: new BorderSide(width: 1.0, color: Colors.white24))),
-//         //   child: Icon(Icons.autorenew, color: Colors.white),
-//         // ),
-//         title: Text(
-//           "Introduction to Driving",
-//           // style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
-//           style: TextStyle( fontWeight: FontWeight.bold),
-//         ),
-//         // subtitle: Text("Intermediate", style: TextStyle(color: Colors.white)),
-
-//         subtitle: Row(
-//           children: <Widget>[
-//             Icon(Icons.linear_scale, color: Colors.blue),
-//             Text(" Intermediate", style: TextStyle(color: Colors.black))
-//           ],
-//         ),
-//         trailing:
-//             Icon(Icons.keyboard_arrow_right, color: Colors.black, size: 30.0));
-
-//     // ListTile(
-//     //   title: const Text('Titulo'),
-//     //   subtitle: const Text('Subtitulo'),
-//     //   leading: const Icon( Icons.accessibility_new ),
-//     //   trailing: const Icon( Icons.keyboard_arrow_right ),
-//     //   onTap: (){},
-
-//     // );
-//   }
-// }
-
 class _CustomBottomNavigationBar extends StatelessWidget {
-  const _CustomBottomNavigationBar({super.key});
+  const _CustomBottomNavigationBar();
 
   @override
   Widget build(BuildContext context) {
