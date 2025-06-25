@@ -11,7 +11,7 @@ import '../theme/widget_themes/outlined_button_theme.dart';
 import '../theme/widget_themes/text_field_theme.dart';
 import '../theme/widget_themes/text_theme.dart';
 
-const colorSeed = Color.fromARGB(255, 0, 166, 91);
+const colorSeed = Color.fromRGBO(0, 166, 91, 1);
 
 class TAppTheme {
   TAppTheme._();
@@ -22,7 +22,7 @@ class TAppTheme {
     colorScheme: ColorScheme.fromSeed(
       seedColor: colorSeed,
       primary: colorSeed,
-      surface: TColors.primaryBackground,
+      // surface: TColors.primaryBackground,
 
       // surface: AppColors.backgroundLight,
     ),
@@ -33,7 +33,7 @@ class TAppTheme {
     chipTheme: TChipTheme.lightChipTheme,
     appBarTheme: TAppBarTheme.lightAppBarTheme,
     checkboxTheme: TCheckboxTheme.lightCheckboxTheme,
-    scaffoldBackgroundColor: TColors.primaryBackground,
+    scaffoldBackgroundColor: const Color.fromARGB(255, 255, 255, 255),
     bottomSheetTheme: TBottomSheetTheme.lightBottomSheetTheme,
     elevatedButtonTheme: TElevatedButtonTheme.lightElevatedButtonTheme,
     outlinedButtonTheme: TOutlinedButtonTheme.lightOutlinedButtonTheme,
@@ -61,6 +61,12 @@ class TAppTheme {
     outlinedButtonTheme: TOutlinedButtonTheme.darkOutlinedButtonTheme,
     inputDecorationTheme: TTextFormFieldTheme.darkInputDecorationTheme,
   );
+
+  // Custom text themes
+  // title page
+
+  // Complete Color Scheme
+  final colorScheme = ColorScheme.fromSeed(seedColor: colorSeed);
 }
 
 

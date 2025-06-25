@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:go_router/go_router.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:intl/intl.dart';
 
 import '../../../shared/shared.dart';
@@ -19,10 +20,21 @@ class TurnaroundMainScreen extends StatelessWidget {
       // backgroundColor: Color.fromRGBO(58, 66, 86, 1.0),
       drawer: SideMenu(scaffoldKey: scaffoldKey),
       appBar: AppBar(
-        title: const Text('Turnaround 2'),
+        leading: IconButton(
+          icon: const Icon(Icons.more_vert),
+          onPressed: () => scaffoldKey.currentState?.openDrawer(),
+        ),
+        // title: const Text('Turnaround 2'),
+        title: Center(
+          child: SvgPicture.asset(
+            "assets/icons/logo-trc.svg",
+            fit: BoxFit.scaleDown,
+            height: 35,
+          ),
+        ),
         // user icon menu
         actions: [
-          IconButton(onPressed: () {}, icon: const Icon(Icons.search_rounded)),
+          IconButton(onPressed: () {}, icon: const Icon(Icons.manage_accounts)),
         ],
       ),
       body: _TuraroundMainView(),
@@ -63,24 +75,49 @@ class _TuraroundMainViewState extends ConsumerState {
     if (turnaroundsState.isLoading) {
       return const Center(child: CircularProgressIndicator());
     }
-    return Column(
+    return Stack(
       children: [
-        // Date Filter
-        const SizedBox(height: 10),
-        _DateFilter(),
-        const SizedBox(height: 10),
-        Builder(
-          builder: (context) {
-            return ListView.builder(
-              scrollDirection: Axis.vertical,
-              shrinkWrap: true,
-              itemCount: turnaroundsState.turnarounds.length,
-              itemBuilder: (context, index) {
-                final turnaround = turnaroundsState.turnarounds[index];
-                return _ListTileCard(turnaround: turnaround);
-              },
-            );
-          },
+        BackgroundImg(),
+        SafeArea(
+          child: SingleChildScrollView(
+            physics: BouncingScrollPhysics(),
+            child: Column(
+              children: [
+                // Date Filter
+                const SizedBox(height: 15),
+                Text(
+                  'Turnarounds',
+                  style: Theme.of(context).textTheme.headlineLarge?.copyWith(
+                    color: Theme.of(context).colorScheme.primary,
+                    fontWeight: FontWeight.w900,
+                    fontFamily: GoogleFonts.openSans(
+                      fontWeight: FontWeight.w900,
+                    ).fontFamily,
+                  ),
+                ),
+                const SizedBox(height: 10),
+                _DateFilter(),
+                const SizedBox(height: 10),
+                Builder(
+                  builder: (context) {
+                    return ListView.builder(
+                      physics:
+                          NeverScrollableScrollPhysics(), // disable scrolling of the ListView
+                      shrinkWrap: true,
+                      scrollDirection: Axis.vertical,
+                      itemCount: turnaroundsState.turnarounds.length,
+                      itemBuilder: (context, index) {
+                        final turnaround = turnaroundsState.turnarounds[index];
+                        // return Text("Descomentar para ver la tarjeta");
+                        return _ListTileCardContainer(turnaround: turnaround);
+                        // return _ListTileCard(turnaround: turnaround);
+                      },
+                    );
+                  },
+                ),
+              ],
+            ),
+          ),
         ),
       ],
     );
@@ -125,7 +162,7 @@ class _DateFilterState extends State<_DateFilter> {
         Text(
           // "${selectedDate.toLocal()}".split(' ')[0],
           inputFormat.format(selectedDate).split(' ')[0],
-          style: TextStyle(fontSize: 20),
+          style: Theme.of(context).textTheme.bodyLarge,
         ),
         IconButton(
           onPressed: () {},
@@ -136,161 +173,135 @@ class _DateFilterState extends State<_DateFilter> {
   }
 }
 
-class _ListTileCard extends StatefulWidget {
+class _ListTileCardContainer extends StatelessWidget {
   final TurnaroundMain turnaround;
-  const _ListTileCard({required this.turnaround});
+  const _ListTileCardContainer({required this.turnaround});
 
-  @override
-  State<_ListTileCard> createState() => _ListTileCardState();
-}
-
-class _ListTileCardState extends State<_ListTileCard> {
   @override
   Widget build(BuildContext context) {
-    return GestureDetector(
-      child: Card(
-        elevation: 4.0,
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 8.0, vertical: 4.0),
+      child: GestureDetector(
+        onTap: _onItemTap(context, turnaround),
+        behavior: HitTestBehavior.opaque,
+        child: Stack(
+          children: [
+            // svg background
+            // SvgPicture.asset(
+            //   "assets/layouts/fligth-container-gris.svg",
+            //   alignment: Alignment.center,
+            //   height: 50,
+            //   fit: BoxFit.fill,
+            // ),
+            FittedBox(
+              child: Center(
+                child: Container(
+                  // altura de la tarjeta
+                  height: 175,
+                  width: MediaQuery.of(context).size.width,
+                  alignment: Alignment.center, // <---- The magic
+                  // padding: const EdgeInsets.all(12),
+                  child: SvgPicture.asset(
+                    // 'assets/layouts/fligth-container-gris.svg',
+                    'assets/layouts/contenedor-blanco.svg',
+                    // fit: BoxFit.fill,
+                    // width: MediaQuery.of(context).size.width,
+                    // Max width of the card
+                    // width: 400,
+                    semanticsLabel: 'Image',
+                    // height: 300,
+                    fit: BoxFit.fill,
 
-        margin: EdgeInsets.symmetric(horizontal: 10.0, vertical: 6.0),
-        child: Container(
-          decoration: BoxDecoration(
-            // color: Color.fromRGBO(64, 75, 96, .9),
-            borderRadius: BorderRadius.circular(15.0),
-          ),
-          child: _CustomListCardTile(turnaround: widget.turnaround),
-        ),
-      ),
-      onTap: () {
-        // *********************************************************************************************************************
-        showModalBottomSheet<void>(
-          context: context,
-          backgroundColor: Colors.transparent,
-          sheetAnimationStyle: AnimationStyle(
-            duration: Duration(milliseconds: 400),
-            reverseDuration: Duration(milliseconds: 300),
-          ),
-          builder: (BuildContext context) {
-            return ClipRRect(
-              borderRadius: const BorderRadius.all(Radius.circular(16.0)),
-              child: Container(
-                decoration: BoxDecoration(
-                  borderRadius: BorderRadius.only(
-                    topLeft: Radius.circular(16.0),
-                    topRight: Radius.circular(16.0),
-                  ),
-                  color: Colors.white,
-                  boxShadow: [
-                    BoxShadow(color: Colors.transparent, spreadRadius: 3),
-                  ],
-                ),
-                // color: Colors.white,
-                margin: EdgeInsets.symmetric(horizontal: 15),
-                child: Padding(
-                  padding: const EdgeInsets.symmetric(
-                    vertical: 0.0,
-                    horizontal: 5.0,
-                  ),
-                  child: Column(
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      // ListTile(trailing: Icon(Icons.close)),
-                      ListTile(
-                        leading: Icon(Icons.fact_check_outlined),
-                        title: Text('Control de actividades'),
-                        onTap: () {
-                          // push
-                          context.push('/control-actividades');
-                          // close bottom sheet
-                          Navigator.pop(context);
-                        },
-                      ),
-                      ListTile(
-                        leading: Icon(Icons.lock_clock_outlined),
-                        title: Text('Cerrar Turnaround'),
-                        onTap: () {
-                          // push
-                          // context.push('/control-actividades');
-                          // close bottom sheet
-                          Navigator.pop(context);
-                        },
-                      ),
-                    ],
+                    alignment: Alignment.center,
                   ),
                 ),
               ),
-            );
-          },
-        );
-        // *********************************************************************************************************************
-      },
-    );
-  }
-}
-
-class _BottomSheetMenu extends StatelessWidget {
-  final TurnaroundMain turnaround;
-  const _BottomSheetMenu({required this.turnaround});
-
-  @override
-  Widget build(BuildContext context) {
-    return Container();
-  }
-}
-
-class _CustomListCardTile extends StatelessWidget {
-  final TurnaroundMain turnaround;
-  const _CustomListCardTile({required this.turnaround});
-
-  @override
-  Widget build(BuildContext context) {
-    return Expanded(
-      child: Padding(
-        padding: const EdgeInsets.all(8.0),
-        child: Row(
-          children: <Widget>[
-            // Image
-            Expanded(
-              flex: 2,
-              child: Image.network(
-                turnaround.fkVuelo.fkAerolinea.imagen ?? "",
-                width: 60.0,
-              ),
             ),
-            Expanded(
-              flex: 4,
-              child: !(turnaround.fkVuelo.lugarSalida == null)
-                  ? _CardFligthInfo(
-                      turnaround: turnaround,
-                      isInbound: true,
-                      display: !(turnaround.fkVuelo.lugarSalida == null),
-                      numeroVuelo: !(turnaround.fkVuelo.lugarSalida == null)
-                          ? turnaround.fkVuelo.numeroVueloIn
-                          : '',
-                      ruta:
-                          "${turnaround.fkVuelo.lugarSalida?.codigoIata} - ${turnaround.fkVuelo.stn?.codigoIata}",
-                      hora: turnaround.fkVuelo.etaIn?.substring(0, 5) ?? '',
-                    )
-                  : const Text(''),
-            ),
-            Expanded(
-              flex: 4,
-              child: !(turnaround.fkVuelo.lugarDestino == null)
-                  ? _CardFligthInfo(
-                      turnaround: turnaround,
-                      isInbound: false,
-                      display: !(turnaround.fkVuelo.lugarDestino == null),
-                      numeroVuelo: !(turnaround.fkVuelo.lugarDestino == null)
-                          ? turnaround.fkVuelo.numeroVueloOut ?? ''
-                          : '',
-                      ruta:
-                          "${turnaround.fkVuelo.stn?.codigoIata} - ${turnaround.fkVuelo.lugarDestino?.codigoIata}",
-                      hora: turnaround.fkVuelo.etdOut?.substring(0, 5) ?? '',
-                    )
-                  : const Text(''),
-            ),
-            // Incoming flight
 
-            // Outgoing flight
+            Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              crossAxisAlignment: CrossAxisAlignment.center,
+              // mainAxisSize: MainAxisSize.max,
+              // mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              // shrinkWrap: true,
+              // physics: NeverScrollableScrollPhysics(),
+              children: [
+                // Cola de aerolinea
+                Flexible(
+                  flex: 1,
+                  child: _TailView(
+                    image: turnaround.fkVuelo.fkAerolinea.imagen ?? "",
+                    name: turnaround.fkVuelo.fkAerolinea.aka,
+                  ),
+                ),
+
+                // Vuelo de llegada
+                turnaround.fkVuelo.lugarSalida == null
+                    ? Spacer(flex: 1)
+                    : Flexible(
+                        flex: 1,
+                        child:
+                            // IF lugarSalida != null return _InboundView else empty
+                            turnaround.fkVuelo.lugarSalida == null
+                            // empty sizedbox that fill all the space available
+                            ? SizedBox(
+                                width: MediaQuery.of(context).size.width / 3.1,
+                                height: 100,
+                              )
+                            : _InboundView(
+                                lugarSalida:
+                                    turnaround
+                                        .fkVuelo
+                                        .lugarSalida
+                                        ?.codigoIata ??
+                                    "",
+                                lugarLlegada:
+                                    turnaround.fkVuelo.stn?.codigoIata ?? "",
+                                lugarSalidaLargo:
+                                    turnaround.fkVuelo.lugarSalida?.ciudad ??
+                                    "",
+                                lugarLlegadaLargo:
+                                    turnaround.fkVuelo.stn?.ciudad ?? "",
+                                hora:
+                                    turnaround.fkVuelo.etaIn?.substring(0, 5) ??
+                                    "",
+                                numeroVuelo:
+                                    "${turnaround.fkVuelo.fkAerolinea.codigoIata} - ${turnaround.fkVuelo.numeroVueloIn} ",
+                                isInbound: true,
+                              ),
+                      ),
+
+                // Vuelo de Salida
+                Flexible(
+                  flex: 1,
+                  child: turnaround.fkVuelo.lugarDestino == null
+                      ? SizedBox(
+                          width: MediaQuery.of(context).size.width / 3.1,
+                          height: 100,
+                        )
+                      : _InboundView(
+                          lugarSalida: turnaround.fkVuelo.stn?.codigoIata ?? "",
+                          lugarLlegada:
+                              turnaround.fkVuelo.lugarDestino?.codigoIata ?? "",
+                          lugarSalidaLargo:
+                              turnaround.fkVuelo.stn?.ciudad ?? "",
+                          lugarLlegadaLargo:
+                              turnaround.fkVuelo.lugarDestino?.ciudad ?? "",
+                          hora:
+                              turnaround.fkVuelo.etdOut?.substring(0, 5) ?? "",
+                          numeroVuelo:
+                              "${turnaround.fkVuelo.fkAerolinea.codigoIata} - ${turnaround.fkVuelo.numeroVueloOut} ",
+                          isInbound: false,
+                        ),
+                ),
+              ],
+            ),
+            // Row with 3 equal spaces
+            // Row(
+            //   children: [
+            //     GridTile
+            //   ],
+            // ),
           ],
         ),
       ),
@@ -298,66 +309,39 @@ class _CustomListCardTile extends StatelessWidget {
   }
 }
 
-class _CardFligthInfo extends StatelessWidget {
-  final bool isInbound;
-  final bool display;
-  final String numeroVuelo;
-  final String ruta;
-  final String hora;
-  final TurnaroundMain turnaround;
+// OnTap menu function
 
-  const _CardFligthInfo({
-    required this.turnaround,
-    required this.isInbound,
-    required this.display,
-    required this.numeroVuelo,
-    required this.ruta,
-    required this.hora,
-  });
+class _TailView extends StatelessWidget {
+  final String image;
+  final String name;
+  const _TailView({required this.image, required this.name});
 
   @override
   Widget build(BuildContext context) {
-    final TextTheme textTheme = Theme.of(context).textTheme;
-    return Row(
+    return Column(
+      // mainAxisSize: MainAxisSize.max,
+      crossAxisAlignment: CrossAxisAlignment.center,
+      mainAxisAlignment: MainAxisAlignment.center,
       children: [
-        // SVG of the flight (inbound or outbound)
-        if (isInbound)
-          SvgPicture.asset("assets/icons/arrival-icon.svg", height: 30),
-        if (!isInbound)
-          SvgPicture.asset("assets/icons/departure-icon.svg", height: 30),
         Padding(
-          padding: const EdgeInsets.all(4.0),
-          child: Column(
-            children: [
-              // flight information
-              Text(
-                "${turnaround.fkVuelo.fkAerolinea.codigoIata}-$numeroVuelo",
-                style: const TextStyle(
-                  fontSize: 18,
-                  fontWeight: FontWeight.bold,
-                ),
-              ),
-              // Ruta
-              Text(ruta, style: textTheme.bodyLarge),
-              // Hora
-              if (isInbound) Text(hora, style: textTheme.bodyLarge),
-              // Hora
-              if (!isInbound)
-                Text(
-                  hora,
-                  style: const TextStyle(
-                    fontSize: 16,
-                    // fontWeight: FontWeight.bold,
-                  ),
-                ),
-              // Text(
-              //   "${turnaround.fkVuelo.fechaSalida} - ${turnaround.fkVuelo.fechaLlegada}",
-              //   style: const TextStyle(
-              //     fontSize: 16,
-              //     fontWeight: FontWeight.bold,
-              //   ),
-              // ),
-            ],
+          padding: const EdgeInsets.only(
+            // top: 0,
+            // bottom: 0,
+            left: 23,
+            right: 10,
+          ),
+          child: Image.network(image),
+        ),
+        // Uppercase
+        Padding(
+          padding: const EdgeInsets.only(left: 20),
+          child: Text(
+            name.toUpperCase(),
+            style: Theme.of(context).textTheme.labelMedium?.copyWith(
+              fontFamily: GoogleFonts.openSans(
+                fontWeight: FontWeight.w700,
+              ).fontFamily,
+            ),
           ),
         ),
       ],
@@ -365,11 +349,180 @@ class _CardFligthInfo extends StatelessWidget {
   }
 }
 
-class _CustomBottomNavigationBar extends StatelessWidget {
-  const _CustomBottomNavigationBar();
+class _InboundView extends StatelessWidget {
+  final String lugarSalida;
+  final String lugarLlegada;
+  final String lugarSalidaLargo;
+  final String lugarLlegadaLargo;
+  final bool isInbound;
+
+  final String hora;
+  final String numeroVuelo;
+  const _InboundView({
+    required this.lugarSalida,
+    required this.lugarLlegada,
+    required this.lugarSalidaLargo,
+    required this.lugarLlegadaLargo,
+    required this.hora,
+    required this.numeroVuelo,
+    required this.isInbound,
+  });
 
   @override
   Widget build(BuildContext context) {
-    return Container();
+    return Padding(
+      padding: const EdgeInsets.only(top: 18, bottom: 10, left: 15, right: 15),
+      child: Center(
+        child: Column(
+          mainAxisSize: MainAxisSize.max,
+          // mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          // crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: [
+            Row(
+              mainAxisSize: MainAxisSize.max,
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Text(
+                  lugarSalida,
+                  style: Theme.of(context).textTheme.titleLarge?.copyWith(
+                    fontFamily: GoogleFonts.openSans(
+                      fontWeight: FontWeight.w700,
+                    ).fontFamily,
+                  ),
+                ),
+                Text(
+                  lugarLlegada,
+                  style: Theme.of(context).textTheme.titleLarge?.copyWith(
+                    fontFamily: GoogleFonts.openSans(
+                      fontWeight: FontWeight.w700,
+                    ).fontFamily,
+                  ),
+                ),
+              ],
+            ),
+            isInbound
+                ? SvgPicture.asset("assets/icons/llegada.svg", height: 30)
+                : SvgPicture.asset("assets/icons/salida.svg", height: 30),
+            // hora
+            Text(
+              hora,
+              style: Theme.of(context).textTheme.titleLarge?.copyWith(
+                fontFamily: GoogleFonts.openSans(
+                  fontWeight: FontWeight.w700,
+                ).fontFamily,
+              ),
+            ),
+            isInbound
+                ? Text(
+                    "LLEGADA",
+                    style: Theme.of(context).textTheme.labelSmall?.copyWith(
+                      fontFamily: GoogleFonts.openSans(
+                        fontWeight: FontWeight.w500,
+                      ).fontFamily,
+                    ),
+                  )
+                : Text(
+                    "SALIDA",
+                    style: Theme.of(context).textTheme.labelSmall?.copyWith(
+                      fontFamily: GoogleFonts.openSans(
+                        fontWeight: FontWeight.w500,
+                      ).fontFamily,
+                    ),
+                  ),
+
+            // SizedBox(height: 10),
+            Text(
+              numeroVuelo,
+              style: Theme.of(context).textTheme.labelLarge?.copyWith(
+                fontFamily: GoogleFonts.openSans(
+                  fontWeight: FontWeight.w700,
+                ).fontFamily,
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
   }
+}
+
+_onItemTap(BuildContext context, TurnaroundMain turnaround) {
+  // return a showModalBottomSheet
+  return () {
+    // *********************************************************************************************************************
+    showModalBottomSheet<void>(
+      elevation: 100,
+      context: context,
+      backgroundColor: Colors.transparent,
+      sheetAnimationStyle: AnimationStyle(
+        duration: Duration(milliseconds: 400),
+        reverseDuration: Duration(milliseconds: 300),
+      ),
+      builder: (BuildContext context) {
+        return ClipRRect(
+          borderRadius: const BorderRadius.all(Radius.circular(16.0)),
+          child: Container(
+            decoration: BoxDecoration(
+              borderRadius: BorderRadius.only(
+                topLeft: Radius.circular(16.0),
+                topRight: Radius.circular(16.0),
+              ),
+              color: Colors.white,
+              boxShadow: [
+                BoxShadow(color: Colors.transparent, spreadRadius: 3),
+              ],
+            ),
+            // color: Colors.white,
+            margin: EdgeInsets.symmetric(horizontal: 15),
+            child: Padding(
+              padding: const EdgeInsets.only(
+                // top: 3.0,
+                bottom: 5.0,
+                left: 3.0,
+                right: 3.0,
+              ),
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  // LOGICA
+                  CustomListTile(
+                    leading: Icon(Icons.person),
+                    title: 'Asignar Personal',
+                    onTap: () {},
+                  ),
+                  CustomListTile(
+                    leading: Icon(Icons.agriculture),
+                    title: 'Asignar equipos GSE',
+                    onTap: () {},
+                  ),
+                  CustomListTile(
+                    leading: Icon(Icons.start),
+                    title: 'Iniciar Operaciones',
+                    onTap: () {},
+                  ),
+                  CustomListTile(
+                    leading: Icon(Icons.assignment),
+                    title: 'Control de actividades',
+                    onTap: () {
+                      // push
+                      context.push('/control-actividades');
+                      // close bottom sheet
+
+                      Navigator.pop(context);
+                    },
+                  ),
+                  CustomListTile(
+                    leading: Icon(Icons.lock),
+                    title: 'Cerrar Vuelo',
+                    onTap: () {},
+                  ),
+                ],
+              ),
+            ),
+          ),
+        );
+      },
+    );
+    // *********************************************************************************************************************
+  };
 }

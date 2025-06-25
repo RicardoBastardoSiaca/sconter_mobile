@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 
-class Background extends StatelessWidget {
+class BackgroundOld extends StatelessWidget {
   final Widget child;
-  const Background({
+  const BackgroundOld({
     super.key,
     required this.child,
     this.topImage = "assets/images/main_top.png",
@@ -24,10 +24,7 @@ class Background extends StatelessWidget {
             Positioned(
               top: 0,
               left: 0,
-              child: Image.asset(
-                topImage,
-                width: 120,
-              ),
+              child: Image.asset(topImage, width: 120),
             ),
             // Positioned(
             //   bottom: 0,
