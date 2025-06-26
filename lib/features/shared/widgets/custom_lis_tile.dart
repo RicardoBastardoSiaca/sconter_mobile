@@ -45,13 +45,13 @@ class CustomListTile extends StatelessWidget {
             children: [
               Padding(
                 // Padding for the leading widget
-                padding: const EdgeInsets.only(left: 12.0, right: 12.0),
+                padding: const EdgeInsets.only(left: 20.0, right: 12.0),
                 child: leading, // Display leading widget
               ),
-              Padding(
-                padding: const EdgeInsets.only(top: 12.0),
-                child: Expanded(
-                  // Expanded section for title and subtitle
+              Expanded(
+                // Expanded section for title and subtitle
+                child: Padding(
+                  padding: const EdgeInsets.only(top: 12.0),
                   child: Column(
                     // Column layout for title and subtitle
                     crossAxisAlignment:

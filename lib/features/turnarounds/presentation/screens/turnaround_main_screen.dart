@@ -84,7 +84,7 @@ class _TuraroundMainViewState extends ConsumerState {
             child: Column(
               children: [
                 // Date Filter
-                const SizedBox(height: 15),
+                const SizedBox(height: 8),
                 Text(
                   'Turnarounds',
                   style: Theme.of(context).textTheme.headlineLarge?.copyWith(
@@ -95,26 +95,10 @@ class _TuraroundMainViewState extends ConsumerState {
                     ).fontFamily,
                   ),
                 ),
-                const SizedBox(height: 10),
+                const SizedBox(height: 5),
                 _DateFilter(),
-                const SizedBox(height: 10),
-                Builder(
-                  builder: (context) {
-                    return ListView.builder(
-                      physics:
-                          NeverScrollableScrollPhysics(), // disable scrolling of the ListView
-                      shrinkWrap: true,
-                      scrollDirection: Axis.vertical,
-                      itemCount: turnaroundsState.turnarounds.length,
-                      itemBuilder: (context, index) {
-                        final turnaround = turnaroundsState.turnarounds[index];
-                        // return Text("Descomentar para ver la tarjeta");
-                        return _ListTileCardContainer(turnaround: turnaround);
-                        // return _ListTileCard(turnaround: turnaround);
-                      },
-                    );
-                  },
-                ),
+                const SizedBox(height: 5),
+                _TurnaroundsListView(turnarounds: turnaroundsState.turnarounds),
               ],
             ),
           ),
@@ -173,6 +157,32 @@ class _DateFilterState extends State<_DateFilter> {
   }
 }
 
+class _TurnaroundsListView extends StatelessWidget {
+  final List<TurnaroundMain> turnarounds;
+  const _TurnaroundsListView({required this.turnarounds});
+
+  @override
+  Widget build(BuildContext context) {
+    return Builder(
+      builder: (context) {
+        return ListView.builder(
+          physics:
+              const NeverScrollableScrollPhysics(), // disable scrolling of the ListView
+          shrinkWrap: true,
+          scrollDirection: Axis.vertical,
+          itemCount: turnarounds.length,
+          itemBuilder: (context, index) {
+            final turnaround = turnarounds[index];
+            // return Text("Descomentar para ver la tarjeta");
+            return _ListTileCardContainer(turnaround: turnaround);
+            // return _ListTileCard(turnaround: turnaround);
+          },
+        );
+      },
+    );
+  }
+}
+
 class _ListTileCardContainer extends StatelessWidget {
   final TurnaroundMain turnaround;
   const _ListTileCardContainer({required this.turnaround});
@@ -181,50 +191,40 @@ class _ListTileCardContainer extends StatelessWidget {
   Widget build(BuildContext context) {
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 8.0, vertical: 4.0),
-      child: GestureDetector(
-        onTap: _onItemTap(context, turnaround),
-        behavior: HitTestBehavior.opaque,
-        child: Stack(
-          children: [
-            // svg background
-            // SvgPicture.asset(
-            //   "assets/layouts/fligth-container-gris.svg",
-            //   alignment: Alignment.center,
-            //   height: 50,
-            //   fit: BoxFit.fill,
-            // ),
-            FittedBox(
-              child: Center(
-                child: Container(
-                  // altura de la tarjeta
-                  height: 175,
-                  width: MediaQuery.of(context).size.width,
-                  alignment: Alignment.center, // <---- The magic
-                  // padding: const EdgeInsets.all(12),
-                  child: SvgPicture.asset(
-                    // 'assets/layouts/fligth-container-gris.svg',
-                    'assets/layouts/contenedor-blanco.svg',
-                    // fit: BoxFit.fill,
-                    // width: MediaQuery.of(context).size.width,
-                    // Max width of the card
-                    // width: 400,
-                    semanticsLabel: 'Image',
-                    // height: 300,
-                    fit: BoxFit.fill,
-
-                    alignment: Alignment.center,
-                  ),
+      child: Stack(
+        children: [
+          FittedBox(
+            child: Center(
+              child: Container(
+                // altura de la tarjeta
+                height: 160,
+                width: MediaQuery.of(context).size.width,
+                alignment: Alignment.center, // <---- The magic
+                child: SvgPicture.asset(
+                  'assets/layouts/contenedor-blanco.svg',
+                  semanticsLabel: 'Image',
+                  fit: BoxFit.fill,
+                  alignment: Alignment.center,
                 ),
               ),
             ),
+          ),
 
-            Row(
+          GestureDetector(
+            // onTap: _onItemTap(context, turnaround),
+            onTap: () {
+              // show dialog menu with list items
+              showDialog(
+                context: context,
+                builder: (context) => _MenuDialog(turnaround: turnaround),
+                // barrierColor: Colors.transparent,
+              );
+            },
+            behavior: HitTestBehavior.opaque,
+            child: Row(
               mainAxisAlignment: MainAxisAlignment.center,
               crossAxisAlignment: CrossAxisAlignment.center,
-              // mainAxisSize: MainAxisSize.max,
-              // mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              // shrinkWrap: true,
-              // physics: NeverScrollableScrollPhysics(),
+
               children: [
                 // Cola de aerolinea
                 Flexible(
@@ -272,44 +272,142 @@ class _ListTileCardContainer extends StatelessWidget {
                       ),
 
                 // Vuelo de Salida
-                Flexible(
-                  flex: 1,
-                  child: turnaround.fkVuelo.lugarDestino == null
-                      ? SizedBox(
-                          width: MediaQuery.of(context).size.width / 3.1,
-                          height: 100,
-                        )
-                      : _InboundView(
-                          lugarSalida: turnaround.fkVuelo.stn?.codigoIata ?? "",
-                          lugarLlegada:
-                              turnaround.fkVuelo.lugarDestino?.codigoIata ?? "",
-                          lugarSalidaLargo:
-                              turnaround.fkVuelo.stn?.ciudad ?? "",
-                          lugarLlegadaLargo:
-                              turnaround.fkVuelo.lugarDestino?.ciudad ?? "",
-                          hora:
-                              turnaround.fkVuelo.etdOut?.substring(0, 5) ?? "",
-                          numeroVuelo:
-                              "${turnaround.fkVuelo.fkAerolinea.codigoIata} - ${turnaround.fkVuelo.numeroVueloOut} ",
-                          isInbound: false,
-                        ),
-                ),
+                turnaround.fkVuelo.lugarDestino == null
+                    ? Spacer(flex: 1)
+                    : Flexible(
+                        flex: 1,
+                        child: turnaround.fkVuelo.lugarDestino == null
+                            ? SizedBox(
+                                width: MediaQuery.of(context).size.width / 3.1,
+                                height: 100,
+                              )
+                            : _InboundView(
+                                lugarSalida:
+                                    turnaround.fkVuelo.stn?.codigoIata ?? "",
+                                lugarLlegada:
+                                    turnaround
+                                        .fkVuelo
+                                        .lugarDestino
+                                        ?.codigoIata ??
+                                    "",
+                                lugarSalidaLargo:
+                                    turnaround.fkVuelo.stn?.ciudad ?? "",
+                                lugarLlegadaLargo:
+                                    turnaround.fkVuelo.lugarDestino?.ciudad ??
+                                    "",
+                                hora:
+                                    turnaround.fkVuelo.etdOut?.substring(
+                                      0,
+                                      5,
+                                    ) ??
+                                    "",
+                                numeroVuelo:
+                                    "${turnaround.fkVuelo.fkAerolinea.codigoIata} - ${turnaround.fkVuelo.numeroVueloOut} ",
+                                isInbound: false,
+                              ),
+                      ),
               ],
             ),
-            // Row with 3 equal spaces
-            // Row(
-            //   children: [
-            //     GridTile
-            //   ],
-            // ),
-          ],
-        ),
+          ),
+          // Row with 3 equal spaces
+          // Row(
+          //   children: [
+          //     GridTile
+          //   ],
+          // ),
+        ],
       ),
     );
   }
 }
 
-// OnTap menu function
+class _MenuDialog extends StatelessWidget {
+  final TurnaroundMain turnaround;
+  const _MenuDialog({required this.turnaround});
+
+  @override
+  Widget build(BuildContext context) {
+    return AlertDialog(
+      // Border Color
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(20),
+        side: const BorderSide(
+          color: Color.fromARGB(255, 255, 255, 255),
+          width: 3,
+        ),
+      ),
+      // title: const Text('Menu'),
+      backgroundColor: Colors.grey.shade100,
+      content: Column(
+        mainAxisSize: MainAxisSize.min,
+        mainAxisAlignment: MainAxisAlignment.spaceAround,
+        children: [
+          MenuListTile(
+            leading: Icon(Icons.person_2),
+            title: 'Asignar Personal',
+            onTap: () {
+              print("onItemTap");
+              // push
+              context.push('/asignar-personal');
+              // close bottom sheet
+              Navigator.pop(context);
+            },
+          ),
+
+          MenuListTile(
+            leading: Icon(Icons.agriculture),
+            title: 'Asignar equipos GSE',
+            onTap: () {
+              print("onItemTap");
+              // push
+              context.push('/asignar-equipos');
+              // close bottom sheet
+              Navigator.pop(context);
+            },
+          ),
+
+          MenuListTile(
+            leading: Icon(Icons.start),
+            title: 'Iniciar Operaciones',
+            onTap: () {
+              print("onItemTap");
+              // push
+              context.push('/iniciar-operaciones');
+              // close bottom sheet
+              Navigator.pop(context);
+            },
+          ),
+
+          MenuListTile(
+            leading: Icon(Icons.assignment),
+            title: 'Control de actividades',
+            onTap: () {
+              print("onItemTap");
+              // push
+              context.push('/control-actividades');
+              // close bottom sheet
+              Navigator.pop(context);
+            },
+          ),
+
+          MenuListTile(
+            leading: Icon(Icons.lock),
+            title: 'Cerrar Vuelo',
+            onTap: () {
+              print("onItemTap");
+              // push
+              context.push('/cerrar-vuelo');
+              // close bottom sheet
+              Navigator.pop(context);
+            },
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+// ignore: unused_element
 
 class _TailView extends StatelessWidget {
   final String image;
@@ -371,12 +469,10 @@ class _InboundView extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: const EdgeInsets.only(top: 18, bottom: 10, left: 15, right: 15),
+      padding: const EdgeInsets.only(top: 12, bottom: 10, left: 15, right: 15),
       child: Center(
         child: Column(
           mainAxisSize: MainAxisSize.max,
-          // mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          // crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
             Row(
               mainAxisSize: MainAxisSize.max,
@@ -446,83 +542,144 @@ class _InboundView extends StatelessWidget {
   }
 }
 
-_onItemTap(BuildContext context, TurnaroundMain turnaround) {
-  // return a showModalBottomSheet
-  return () {
-    // *********************************************************************************************************************
-    showModalBottomSheet<void>(
-      elevation: 100,
-      context: context,
-      backgroundColor: Colors.transparent,
-      sheetAnimationStyle: AnimationStyle(
-        duration: Duration(milliseconds: 400),
-        reverseDuration: Duration(milliseconds: 300),
-      ),
-      builder: (BuildContext context) {
-        return ClipRRect(
-          borderRadius: const BorderRadius.all(Radius.circular(16.0)),
-          child: Container(
-            decoration: BoxDecoration(
-              borderRadius: BorderRadius.only(
-                topLeft: Radius.circular(16.0),
-                topRight: Radius.circular(16.0),
-              ),
-              color: Colors.white,
-              boxShadow: [
-                BoxShadow(color: Colors.transparent, spreadRadius: 3),
-              ],
-            ),
-            // color: Colors.white,
-            margin: EdgeInsets.symmetric(horizontal: 15),
-            child: Padding(
-              padding: const EdgeInsets.only(
-                // top: 3.0,
-                bottom: 5.0,
-                left: 3.0,
-                right: 3.0,
-              ),
-              child: Column(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  // LOGICA
-                  CustomListTile(
-                    leading: Icon(Icons.person),
-                    title: 'Asignar Personal',
-                    onTap: () {},
-                  ),
-                  CustomListTile(
-                    leading: Icon(Icons.agriculture),
-                    title: 'Asignar equipos GSE',
-                    onTap: () {},
-                  ),
-                  CustomListTile(
-                    leading: Icon(Icons.start),
-                    title: 'Iniciar Operaciones',
-                    onTap: () {},
-                  ),
-                  CustomListTile(
-                    leading: Icon(Icons.assignment),
-                    title: 'Control de actividades',
-                    onTap: () {
-                      // push
-                      context.push('/control-actividades');
-                      // close bottom sheet
+// _onItemTap(BuildContext context, TurnaroundMain turnaround) {
+//   // return a showModalBottomSheet
+//   return () {
+//     // *********************************************************************************************************************
+//     showModalBottomSheet<void>(
+//       elevation: 100,
+//       context: context,
+//       backgroundColor: Colors.transparent,
+//       sheetAnimationStyle: AnimationStyle(
+//         duration: Duration(milliseconds: 400),
+//         reverseDuration: Duration(milliseconds: 300),
+//       ),
+//       builder: (BuildContext context) {
+//         return ClipRRect(
+//           borderRadius: const BorderRadius.all(Radius.circular(16.0)),
+//           child: Container(
+//             decoration: BoxDecoration(
+//               borderRadius: BorderRadius.only(
+//                 topLeft: Radius.circular(16.0),
+//                 topRight: Radius.circular(16.0),
+//               ),
+//               color: Colors.white,
+//               boxShadow: [
+//                 BoxShadow(color: Colors.transparent, spreadRadius: 3),
+//               ],
+//             ),
+//             // color: Colors.white,
+//             margin: EdgeInsets.symmetric(horizontal: 15),
+//             child: Padding(
+//               padding: const EdgeInsets.only(
+//                 top: 10.0,
+//                 bottom: 25.0,
+//                 left: 25.0,
+//                 right: 3.0,
+//               ),
+//               child: Column(
+//                 mainAxisSize: MainAxisSize.min,
+//                 children: [
+//                   MenuListTile(
+//                     leading: Icon(Icons.person_2),
+//                     title: 'Asignar Personal',
+//                     onTap: () {
+//                       print("onItemTap");
+//                       // push
+//                       context.push('/asignar-personal');
+//                       // close bottom sheet
+//                       Navigator.pop(context);
+//                     },
+//                   ),
 
-                      Navigator.pop(context);
-                    },
-                  ),
-                  CustomListTile(
-                    leading: Icon(Icons.lock),
-                    title: 'Cerrar Vuelo',
-                    onTap: () {},
-                  ),
-                ],
-              ),
-            ),
-          ),
-        );
-      },
-    );
-    // *********************************************************************************************************************
-  };
-}
+//                   MenuListTile(
+//                     leading: Icon(Icons.agriculture),
+//                     title: 'Asignar equipos GSE',
+//                     onTap: () {
+//                       print("onItemTap");
+//                       // push
+//                       context.push('/asignar-equipos');
+//                       // close bottom sheet
+//                       Navigator.pop(context);
+//                     },
+//                   ),
+
+//                   MenuListTile(
+//                     leading: Icon(Icons.start),
+//                     title: 'Iniciar Operaciones',
+//                     onTap: () {
+//                       print("onItemTap");
+//                       // push
+//                       context.push('/iniciar-operaciones');
+//                       // close bottom sheet
+//                       Navigator.pop(context);
+//                     },
+//                   ),
+
+//                   MenuListTile(
+//                     leading: Icon(Icons.assignment),
+//                     title: 'Control de actividades',
+//                     onTap: () {
+//                       print("onItemTap");
+//                       // push
+//                       context.push('/control-actividades');
+//                       // close bottom sheet
+//                       Navigator.pop(context);
+//                     },
+//                   ),
+
+//                   MenuListTile(
+//                     leading: Icon(Icons.lock),
+//                     title: 'Cerrar Vuelo',
+//                     onTap: () {
+//                       print("onItemTap");
+//                       // push
+//                       context.push('/cerrar-vuelo');
+//                       // close bottom sheet
+//                       Navigator.pop(context);
+//                     },
+//                   ),
+//                   // LOGICA
+//                   // CustomListTile(
+//                   //   leading: Icon(Icons.person),
+//                   //   title: 'Asignar Personal',
+//                   //   onTap: () {},
+//                   // ),
+//                   // CustomListTile(
+//                   //   leading: Icon(Icons.agriculture),
+//                   //   title: 'Asignar equipos GSE',
+//                   //   onTap: () {},
+//                   // ),
+//                   // CustomListTile(
+//                   //   leading: Icon(Icons.start),
+//                   //   title: 'Iniciar Operaciones',
+//                   //   onTap: () {},
+//                   // ),
+//                   // CustomListTile(
+//                   //   leading: Icon(Icons.assignment),
+//                   //   title: 'Control de actividades',
+//                   //   onTap: () {
+//                   //     print("onItemTap");
+
+//                   //     // push
+//                   //     context.push('/control-actividades');
+//                   //     // close bottom sheet
+
+//                   //     Navigator.pop(context);
+//                   //   },
+//                   // ),
+//                   // CustomListTile(
+//                   //   leading: Icon(Icons.lock),
+//                   //   title: 'Cerrar Vuelo',
+//                   //   onTap: () {},
+//                   // ),
+//                 ],
+//               ),
+//             ),
+//           ),
+//         );
+//       },
+//     );
+//     // *********************************************************************************************************************
+//   };
+// }
