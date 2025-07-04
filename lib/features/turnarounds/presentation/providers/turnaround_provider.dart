@@ -7,49 +7,42 @@ import 'turnaround_repository_provider.dart';
 
 // Provider
 
-final turnaroundProvider = StateNotifierProvider<TurnaroundNotifier, TurnaroundState>((ref) {
-
-  final turnaroundsRepository = ref.watch(turnaroundRepositoryProvider);
-  return TurnaroundNotifier(
-    turnaroundsRepository: turnaroundsRepository
-  );
-});
-
-
-
+final turnaroundProvider =
+    StateNotifierProvider<TurnaroundNotifier, TurnaroundState>((ref) {
+      final turnaroundsRepository = ref.watch(turnaroundRepositoryProvider);
+      return TurnaroundNotifier(turnaroundsRepository: turnaroundsRepository);
+    });
 
 // Notifier
 
 class TurnaroundNotifier extends StateNotifier<TurnaroundState> {
-
   final TurnaroundsRepository turnaroundsRepository;
 
-  TurnaroundNotifier({
-    required this.turnaroundsRepository
-     
-  }) : super(TurnaroundState());
+  TurnaroundNotifier({required this.turnaroundsRepository})
+    : super(TurnaroundState());
 
   Future<void> getTurnarounds() async {
-
-    // if (state.isLoading) return;
+    if (state.isLoading) return;
     // state = state.copyWith(isLoading: true);
 
     final turnarounds = await turnaroundsRepository.getTurnaroundsByDate(
-      state.selectedDate.year, state.selectedDate.month, state.selectedDate.day
-      );
-    state = state.copyWith(
-      isLoading: false, 
-      turnarounds: turnarounds 
+      state.selectedDate.year,
+      state.selectedDate.month,
+      state.selectedDate.day,
     );
+    state = state.copyWith(isLoading: false, turnarounds: turnarounds);
+  }
 
+  // set new date and fetch turnarounds
+  void setSelectedDate(DateTime date) {
+    state = state.copyWith(selectedDate: date);
+    getTurnarounds();
   }
 }
-
 
 // STATE
 
 class TurnaroundState {
-
   final DateTime selectedDate;
   final DateTime startDate;
   final DateTime endDate;
@@ -61,11 +54,10 @@ class TurnaroundState {
     DateTime? startDate,
     DateTime? endDate,
     this.isLoading = false,
-    this.turnarounds =const [],
-  })  : selectedDate = selectedDate ?? DateTime.now(),
-        startDate = startDate ?? DateTime.now(),
-        endDate = endDate ?? DateTime.now();
-  
+    this.turnarounds = const [],
+  }) : selectedDate = selectedDate ?? DateTime.now(),
+       startDate = startDate ?? DateTime.now(),
+       endDate = endDate ?? DateTime.now();
 
   TurnaroundState copyWith({
     DateTime? selectedDate,

@@ -29,8 +29,11 @@ final goRouterProvider = Provider((ref) {
         builder: (context, state) => const TurnaroundMainScreen(),
       ),
       GoRoute(
-        path: '/control-actividades',
-        builder: (context, state) => const ControlActividadesScreen(),
+        path: '/control-actividades/:id',
+        builder: (context, state) => ControlActividadesScreen(
+          // trcId: state.pathParameters['trcId']! as int,
+          trcId: int.parse(state.pathParameters['id']!),
+        ),
       ),
     ],
 

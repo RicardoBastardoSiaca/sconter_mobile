@@ -84,7 +84,7 @@ class _TuraroundMainViewState extends ConsumerState {
             child: Column(
               children: [
                 // Date Filter
-                const SizedBox(height: 8),
+                const SizedBox(height: 3),
                 Text(
                   'Turnarounds',
                   style: Theme.of(context).textTheme.headlineLarge?.copyWith(
@@ -95,9 +95,9 @@ class _TuraroundMainViewState extends ConsumerState {
                     ).fontFamily,
                   ),
                 ),
-                const SizedBox(height: 5),
+                const SizedBox(height: 2),
                 _DateFilter(),
-                const SizedBox(height: 5),
+                // const SizedBox(height: ),
                 _TurnaroundsListView(turnarounds: turnaroundsState.turnarounds),
               ],
             ),
@@ -108,33 +108,13 @@ class _TuraroundMainViewState extends ConsumerState {
   }
 }
 
-class _DateFilter extends StatefulWidget {
-  const _DateFilter();
+class _DateFilter extends ConsumerWidget {
+  const _DateFilter({super.key});
 
   @override
-  State<_DateFilter> createState() => _DateFilterState();
-}
-
-class _DateFilterState extends State<_DateFilter> {
-  DateTime selectedDate = DateTime.now();
-  DateFormat inputFormat = DateFormat('dd/MM/yyyy HH:mm');
-
-  Future<void> _selectDate(BuildContext context) async {
-    final DateTime? picked = await showDatePicker(
-      context: context,
-      initialDate: selectedDate,
-      firstDate: DateTime(2015, 8),
-      lastDate: DateTime(2101),
-    );
-    if (picked != null && picked != selectedDate) {
-      setState(() {
-        selectedDate = picked;
-      });
-    }
-  }
-
-  @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
+    final selectedDate = ref.watch(datetimeProvider);
+    final inputFormat = DateFormat('dd/MM/yyyy HH:mm');
     return Row(
       mainAxisAlignment: MainAxisAlignment.center,
 
@@ -143,19 +123,107 @@ class _DateFilterState extends State<_DateFilter> {
           onPressed: () {},
           icon: Icon(Icons.arrow_back_ios_outlined, size: 20),
         ),
-        Text(
-          // "${selectedDate.toLocal()}".split(' ')[0],
-          inputFormat.format(selectedDate).split(' ')[0],
-          style: Theme.of(context).textTheme.bodyLarge,
+        GestureDetector(
+          onTap: () async {
+            final DateTime? dateTime = await showDatePicker(
+              context: context,
+              initialDate: selectedDate,
+              firstDate: DateTime(2000),
+              lastDate: DateTime(2100),
+            );
+            if (dateTime != null) {
+              ref.read(datetimeProvider.notifier).state = dateTime;
+              // Get the turnarounds for the selected date
+
+              // setSelectedDate
+              ref.read(turnaroundProvider.notifier).setSelectedDate(dateTime);
+
+              // ref.read(turnaroundProvider.notifier).state = ref
+              //     .read(turnaroundProvider.notifier)
+              //     .state
+              //     .copyWith(selectedDate: dateTime);
+              // ref.read(turnaroundProvider.notifier).getTurnarounds();
+            }
+          },
+          child: Text(
+            // "${selectedDate.toLocal()}".split(' ')[0],
+            inputFormat.format(selectedDate).split(' ')[0],
+            style: Theme.of(context).textTheme.bodyLarge,
+          ),
         ),
         IconButton(
-          onPressed: () {},
           icon: Icon(Icons.arrow_forward_ios_rounded, size: 20),
+          onPressed: () {},
         ),
       ],
     );
   }
 }
+
+// class _DateFilter extends StatefulWidget {
+//   const _DateFilter();
+
+//   @override
+//   State<_DateFilter> createState() => _DateFilterState();
+// }
+
+// class _DateFilterState extends State<_DateFilter> {
+//   DateTime selectedDate = DateTime.now();
+//   DateFormat inputFormat = DateFormat('dd/MM/yyyy HH:mm');
+
+//   Future<void> _selectDate(BuildContext context) async {
+//     final DateTime? picked = await showDatePicker(
+//       context: context,
+//       initialDate: selectedDate,
+//       firstDate: DateTime(2015, 8),
+//       lastDate: DateTime(2101),
+//     );
+//     if (picked != null && picked != selectedDate) {
+//       setState(() {
+//         selectedDate = picked;
+//       });
+//     }
+//   }
+
+//   @override
+//   Widget build(BuildContext context) {
+//     return Row(
+//       mainAxisAlignment: MainAxisAlignment.center,
+
+//       children: [
+//         IconButton(
+//           onPressed: () {},
+//           icon: Icon(Icons.arrow_back_ios_outlined, size: 20),
+//         ),
+//         GestureDetector(
+//           onTap: () async {
+//             final DateTime? dateTime = await showDatePicker(
+//               context: context,
+//               initialDate: selectedDate,
+//               firstDate: DateTime(2000),
+//               lastDate: DateTime(2100),
+//             );
+//             if (dateTime != null) {
+//               setState(() {selectedDate = dateTime; });
+//               // Get the turnarounds for the selected date
+//               ref.read(turnaroundProvider.notifier).getTurnarounds();
+//             }
+
+//           },
+//           child: Text(
+//             // "${selectedDate.toLocal()}".split(' ')[0],
+//             inputFormat.format(selectedDate).split(' ')[0],
+//             style: Theme.of(context).textTheme.bodyLarge,
+//           ),
+//         ),
+//         IconButton(
+//           icon: Icon(Icons.arrow_forward_ios_rounded, size: 20),
+//           onPressed: () {},
+//         ),
+//       ],
+//     );
+//   }
+// }
 
 class _TurnaroundsListView extends StatelessWidget {
   final List<TurnaroundMain> turnarounds;
@@ -190,14 +258,14 @@ class _ListTileCardContainer extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 8.0, vertical: 4.0),
+      padding: const EdgeInsets.symmetric(horizontal: 8.0, vertical: 0.0),
       child: Stack(
         children: [
           FittedBox(
             child: Center(
               child: Container(
                 // altura de la tarjeta
-                height: 160,
+                height: 140,
                 width: MediaQuery.of(context).size.width,
                 alignment: Alignment.center, // <---- The magic
                 child: SvgPicture.asset(
@@ -246,7 +314,7 @@ class _ListTileCardContainer extends StatelessWidget {
                             // empty sizedbox that fill all the space available
                             ? SizedBox(
                                 width: MediaQuery.of(context).size.width / 3.1,
-                                height: 100,
+                                // height: 100,
                               )
                             : _InboundView(
                                 lugarSalida:
@@ -279,7 +347,7 @@ class _ListTileCardContainer extends StatelessWidget {
                         child: turnaround.fkVuelo.lugarDestino == null
                             ? SizedBox(
                                 width: MediaQuery.of(context).size.width / 3.1,
-                                height: 100,
+                                // height: 100,
                               )
                             : _InboundView(
                                 lugarSalida:
@@ -384,7 +452,8 @@ class _MenuDialog extends StatelessWidget {
             onTap: () {
               print("onItemTap");
               // push
-              context.push('/control-actividades');
+              // context.push('/control-actividades');
+              context.push('/control-actividades/${turnaround.id}');
               // close bottom sheet
               Navigator.pop(context);
             },
@@ -508,23 +577,23 @@ class _InboundView extends StatelessWidget {
                 ).fontFamily,
               ),
             ),
-            isInbound
-                ? Text(
-                    "LLEGADA",
-                    style: Theme.of(context).textTheme.labelSmall?.copyWith(
-                      fontFamily: GoogleFonts.openSans(
-                        fontWeight: FontWeight.w500,
-                      ).fontFamily,
-                    ),
-                  )
-                : Text(
-                    "SALIDA",
-                    style: Theme.of(context).textTheme.labelSmall?.copyWith(
-                      fontFamily: GoogleFonts.openSans(
-                        fontWeight: FontWeight.w500,
-                      ).fontFamily,
-                    ),
-                  ),
+            // isInbound
+            //     ? Text(
+            //         "LLEGADA",
+            //         style: Theme.of(context).textTheme.labelSmall?.copyWith(
+            //           fontFamily: GoogleFonts.openSans(
+            //             fontWeight: FontWeight.w500,
+            //           ).fontFamily,
+            //         ),
+            //       )
+            //     : Text(
+            //         "SALIDA",
+            //         style: Theme.of(context).textTheme.labelSmall?.copyWith(
+            //           fontFamily: GoogleFonts.openSans(
+            //             fontWeight: FontWeight.w500,
+            //           ).fontFamily,
+            //         ),
+            //       ),
 
             // SizedBox(height: 10),
             Text(

@@ -1,23 +1,51 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../domain/domain.dart';
+import 'providers.dart';
 
-final controlActividadesProvider = StateNotifierProvider.autoDispose
-    .family<ControlActividadesNotifier, ControlActividadesState, int>((
-      ref,
-      trcId,
-    ) {
-      return ControlActividadesNotifier(trcId: trcId);
+// StateNotifierProvider
+
+// Provider
+
+final controlActividadesProvider =
+    StateNotifierProvider.family<
+      ControlActividadesNotifier,
+      ControlActividadesState,
+      int
+    >((ref, trcId) {
+      final turnaroundsRepository = ref.watch(turnaroundRepositoryProvider);
+      return ControlActividadesNotifier(
+        trcId: trcId,
+        turnaroundsRepository: turnaroundsRepository,
+      );
     });
 
 // Notifier
 class ControlActividadesNotifier
     extends StateNotifier<ControlActividadesState> {
+  final TurnaroundsRepository turnaroundsRepository;
   final int trcId;
-  ControlActividadesNotifier({required this.trcId})
-    : super(ControlActividadesState(id: trcId));
+  ControlActividadesNotifier({
+    required this.turnaroundsRepository,
+    required this.trcId,
+  }) : super(ControlActividadesState(id: trcId));
+
+  Future<void> getControlDeActividadesByTrcId() async {
+    state = state.copyWith(isLoading: true);
+    try {
+      final controlDeActividades = await turnaroundsRepository
+          .getControlDeActividades(trcId);
+      state = state.copyWith(
+        controlActividades: controlDeActividades,
+        isLoading: false,
+      );
+    } catch (e) {
+      state = state.copyWith(isLoading: false);
+    }
+  }
 }
 
+// State
 class ControlActividadesState {
   final int id;
   final ControlActividades? controlActividades;
@@ -42,4 +70,6 @@ class ControlActividadesState {
     isLoading: isLoading ?? this.isLoading,
     isSaving: isSaving ?? this.isSaving,
   );
+
+  void getControlDeActividadesByTrcId() {}
 }
