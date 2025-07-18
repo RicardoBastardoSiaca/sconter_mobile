@@ -1,4 +1,5 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:turnaround_mobile/features/shared/domain/entities/entities.dart';
 
 import '../../domain/domain.dart';
 import 'turnaround_repository_provider.dart';
@@ -38,6 +39,17 @@ class TurnaroundNotifier extends StateNotifier<TurnaroundState> {
     state = state.copyWith(selectedDate: date);
     getTurnarounds();
   }
+
+  // iniciar operaciones
+  Future<SimpleApiResponse> iniciarOperaciones(int id) async {
+    final response = await turnaroundsRepository.startOperations(id);
+
+    if (response.success) {
+      getTurnarounds();
+    }
+
+    return response;
+  }
 }
 
 // STATE
@@ -75,3 +87,18 @@ class TurnaroundState {
     );
   }
 }
+
+// TrcIdProvider
+final trcIdProvider = StateProvider<int>((ref) {
+  return 0;
+});
+
+// TODO: Selected Date Provider
+final selectedDateProvider = StateProvider<DateTime>((ref) {
+  return DateTime.now();
+});
+
+// TODO: Selected Turnaround Provider
+// final selectedTurnaroundProvider = StateProvider<TurnaroundMain>((ref) {
+//   return TurnaroundMain();
+// });

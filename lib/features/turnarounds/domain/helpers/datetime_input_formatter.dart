@@ -18,6 +18,26 @@ class DateTimeInputFormatter {
   // }
 
   static DateFormat inputFormat = DateFormat('dd/MM/yyyy HH:mm');
+
+  static DateFormat displayFormat = DateFormat('dd/MM/yyyy');
+  static DateFormat displayFormatWithTime = DateFormat('dd/MM/yyyy HH:mm');
+  static DateFormat displayFormatWithTimeAndSeconds = DateFormat(
+    'dd/MM/yyyy HH:mm:ss',
+  );
+  static DateFormat displayFormatWithTimeAndSecondsAndMilliseconds = DateFormat(
+    'dd/MM/yyyy HH:mm:ss.SSS',
+  );
+  static DateFormat displayFormatWithTimeAndMilliseconds = DateFormat(
+    'dd/MM/yyyy HH:mm.SSS',
+  );
+  static DateFormat displayFormatWithTimeAndMillisecondsAndTimezone =
+      DateFormat('dd/MM/yyyy HH:mm:ss.SSS Z');
+
+  // Time
+  static DateFormat timeFormat = DateFormat('HH:mm');
+  static DateFormat timeFormatWithSeconds = DateFormat('HH:mm:ss');
+  static DateFormat timeFormatWithMilliseconds = DateFormat('HH:mm:ss.SSS');
+
   // static Future<void> format(DateTime selectedDate) async {
   //   final DateTime? picked = await showDatePicker(
   //     context: context,

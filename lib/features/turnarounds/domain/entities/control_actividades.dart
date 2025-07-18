@@ -211,7 +211,7 @@ class Departamento {
 class Actividades {
   int index;
   String nombreActividad;
-  List<Tarea> tareas;
+  List<Tarea>? tareas;
   bool todasTareasHechas;
 
   Actividades({
@@ -253,7 +253,7 @@ class Tarea {
   bool completado;
   int? numeroMedida;
   String? unidadMedida;
-  String faseTarea;
+  String? faseTarea;
   List<dynamic>? maquinaria;
   List<Imagen>? imagen;
   Map<String, int>? pasajeros;
@@ -334,7 +334,7 @@ class Tarea {
 
 class Imagen {
   int id;
-  String imagen;
+  String? imagen;
 
   Imagen({required this.id, required this.imagen});
 
@@ -344,12 +344,32 @@ class Imagen {
   Map<String, dynamic> toJson() => {"id": id, "imagen": imagen};
 }
 
-enum TipoNombre { HORA, HORA_INICIO_Y_FIN, PASAJERO }
+enum TipoNombre {
+  HORA,
+  HORA_INICIO_Y_FIN,
+  PASAJERO,
+  MAQUINARIA_CON_TIEMPO,
+  MAQUINARIA_SIN_TIEMPO,
+  CANTIDAD,
+  TEXTO,
+  EQUIPAJE,
+  EQUIPOS_IT,
+  EQUIPO_DE_LIMPIEZA,
+}
 
 final tipoNombreValues = EnumValues({
   "Hora": TipoNombre.HORA,
   "Hora inicio y fin": TipoNombre.HORA_INICIO_Y_FIN,
   "Pasajero": TipoNombre.PASAJERO,
+  "Maquinaria con tiempo":
+      TipoNombre.MAQUINARIA_CON_TIEMPO, // Default case if empty
+  "Maquinaria sin tiempo":
+      TipoNombre.MAQUINARIA_SIN_TIEMPO, // Default case if empty
+  "Cantidad": TipoNombre.CANTIDAD,
+  "Texto": TipoNombre.TEXTO,
+  "Equipaje": TipoNombre.EQUIPAJE,
+  "Equipos IT": TipoNombre.EQUIPOS_IT,
+  "Equipo De Limpieza": TipoNombre.EQUIPO_DE_LIMPIEZA,
 });
 
 class ServiciosAle {

@@ -109,7 +109,7 @@ class _TuraroundMainViewState extends ConsumerState {
 }
 
 class _DateFilter extends ConsumerWidget {
-  const _DateFilter({super.key});
+  const _DateFilter();
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -160,71 +160,6 @@ class _DateFilter extends ConsumerWidget {
   }
 }
 
-// class _DateFilter extends StatefulWidget {
-//   const _DateFilter();
-
-//   @override
-//   State<_DateFilter> createState() => _DateFilterState();
-// }
-
-// class _DateFilterState extends State<_DateFilter> {
-//   DateTime selectedDate = DateTime.now();
-//   DateFormat inputFormat = DateFormat('dd/MM/yyyy HH:mm');
-
-//   Future<void> _selectDate(BuildContext context) async {
-//     final DateTime? picked = await showDatePicker(
-//       context: context,
-//       initialDate: selectedDate,
-//       firstDate: DateTime(2015, 8),
-//       lastDate: DateTime(2101),
-//     );
-//     if (picked != null && picked != selectedDate) {
-//       setState(() {
-//         selectedDate = picked;
-//       });
-//     }
-//   }
-
-//   @override
-//   Widget build(BuildContext context) {
-//     return Row(
-//       mainAxisAlignment: MainAxisAlignment.center,
-
-//       children: [
-//         IconButton(
-//           onPressed: () {},
-//           icon: Icon(Icons.arrow_back_ios_outlined, size: 20),
-//         ),
-//         GestureDetector(
-//           onTap: () async {
-//             final DateTime? dateTime = await showDatePicker(
-//               context: context,
-//               initialDate: selectedDate,
-//               firstDate: DateTime(2000),
-//               lastDate: DateTime(2100),
-//             );
-//             if (dateTime != null) {
-//               setState(() {selectedDate = dateTime; });
-//               // Get the turnarounds for the selected date
-//               ref.read(turnaroundProvider.notifier).getTurnarounds();
-//             }
-
-//           },
-//           child: Text(
-//             // "${selectedDate.toLocal()}".split(' ')[0],
-//             inputFormat.format(selectedDate).split(' ')[0],
-//             style: Theme.of(context).textTheme.bodyLarge,
-//           ),
-//         ),
-//         IconButton(
-//           icon: Icon(Icons.arrow_forward_ios_rounded, size: 20),
-//           onPressed: () {},
-//         ),
-//       ],
-//     );
-//   }
-// }
-
 class _TurnaroundsListView extends StatelessWidget {
   final List<TurnaroundMain> turnarounds;
   const _TurnaroundsListView({required this.turnarounds});
@@ -262,18 +197,16 @@ class _ListTileCardContainer extends StatelessWidget {
       child: Stack(
         children: [
           FittedBox(
-            child: Center(
-              child: Container(
-                // altura de la tarjeta
-                height: 140,
-                width: MediaQuery.of(context).size.width,
-                alignment: Alignment.center, // <---- The magic
-                child: SvgPicture.asset(
-                  'assets/layouts/contenedor-blanco.svg',
-                  semanticsLabel: 'Image',
-                  fit: BoxFit.fill,
-                  alignment: Alignment.center,
-                ),
+            child: Container(
+              // altura de la tarjeta
+              height: 140,
+              width: MediaQuery.of(context).size.width,
+              alignment: Alignment.center, // <---- The magic
+              child: SvgPicture.asset(
+                'assets/layouts/contenedor-blanco.svg',
+                semanticsLabel: 'Image',
+                fit: BoxFit.fill,
+                alignment: Alignment.center,
               ),
             ),
           ),
@@ -290,9 +223,7 @@ class _ListTileCardContainer extends StatelessWidget {
             },
             behavior: HitTestBehavior.opaque,
             child: Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              crossAxisAlignment: CrossAxisAlignment.center,
-
+              // mainAxisAlignment: MainAxisAlignment.center,
               children: [
                 // Cola de aerolinea
                 Flexible(
@@ -389,12 +320,14 @@ class _ListTileCardContainer extends StatelessWidget {
   }
 }
 
-class _MenuDialog extends StatelessWidget {
+// SimpleApiResponse model
+
+class _MenuDialog extends ConsumerWidget {
   final TurnaroundMain turnaround;
   const _MenuDialog({required this.turnaround});
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
     return AlertDialog(
       // Border Color
       shape: RoundedRectangleBorder(
@@ -437,10 +370,10 @@ class _MenuDialog extends StatelessWidget {
           MenuListTile(
             leading: Icon(Icons.start),
             title: 'Iniciar Operaciones',
-            onTap: () {
+            onTap: () async {
               print("onItemTap");
               // push
-              context.push('/iniciar-operaciones');
+              await iniciarOperaciones(context, ref, turnaround.id);
               // close bottom sheet
               Navigator.pop(context);
             },
@@ -453,6 +386,10 @@ class _MenuDialog extends StatelessWidget {
               print("onItemTap");
               // push
               // context.push('/control-actividades');
+
+              // set trcIdProvider
+              ref.read(trcIdProvider.notifier).state = turnaround.id;
+              // push with turnaround id
               context.push('/control-actividades/${turnaround.id}');
               // close bottom sheet
               Navigator.pop(context);
@@ -473,6 +410,59 @@ class _MenuDialog extends StatelessWidget {
         ],
       ),
     );
+  }
+
+  Future<void> iniciarOperaciones(
+    BuildContext context,
+    WidgetRef ref,
+    int id,
+  ) async {
+    // For example, you can use a service or repository to handle the API call
+    print("Iniciar operaciones for turnaround id: $id");
+    // Call the API repository to start operations, and show success message
+    // await turnaroundsRepository.startOperations(id);
+    final SimpleApiResponse response = await ref
+        .read(turnaroundProvider.notifier)
+        .iniciarOperaciones(id);
+
+    // alert dialog
+    if (response.success) {
+      await showDialog<void>(
+        context: context,
+        builder: (BuildContext context) {
+          return AlertDialog(
+            title: const Text('Operaciones Iniciadas'),
+            content: Text(response.message),
+            actions: <Widget>[
+              TextButton(
+                child: const Text('OK'),
+                onPressed: () {
+                  Navigator.of(context).pop();
+                },
+              ),
+            ],
+          );
+        },
+      );
+    } else {
+      await showDialog<void>(
+        context: context,
+        builder: (BuildContext context) {
+          return AlertDialog(
+            title: const Text('Error'),
+            content: Text(response.message),
+            actions: <Widget>[
+              TextButton(
+                child: const Text('OK'),
+                onPressed: () {
+                  Navigator.of(context).pop();
+                },
+              ),
+            ],
+          );
+        },
+      );
+    }
   }
 }
 
@@ -538,74 +528,72 @@ class _InboundView extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: const EdgeInsets.only(top: 12, bottom: 10, left: 15, right: 15),
-      child: Center(
-        child: Column(
-          mainAxisSize: MainAxisSize.max,
-          children: [
-            Row(
-              mainAxisSize: MainAxisSize.max,
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                Text(
-                  lugarSalida,
-                  style: Theme.of(context).textTheme.titleLarge?.copyWith(
-                    fontFamily: GoogleFonts.openSans(
-                      fontWeight: FontWeight.w700,
-                    ).fontFamily,
-                  ),
+      // padding: const EdgeInsets.only(left: 15, right: 15),
+      padding: const EdgeInsets.only(top: 15, bottom: 15, left: 15, right: 15),
+      child: Column(
+        children: [
+          Row(
+            mainAxisSize: MainAxisSize.max,
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Text(
+                lugarSalida,
+                style: Theme.of(context).textTheme.titleLarge?.copyWith(
+                  fontFamily: GoogleFonts.openSans(
+                    fontWeight: FontWeight.w700,
+                  ).fontFamily,
                 ),
-                Text(
-                  lugarLlegada,
-                  style: Theme.of(context).textTheme.titleLarge?.copyWith(
-                    fontFamily: GoogleFonts.openSans(
-                      fontWeight: FontWeight.w700,
-                    ).fontFamily,
-                  ),
-                ),
-              ],
-            ),
-            isInbound
-                ? SvgPicture.asset("assets/icons/llegada.svg", height: 30)
-                : SvgPicture.asset("assets/icons/salida.svg", height: 30),
-            // hora
-            Text(
-              hora,
-              style: Theme.of(context).textTheme.titleLarge?.copyWith(
-                fontFamily: GoogleFonts.openSans(
-                  fontWeight: FontWeight.w700,
-                ).fontFamily,
               ),
+              Text(
+                lugarLlegada,
+                style: Theme.of(context).textTheme.titleLarge?.copyWith(
+                  fontFamily: GoogleFonts.openSans(
+                    fontWeight: FontWeight.w700,
+                  ).fontFamily,
+                ),
+              ),
+            ],
+          ),
+          isInbound
+              ? SvgPicture.asset("assets/icons/llegada.svg", height: 30)
+              : SvgPicture.asset("assets/icons/salida.svg", height: 30),
+          // hora
+          Text(
+            hora,
+            style: Theme.of(context).textTheme.titleLarge?.copyWith(
+              fontFamily: GoogleFonts.openSans(
+                fontWeight: FontWeight.w700,
+              ).fontFamily,
             ),
-            // isInbound
-            //     ? Text(
-            //         "LLEGADA",
-            //         style: Theme.of(context).textTheme.labelSmall?.copyWith(
-            //           fontFamily: GoogleFonts.openSans(
-            //             fontWeight: FontWeight.w500,
-            //           ).fontFamily,
-            //         ),
-            //       )
-            //     : Text(
-            //         "SALIDA",
-            //         style: Theme.of(context).textTheme.labelSmall?.copyWith(
-            //           fontFamily: GoogleFonts.openSans(
-            //             fontWeight: FontWeight.w500,
-            //           ).fontFamily,
-            //         ),
-            //       ),
+          ),
+          // isInbound
+          //     ? Text(
+          //         "LLEGADA",
+          //         style: Theme.of(context).textTheme.labelSmall?.copyWith(
+          //           fontFamily: GoogleFonts.openSans(
+          //             fontWeight: FontWeight.w500,
+          //           ).fontFamily,
+          //         ),
+          //       )
+          //     : Text(
+          //         "SALIDA",
+          //         style: Theme.of(context).textTheme.labelSmall?.copyWith(
+          //           fontFamily: GoogleFonts.openSans(
+          //             fontWeight: FontWeight.w500,
+          //           ).fontFamily,
+          //         ),
+          //       ),
 
-            // SizedBox(height: 10),
-            Text(
-              numeroVuelo,
-              style: Theme.of(context).textTheme.labelLarge?.copyWith(
-                fontFamily: GoogleFonts.openSans(
-                  fontWeight: FontWeight.w700,
-                ).fontFamily,
-              ),
+          // SizedBox(height: 10),
+          Text(
+            numeroVuelo,
+            style: Theme.of(context).textTheme.labelLarge?.copyWith(
+              fontFamily: GoogleFonts.openSans(
+                fontWeight: FontWeight.w700,
+              ).fontFamily,
             ),
-          ],
-        ),
+          ),
+        ],
       ),
     );
   }

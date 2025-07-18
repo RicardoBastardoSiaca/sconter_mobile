@@ -1,3 +1,4 @@
+import 'package:turnaround_mobile/features/shared/shared.dart';
 import 'package:turnaround_mobile/features/turnarounds/domain/entities/turnaround_main.dart';
 
 import '../entities/control_actividades.dart';
@@ -10,6 +11,21 @@ abstract class TurnaroundsRepository {
   );
 
   Future<ControlActividades> getControlDeActividades(int id);
+
+  // Iniciar operaciones
+  Future<SimpleApiResponse> startOperations(int id);
+
+  Future<SimpleApiResponse> setHoraInicio(
+    int id,
+    DateTime horaInicio,
+    String tipo,
+  );
+
+  Future<SimpleApiResponse> setHoraInicioFin(
+    int id,
+    DateTime horaInicio,
+    String tipo,
+  );
 
   // TODO Asignar Personal
 

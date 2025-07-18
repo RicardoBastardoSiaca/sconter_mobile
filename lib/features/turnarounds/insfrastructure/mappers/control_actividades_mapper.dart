@@ -15,11 +15,15 @@ class ControlActividadesMapper {
       numeroVueloIn: json["numero_vuelo_in"],
       etdIn: json["ETD_in"],
       etaIn: json["ETA_in"],
-      etaFechaIn: DateTime.parse(json["ETA_fecha_in"]),
+      etaFechaIn: json["ETA_fecha_in"] == null
+          ? null
+          : DateTime.parse(json["ETA_fecha_in"]),
       numeroVueloOut: json["numero_vuelo_out"],
       etdOut: json["ETD_out"],
       etaOut: json["ETA_out"],
-      etdFechaOut: DateTime.parse(json["ETD_fecha_out"]),
+      etdFechaOut: json["ETD_fecha_out"] == null
+          ? null
+          : DateTime.parse(json["ETD_fecha_out"]),
       gate: json["gate"],
       tipoVueloId: json["tipo_vuelo_id"],
       tipoServicioId: json["tipo_servicio_id"],
@@ -31,12 +35,20 @@ class ControlActividadesMapper {
       numeroVueloLlegada: json["numero_vuelo_llegada"],
       horaInicio: json["hora_inicio"],
       horaFin: json["hora_fin"],
-      fechaInicio: DateTime.parse(json["fecha_inicio"]),
-      fechaFin: DateTime.parse(json["fecha_fin"]),
+      fechaInicio: json["fecha_inicio"] == null
+          ? null
+          : DateTime.parse(json["fecha_inicio"]),
+      fechaFin: json["fecha_fin"] == null
+          ? null
+          : DateTime.parse(json["fecha_fin"]),
       horaInicioReal: json["hora_inicio_real"],
       horaFinReal: json["hora_fin_real"],
-      fechaInicioReal: DateTime.parse(json["fecha_inicio_real"]),
-      fechaFinReal: DateTime.parse(json["fecha_fin_real"]),
+      fechaInicioReal: json["fecha_inicio_real"] == null
+          ? null
+          : DateTime.parse(json["fecha_inicio_real"]),
+      fechaFinReal: json["fecha_fin_real"] == null
+          ? null
+          : DateTime.parse(json["fecha_fin_real"]),
       tiempoExtimado: json["tiempo_extimado"],
       departamentos: List<Departamento>.from(
         (json["departamentos"] as List).map((x) => mapJsonToDepartamento(x)),
@@ -100,11 +112,20 @@ class ControlActividadesMapper {
       unidadMedida: json["unidad_medida"],
       faseTarea: json["fase_tarea"],
       maquinaria: List<dynamic>.from(json["maquinaria"].map((x) => x)),
-      imagen: json["imagen"] == null ? null : [mapJsonToImagen(json["imagen"])],
-      pasajeros: Map.from(
-        json["pasajeros"]!,
-      ).map((k, v) => MapEntry<String, int>(k, v)),
-      equipo: List<dynamic>.from(json["equipo"].map((x) => x)),
+      // imagen: json["imagen"] == null ? null : [mapJsonToImagen(json["imagen"])],
+      // if list is empty, return an empty list
+      imagen: json["imagen"].toList().isEmpty
+          ? null
+          : List<Imagen>.from(json["imagen"].map((x) => mapJsonToImagen(x))),
+
+      pasajeros: json["pasajeros"] == null
+          ? null
+          : Map.from(
+              json["pasajeros"]!,
+            ).map((k, v) => MapEntry<String, int>(k, v)),
+      equipo: json["equipo"].toList().isEmpty
+          ? null
+          : List<dynamic>.from(json["equipo"].map((x) => x)),
     );
   }
 
