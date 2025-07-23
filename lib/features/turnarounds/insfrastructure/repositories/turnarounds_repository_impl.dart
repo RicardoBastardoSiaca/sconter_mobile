@@ -45,4 +45,19 @@ class TurnaroundsRepositoryImpl extends TurnaroundsRepository {
     // TODO: implement setHoraInicioFin
     return datasource.setHoraInicioFin(id, horaInicio, tipo);
   }
+
+  @override
+  Future<SimpleApiResponse> uploadImage(body) {
+    return datasource.uploadImage(body);
+  }
+
+  @override
+  Future<SimpleApiResponse> deleteImage(body) {
+    return datasource.deleteImage(body);
+  }
+
+  @override
+  Future<SimpleApiResponse> updateImage(body) {
+    return datasource.updateImage(body);
+  }
 }

@@ -25,6 +25,13 @@ abstract class TurnaroundsDatasource {
     String tipo,
   );
 
+  // Images
+  Future<SimpleApiResponse> uploadImage(body);
+
+  Future<SimpleApiResponse> updateImage(body);
+
+  Future<SimpleApiResponse> deleteImage(body);
+
   // TODO Asignar Personal
 
   // TODO asignar Equipos GSE

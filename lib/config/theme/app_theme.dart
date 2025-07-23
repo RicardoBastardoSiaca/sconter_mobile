@@ -12,6 +12,7 @@ import '../theme/widget_themes/text_field_theme.dart';
 import '../theme/widget_themes/text_theme.dart';
 
 const colorSeed = Color.fromRGBO(0, 166, 91, 1);
+// #00a65b
 
 class TAppTheme {
   TAppTheme._();

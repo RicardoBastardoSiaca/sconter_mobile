@@ -3,3 +3,5 @@ export 'control_actividades_screen.dart';
 
 export 'asignar_personal_screen.dart';
 export 'asignar_maquinaria_screen.dart';
+
+export 'image_fullscreen_carousel.dart';

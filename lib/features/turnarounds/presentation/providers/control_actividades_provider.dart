@@ -1,4 +1,8 @@
-import 'package:flutter/material.dart';
+import 'dart:convert';
+import 'dart:io';
+
+import 'package:dio/dio.dart';
+import 'package:http_parser/http_parser.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:turnaround_mobile/features/shared/domain/domain.dart';
 
@@ -157,6 +161,85 @@ class ControlActividadesNotifier
         return SnackbarResponse(message: 'Tipo no reconocido.', success: false);
     }
   }
+
+  void addImage(String? photoPath) {
+    // print("Adding image: $photoPath");
+    if (photoPath == null || photoPath.isEmpty) {
+      // print("No photo path provided.");
+      return;
+    }
+    // print("Adding image to control actividades: $photoPath");
+  }
+
+  Future<SnackbarResponse?> uploadImage(String? photoPath, int id) async {
+    // With FormData
+    if (photoPath == null || photoPath.isEmpty) {
+      // print("No photo path provided for upload.");
+      return null;
+    }
+
+    final body = {'id': id, 'tipo': 'imagen'};
+    final image = File(photoPath);
+
+    FormData formData = FormData();
+    formData = FormData.fromMap({
+      'documento': await MultipartFile.fromFile(photoPath, filename: photoPath),
+      'formato': 'documento',
+      'nombre': 'avatar',
+      'type': image.path.split('.').last,
+      // 'encryptedBody': json.encode(body),
+      'encryptedBody': EncryptDecrypt().encryptUsingAES256(json.encode(body)),
+    });
+
+    try {
+      final response = await turnaroundsRepository.uploadImage(formData);
+      if (response.success) {
+        getControlDeActividadesByTrcId();
+        return SnackbarResponse(message: 'Imagen subida.', success: true);
+      } else {
+        // print("Error uploading image: ${response.message}");
+        return SnackbarResponse(
+          message: 'Error al subir la imagen.',
+          success: false,
+        );
+      }
+    } catch (e) {
+      // Handle any errors that occur during the upload
+      return SnackbarResponse(
+        message: 'Error al subir la imagen.',
+        success: false,
+      );
+      // print("Error uploading image: $e");
+    }
+  }
+
+  void updateImage(String? photoPath) {}
+
+  Future<SnackbarResponse> deleteImage(int id) async {
+    final body = {'id': id, 'tipo': 'imagen'};
+
+    try {
+      final response = await turnaroundsRepository.deleteImage(body);
+      if (response.success) {
+        // snackbar response
+        getControlDeActividadesByTrcId();
+        return SnackbarResponse(message: 'Imagen eliminada.', success: true);
+      } else {
+        return SnackbarResponse(
+          message: 'Error al eliminar la imagen.',
+          success: false,
+        );
+      }
+    } catch (e) {
+      // print("Error deleting image: $e");
+      return SnackbarResponse(
+        message: 'Ha ocurrido un error al eliminar la imagen.',
+        success: false,
+      );
+    } finally {
+      state = state.copyWith(isSaving: false);
+    }
+  }
 }
 
 // State
@@ -197,3 +280,15 @@ class ControlActividadesState {
 final isLoadingControlActividadesProvider = StateProvider<bool>((ref) {
   return false;
 });
+
+// Images List Provider
+final imagesListProvider = StateProvider<CustomFullscreenCarouselData>((ref) {
+  return CustomFullscreenCarouselData(imagenes: [], index: 0);
+});
+
+// Custom Data Class for Fullscreen Carousel
+class CustomFullscreenCarouselData {
+  late final List<Imagen> imagenes; // List of Imagen imagen;
+  late final int index;
+  CustomFullscreenCarouselData({required this.imagenes, required this.index});
+}

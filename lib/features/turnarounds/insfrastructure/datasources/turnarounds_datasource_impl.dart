@@ -201,4 +201,49 @@ class TurnaroundsDatasourceImpl implements TurnaroundsDatasource {
       // throw Exception('Error al establecer la hora de inicio: $e');
     }
   }
+
+  @override
+  Future<SimpleApiResponse> uploadImage(body) {
+    return dio
+        .post('/control-actividades/imagen/?token=$accessToken', data: body)
+        .then((response) {
+          if (response.statusCode == 201) {
+            return SimpleApiResponse(
+              message: 'Imagen subida correctamente.',
+              success: true,
+            );
+          } else {
+            return SimpleApiResponse(
+              message: 'Error al subir la imagen.',
+              success: false,
+            );
+          }
+        });
+  }
+
+  @override
+  Future<SimpleApiResponse> deleteImage(body) {
+    return dio
+        .put('/control-actividades/imagen/?token=$accessToken', data: body)
+        .then((response) {
+          print('Response from deleteImage: $response');
+          if (response.statusCode == 201) {
+            return SimpleApiResponse(
+              message: 'Imagen eliminada correctamente.',
+              success: true,
+            );
+          } else {
+            return SimpleApiResponse(
+              message: 'Error al eliminar la imagen.',
+              success: false,
+            );
+          }
+        });
+  }
+
+  @override
+  Future<SimpleApiResponse> updateImage(body) {
+    // TODO: implement updateImage
+    throw UnimplementedError();
+  }
 }
