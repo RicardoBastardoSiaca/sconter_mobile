@@ -1,6 +1,7 @@
 import 'package:turnaround_mobile/features/shared/shared.dart';
 import 'package:turnaround_mobile/features/turnarounds/domain/entities/turnaround_main.dart';
 
+import '../domain.dart';
 import '../entities/control_actividades.dart';
 
 abstract class TurnaroundsRepository {
@@ -36,7 +37,12 @@ abstract class TurnaroundsRepository {
 
   // TODO Asignar Personal
 
-  // TODO asignar Equipos GSE
+  // get Categorias Equipos GSE
+  Future<CategoriasEquiposGseResponse> getCategoriasEquiposGSE(
+    int id,
+    int idPlantilla,
+    Map<String, dynamic> body,
+  );
 
   //
 }

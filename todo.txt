@@ -1,3 +1,31 @@
+cambiar containers segun el status de trc
+DONE mostrar u ocultar opciones dependiendo del status de trc
+
+Comentarios
+
+asigacion de maquinarias
+Tareas tipo maquinarias
+
+Servicios especiales
+servicios adicionales
+
+
+asignacion de usuario
+
+menu del control de actividades
+codigos de demora
+ 
+
+
+
+
+
+
+
+
+
+
+
 
 
 ************************************************************************************************

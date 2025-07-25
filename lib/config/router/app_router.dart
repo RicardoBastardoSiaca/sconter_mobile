@@ -40,6 +40,15 @@ final goRouterProvider = Provider((ref) {
         path: '/image-fullscreen-carousel',
         builder: (context, state) => ImageFullscreenCarousel(),
       ),
+
+      GoRoute(
+        path: '/asignar-equipos-gse',
+        builder: (context, state) => AsignarEquiposGseScreen(),
+      ),
+      GoRoute(
+        path: '/asignar-personal',
+        builder: (context, state) => AsignarPersonalScreen(),
+      ),
     ],
 
     // state.params ahora es state.pathParameters

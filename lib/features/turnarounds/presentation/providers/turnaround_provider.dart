@@ -99,6 +99,6 @@ final selectedDateProvider = StateProvider<DateTime>((ref) {
 });
 
 // TODO: Selected Turnaround Provider
-// final selectedTurnaroundProvider = StateProvider<TurnaroundMain>((ref) {
-//   return TurnaroundMain();
-// });
+final selectedTurnaroundProvider = StateProvider<TurnaroundMain?>((ref) {
+  return null;
+});

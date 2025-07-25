@@ -246,4 +246,29 @@ class TurnaroundsDatasourceImpl implements TurnaroundsDatasource {
     // TODO: implement updateImage
     throw UnimplementedError();
   }
+
+  @override
+  Future<CategoriasEquiposGseResponse> getCategoriasEquiposGSE(
+    int id,
+    int idPlantilla,
+    Map<String, dynamic> body,
+  ) {
+    return dio
+        .post(
+          '/maquinarias/lista_categoria_maquinaria/$idPlantilla/?token=$accessToken',
+          data: body,
+        )
+        .then((response) {
+          print('Response from getCategoriasEquiposGSE: $response');
+          if (response.statusCode == 200) {
+            final data = response.data;
+
+            final CategoriasEquiposGseResponse categorias =
+                CategoriasEquiposGseMapper.mapJsonToCategoriasEquiposGse(data);
+            return categorias;
+          } else {
+            throw Exception('Error al obtener las categorias de equipos GSE.');
+          }
+        });
+  }
 }

@@ -34,7 +34,10 @@ abstract class TurnaroundsDatasource {
 
   // TODO Asignar Personal
 
-  // TODO asignar Equipos GSE
-
-  //
+  // get Categorias Equipos GSE
+  Future<CategoriasEquiposGseResponse> getCategoriasEquiposGSE(
+    int id,
+    int idPlantilla,
+    Map<String, dynamic> body,
+  );
 }

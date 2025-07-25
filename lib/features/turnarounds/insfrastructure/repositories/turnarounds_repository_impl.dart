@@ -60,4 +60,13 @@ class TurnaroundsRepositoryImpl extends TurnaroundsRepository {
   Future<SimpleApiResponse> updateImage(body) {
     return datasource.updateImage(body);
   }
+
+  @override
+  Future<CategoriasEquiposGseResponse> getCategoriasEquiposGSE(
+    int id,
+    int idPlantilla,
+    Map<String, dynamic> body,
+  ) {
+    return datasource.getCategoriasEquiposGSE(id, idPlantilla, body);
+  }
 }

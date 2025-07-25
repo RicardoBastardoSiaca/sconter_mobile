@@ -203,7 +203,15 @@ class _ListTileCardContainer extends StatelessWidget {
               width: MediaQuery.of(context).size.width,
               alignment: Alignment.center, // <---- The magic
               child: SvgPicture.asset(
-                'assets/layouts/contenedor-blanco.svg',
+                switch (turnaround.fkVuelo.estatus.color) {
+                  "verde" => 'assets/layouts/contenedor-verde.svg',
+                  "amarillo" => 'assets/layouts/contenedor-amarillo.svg',
+                  "rojo" => 'assets/layouts/contenedor-rojo.svg',
+                  "azul" => 'assets/layouts/contenedor-azul.svg',
+                  "gris" => 'assets/layouts/contenedor-blanco.svg',
+                  _ => 'assets/layouts/contenedor-blanco.svg', // default case
+                },
+                // 'assets/layouts/contenedor-blanco.svg',
                 semanticsLabel: 'Image',
                 fit: BoxFit.fill,
                 alignment: Alignment.center,
@@ -343,70 +351,128 @@ class _MenuDialog extends ConsumerWidget {
         mainAxisSize: MainAxisSize.min,
         mainAxisAlignment: MainAxisAlignment.spaceAround,
         children: [
-          MenuListTile(
-            leading: Icon(Icons.person_2),
-            title: 'Asignar Personal',
-            onTap: () {
-              print("onItemTap");
-              // push
-              context.push('/asignar-personal');
-              // close bottom sheet
-              Navigator.pop(context);
-            },
-          ),
+          // Show list tile conditionally based on turnaround status
+          // MenuListTile(
+          //   leading: Icon(Icons.airplane_ticket),
+          //   title: 'Detalles del Vuelo',
+          //   onTap: () {
+          //     print("onItemTap");
+          //     // push
+          //     context.push('/detalles-vuelo/${turnaround.id}');
+          //     // close bottom sheet
+          //     Navigator.pop(context);
+          //   },
+          // ),
+          if (turnaround.estatus == 1 ||
+              turnaround.estatus == 2 ||
+              turnaround.estatus == 3)
+            MenuListTile(
+              leading: Icon(Icons.person_2),
+              title: 'Asignar Personal',
+              onTap: () {
+                print("onItemTap");
+                // push
+                context.push('/asignar-personal');
+                // close bottom sheet
+                Navigator.pop(context);
+              },
+            ),
 
-          MenuListTile(
-            leading: Icon(Icons.agriculture),
-            title: 'Asignar equipos GSE',
-            onTap: () {
-              print("onItemTap");
-              // push
-              context.push('/asignar-equipos');
-              // close bottom sheet
-              Navigator.pop(context);
-            },
-          ),
+          if (turnaround.estatus == 1 ||
+              turnaround.estatus == 2 ||
+              turnaround.estatus == 3)
+            MenuListTile(
+              leading: Icon(Icons.agriculture),
+              title: 'Asignar equipos GSE',
+              onTap: () {
+                print("onItemTap");
 
-          MenuListTile(
-            leading: Icon(Icons.start),
-            title: 'Iniciar Operaciones',
-            onTap: () async {
-              print("onItemTap");
-              // push
-              await iniciarOperaciones(context, ref, turnaround.id);
-              // close bottom sheet
-              Navigator.pop(context);
-            },
-          ),
+                // set selectedTurnaroundProvider
+                ref.read(selectedTurnaroundProvider.notifier).state =
+                    turnaround;
+                print("selectedTurnaroundProvider: $turnaround");
+                // push
+                context.push('/asignar-equipos-gse');
+                // close bottom sheet
+                Navigator.pop(context);
+              },
+            ),
 
-          MenuListTile(
-            leading: Icon(Icons.assignment),
-            title: 'Control de actividades',
-            onTap: () {
-              print("onItemTap");
-              // push
-              // context.push('/control-actividades');
+          if (turnaround.estatus == 1)
+            MenuListTile(
+              leading: Icon(Icons.start),
+              title: 'Iniciar Operaciones',
+              onTap: () async {
+                print("onItemTap");
+                // push
+                await iniciarOperaciones(context, ref, turnaround.id);
+                // close bottom sheet
+                Navigator.pop(context);
+              },
+            ),
 
-              // set trcIdProvider
-              ref.read(trcIdProvider.notifier).state = turnaround.id;
-              // push with turnaround id
-              context.push('/control-actividades/${turnaround.id}');
-              // close bottom sheet
-              Navigator.pop(context);
-            },
-          ),
+          if (turnaround.estatus == 2 ||
+              turnaround.estatus == 3 ||
+              turnaround.estatus == 7)
+            MenuListTile(
+              leading: Icon(Icons.assignment),
+              title: 'Control de actividades',
+              onTap: () {
+                print("onItemTap");
+                // push
+                // context.push('/control-actividades');
 
-          MenuListTile(
-            leading: Icon(Icons.lock),
-            title: 'Cerrar Vuelo',
-            onTap: () {
-              print("onItemTap");
-              // push
-              context.push('/cerrar-vuelo');
-              // close bottom sheet
-              Navigator.pop(context);
-            },
-          ),
+                // set trcIdProvider
+                ref.read(trcIdProvider.notifier).state = turnaround.id;
+                // push with turnaround id
+                context.push('/control-actividades/${turnaround.id}');
+                // close bottom sheet
+                Navigator.pop(context);
+              },
+            ),
+
+          if (turnaround.estatus == 3)
+            MenuListTile(
+              leading: Icon(Icons.lock),
+              title: 'Cerrar Vuelo',
+              onTap: () {
+                print("onItemTap");
+                // push
+                context.push('/cerrar-vuelo');
+                // close bottom sheet
+                Navigator.pop(context);
+              },
+            ),
+          if (turnaround.estatus == 2 || turnaround.estatus == 3)
+            MenuListTile(
+              leading: Icon(Icons.lock),
+              title: 'Cancelar Vuelo',
+              onTap: () {
+                print("Cancelar Vuelo");
+                // push
+                // context.push('/cerrar-vuelo');
+                // close bottom sheet
+                // Navigator.pop(context);
+              },
+            ),
+
+          // Generar reportes
+          if (turnaround.estatus == 3 ||
+              (turnaround.estatus != 1 &&
+                  turnaround.estatus != 2 &&
+                  turnaround.estatus != 3 &&
+                  turnaround.estatus != 7))
+            MenuListTile(
+              leading: Icon(Icons.report),
+              title: 'Generar reportes',
+              onTap: () {
+                print("Generar reportes");
+                // push
+                context.push('/generar-reportes');
+                // close bottom sheet
+                Navigator.pop(context);
+              },
+            ),
         ],
       ),
     );

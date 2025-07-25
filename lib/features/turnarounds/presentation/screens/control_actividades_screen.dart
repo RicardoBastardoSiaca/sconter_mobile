@@ -689,7 +689,6 @@ class _TareaHoraInicioFinView extends ConsumerWidget {
             // ifLoading
             GestureDetector(
               onTap: () async {
-                print('Hora final tapped');
                 // Show time picker dialog
                 final selectedTime = await showTimePickerDialog(
                   context,
@@ -698,7 +697,6 @@ class _TareaHoraInicioFinView extends ConsumerWidget {
                       ? TimeOfDay.fromDateTime(tarea.horaFin!)
                       : null,
                 );
-                print('Selected time: $selectedTime');
                 if (selectedTime != null) {
                   // TODO: Api call to update tarea with selected time
                   final response = await setHoraInicio(
@@ -956,8 +954,6 @@ class _TareaImagenView extends ConsumerWidget {
                       // ignore: use_build_context_synchronously
                       context,
                     );
-
-                    print('Selected photo path: $photoPath');
                   },
                   style: ElevatedButton.styleFrom(
                     shape: CircleBorder(),
@@ -979,8 +975,6 @@ class _TareaImagenView extends ConsumerWidget {
                   onPressed: () async {
                     final photoPath = await CameraGalleryServiceImpl()
                         .takePhoto();
-
-                    print('Selected photo path: $photoPath');
 
                     if (photoPath == null) {
                       return;
