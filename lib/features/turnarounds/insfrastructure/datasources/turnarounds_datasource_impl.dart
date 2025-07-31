@@ -1,5 +1,4 @@
 import 'package:dio/dio.dart';
-import 'package:intl/intl.dart';
 import 'package:turnaround_mobile/config/constants/environment.dart';
 import 'package:turnaround_mobile/features/shared/shared.dart';
 
@@ -268,6 +267,140 @@ class TurnaroundsDatasourceImpl implements TurnaroundsDatasource {
             return categorias;
           } else {
             throw Exception('Error al obtener las categorias de equipos GSE.');
+          }
+        });
+  }
+
+  @override
+  Future<SimpleApiResponse> asignarEquiposGSE(Map<String, dynamic> body) {
+    return dio
+        .post(
+          '/turnarounds/asignar_maquinarias/?token=$accessToken',
+          data: body,
+        )
+        .then((response) {
+          print('Response from asignarEquiposGSE: $response');
+          if (response.statusCode == 200) {
+            return SimpleApiResponse(
+              message: 'Equipos GSE asignados correctamente.',
+              success: true,
+            );
+          } else {
+            return SimpleApiResponse(
+              message: 'Error al asignar equipos GSE.',
+              success: false,
+            );
+          }
+        });
+  }
+
+  @override
+  Future<SimpleApiResponse> asignarMaquinariasTareas(
+    Map<String, dynamic> body,
+  ) {
+    return dio
+        .put(
+          '/control-actividades/asignacion_maquinaria/?token=$accessToken',
+          data: body,
+        )
+        .then((response) {
+          print('Response from asignarMaquinariasTareas: $response');
+          if (response.statusCode == 201) {
+            return SimpleApiResponse(
+              message: 'Maquinarias y tareas asignadas correctamente.',
+              success: true,
+            );
+          } else {
+            return SimpleApiResponse(
+              message: 'Error al asignar maquinarias y tareas.',
+              success: false,
+            );
+          }
+        });
+  }
+
+  @override
+  Future<SimpleApiResponse> setHoraInicioFinMaquinaria(
+    HoraInicioFinMaquinaria body,
+  ) {
+    // Restar 4 horas para hacer matches with the backend
+    final requestBody = {
+      'id': body.id,
+      'tarea_id': body.tareaId,
+      'hora_inicio': body.horaInicio
+          ?.subtract(const Duration(hours: 4))
+          .toIso8601String(),
+      'hora_fin': body.horaFin
+          ?.subtract(const Duration(hours: 4))
+          .toIso8601String(),
+      'tipo': body.tipo,
+    };
+
+    return dio
+        .post(
+          '/control-actividades/asignacion_maquinaria_con_hora/?token=$accessToken',
+          data: requestBody,
+        )
+        .then((response) {
+          print('Response from setHoraInicioFinMaquinaria: $response');
+          if (response.statusCode == 201) {
+            return SimpleApiResponse(
+              message: 'Hora actualizada correctamente.',
+              success: true,
+            );
+          } else {
+            return SimpleApiResponse(
+              message: 'Error al actualizar hora.',
+              success: false,
+            );
+          }
+        });
+  }
+
+  @override
+  Future<SimpleApiResponse> setComentario(ComentarioRequest body) {
+    final requestBody = {'id': body.id, 'comentario': body.comentario};
+    return dio
+        .post(
+          '/control-actividades/comentario/?token=$accessToken',
+          data: requestBody,
+        )
+        .then((response) {
+          print('Response from setComentario: $response');
+          if (response.statusCode == 201) {
+            return SimpleApiResponse(
+              message: 'Comentario actualizado correctamente.',
+              success: true,
+            );
+          } else {
+            return SimpleApiResponse(
+              message: 'Error al actualizar comentario.',
+              success: false,
+            );
+          }
+        });
+  }
+
+  @override
+  Future<SimpleApiResponse> setNumero(SetNumeroTareaRequest body) {
+    final requestBody = {'id': body.id, 'numero': body.numero};
+    return dio
+        .post(
+          '/control-actividades/numero/?token=$accessToken',
+          data: requestBody,
+        )
+        .then((response) {
+          print('Response from setNumero: $response');
+          if (response.statusCode == 201) {
+            return SimpleApiResponse(
+              message: 'Numero actualizado.',
+              success: true,
+            );
+          } else {
+            return SimpleApiResponse(
+              message: 'Error al actualizar numero.',
+              success: false,
+            );
           }
         });
   }

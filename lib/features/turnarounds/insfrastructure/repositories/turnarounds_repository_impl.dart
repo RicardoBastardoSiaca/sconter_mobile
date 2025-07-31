@@ -69,4 +69,33 @@ class TurnaroundsRepositoryImpl extends TurnaroundsRepository {
   ) {
     return datasource.getCategoriasEquiposGSE(id, idPlantilla, body);
   }
+
+  @override
+  Future<SimpleApiResponse> asignarEquiposGSE(Map<String, dynamic> body) {
+    return datasource.asignarEquiposGSE(body);
+  }
+
+  @override
+  Future<SimpleApiResponse> asignarMaquinariasTareas(
+    Map<String, dynamic> body,
+  ) {
+    return datasource.asignarMaquinariasTareas(body);
+  }
+
+  @override
+  Future<SimpleApiResponse> setHoraInicioFinMaquinaria(
+    HoraInicioFinMaquinaria body,
+  ) {
+    return datasource.setHoraInicioFinMaquinaria(body);
+  }
+
+  @override
+  Future<SimpleApiResponse> setComentario(ComentarioRequest body) {
+    return datasource.setComentario(body);
+  }
+
+  @override
+  Future<SimpleApiResponse> setNumero(SetNumeroTareaRequest body) {
+    return datasource.setNumero(body);
+  }
 }

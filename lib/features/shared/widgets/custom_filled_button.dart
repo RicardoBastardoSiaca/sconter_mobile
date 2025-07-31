@@ -4,6 +4,7 @@ class CustomFilledButton extends StatelessWidget {
   final void Function()? onPressed;
   final String text;
   final Color? buttonColor;
+  // text Color
 
   const CustomFilledButton({
     super.key,
@@ -14,24 +15,22 @@ class CustomFilledButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    const radius = Radius.circular(40);
+    const radius = Radius.circular(30);
 
     return FilledButton(
       style: FilledButton.styleFrom(
         // primary
         backgroundColor: buttonColor ?? Theme.of(context).primaryColor,
         shape: const RoundedRectangleBorder(
-          borderRadius: BorderRadius.only(
-            topLeft: radius,
-            topRight: radius,
-            bottomLeft: radius,
-            bottomRight: radius,
-          ),
+          borderRadius: BorderRadius.all(radius),
         ),
       ),
 
       onPressed: onPressed,
-      child: Text(text),
+      child: Text(
+        text,
+        style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+      ),
     );
   }
 }

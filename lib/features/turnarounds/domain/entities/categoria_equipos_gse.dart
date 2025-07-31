@@ -1,5 +1,3 @@
-import 'dart:ffi';
-
 class CategoriasEquiposGseResponse {
   List<CategoriaEquiposGse> categoriasEquiposGse = [];
   bool crear;
@@ -41,6 +39,7 @@ class MaquinariaCategoriaEquipos {
   String modelo;
   bool ocupado;
   bool selected;
+  bool? selectedTask;
 
   MaquinariaCategoriaEquipos({
     required this.id,
@@ -49,6 +48,7 @@ class MaquinariaCategoriaEquipos {
     required this.modelo,
     required this.ocupado,
     required this.selected,
+    required this.selectedTask,
   });
 
   // factory Maquinaria.fromJson(Map<String, dynamic> json) => Maquinaria(

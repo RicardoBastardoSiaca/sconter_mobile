@@ -481,3 +481,43 @@ class EnumValues<T> {
     return reverseMap;
   }
 }
+
+// Responses Entities
+class HoraInicioFinMaquinaria {
+  DateTime? horaInicio;
+  DateTime? horaFin;
+  int id;
+  int tareaId;
+  String tipo;
+
+  HoraInicioFinMaquinaria({
+    this.horaInicio,
+    this.horaFin,
+    required this.id,
+    required this.tareaId,
+    required this.tipo,
+  });
+
+  // factory HoraInicioFinMaquinaria.fromJson(Map<String, dynamic> json) =>
+  //     HoraInicioFinMaquinaria(
+  //       horaInicio: DateTime.parse(json["horaInicio"]),
+  //       horaFin: DateTime.parse(json["horaFin"]),
+  //       id: json["id"],
+  //       tareaId: json["tareaId"],
+  //       tipo: json["tipo"],
+  //     );
+}
+
+class ComentarioRequest {
+  int id;
+  String comentario;
+
+  ComentarioRequest({required this.id, required this.comentario});
+}
+
+class SetNumeroTareaRequest {
+  int id;
+  int numero;
+
+  SetNumeroTareaRequest({required this.id, required this.numero});
+}

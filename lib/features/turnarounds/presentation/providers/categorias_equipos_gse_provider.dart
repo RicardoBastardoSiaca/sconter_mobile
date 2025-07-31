@@ -3,6 +3,7 @@
 // State
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+import '../../../shared/domain/domain.dart';
 import '../../domain/domain.dart';
 import 'providers.dart';
 
@@ -63,6 +64,7 @@ class CategoriasEquiposGseNotifier
       "horaI": horaI,
       "horaF": horaF,
       "fecha": fecha,
+      "tipoAsignacion": 'tarea',
     };
     try {
       final categoriasEquiposGseResponse = await turnaroundsRepository
@@ -77,6 +79,59 @@ class CategoriasEquiposGseNotifier
       // print("Error getting control de actividades: $e");
       print('Error $e');
       // state = state.copyWith(isLoading: false);
+    }
+
+    // asignarMaquinariasTareas
+  }
+
+  Future<SnackbarResponse> asignarMaquinariasTareas(
+    Map<String, dynamic> body,
+  ) async {
+    try {
+      final SimpleApiResponse response = await turnaroundsRepository
+          .asignarMaquinariasTareas(body);
+      if (response.success) {
+        // snackbar response
+        // getCategoriasEquiposGse();
+        return SnackbarResponse(message: 'Equipos asignados.', success: true);
+      } else {
+        return SnackbarResponse(
+          message: 'Error al asignar los equipos.',
+          success: false,
+        );
+      }
+    } catch (e) {
+      // print("Error deleting image: $e");
+      return SnackbarResponse(
+        message: 'Error al asignar los equipos.',
+        success: false,
+      );
+    }
+  }
+
+  // Asignar Equipos GSE
+  Future<SnackbarResponse> asignarEquiposGse(Map<String, dynamic> body) async {
+    try {
+      final response = await turnaroundsRepository.asignarEquiposGSE(body);
+      if (response.success) {
+        // snackbar response
+        getCategoriasEquiposGse();
+        return SnackbarResponse(
+          message: 'Equipos GSE asignados.',
+          success: true,
+        );
+      } else {
+        return SnackbarResponse(
+          message: 'Error al asignar los equipos GSE.',
+          success: false,
+        );
+      }
+    } catch (e) {
+      // print("Error deleting image: $e");
+      return SnackbarResponse(
+        message: 'Ha ocurrido un error al asignar los equipos GSE.',
+        success: false,
+      );
     }
   }
 }
@@ -109,3 +164,17 @@ class CategoriasEquiposGseState {
 
   // void getControlDeActividadesByTrcId() {}
 }
+
+// categoriasEquiposGse State Provider
+final newCategoriasEquiposGseProvider =
+    StateProvider<List<CategoriaEquiposGse>>((ref) {
+      return [];
+    });
+
+final selectedTaskProvider = StateProvider<Map<String, int>>((ref) {
+  return {};
+});
+
+final selectedMaquinariasTaskProvider = StateProvider<List<dynamic>>((ref) {
+  return [];
+});

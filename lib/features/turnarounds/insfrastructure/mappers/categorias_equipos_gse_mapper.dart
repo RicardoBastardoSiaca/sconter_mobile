@@ -7,7 +7,7 @@ class CategoriasEquiposGseMapper {
     return CategoriasEquiposGseResponse(
       // categoriasEquiposGse:
       crear: json['crear'],
-      fecha: json['fecha'],
+      fecha: json['fecha'] ?? '',
       horaF: json['horaF'],
       horaI: json['horaI'],
       idTurnaround: json['id_turnaround'],
@@ -46,6 +46,7 @@ class CategoriasEquiposGseMapper {
       modelo: json['modelo'],
       ocupado: json['ocupado'],
       selected: json['selected'],
+      selectedTask: false,
     );
   }
 }

@@ -1,8 +1,6 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:turnaround_mobile/features/auth/auth.dart';
-import 'package:turnaround_mobile/features/turnarounds/presentation/screens/control_actividades_screen.dart';
-import 'package:turnaround_mobile/features/turnarounds/presentation/screens/turnaround_main_screen.dart';
 import 'package:turnaround_mobile/features/turnarounds/turnarounds.dart';
 
 import '../../features/auth/presentation/providers/auth_provider.dart';
@@ -48,6 +46,11 @@ final goRouterProvider = Provider((ref) {
       GoRoute(
         path: '/asignar-personal',
         builder: (context, state) => AsignarPersonalScreen(),
+      ),
+
+      GoRoute(
+        path: '/asignar-equipos-gse-control-actividades',
+        builder: (context, state) => AsignarEquiposGseControlActividades(),
       ),
     ],
 

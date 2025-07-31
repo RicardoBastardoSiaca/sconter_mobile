@@ -2,7 +2,6 @@ import 'dart:convert';
 import 'dart:io';
 
 import 'package:dio/dio.dart';
-import 'package:http_parser/http_parser.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:turnaround_mobile/features/shared/domain/domain.dart';
 
@@ -162,6 +161,27 @@ class ControlActividadesNotifier
     }
   }
 
+  Future<SnackbarResponse> setHoraInicioFinMaquinaria(
+    HoraInicioFinMaquinaria body,
+  ) async {
+    try {
+      final response = await turnaroundsRepository.setHoraInicioFinMaquinaria(
+        body,
+      );
+      if (response.success) {
+        getControlDeActividadesByTrcId();
+        return SnackbarResponse(message: 'Hora registrada.', success: true);
+      } else {
+        return SnackbarResponse(
+          message: 'Ha ocurrido un error.',
+          success: false,
+        );
+      }
+    } catch (e) {
+      return SnackbarResponse(message: 'Ha ocurrido un error.', success: false);
+    }
+  }
+
   void addImage(String? photoPath) {
     // print("Adding image: $photoPath");
     if (photoPath == null || photoPath.isEmpty) {
@@ -238,6 +258,43 @@ class ControlActividadesNotifier
       );
     } finally {
       state = state.copyWith(isSaving: false);
+    }
+  }
+
+  Future<SnackbarResponse> setComentario(ComentarioRequest body) async {
+    try {
+      final response = await turnaroundsRepository.setComentario(body);
+      if (response.success) {
+        getControlDeActividadesByTrcId();
+        return SnackbarResponse(
+          message: 'Comentario registrado.',
+          success: true,
+        );
+      } else {
+        return SnackbarResponse(
+          message: 'Ha ocurrido un error.',
+          success: false,
+        );
+      }
+    } catch (e) {
+      return SnackbarResponse(message: 'Ha ocurrido un error.', success: false);
+    }
+  }
+
+  Future<SnackbarResponse> setNumero(SetNumeroTareaRequest body) async {
+    try {
+      final response = await turnaroundsRepository.setNumero(body);
+      if (response.success) {
+        getControlDeActividadesByTrcId();
+        return SnackbarResponse(message: 'Número registrado.', success: true);
+      } else {
+        return SnackbarResponse(
+          message: 'Ha ocurrido un error.',
+          success: false,
+        );
+      }
+    } catch (e) {
+      return SnackbarResponse(message: 'Ha ocurrido un error.', success: false);
     }
   }
 }

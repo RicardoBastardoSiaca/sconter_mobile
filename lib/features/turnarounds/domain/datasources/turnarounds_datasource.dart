@@ -40,4 +40,16 @@ abstract class TurnaroundsDatasource {
     int idPlantilla,
     Map<String, dynamic> body,
   );
+
+  Future<SimpleApiResponse> asignarEquiposGSE(Map<String, dynamic> body);
+
+  Future<SimpleApiResponse> asignarMaquinariasTareas(Map<String, dynamic> body);
+
+  Future<SimpleApiResponse> setHoraInicioFinMaquinaria(
+    HoraInicioFinMaquinaria body,
+  );
+
+  Future<SimpleApiResponse> setComentario(ComentarioRequest body);
+
+  Future<SimpleApiResponse> setNumero(SetNumeroTareaRequest body);
 }

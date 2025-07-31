@@ -1,5 +1,4 @@
 import 'package:encrypt/encrypt.dart' as encrypt;
-import 'package:flutter/foundation.dart';
 import 'package:turnaround_mobile/config/constants/environment.dart';
 
 class EncryptDecrypt {

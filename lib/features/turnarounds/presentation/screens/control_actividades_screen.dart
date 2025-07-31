@@ -1,8 +1,6 @@
-import 'dart:io';
-import 'dart:ui' as ui;
-
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:go_router/go_router.dart';
@@ -136,7 +134,7 @@ class _DepartamentosView extends StatelessWidget {
   Widget build(BuildContext context) {
     return Column(
       children: [
-        SizedBox(height: 8),
+        // SizedBox(height: 8),
 
         // Actividades map view
         Expanded(
@@ -171,42 +169,45 @@ class _ActividadView extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     bool isExpanded = true;
-    return ExpansionPanelList(
-      // elevation: 0,
-      expandedHeaderPadding: EdgeInsets.zero,
-      expansionCallback: (int index, bool isExpanded) {
-        isExpanded = !isExpanded;
-      },
-      children: [
-        ExpansionPanel(
-          canTapOnHeader: true,
+    return Padding(
+      padding: const EdgeInsets.only(top: 5, bottom: 5),
+      child: ExpansionPanelList(
+        // elevation: 0,
+        expandedHeaderPadding: EdgeInsets.zero,
+        expansionCallback: (int index, bool isExpanded) {
+          isExpanded = !isExpanded;
+        },
+        children: [
+          ExpansionPanel(
+            canTapOnHeader: true,
 
-          // borderRadius: BorderRadius.circular(8),
-          backgroundColor: Colors.white,
-          headerBuilder: (BuildContext context, bool isExpanded) {
-            return ListTile(
-              title: Text(
-                actividad.nombreActividad,
-                style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                  fontWeight: FontWeight.w800,
-                  // color: Theme.of(context).colorScheme.primary,
+            // borderRadius: BorderRadius.circular(8),
+            backgroundColor: Colors.white,
+            headerBuilder: (BuildContext context, bool isExpanded) {
+              return ListTile(
+                title: Text(
+                  '${indexAct + 1}. ${actividad.nombreActividad}',
+                  style: Theme.of(context).textTheme.titleLarge?.copyWith(
+                    fontWeight: FontWeight.w800,
+                    // color: Theme.of(context).colorScheme.primary,
+                  ),
                 ),
-              ),
-            );
-          },
-          isExpanded: isExpanded,
-          body: Column(
-            children: actividad.tareas!.map((tarea) {
-              return _TareaView(
-                tarea: tarea,
-                indexTar: indexAct,
-                indexAct: indexAct,
-                indexDep: indexDep,
               );
-            }).toList(),
+            },
+            isExpanded: isExpanded,
+            body: Column(
+              children: actividad.tareas!.map((tarea) {
+                return _TareaView(
+                  tarea: tarea,
+                  indexTar: indexAct,
+                  indexAct: indexAct,
+                  indexDep: indexDep,
+                );
+              }).toList(),
+            ),
           ),
-        ),
-      ],
+        ],
+      ),
     );
   }
 }
@@ -237,10 +238,12 @@ class _TareaView extends StatelessWidget {
           backgroundColor: Colors.white,
           headerBuilder: (BuildContext context, bool isExpanded) {
             return ListTile(
+              // set min height
+              // minVerticalPadding: 40,
               title: Text(
                 tarea.titulo,
                 style: Theme.of(context).textTheme.bodyLarge?.copyWith(
-                  fontWeight: FontWeight.w400,
+                  fontWeight: FontWeight.w600,
                   // color: Theme.of(context).colorScheme.primary,
                 ),
               ),
@@ -256,7 +259,12 @@ class _TareaView extends StatelessWidget {
                   3 => _TareaHoraInicioFinView(tarea: tarea),
                   1 => _TareaCantidadView(tarea: tarea),
                   4 => _TareaMaquinariaSinTiempoView(tarea: tarea),
-                  5 => _TareaMaquinariaConTiempoView(tarea: tarea),
+                  5 => _TareaMaquinariaConTiempoView(
+                    tarea: tarea,
+                    indexTar: indexTar,
+                    indexAct: indexAct,
+                    indexDep: indexDep,
+                  ),
                   6 => _TareaTextoView(tarea: tarea),
                   7 => _TareaPasajerosView(tarea: tarea),
                   8 => _TareaExcesoEquipajeView(tarea: tarea),
@@ -268,9 +276,8 @@ class _TareaView extends StatelessWidget {
 
                 // Image list display
                 _TareaImagenView(tarea: tarea),
-                // if (tarea.imagenes != null && tarea.imagenes!.isNotEmpty) ...[
-                //   _TareaImagenView(tarea: tarea),
-                // ]
+
+                _ComentarioView(tarea: tarea),
               ],
             ),
           ),
@@ -307,19 +314,19 @@ class _TareaHoraView extends ConsumerWidget {
           children: [
             // ifLoading
             GestureDetector(
+              behavior: HitTestBehavior.translucent,
               onTap: () async {
-                print('Hora tapped');
+                // print('Hora tapped');
                 // Show time picker dialog
                 final selectedTime = await showTimePickerDialog(
                   context,
-                  tarea,
+                  tarea.horaInicio ?? DateTime.now(),
                   tarea.horaInicio != null
                       ? TimeOfDay.fromDateTime(tarea.horaInicio!)
                       : null,
                 );
-                print('Selected time: $selectedTime');
+                // print('Selected time: $selectedTime');
                 if (selectedTime != null) {
-                  // TODO: Api call to update tarea with selected time
                   final response = await setHoraInicio(
                     ref,
                     tarea.id,
@@ -349,7 +356,7 @@ class _TareaHoraView extends ConsumerWidget {
                   children: [
                     Text(
                       'Hora:',
-                      style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                      style: Theme.of(context).textTheme.titleSmall?.copyWith(
                         fontWeight: FontWeight.w400,
                       ),
                     ),
@@ -362,7 +369,7 @@ class _TareaHoraView extends ConsumerWidget {
                       // min width: 100,
                       constraints: const BoxConstraints(minWidth: 60),
                       decoration: BoxDecoration(
-                        color: const Color.fromARGB(255, 210, 210, 210),
+                        color: Colors.grey.shade200,
                         borderRadius: BorderRadius.circular(8),
                       ),
                       child: Text(
@@ -370,7 +377,7 @@ class _TareaHoraView extends ConsumerWidget {
                                 ? timeFormat.format(tarea.horaInicio!)
                                 : '')
                             .toString(),
-                        style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                        style: Theme.of(context).textTheme.titleSmall?.copyWith(
                           fontWeight: FontWeight.w600,
                         ),
                       ),
@@ -423,9 +430,9 @@ class _TareaHoraView extends ConsumerWidget {
                     },
                     style: ElevatedButton.styleFrom(
                       shape: CircleBorder(),
-                      padding: EdgeInsets.all(2),
-                      // iconSize: 40,
-                      fixedSize: const Size(25, 25),
+                      padding: EdgeInsets.all(5),
+                      // iconSize: 35,
+                      fixedSize: const Size(45, 45),
                       backgroundColor: Theme.of(
                         context,
                       ).colorScheme.primary, // <-- Button color
@@ -434,7 +441,7 @@ class _TareaHoraView extends ConsumerWidget {
                     child: Icon(
                       Icons.access_time,
                       color: Colors.white,
-                      size: 30,
+                      size: 35,
                     ),
                   ),
             // IconButton(
@@ -496,7 +503,7 @@ Future<SnackbarResponse> setHoraFin(
 Future<TimeOfDay?> showTimePickerDialog(
   BuildContext context,
   // WidgetRef ref,
-  Tarea tarea,
+  DateTime hora,
   TimeOfDay? initialTime,
 ) async {
   // TODO: 24 hour format
@@ -510,23 +517,33 @@ Future<TimeOfDay?> showTimePickerDialog(
     helpText: 'Seleccionar hora',
     context: context,
     initialTime: initialTime != null
-        ? TimeOfDay.fromDateTime(tarea.horaInicio!)
+        ? TimeOfDay.fromDateTime(hora)
         : TimeOfDay.now(),
   );
   return selectedTime;
+}
 
-  // if (selectedTime != null) {
-  //   print('Selected time: ${selectedTime.format(context)}');
-  //   // TODO: Update tarea with selected time
-  //   tarea.horaInicio = DateTime(
-  //     DateTime.now().year,
-  //     DateTime.now().month,
-  //     DateTime.now().day,
-  //     selectedTime.hour,
-  //     selectedTime.minute,
-  //   );
-  // Update state
-  // }
+Future<TimeOfDay?> showTimePickerMaquinariasDialog(
+  BuildContext context,
+  // WidgetRef ref,
+  Maquinaria maquinaria,
+  TimeOfDay? initialTime,
+) async {
+  // TODO: 24 hour format
+  final selectedTime = await showTimePicker(
+    confirmText: 'Seleccionar',
+    cancelText: 'Cancelar',
+    minuteLabelText: 'Minutos',
+    hourLabelText: 'Horas',
+    useRootNavigator: true,
+    initialEntryMode: TimePickerEntryMode.input,
+    helpText: 'Seleccionar hora',
+    context: context,
+    initialTime: initialTime != null
+        ? TimeOfDay.fromDateTime(maquinaria.horaInicio)
+        : TimeOfDay.now(),
+  );
+  return selectedTime;
 }
 
 class _TareaHoraInicioFinView extends ConsumerWidget {
@@ -550,12 +567,14 @@ class _TareaHoraInicioFinView extends ConsumerWidget {
           children: [
             // ifLoading
             GestureDetector(
+              behavior: HitTestBehavior.translucent,
               onTap: () async {
                 print('Hora inicio tapped');
                 // Show time picker dialog
                 final selectedTime = await showTimePickerDialog(
                   context,
-                  tarea,
+                  // ref,
+                  tarea.horaInicio ?? DateTime.now(),
                   tarea.horaInicio != null
                       ? TimeOfDay.fromDateTime(tarea.horaInicio!)
                       : null,
@@ -592,7 +611,7 @@ class _TareaHoraInicioFinView extends ConsumerWidget {
                   children: [
                     Text(
                       'Hora de inicio',
-                      style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                      style: Theme.of(context).textTheme.titleSmall?.copyWith(
                         fontWeight: FontWeight.w400,
                       ),
                     ),
@@ -605,7 +624,7 @@ class _TareaHoraInicioFinView extends ConsumerWidget {
                       // min width: 100,
                       constraints: const BoxConstraints(minWidth: 60),
                       decoration: BoxDecoration(
-                        color: const Color.fromARGB(255, 210, 210, 210),
+                        color: Colors.grey.shade200,
                         borderRadius: BorderRadius.circular(8),
                       ),
                       child: Text(
@@ -613,7 +632,7 @@ class _TareaHoraInicioFinView extends ConsumerWidget {
                                 ? timeFormat.format(tarea.horaInicio!)
                                 : '')
                             .toString(),
-                        style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                        style: Theme.of(context).textTheme.titleSmall?.copyWith(
                           fontWeight: FontWeight.w600,
                         ),
                       ),
@@ -666,8 +685,8 @@ class _TareaHoraInicioFinView extends ConsumerWidget {
                     },
                     style: ElevatedButton.styleFrom(
                       shape: CircleBorder(),
-                      padding: EdgeInsets.all(2),
-                      fixedSize: const Size(25, 25),
+                      padding: EdgeInsets.all(5),
+                      fixedSize: const Size(45, 45),
                       backgroundColor: Theme.of(
                         context,
                       ).colorScheme.primary, // <-- Button color
@@ -676,7 +695,7 @@ class _TareaHoraInicioFinView extends ConsumerWidget {
                     child: Icon(
                       Icons.access_time,
                       color: Colors.white,
-                      size: 30,
+                      size: 35,
                     ),
                   ),
           ],
@@ -688,11 +707,12 @@ class _TareaHoraInicioFinView extends ConsumerWidget {
           children: [
             // ifLoading
             GestureDetector(
+              behavior: HitTestBehavior.translucent,
               onTap: () async {
                 // Show time picker dialog
                 final selectedTime = await showTimePickerDialog(
                   context,
-                  tarea,
+                  tarea.horaFin ?? DateTime.now(),
                   tarea.horaFin != null
                       ? TimeOfDay.fromDateTime(tarea.horaFin!)
                       : null,
@@ -728,7 +748,7 @@ class _TareaHoraInicioFinView extends ConsumerWidget {
                   children: [
                     Text(
                       'Hora final:',
-                      style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                      style: Theme.of(context).textTheme.titleSmall?.copyWith(
                         fontWeight: FontWeight.w400,
                       ),
                     ),
@@ -741,7 +761,7 @@ class _TareaHoraInicioFinView extends ConsumerWidget {
                       // min width: 100,
                       constraints: const BoxConstraints(minWidth: 60),
                       decoration: BoxDecoration(
-                        color: const Color.fromARGB(255, 210, 210, 210),
+                        color: Colors.grey.shade200,
                         borderRadius: BorderRadius.circular(8),
                       ),
                       child: Text(
@@ -749,7 +769,7 @@ class _TareaHoraInicioFinView extends ConsumerWidget {
                                 ? timeFormat.format(tarea.horaFin!)
                                 : '')
                             .toString(),
-                        style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                        style: Theme.of(context).textTheme.titleSmall?.copyWith(
                           fontWeight: FontWeight.w600,
                         ),
                       ),
@@ -802,8 +822,8 @@ class _TareaHoraInicioFinView extends ConsumerWidget {
                     },
                     style: ElevatedButton.styleFrom(
                       shape: CircleBorder(),
-                      padding: EdgeInsets.all(2),
-                      fixedSize: const Size(25, 25),
+                      padding: EdgeInsets.all(5),
+                      fixedSize: const Size(45, 45),
                       backgroundColor: Theme.of(
                         context,
                       ).colorScheme.primary, // <-- Button color
@@ -812,7 +832,7 @@ class _TareaHoraInicioFinView extends ConsumerWidget {
                     child: Icon(
                       Icons.access_time,
                       color: Colors.white,
-                      size: 30,
+                      size: 35,
                     ),
                   ),
           ],
@@ -823,13 +843,206 @@ class _TareaHoraInicioFinView extends ConsumerWidget {
 }
 
 // TODO: Tarea Cantidad
-class _TareaCantidadView extends StatelessWidget {
+class _TareaCantidadView extends ConsumerWidget {
   final Tarea tarea;
   const _TareaCantidadView({required this.tarea});
 
   @override
-  Widget build(BuildContext context) {
-    return Container();
+  Widget build(BuildContext context, WidgetRef ref) {
+    final TextEditingController numberController = TextEditingController();
+    return Column(
+      children: [
+        Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            Row(
+              children: [
+                Text(
+                  'Cantidad',
+                  style: Theme.of(
+                    context,
+                  ).textTheme.titleSmall?.copyWith(fontWeight: FontWeight.w400),
+                ),
+                Container(
+                  margin: const EdgeInsets.only(left: 8),
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 8,
+                    vertical: 4,
+                  ),
+                  // min width: 100,
+                  constraints: const BoxConstraints(minWidth: 60),
+                  decoration: BoxDecoration(
+                    color: Colors.grey.shade200,
+                    borderRadius: BorderRadius.circular(8),
+                  ),
+                  child: Center(
+                    child: Text(
+                      tarea.numero?.toString() ?? '',
+                      style: Theme.of(context).textTheme.titleSmall?.copyWith(
+                        fontWeight: FontWeight.w600,
+                      ),
+                    ),
+                  ),
+                ),
+              ],
+            ),
+
+            // Button to open dialog to set and submit cantidad
+            ElevatedButton(
+              // disable if isLoading
+              onPressed:
+                  (
+                    // Open a dialog to write and submit the comment
+                  ) async {
+                    // set initial value in the text field controller
+                    numberController.text = tarea.numero?.toString() ?? '';
+                    showDialog(
+                      context: context,
+                      builder: (BuildContext context) {
+                        return AlertDialog(
+                          backgroundColor: Colors.white,
+                          title: Text('Cantidad'),
+                          content: TextField(
+                            controller: numberController,
+                            keyboardType:
+                                TextInputType.number, // Show numeric keyboard
+                            inputFormatters: <TextInputFormatter>[
+                              FilteringTextInputFormatter
+                                  .digitsOnly, // Allow only digits
+                            ],
+
+                            decoration: InputDecoration(
+                              hintText: '123...',
+                              border: null,
+                              filled: true,
+                              fillColor: Colors.grey[200],
+                            ),
+                          ),
+                          actions: <Widget>[
+                            FilledButton(
+                              style: FilledButton.styleFrom(
+                                // primary
+                                backgroundColor: Colors.grey,
+                                shape: const RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.all(
+                                    Radius.circular(30),
+                                  ),
+                                ),
+                              ),
+                              onPressed: () {
+                                Navigator.pop(context);
+                                numberController.clear();
+                              },
+                              child: Text(
+                                'Salir',
+                                style: const TextStyle(
+                                  fontSize: 18,
+                                  fontWeight: FontWeight.bold,
+                                ),
+                              ),
+                            ),
+
+                            CustomFilledButton(
+                              text: 'Guardar',
+                              // buttonColor: Colors.green,
+                              onPressed: () async {
+                                final SetNumeroTareaRequest body =
+                                    SetNumeroTareaRequest(
+                                      id: tarea.id,
+                                      numero: int.parse(numberController.text),
+                                    );
+
+                                print("Numero: ${body.numero}");
+
+                                final trcId = ref
+                                    .read(selectedTurnaroundProvider.notifier)
+                                    .state!
+                                    .id;
+                                final response = await ref
+                                    .read(
+                                      controlActividadesProvider(
+                                        trcId,
+                                      ).notifier,
+                                    )
+                                    .setNumero(body);
+
+                                // Show snackbar response
+                                CustomSnackbar.showResponseSnackbar(
+                                  response.message,
+                                  response.success,
+                                  // ignore: use_build_context_synchronously
+                                  context,
+                                );
+
+                                Navigator.pop(context);
+                                numberController.clear();
+                              },
+
+                              // final trcId = ref
+                              //     .read(selectedTurnaroundProvider.notifier)
+                              //     .state!
+                              //     .id;
+                              // final response = await ref
+                              //     .read(
+                              //       controlActividadesProvider(
+                              //         trcId,
+                              //       ).notifier,
+                              //     )
+                              //     .setComentario(body);
+
+                              // // Show snackbar response
+                              // CustomSnackbar.showResponseSnackbar(
+                              //   response.message,
+                              //   response.success,
+                              //   // ignore: use_build_context_synchronously
+                              //   context,
+                              // );
+
+                              // Navigator.pop(context);
+                              // textController.clear();
+                            ),
+
+                            // TextButton(
+                            //   child: Text('Cancel'),
+                            //   onPressed: () {
+                            //     Navigator.of(context).pop(); // Close the dialog
+                            //   },
+                            // ),
+                            // ElevatedButton(
+                            //   child: Text('Submit'),
+                            //   onPressed: () {
+                            //     String submittedText = textController.text;
+                            //     // Process the submitted text (e.g., save it, display it)
+                            //     print('Submitted text: $submittedText');
+                            //     Navigator.of(context).pop(); // Close the dialog
+                            //     textController
+                            //         .clear(); // Clear the text field after submission
+                            //   },
+                            // ),
+                          ],
+                        );
+                      },
+                    );
+                  },
+              style: ElevatedButton.styleFrom(
+                shape: CircleBorder(),
+                padding: EdgeInsets.all(5),
+                fixedSize: const Size(45, 45),
+                backgroundColor: Theme.of(
+                  context,
+                ).colorScheme.primary, // <-- Button color
+                foregroundColor: Colors.red, // <-- Splash color
+              ),
+              child: Icon(
+                Icons.onetwothree_outlined,
+                color: Colors.white,
+                size: 35,
+              ),
+            ),
+          ],
+        ),
+      ],
+    );
   }
 }
 
@@ -843,13 +1056,466 @@ class _TareaMaquinariaSinTiempoView extends StatelessWidget {
   }
 }
 
-class _TareaMaquinariaConTiempoView extends StatelessWidget {
+class _TareaMaquinariaConTiempoView extends ConsumerWidget {
   final Tarea tarea;
-  const _TareaMaquinariaConTiempoView({required this.tarea});
+  final int indexTar;
+  final int indexDep;
+  final int indexAct;
+
+  const _TareaMaquinariaConTiempoView({
+    required this.tarea,
+    required this.indexTar,
+    required this.indexDep,
+    required this.indexAct,
+  });
 
   @override
-  Widget build(BuildContext context) {
-    return Container();
+  Widget build(BuildContext context, WidgetRef ref) {
+    return Column(
+      children: [
+        _TareaHoraInicioFinView(tarea: tarea),
+
+        Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            Text(
+              'Equipos GSE',
+              style: Theme.of(
+                context,
+              ).textTheme.titleSmall?.copyWith(fontWeight: FontWeight.w400),
+            ),
+            ElevatedButton(
+              // disable if isLoading
+              onPressed: () async {
+                ref.read(selectedTaskProvider.notifier).state = {
+                  "indexDep": indexDep,
+                  "indexAct": indexAct,
+                  "indexTarea": indexTar,
+                  "tareaId": tarea.id,
+                };
+                ref.read(selectedMaquinariasTaskProvider.notifier).state =
+                    tarea.maquinaria ?? [];
+
+                await ref
+                    .read(categoriasEquiposGseProvider.notifier)
+                    .getCategoriasEquiposGse();
+
+                print("asignar equipos gse");
+                context.push('/asignar-equipos-gse-control-actividades');
+
+                // get control de actividades after close
+                // await ref
+                //     .read(controlDeActividadesProvider.notifier)
+                //     .getControlDeActividadesByTrcId(trcId);
+              },
+              style: ElevatedButton.styleFrom(
+                shape: CircleBorder(),
+                padding: EdgeInsets.all(5),
+                fixedSize: const Size(45, 45),
+                backgroundColor: Theme.of(
+                  context,
+                ).colorScheme.primary, // <-- Button color
+                // foregroundColor: Colors.red, // <-- Splash color
+              ),
+              child: Icon(Icons.agriculture, color: Colors.white, size: 35),
+            ),
+          ],
+        ),
+        // Listado de maquinarias con hora de inicio y fin
+        _ListadoMaquinariasConTiempoView(
+          tarea: tarea,
+          indexTar: indexTar,
+          indexDep: indexDep,
+          indexAct: indexAct,
+        ),
+      ],
+    );
+  }
+}
+
+class _ListadoMaquinariasConTiempoView extends ConsumerWidget {
+  final int indexAct, indexDep, indexTar;
+  final Tarea tarea;
+  const _ListadoMaquinariasConTiempoView({
+    required this.indexTar,
+    required this.indexDep,
+    required this.indexAct,
+    required this.tarea,
+  });
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final timeFormat = DateFormat('HH:mm');
+    bool isLoading = ref.watch(isLoadingControlActividadesProvider);
+    return ListView.builder(
+      shrinkWrap: true,
+      itemCount: tarea.maquinaria?.length,
+      itemBuilder: (context, index) {
+        final maquinaria = tarea.maquinaria?[index];
+        return Column(
+          children: [
+            SizedBox(height: 8),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.start,
+              children: [
+                Text(
+                  '${maquinaria?['maquinaria_identificador']} - ${maquinaria?['maquinaria_modelo']}',
+
+                  style: Theme.of(
+                    context,
+                  ).textTheme.titleSmall?.copyWith(fontWeight: FontWeight.w600),
+                ),
+              ],
+            ),
+
+            // ******************************************
+            // Hora de inicio Maquinaria
+            Padding(
+              padding: const EdgeInsets.only(left: 8),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  // ifLoading
+                  GestureDetector(
+                    behavior: HitTestBehavior.translucent,
+                    onTap: () async {
+                      print('Hora inicio tapped');
+                      // Show time picker dialog
+                      final selectedTime = await showTimePickerDialog(
+                        context,
+                        maquinaria["hora_inicio"] ?? DateTime.now(),
+                        maquinaria["hora_inicio"] != null
+                            ? TimeOfDay.fromDateTime(maquinaria.horaInicio)
+                            : null,
+                      );
+                      print('Selected time: $selectedTime');
+                      if (selectedTime != null) {
+                        var trcDate = ref
+                            .read(selectedTurnaroundProvider.notifier)
+                            .state
+                            ?.fechaInicio;
+                        final body = HoraInicioFinMaquinaria(
+                          // ignore: use_build_context_synchronously
+                          horaInicio: getDateTimeFromTimeOfDay(
+                            trcDate,
+                            selectedTime,
+                          ),
+                          horaFin: null,
+                          id: maquinaria['id'],
+                          tareaId: tarea.id,
+                          tipo: 'Hora de Inicio',
+                        );
+                        final trcId = ref.read(trcIdProvider);
+                        final response = await ref
+                            .read(controlActividadesProvider(trcId).notifier)
+                            .setHoraInicioFinMaquinaria(body);
+
+                        // Show snackbar response
+                        CustomSnackbar.showResponseSnackbar(
+                          response.message,
+                          response.success,
+                          // ignore: use_build_context_synchronously
+                          context,
+                        );
+                      }
+                    },
+                    child: SizedBox(
+                      // width: 100,
+                      child: Row(
+                        children: [
+                          Text(
+                            'Hora de inicio',
+                            style: Theme.of(context).textTheme.titleSmall
+                                ?.copyWith(fontWeight: FontWeight.w400),
+                          ),
+                          Container(
+                            margin: const EdgeInsets.only(left: 8),
+                            padding: const EdgeInsets.symmetric(
+                              horizontal: 8,
+                              vertical: 4,
+                            ),
+                            // min width: 100,
+                            constraints: const BoxConstraints(minWidth: 60),
+                            decoration: BoxDecoration(
+                              color: Colors.grey.shade200,
+                              borderRadius: BorderRadius.circular(8),
+                            ),
+                            child: Text(
+                              (maquinaria['hora_inicio'] != null
+                                      ? timeFormat.format(
+                                          DateTime.parse(
+                                            maquinaria['hora_inicio'],
+                                          ),
+                                        )
+                                      : '')
+                                  .toString(),
+                              style: Theme.of(context).textTheme.titleSmall
+                                  ?.copyWith(fontWeight: FontWeight.w600),
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
+
+                  // Rounded button to set current time
+                  isLoading
+                      ? Padding(
+                          padding: const EdgeInsets.only(right: 8),
+                          child: SizedBox(
+                            height: 25.0,
+                            width: 25.0,
+                            child: Center(
+                              child: CircularProgressIndicator(
+                                color: Theme.of(context).colorScheme.primary,
+                                strokeWidth: 3.0,
+                              ),
+                            ),
+                          ),
+                        )
+                      : ElevatedButton(
+                          // disable if isLoading
+                          onPressed: () async {
+                            if (isLoading) return;
+                            // Show loading indicator
+                            ref
+                                .read(
+                                  isLoadingControlActividadesProvider.notifier,
+                                )
+                                .update((state) => true);
+                            // wait 3 seconds
+                            // await Future.delayed(const Duration(seconds: 3));
+
+                            final HoraInicioFinMaquinaria body =
+                                HoraInicioFinMaquinaria(
+                                  horaInicio: DateTime.now(),
+                                  horaFin: null,
+                                  id: maquinaria['id'],
+                                  tareaId: tarea.id,
+                                  tipo: 'Hora de Inicio',
+                                );
+
+                            final trcId = ref.read(trcIdProvider);
+                            final response = await ref
+                                .read(
+                                  controlActividadesProvider(trcId).notifier,
+                                )
+                                .setHoraInicioFinMaquinaria(body);
+                            // Show snackbar response
+                            CustomSnackbar.showResponseSnackbar(
+                              response.message,
+                              response.success,
+                              // ignore: use_build_context_synchronously
+                              context,
+                            );
+
+                            ref
+                                .read(
+                                  isLoadingControlActividadesProvider.notifier,
+                                )
+                                .update((state) => false);
+                          },
+                          style: ElevatedButton.styleFrom(
+                            shape: CircleBorder(),
+                            padding: EdgeInsets.all(5),
+                            fixedSize: const Size(45, 45),
+                            backgroundColor: Theme.of(
+                              context,
+                            ).colorScheme.primary, // <-- Button color
+                            foregroundColor: Colors.red, // <-- Splash color
+                          ),
+                          child: Icon(
+                            Icons.access_time,
+                            color: Colors.white,
+                            size: 35,
+                          ),
+                        ),
+                ],
+              ),
+            ),
+
+            // Hora final Maquinaria
+            Padding(
+              padding: const EdgeInsets.only(left: 8),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  // ifLoading
+                  GestureDetector(
+                    behavior: HitTestBehavior.translucent,
+                    onTap: () async {
+                      // Show time picker dialog
+                      final selectedTime = await showTimePickerDialog(
+                        context,
+                        maquinaria['hora_inicio'] ?? DateTime.now(),
+                        maquinaria['hora_inicio'] != null
+                            ? TimeOfDay.fromDateTime(maquinaria['hora_fin'])
+                            : null,
+                      );
+                      print('Selected time: $selectedTime');
+                      if (selectedTime != null) {
+                        var trcDate = ref
+                            .read(selectedTurnaroundProvider.notifier)
+                            .state
+                            ?.fechaInicio;
+                        final HoraInicioFinMaquinaria body =
+                            HoraInicioFinMaquinaria(
+                              id: maquinaria['id'],
+                              horaInicio: null,
+                              // ignore: use_build_context_synchronously
+                              horaFin: getDateTimeFromTimeOfDay(
+                                trcDate,
+                                selectedTime,
+                              ),
+                              tareaId: tarea.id,
+                              tipo: 'Hora final',
+                            );
+                        final trcId = ref.read(trcIdProvider);
+                        final response = await ref
+                            .read(controlActividadesProvider(trcId).notifier)
+                            .setHoraInicioFinMaquinaria(body);
+
+                        // Show snackbar response
+                        CustomSnackbar.showResponseSnackbar(
+                          response.message,
+                          response.success,
+                          // ignore: use_build_context_synchronously
+                          context,
+                        );
+                      }
+                    },
+                    child: SizedBox(
+                      // width: 100,
+                      child: Row(
+                        children: [
+                          Text(
+                            'Hora final',
+                            style: Theme.of(context).textTheme.titleSmall
+                                ?.copyWith(fontWeight: FontWeight.w400),
+                          ),
+                          Container(
+                            margin: const EdgeInsets.only(left: 8),
+                            padding: const EdgeInsets.symmetric(
+                              horizontal: 8,
+                              vertical: 4,
+                            ),
+                            // min width: 100,
+                            constraints: const BoxConstraints(minWidth: 60),
+                            decoration: BoxDecoration(
+                              color: Colors.grey.shade200,
+                              borderRadius: BorderRadius.circular(8),
+                            ),
+                            child: Text(
+                              (maquinaria['hora_fin'] != null
+                                      ? timeFormat.format(
+                                          DateTime.parse(
+                                            maquinaria['hora_fin'],
+                                          ),
+                                        )
+                                      : '')
+                                  .toString(),
+                              style: Theme.of(context).textTheme.titleSmall
+                                  ?.copyWith(fontWeight: FontWeight.w600),
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
+
+                  // Rounded button to set current time
+                  isLoading
+                      ? Padding(
+                          padding: const EdgeInsets.only(right: 8),
+                          child: SizedBox(
+                            height: 25.0,
+                            width: 25.0,
+                            child: Center(
+                              child: CircularProgressIndicator(
+                                color: Theme.of(context).colorScheme.primary,
+                                strokeWidth: 3.0,
+                              ),
+                            ),
+                          ),
+                        )
+                      : ElevatedButton(
+                          // disable if isLoading
+                          onPressed: () async {
+                            if (isLoading) return;
+                            // Show loading indicator
+                            ref
+                                .read(
+                                  isLoadingControlActividadesProvider.notifier,
+                                )
+                                .update((state) => true);
+                            // wait 3 seconds
+                            // await Future.delayed(const Duration(seconds: 3));
+
+                            final body = HoraInicioFinMaquinaria(
+                              horaInicio: null,
+                              // horaInicio: TimeOfDay.now().format(context),
+                              horaFin: DateTime.now(),
+                              id: maquinaria['id'],
+                              tareaId: tarea.id,
+                              tipo: 'Hora final',
+                            );
+
+                            final trcId = ref.read(trcIdProvider);
+                            final response = await ref
+                                .read(
+                                  controlActividadesProvider(trcId).notifier,
+                                )
+                                .setHoraInicioFinMaquinaria(body);
+                            // Show snackbar response
+                            CustomSnackbar.showResponseSnackbar(
+                              response.message,
+                              response.success,
+                              // ignore: use_build_context_synchronously
+                              context,
+                            );
+
+                            // final response = await setHoraInicio(
+                            //   ref,
+                            //   tarea.id,
+                            //   DateTime.now(),
+                            //   'Hora de Inicio',
+                            // );
+                            // CustomSnackbar.showResponseSnackbar(
+                            //   response.message,
+                            //   response.success,
+                            //   // ignore: use_build_context_synchronously
+                            //   context,
+                            // );
+                            ref
+                                .read(
+                                  isLoadingControlActividadesProvider.notifier,
+                                )
+                                .update((state) => false);
+                          },
+                          style: ElevatedButton.styleFrom(
+                            shape: CircleBorder(),
+                            padding: EdgeInsets.all(5),
+                            fixedSize: const Size(45, 45),
+                            backgroundColor: Theme.of(
+                              context,
+                            ).colorScheme.primary, // <-- Button color
+                            foregroundColor: Colors.red, // <-- Splash color
+                          ),
+                          child: Icon(
+                            Icons.access_time,
+                            color: Colors.white,
+                            size: 35,
+                          ),
+                        ),
+                ],
+              ),
+            ),
+
+            // ******************************************
+          ],
+        );
+      },
+    );
   }
 }
 
@@ -919,7 +1585,7 @@ class _TareaImagenView extends ConsumerWidget {
               'Imágenes:',
               style: Theme.of(
                 context,
-              ).textTheme.bodyMedium?.copyWith(fontWeight: FontWeight.w400),
+              ).textTheme.titleSmall?.copyWith(fontWeight: FontWeight.w400),
             ),
             // Camera icon
             Row(
@@ -957,8 +1623,8 @@ class _TareaImagenView extends ConsumerWidget {
                   },
                   style: ElevatedButton.styleFrom(
                     shape: CircleBorder(),
-                    padding: EdgeInsets.all(2),
-                    fixedSize: const Size(25, 25),
+                    padding: EdgeInsets.all(5),
+                    fixedSize: const Size(45, 45),
                     backgroundColor: Theme.of(
                       context,
                     ).colorScheme.primary, // <-- Button color
@@ -967,7 +1633,7 @@ class _TareaImagenView extends ConsumerWidget {
                   child: Icon(
                     Icons.photo_library_outlined,
                     color: Colors.white,
-                    size: 30,
+                    size: 35,
                   ),
                 ),
                 ElevatedButton(
@@ -998,8 +1664,8 @@ class _TareaImagenView extends ConsumerWidget {
                   },
                   style: ElevatedButton.styleFrom(
                     shape: CircleBorder(),
-                    padding: EdgeInsets.all(2),
-                    fixedSize: const Size(25, 25),
+                    padding: EdgeInsets.all(5),
+                    fixedSize: const Size(45, 45),
                     backgroundColor: Theme.of(
                       context,
                     ).colorScheme.primary, // <-- Button color
@@ -1008,7 +1674,7 @@ class _TareaImagenView extends ConsumerWidget {
                   child: Icon(
                     Icons.camera_alt_outlined,
                     color: Colors.white,
-                    size: 30,
+                    size: 35,
                   ),
                 ),
               ],
@@ -1040,6 +1706,166 @@ class _TareaImagenView extends ConsumerWidget {
         //   }).toList(),
         // if (tarea.imagenes == null || tarea.imagenes!.isEmpty)
         //   const Text('No hay imágenes para esta tarea'),
+      ],
+    );
+  }
+}
+
+class _ComentarioView extends ConsumerWidget {
+  final Tarea tarea;
+  const _ComentarioView({required this.tarea});
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    TextEditingController textController = TextEditingController();
+
+    return Column(
+      children: [
+        Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            Text(
+              'Comentarios:',
+              style: Theme.of(
+                context,
+              ).textTheme.titleSmall?.copyWith(fontWeight: FontWeight.w400),
+            ),
+            ElevatedButton(
+              // disable if isLoading
+              onPressed:
+                  (
+                    // Open a dialog to write and submit the comment
+                  ) async {
+                    // set value of tarea.comentario to textController
+                    textController.text = tarea.comentario ?? '';
+
+                    showDialog(
+                      context: context,
+                      builder: (BuildContext context) {
+                        return AlertDialog(
+                          backgroundColor: Colors.white,
+                          title: Text('Comentario'),
+                          content: TextField(
+                            controller: textController,
+                            maxLines: null, // Allows for multiline input
+                            minLines: 3,
+                            keyboardType: TextInputType
+                                .multiline, // Optimizes keyboard for multiline text
+
+                            decoration: InputDecoration(
+                              hintText: 'Escriba su comentario...',
+                              border: null,
+                              filled: true,
+                              fillColor: Colors.grey[200],
+                            ),
+                          ),
+                          actions: <Widget>[
+                            FilledButton(
+                              style: FilledButton.styleFrom(
+                                // primary
+                                backgroundColor: Colors.grey,
+                                shape: const RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.all(
+                                    Radius.circular(30),
+                                  ),
+                                ),
+                              ),
+                              onPressed: () {
+                                Navigator.pop(context);
+                                textController.clear();
+                              },
+                              child: Text(
+                                'Salir',
+                                style: const TextStyle(
+                                  fontSize: 18,
+                                  fontWeight: FontWeight.bold,
+                                ),
+                              ),
+                            ),
+
+                            CustomFilledButton(
+                              text: 'Asignar',
+                              // buttonColor: Colors.green,
+                              onPressed: () async {
+                                final ComentarioRequest body =
+                                    ComentarioRequest(
+                                      id: tarea.id,
+                                      comentario: textController.text,
+                                    );
+
+                                print("Comentario: ${body.comentario}");
+                                final trcId = ref
+                                    .read(selectedTurnaroundProvider.notifier)
+                                    .state!
+                                    .id;
+                                final response = await ref
+                                    .read(
+                                      controlActividadesProvider(
+                                        trcId,
+                                      ).notifier,
+                                    )
+                                    .setComentario(body);
+
+                                // Show snackbar response
+                                CustomSnackbar.showResponseSnackbar(
+                                  response.message,
+                                  response.success,
+                                  // ignore: use_build_context_synchronously
+                                  context,
+                                );
+
+                                Navigator.pop(context);
+                                textController.clear();
+                              },
+                            ),
+
+                            // TextButton(
+                            //   child: Text('Cancel'),
+                            //   onPressed: () {
+                            //     Navigator.of(context).pop(); // Close the dialog
+                            //   },
+                            // ),
+                            // ElevatedButton(
+                            //   child: Text('Submit'),
+                            //   onPressed: () {
+                            //     String submittedText = textController.text;
+                            //     // Process the submitted text (e.g., save it, display it)
+                            //     print('Submitted text: $submittedText');
+                            //     Navigator.of(context).pop(); // Close the dialog
+                            //     textController
+                            //         .clear(); // Clear the text field after submission
+                            //   },
+                            // ),
+                          ],
+                        );
+                      },
+                    );
+                  },
+              style: ElevatedButton.styleFrom(
+                shape: CircleBorder(),
+                padding: EdgeInsets.all(5),
+                fixedSize: const Size(45, 45),
+                backgroundColor: Theme.of(
+                  context,
+                ).colorScheme.primary, // <-- Button color
+                foregroundColor: Colors.red, // <-- Splash color
+              ),
+              child: Icon(Icons.edit_note, color: Colors.white, size: 35),
+            ),
+          ],
+        ),
+        // Grey container to display the comment
+        Container(
+          width: double.infinity,
+          padding: const EdgeInsets.all(10),
+          margin: const EdgeInsets.symmetric(vertical: 10),
+          decoration: BoxDecoration(
+            color: Colors.grey.shade200,
+            borderRadius: BorderRadius.circular(10),
+          ),
+          child: Text(tarea.comentario ?? ''),
+        ),
+        // Text(tarea.comentario ?? ''),
       ],
     );
   }
@@ -1149,7 +1975,7 @@ class _ImageCarousel extends StatelessWidget {
 
 class _CarouselWithIndicatorDemo extends StatefulWidget {
   final List<Imagen> images;
-  const _CarouselWithIndicatorDemo({super.key, required this.images});
+  const _CarouselWithIndicatorDemo({required this.images});
 
   @override
   State<StatefulWidget> createState() {
@@ -1197,6 +2023,7 @@ class _CarouselWithIndicatorState extends State<_CarouselWithIndicatorDemo> {
           mainAxisAlignment: MainAxisAlignment.center,
           children: images.asMap().entries.map((entry) {
             return GestureDetector(
+              behavior: HitTestBehavior.translucent,
               onTap: () => _controller.animateToPage(entry.key),
               child: Container(
                 width: 12.0,
@@ -1221,7 +2048,7 @@ class _CarouselWithIndicatorState extends State<_CarouselWithIndicatorDemo> {
 
 class _ComplicatedImageDemo extends ConsumerWidget {
   final List<Imagen> images;
-  const _ComplicatedImageDemo({super.key, required this.images});
+  const _ComplicatedImageDemo({required this.images});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -1253,6 +2080,7 @@ class _ComplicatedImageDemo extends ConsumerWidget {
                   child: ClipRRect(
                     borderRadius: const BorderRadius.all(Radius.circular(20)),
                     child: GestureDetector(
+                      behavior: HitTestBehavior.translucent,
                       onTap: () {
                         // print("onItemTap");
                         // push with images list and id
@@ -1445,4 +2273,15 @@ class _ControlActividadesMainView extends ConsumerWidget {
       ],
     );
   }
+}
+
+getDateTimeFromTimeOfDay(String date, TimeOfDay time) {
+  DateTime parsedDate = DateFormat('yyyy-MM-dd').parse(date);
+  return DateTime(
+    parsedDate.year,
+    parsedDate.month,
+    parsedDate.day,
+    time.hour,
+    time.minute,
+  );
 }

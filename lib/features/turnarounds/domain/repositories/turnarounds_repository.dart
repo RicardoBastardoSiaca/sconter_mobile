@@ -1,8 +1,6 @@
 import 'package:turnaround_mobile/features/shared/shared.dart';
-import 'package:turnaround_mobile/features/turnarounds/domain/entities/turnaround_main.dart';
 
 import '../domain.dart';
-import '../entities/control_actividades.dart';
 
 abstract class TurnaroundsRepository {
   Future<List<TurnaroundMain>> getTurnaroundsByDate(
@@ -43,6 +41,18 @@ abstract class TurnaroundsRepository {
     int idPlantilla,
     Map<String, dynamic> body,
   );
+
+  Future<SimpleApiResponse> asignarEquiposGSE(Map<String, dynamic> body);
+
+  Future<SimpleApiResponse> asignarMaquinariasTareas(Map<String, dynamic> body);
+
+  Future<SimpleApiResponse> setHoraInicioFinMaquinaria(
+    HoraInicioFinMaquinaria body,
+  );
+
+  Future<SimpleApiResponse> setComentario(ComentarioRequest body);
+
+  Future<SimpleApiResponse> setNumero(SetNumeroTareaRequest body);
 
   //
 }

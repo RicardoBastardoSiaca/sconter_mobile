@@ -198,6 +198,8 @@ class _ListTileCardContainer extends StatelessWidget {
         children: [
           FittedBox(
             child: Container(
+              // Shadow
+
               // altura de la tarjeta
               height: 140,
               width: MediaQuery.of(context).size.width,
@@ -215,6 +217,7 @@ class _ListTileCardContainer extends StatelessWidget {
                 semanticsLabel: 'Image',
                 fit: BoxFit.fill,
                 alignment: Alignment.center,
+                // Box shadow
               ),
             ),
           ),
@@ -390,6 +393,7 @@ class _MenuDialog extends ConsumerWidget {
                 // set selectedTurnaroundProvider
                 ref.read(selectedTurnaroundProvider.notifier).state =
                     turnaround;
+
                 print("selectedTurnaroundProvider: $turnaround");
                 // push
                 context.push('/asignar-equipos-gse');
@@ -424,6 +428,9 @@ class _MenuDialog extends ConsumerWidget {
 
                 // set trcIdProvider
                 ref.read(trcIdProvider.notifier).state = turnaround.id;
+                // set selectedTurnaroundProvider
+                ref.read(selectedTurnaroundProvider.notifier).state =
+                    turnaround;
                 // push with turnaround id
                 context.push('/control-actividades/${turnaround.id}');
                 // close bottom sheet
