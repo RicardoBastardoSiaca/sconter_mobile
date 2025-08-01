@@ -52,4 +52,6 @@ abstract class TurnaroundsDatasource {
   Future<SimpleApiResponse> setComentario(ComentarioRequest body);
 
   Future<SimpleApiResponse> setNumero(SetNumeroTareaRequest body);
+
+  Future<SimpleApiResponse> savePasajeros(SavePasajerosRequest body);
 }

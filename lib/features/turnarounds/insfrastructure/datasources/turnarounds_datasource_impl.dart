@@ -404,4 +404,43 @@ class TurnaroundsDatasourceImpl implements TurnaroundsDatasource {
           }
         });
   }
+
+  @override
+  Future<SimpleApiResponse> savePasajeros(SavePasajerosRequest body) {
+    final requestBody = {
+      'id': body.id,
+      'llegada_ejecutivo': body.llegadaEjecutivo,
+      'llegada_infante': body.llegadaInfante,
+      'llegada_economica': body.llegadaEconomica,
+      'salida_ejecutivo': body.salidaEjecutivo,
+      'salida_infante': body.salidaInfante,
+      'salida_economica': body.salidaEconomica,
+      'transito_ejecutivo': body.transitoEjecutivo,
+      'transito_infante': body.transitoInfante,
+      'transito_economica': body.transitoEconomica,
+      'inadmitidos_ejecutivo': body.inadmitidosEjecutivo,
+      'inadmitidos_infante': body.inadmitidosInfante,
+      'inadmitidos_economica': body.inadmitidosEconomica,
+    };
+
+    return dio
+        .post(
+          '/control-actividades/pasajero/?token=$accessToken',
+          data: requestBody,
+        )
+        .then((response) {
+          print('Response from savePasajeros: $response');
+          if (response.statusCode == 201) {
+            return SimpleApiResponse(
+              message: 'Pasajeros actualizados.',
+              success: true,
+            );
+          } else {
+            return SimpleApiResponse(
+              message: 'Error al actualizar pasajeros.',
+              success: false,
+            );
+          }
+        });
+  }
 }

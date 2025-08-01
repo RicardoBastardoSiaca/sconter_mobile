@@ -12,6 +12,7 @@ import '../../../../config/config.dart';
 import '../../../shared/shared.dart';
 
 import '../providers/providers.dart';
+import '../widgets/widgets.dart';
 
 // helpers
 
@@ -1529,13 +1530,313 @@ class _TareaTextoView extends StatelessWidget {
   }
 }
 
-class _TareaPasajerosView extends StatelessWidget {
+class _TareaPasajerosView extends ConsumerWidget {
   final Tarea tarea;
   const _TareaPasajerosView({required this.tarea});
 
   @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final turnaround = ref.watch(selectedTurnaroundProvider);
+
+    return GestureDetector(
+      onTap: () async {
+        // Open pasajeros dialog
+        ref.read(pasajerosFormProvider.notifier).setInitialValues(tarea);
+        showDialog(
+          context: context,
+          builder: (context) {
+            // Set the initial values of the form fields
+            return PasajerosDialog(tarea: tarea);
+          },
+        );
+      },
+
+      child: Column(
+        children: [
+          if (turnaround?.fkVuelo.tipoServicio.id != 3)
+            // Llegada
+            _LlegadaPasajerosView(tarea: tarea),
+
+          const Divider(thickness: 1),
+
+          if (turnaround?.fkVuelo.tipoServicio.id != 4)
+            // Salida
+            _SalidaPasajeroView(tarea: tarea),
+
+          if (turnaround?.fkVuelo.tipoServicio.id != 4)
+            // Transito
+            _TransitoPasajerosView(tarea: tarea),
+
+          if (turnaround?.fkVuelo.tipoServicio.id != 4)
+            // Inadmitidos
+            _InadmitidosPasajerosView(tarea: tarea),
+
+          if (turnaround?.fkVuelo.tipoServicio.id != 4)
+            const Divider(thickness: 1),
+
+          if (turnaround?.fkVuelo.tipoServicio.id != 4)
+            // total
+            _TotalPasajerosView(tarea: tarea),
+
+          SizedBox(height: 8),
+        ],
+      ),
+    );
+  }
+}
+
+class _TotalPasajerosView extends StatelessWidget {
+  const _TotalPasajerosView({required this.tarea});
+
+  final Tarea tarea;
+
+  @override
   Widget build(BuildContext context) {
-    return Container();
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+      children: [
+        // half width
+        Flexible(flex: 3, child: Text('Total:')),
+        Flexible(
+          flex: 6,
+          child: Row(
+            children: [
+              Expanded(
+                child: _CustomPasajerosBox(
+                  clase: 'C',
+                  // total pasajeros = salida + transito - inadmitidos
+                  cantidad:
+                      tarea.pasajeros!['salida_ejecutivo']! +
+                      tarea.pasajeros!['transito_ejecutivo']! -
+                      tarea.pasajeros!['inadmitidos_ejecutivo']!,
+                ),
+              ),
+              Expanded(
+                child: _CustomPasajerosBox(
+                  clase: 'Y',
+                  cantidad:
+                      tarea.pasajeros!['salida_economica']! +
+                      tarea.pasajeros!['transito_economica']! -
+                      tarea.pasajeros!['inadmitidos_economica']!,
+                ),
+              ),
+              Expanded(
+                child: _CustomPasajerosBox(
+                  clase: 'I',
+                  cantidad:
+                      tarea.pasajeros!['salida_infante']! +
+                      tarea.pasajeros!['transito_infante']! -
+                      tarea.pasajeros!['inadmitidos_infante']!,
+                ),
+              ),
+            ],
+          ),
+        ),
+      ],
+    );
+  }
+}
+
+class _LlegadaPasajerosView extends StatelessWidget {
+  const _LlegadaPasajerosView({required this.tarea});
+
+  final Tarea tarea;
+
+  @override
+  Widget build(BuildContext context) {
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+      children: [
+        // half width
+        Flexible(flex: 3, child: Text('Llegada:')),
+        Flexible(
+          flex: 6,
+          child: Row(
+            children: [
+              Expanded(
+                child: _CustomPasajerosBox(
+                  clase: 'C',
+                  cantidad: tarea.pasajeros!['llegada_ejecutivo']!,
+                ),
+              ),
+              Expanded(
+                child: _CustomPasajerosBox(
+                  clase: 'Y',
+                  cantidad: tarea.pasajeros!['llegada_economica']!,
+                ),
+              ),
+              Expanded(
+                child: _CustomPasajerosBox(
+                  clase: 'I',
+                  cantidad: tarea.pasajeros!['llegada_infante']!,
+                ),
+              ),
+            ],
+          ),
+        ),
+      ],
+    );
+  }
+}
+
+class _InadmitidosPasajerosView extends StatelessWidget {
+  const _InadmitidosPasajerosView({required this.tarea});
+
+  final Tarea tarea;
+
+  @override
+  Widget build(BuildContext context) {
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+      children: [
+        // half width
+        Flexible(flex: 3, child: Text('Inadmitidos:')),
+        Flexible(
+          flex: 6,
+          child: Row(
+            children: [
+              Expanded(
+                child: _CustomPasajerosBox(
+                  clase: 'C',
+                  cantidad: tarea.pasajeros!['inadmitidos_ejecutivo']!,
+                ),
+              ),
+              Expanded(
+                child: _CustomPasajerosBox(
+                  clase: 'Y',
+                  cantidad: tarea.pasajeros!['inadmitidos_economica']!,
+                ),
+              ),
+              Expanded(
+                child: _CustomPasajerosBox(
+                  clase: 'I',
+                  cantidad: tarea.pasajeros!['inadmitidos_infante']!,
+                ),
+              ),
+            ],
+          ),
+        ),
+      ],
+    );
+  }
+}
+
+class _TransitoPasajerosView extends StatelessWidget {
+  const _TransitoPasajerosView({required this.tarea});
+
+  final Tarea tarea;
+
+  @override
+  Widget build(BuildContext context) {
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+      children: [
+        // half width
+        Flexible(flex: 3, child: Text('Transito:')),
+        Flexible(
+          flex: 6,
+          child: Row(
+            children: [
+              Expanded(
+                child: _CustomPasajerosBox(
+                  clase: 'C',
+                  cantidad: tarea.pasajeros!['transito_ejecutivo']!,
+                ),
+              ),
+              Expanded(
+                child: _CustomPasajerosBox(
+                  clase: 'Y',
+                  cantidad: tarea.pasajeros!['transito_economica']!,
+                ),
+              ),
+              Expanded(
+                child: _CustomPasajerosBox(
+                  clase: 'I',
+                  cantidad: tarea.pasajeros!['transito_infante']!,
+                ),
+              ),
+            ],
+          ),
+        ),
+      ],
+    );
+  }
+}
+
+class _SalidaPasajeroView extends StatelessWidget {
+  const _SalidaPasajeroView({required this.tarea});
+
+  final Tarea tarea;
+
+  @override
+  Widget build(BuildContext context) {
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+      children: [
+        // half width
+        Flexible(flex: 3, child: Text('Salida:')),
+        Flexible(
+          flex: 6,
+          child: Row(
+            children: [
+              Expanded(
+                child: _CustomPasajerosBox(
+                  clase: 'C',
+                  cantidad: tarea.pasajeros!['salida_ejecutivo']!,
+                ),
+              ),
+              Expanded(
+                child: _CustomPasajerosBox(
+                  clase: 'Y',
+                  cantidad: tarea.pasajeros!['salida_economica']!,
+                ),
+              ),
+              Expanded(
+                child: _CustomPasajerosBox(
+                  clase: 'I',
+                  cantidad: tarea.pasajeros!['salida_infante']!,
+                ),
+              ),
+            ],
+          ),
+        ),
+      ],
+    );
+  }
+}
+
+class _CustomPasajerosBox extends StatelessWidget {
+  final String clase;
+  final int cantidad;
+  const _CustomPasajerosBox({required this.clase, required this.cantidad});
+
+  @override
+  Widget build(BuildContext context) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 5),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.center,
+        children: [
+          Text(clase),
+          ClipRRect(
+            borderRadius: BorderRadius.circular(10),
+            child: Container(
+              width: double.infinity,
+              height: 40,
+              decoration: BoxDecoration(color: Colors.grey.shade200),
+              child: Center(
+                child: Text(
+                  cantidad.toString(),
+                  style: Theme.of(
+                    context,
+                  ).textTheme.titleSmall?.copyWith(fontWeight: FontWeight.w600),
+                ),
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
   }
 }
 

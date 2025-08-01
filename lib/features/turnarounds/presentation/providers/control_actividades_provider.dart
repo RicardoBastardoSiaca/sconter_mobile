@@ -297,6 +297,26 @@ class ControlActividadesNotifier
       return SnackbarResponse(message: 'Ha ocurrido un error.', success: false);
     }
   }
+
+  Future<SnackbarResponse> savePasajeros(SavePasajerosRequest body) async {
+    try {
+      final response = await turnaroundsRepository.savePasajeros(body);
+      if (response.success) {
+        getControlDeActividadesByTrcId();
+        return SnackbarResponse(
+          message: 'Pasajeros registrados.',
+          success: true,
+        );
+      } else {
+        return SnackbarResponse(
+          message: 'Ha ocurrido un error.',
+          success: false,
+        );
+      }
+    } catch (e) {
+      return SnackbarResponse(message: 'Ha ocurrido un error.', success: false);
+    }
+  }
 }
 
 // State

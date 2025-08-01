@@ -521,3 +521,35 @@ class SetNumeroTareaRequest {
 
   SetNumeroTareaRequest({required this.id, required this.numero});
 }
+
+class SavePasajerosRequest {
+  int id;
+  int llegadaEjecutivo;
+  int llegadaEconomica;
+  int llegadaInfante;
+  int transitoEjecutivo;
+  int transitoEconomica;
+  int transitoInfante;
+  int salidaEjecutivo;
+  int salidaEconomica;
+  int salidaInfante;
+  int inadmitidosEjecutivo;
+  int inadmitidosEconomica;
+  int inadmitidosInfante;
+
+  SavePasajerosRequest({
+    required this.id,
+    required this.llegadaEjecutivo,
+    required this.llegadaEconomica,
+    required this.llegadaInfante,
+    required this.transitoEjecutivo,
+    required this.transitoEconomica,
+    required this.transitoInfante,
+    required this.salidaEjecutivo,
+    required this.salidaEconomica,
+    required this.salidaInfante,
+    required this.inadmitidosEjecutivo,
+    required this.inadmitidosEconomica,
+    required this.inadmitidosInfante,
+  });
+}

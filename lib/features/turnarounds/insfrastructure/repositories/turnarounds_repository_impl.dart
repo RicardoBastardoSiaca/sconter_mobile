@@ -98,4 +98,9 @@ class TurnaroundsRepositoryImpl extends TurnaroundsRepository {
   Future<SimpleApiResponse> setNumero(SetNumeroTareaRequest body) {
     return datasource.setNumero(body);
   }
+
+  @override
+  Future<SimpleApiResponse> savePasajeros(SavePasajerosRequest body) {
+    return datasource.savePasajeros(body);
+  }
 }

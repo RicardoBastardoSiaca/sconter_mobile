@@ -1,3 +1,25 @@
+
+modulos y Funcionalidades
+************************************************************************************************
+Servicios especiales
+Servicios adicionales
+Codigos de demora
+Cerrar vuelo
+
+
+
+Asignacion de maquinarias
+Tareas tipo maquinarias
+tareas tipo pasajeros
+tareas tipo cantidad
+tareas tipo comentario
+
+MISCELLANEOUS
+************************************************************************************************
+colocar indicador al final en pasajeros
+
+
+
 cambiar containers segun el status de trc
 DONE mostrar u ocultar opciones dependiendo del status de trc
 
