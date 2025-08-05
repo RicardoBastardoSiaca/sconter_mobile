@@ -4,6 +4,7 @@ import 'package:turnaround_mobile/features/turnarounds/domain/entities/control_a
 
 import '../../../shared/shared.dart';
 import '../providers/providers.dart';
+import 'widgets.dart';
 
 class PasajerosDialog extends ConsumerWidget {
   final Tarea tarea;
@@ -15,154 +16,204 @@ class PasajerosDialog extends ConsumerWidget {
     // PasajerosFormState pasajerosForm = ref
     //     .read(pasajerosFormProvider.notifier)
     //     .state;
-    return AlertDialog(
-      insetPadding: EdgeInsets.symmetric(horizontal: 2),
-      backgroundColor: Colors.white,
-      title: Text('Pasajeros'),
-      content: Builder(
-        builder: (context) {
-          // var height = MediaQuery.of(context).size.height;
-          var width = MediaQuery.of(context).size.width;
+    return Scaffold(
+      backgroundColor: Colors.transparent,
+      body: AlertDialog(
+        insetPadding: EdgeInsets.symmetric(horizontal: 2),
+        backgroundColor: Colors.white,
+        title: Text('Pasajeros'),
+        content: Builder(
+          builder: (BuildContext context) {
+            // var height = MediaQuery.of(context).size.height;
+            var width = MediaQuery.of(context).size.width;
 
-          return SizedBox(
-            // height: height * 0.5,
-            width: width * 0.8,
-            child: SingleChildScrollView(
-              child: Column(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  _LlegadaPasajerosView(tarea: tarea),
+            return SizedBox(
+              // height: height * 0.5,
+              width: width * 0.8,
+              child: SingleChildScrollView(
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    _LlegadaPasajerosView(tarea: tarea),
 
-                  const Divider(thickness: 1),
+                    const Divider(thickness: 1),
 
-                  _SalidaPasajerosView(tarea: tarea),
+                    _SalidaPasajerosView(tarea: tarea),
 
-                  SizedBox(height: 5),
+                    SizedBox(height: 5),
 
-                  _TransitoPasajerosView(tarea: tarea),
-                  SizedBox(height: 5),
+                    _TransitoPasajerosView(tarea: tarea),
+                    SizedBox(height: 5),
 
-                  _InadmitidosPasajerosView(tarea: tarea),
+                    _InadmitidosPasajerosView(tarea: tarea),
 
-                  // SizedBox(height: 5),
-                  const Divider(thickness: 1),
-                  // Pasajeros Input Form Field
-                ],
+                    // SizedBox(height: 5),
+                    const Divider(thickness: 1),
+
+                    _TotalPasajerosView(tarea: tarea),
+                    // Pasajeros Input Form Field
+                  ],
+                ),
+              ),
+            );
+          },
+        ),
+
+        actions: <Widget>[
+          FilledButton(
+            style: FilledButton.styleFrom(
+              // primary
+              backgroundColor: Colors.grey,
+              shape: const RoundedRectangleBorder(
+                borderRadius: BorderRadius.all(Radius.circular(30)),
               ),
             ),
-          );
-        },
-      ),
-
-      actions: <Widget>[
-        FilledButton(
-          style: FilledButton.styleFrom(
-            // primary
-            backgroundColor: Colors.grey,
-            shape: const RoundedRectangleBorder(
-              borderRadius: BorderRadius.all(Radius.circular(30)),
+            onPressed: () {
+              Navigator.pop(context);
+              // textController.clear();
+            },
+            child: Text(
+              'Salir',
+              style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
             ),
           ),
-          onPressed: () {
-            Navigator.pop(context);
-            // textController.clear();
-          },
-          child: Text(
-            'Salir',
-            style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+
+          CustomFilledButton(
+            text: 'Guardar',
+
+            // buttonColor: Colors.green,
+            onPressed: () async {
+              // validaciones
+              // if (!pasajerosForm.isValid) {
+              //   return;
+              // }
+
+              if (ref
+                      .watch(pasajerosFormProvider.notifier)
+                      .isTotalPassagersValid() ==
+                  false) {
+                // showErrorSnackbar on top of dialog
+
+                // ScaffoldMessenger.of(context).showSnackBar(
+                //   SnackBar(
+                //     // on top of dialog
+                //     // elevation: 1000,
+                //     behavior: SnackBarBehavior.floating,
+                //     content: const Text('snack'),
+                //     duration: const Duration(seconds: 2),
+                //     action: SnackBarAction(label: 'ACTION', onPressed: () {}),
+                //   ),
+                // );
+                CustomSnackbar.showErrorSnackbar(
+                  'Total de pasajeros no validos',
+                  context,
+                );
+                // final snackBar = SnackBar(
+                //   content: const Text('Total de pasajeros no validos'),
+                //   backgroundColor: Colors.red,
+                // );
+                // ScaffoldMessenger.of(context).showSnackBar(snackBar);
+                return;
+              }
+              // body
+              final SavePasajerosRequest body = SavePasajerosRequest(
+                id: tarea.pasajeros!['id']!,
+                llegadaEjecutivo: pasajerosForm.llegadaEjecutivo.value ?? 0,
+                llegadaEconomica: pasajerosForm.llegadaEconomica.value ?? 0,
+                llegadaInfante: pasajerosForm.llegadaInfante.value ?? 0,
+                transitoEjecutivo: pasajerosForm.transitoEjecutivo.value ?? 0,
+                transitoEconomica: pasajerosForm.transitoEconomica.value ?? 0,
+                transitoInfante: pasajerosForm.transitoInfante.value ?? 0,
+                salidaEjecutivo: pasajerosForm.salidaEjecutivo.value ?? 0,
+                salidaEconomica: pasajerosForm.salidaEconomica.value ?? 0,
+                salidaInfante: pasajerosForm.salidaInfante.value ?? 0,
+                inadmitidosEjecutivo:
+                    pasajerosForm.inadmitidosEjecutivo.value ?? 0,
+                inadmitidosEconomica:
+                    pasajerosForm.inadmitidosEconomica.value ?? 0,
+                inadmitidosInfante: pasajerosForm.inadmitidosInfante.value ?? 0,
+              );
+
+              final trcId = ref
+                  .read(selectedTurnaroundProvider.notifier)
+                  .state!
+                  .id;
+              final response = await ref
+                  .read(controlActividadesProvider(trcId).notifier)
+                  .savePasajeros(body);
+
+              // Show snackbar response
+              CustomSnackbar.showResponseSnackbar(
+                response.message,
+                response.success,
+                // ignore: use_build_context_synchronously
+                context,
+              );
+
+              Navigator.pop(context);
+            },
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+class _TotalPasajerosView extends ConsumerWidget {
+  final Tarea tarea;
+  const _TotalPasajerosView({required this.tarea});
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final pasajerosForm = ref.watch(pasajerosFormProvider);
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+      children: [
+        // half width
+        Flexible(flex: 3, child: Text('Total:')),
+        Flexible(
+          flex: 6,
+          child: Row(
+            children: [
+              Expanded(
+                child: PasajerosBoxContainer(
+                  clase: 'C',
+                  // total pasajeros = salida + transito - inadmitidos
+                  cantidad:
+                      pasajerosForm.salidaEjecutivo.value! +
+                      pasajerosForm.transitoEjecutivo.value! -
+                      pasajerosForm.inadmitidosEjecutivo.value!,
+                ),
+              ),
+              Expanded(
+                child: PasajerosBoxContainer(
+                  clase: 'Y',
+                  cantidad:
+                      pasajerosForm.salidaEconomica.value! +
+                      pasajerosForm.transitoEconomica.value! -
+                      pasajerosForm.inadmitidosEconomica.value!,
+                ),
+              ),
+              Expanded(
+                child: PasajerosBoxContainer(
+                  clase: 'I',
+                  cantidad:
+                      pasajerosForm.salidaInfante.value! +
+                      pasajerosForm.transitoInfante.value! -
+                      pasajerosForm.inadmitidosInfante.value!,
+                ),
+              ),
+            ],
           ),
         ),
-
-        CustomFilledButton(
-          text: 'Guardar 2',
-
-          // buttonColor: Colors.green,
-          onPressed: () async {
-            // body
-            final SavePasajerosRequest body = SavePasajerosRequest(
-              id: tarea.pasajeros!['id']!,
-              llegadaEjecutivo: pasajerosForm.llegadaEjecutivo.value ?? 0,
-              llegadaEconomica: pasajerosForm.llegadaEconomica.value ?? 0,
-              llegadaInfante: pasajerosForm.llegadaInfante.value ?? 0,
-              transitoEjecutivo: pasajerosForm.transitoEjecutivo.value ?? 0,
-              transitoEconomica: pasajerosForm.transitoEconomica.value ?? 0,
-              transitoInfante: pasajerosForm.transitoInfante.value ?? 0,
-              salidaEjecutivo: pasajerosForm.salidaEjecutivo.value ?? 0,
-              salidaEconomica: pasajerosForm.salidaEconomica.value ?? 0,
-              salidaInfante: pasajerosForm.salidaInfante.value ?? 0,
-              inadmitidosEjecutivo:
-                  pasajerosForm.inadmitidosEjecutivo.value ?? 0,
-              inadmitidosEconomica:
-                  pasajerosForm.inadmitidosEconomica.value ?? 0,
-              inadmitidosInfante: pasajerosForm.inadmitidosInfante.value ?? 0,
-            );
-
-            final trcId = ref
-                .read(selectedTurnaroundProvider.notifier)
-                .state!
-                .id;
-            final response = await ref
-                .read(controlActividadesProvider(trcId).notifier)
-                .savePasajeros(body);
-
-            // Show snackbar response
-            CustomSnackbar.showResponseSnackbar(
-              response.message,
-              response.success,
-              // ignore: use_build_context_synchronously
-              context,
-            );
-
-            Navigator.pop(context);
-
-            // final ComentarioRequest body = ComentarioRequest(
-            //   id: tarea.id,
-            //   comentario: textController.text,
-            // );
-
-            // print("Comentario: ${body.comentario}");
-            // final trcId = ref
-            //     .read(selectedTurnaroundProvider.notifier)
-            //     .state!
-            //     .id;
-            // final response = await ref
-            //     .read(controlActividadesProvider(trcId).notifier)
-            //     .setComentario(body);
-
-            // // Show snackbar response
-            // CustomSnackbar.showResponseSnackbar(
-            //   response.message,
-            //   response.success,
-            //   // ignore: use_build_context_synchronously
-            //   context,
-            // );
-
-            // Navigator.pop(context);
-            // textController.clear();
-          },
-        ),
-
-        // TextButton(
-        //   child: Text('Cancel'),
-        //   onPressed: () {
-        //     Navigator.of(context).pop(); // Close the dialog
-        //   },
-        // ),
-        // ElevatedButton(
-        //   child: Text('Submit'),
-        //   onPressed: () {
-        //     String submittedText = textController.text;
-        //     // Process the submitted text (e.g., save it, display it)
-        //     print('Submitted text: $submittedText');
-        //     Navigator.of(context).pop(); // Close the dialog
-        //     textController
-        //         .clear(); // Clear the text field after submission
-        //   },
-        // ),
       ],
     );
   }
 }
+
+// bool isValidForm(PasajerosFormState pasajerosForm) {
+//   return pasajerosForm.isValid;
+// }
 
 class _LlegadaPasajerosView extends ConsumerWidget {
   final Tarea tarea;
@@ -285,6 +336,10 @@ class _SalidaPasajerosView extends ConsumerWidget {
                     },
                     initialValue: tarea.pasajeros!['salida_ejecutivo']
                         .toString(),
+                    // initialValue: ref
+                    //     .watch(pasajerosFormProvider)
+                    //     .salidaEjecutivo
+                    //     .toString(),
                     // errorMessage: null
                     //                     onFieldSubmitted: (_) =>
                     // ref.read(loginFormProvider.notifier).onFormSubmit(),

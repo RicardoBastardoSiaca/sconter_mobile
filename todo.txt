@@ -1,11 +1,16 @@
 
 modulos y Funcionalidades
 ************************************************************************************************
+Tareas tipo limpieza
+Tareas tipo IT
+Tareas tipo texto
 Servicios especiales
 Servicios adicionales
 Codigos de demora
 Cerrar vuelo
-
+Usuarios 
+cerrar sesion
+Reportes
 
 
 Asignacion de maquinarias
@@ -17,6 +22,12 @@ tareas tipo comentario
 MISCELLANEOUS
 ************************************************************************************************
 colocar indicador al final en pasajeros
+
+Actualizar control de actividades al asignar la maquinaria a la tarea
+
+
+
+
 
 
 

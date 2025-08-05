@@ -300,35 +300,64 @@ class PasajerosFormNotifier extends StateNotifier<PasajerosFormState> {
 
   void setInitialValues(Tarea tarea) {
     state = state.copyWith(
-      inadmitidosEconomica: IntegerInput.dirty(
-        tarea.pasajeros!['inadmitidosEconomica'],
+      inadmitidosEconomica: IntegerInput.pure(
+        tarea.pasajeros!['inadmitidos_economica'],
       ),
-      inadmitidosEjecutivo: IntegerInput.dirty(
-        tarea.pasajeros!['inadmitidosEjecutivo'],
+      inadmitidosEjecutivo: IntegerInput.pure(
+        tarea.pasajeros!['inadmitidos_ejecutivo'],
       ),
-      inadmitidosInfante: IntegerInput.dirty(
-        tarea.pasajeros!['inadmitidosInfante'],
+      inadmitidosInfante: IntegerInput.pure(
+        tarea.pasajeros!['inadmitidos_infante'],
       ),
-      llegadaEconomica: IntegerInput.dirty(
-        tarea.pasajeros!['llegadaEconomica'],
+      llegadaEconomica: IntegerInput.pure(
+        tarea.pasajeros!['llegada_economica'],
       ),
-      llegadaEjecutivo: IntegerInput.dirty(
-        tarea.pasajeros!['llegadaEjecutivo'],
+      llegadaEjecutivo: IntegerInput.pure(
+        tarea.pasajeros!['llegada_ejecutivo'],
       ),
-      llegadaInfante: IntegerInput.dirty(tarea.pasajeros!['llegadaInfante']),
-      salidaEconomica: IntegerInput.dirty(tarea.pasajeros!['salidaEconomica']),
-      salidaEjecutivo: IntegerInput.dirty(tarea.pasajeros!['salidaEjecutivo']),
-      salidaInfante: IntegerInput.dirty(tarea.pasajeros!['salidaInfante']),
-      transitoEconomica: IntegerInput.dirty(
-        tarea.pasajeros!['transitoEconomica'],
+      llegadaInfante: IntegerInput.pure(tarea.pasajeros!['llegada_infante']),
+      salidaEconomica: IntegerInput.pure(tarea.pasajeros!['salida_economica']),
+      salidaEjecutivo: IntegerInput.pure(tarea.pasajeros!['salida_ejecutivo']),
+      salidaInfante: IntegerInput.pure(tarea.pasajeros!['salida_infante']),
+      transitoEconomica: IntegerInput.pure(
+        tarea.pasajeros!['transito_economica'],
       ),
-      transitoEjecutivo: IntegerInput.dirty(
-        tarea.pasajeros!['transitoEjecutivo'],
+      transitoEjecutivo: IntegerInput.pure(
+        tarea.pasajeros!['transito_ejecutivo'],
       ),
-      transitoInfante: IntegerInput.dirty(tarea.pasajeros!['transitoInfante']),
+      transitoInfante: IntegerInput.pure(tarea.pasajeros!['transito_infante']),
+
+      isPosting: false,
+      isFormPosted: false,
+      isValid: false,
     );
+    // print state
+    print(state);
+  }
+
+  bool isTotalPassagersValid() {
+    bool ejecutivo =
+        (state.llegadaEjecutivo.value! +
+            state.transitoEjecutivo.value! -
+            state.inadmitidosEjecutivo.value!) >
+        0;
+    bool economica =
+        (state.llegadaEconomica.value! +
+            state.transitoEconomica.value! -
+            state.inadmitidosEconomica.value!) >
+        0;
+    bool infante =
+        (state.llegadaInfante.value! +
+            state.transitoInfante.value! -
+            state.inadmitidosInfante.value!) >
+        0;
+
+    //     0;
+    return ejecutivo && economica && infante;
   }
 }
+
+// Validate Funtion to cehck total passagers is a positive number, if the form id (Salida + transito - inadmitidos > 0  )
 
 // State
 class PasajerosFormState {

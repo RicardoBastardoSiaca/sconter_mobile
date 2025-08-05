@@ -52,7 +52,7 @@ class PasajerosInputFormField extends StatelessWidget {
             // ],
             // controller: controller
             textAlign: TextAlign.end,
-            initialValue: '0',
+            initialValue: initialValue,
             onChanged: onChanged,
             keyboardType: TextInputType.number,
             // Set cursor at the end of the text on tap

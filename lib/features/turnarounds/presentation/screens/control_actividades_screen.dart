@@ -1541,11 +1541,20 @@ class _TareaPasajerosView extends ConsumerWidget {
     return GestureDetector(
       onTap: () async {
         // Open pasajeros dialog
+        // Set the initial values of the form fields in the provider
+        // sets state to initial values
+
         ref.read(pasajerosFormProvider.notifier).setInitialValues(tarea);
+
+        // print(ref.read(pasajerosFormProvider));
+        // get pasajerosFormProvider state
+
         showDialog(
+          // useRootNavigator: false, // to remove the dialog from the stack
           context: context,
-          builder: (context) {
-            // Set the initial values of the form fields
+          builder: (BuildContext context) {
+            // ref.read(pasajerosFormProvider.notifier).setInitialValues(tarea);
+
             return PasajerosDialog(tarea: tarea);
           },
         );
@@ -1602,7 +1611,7 @@ class _TotalPasajerosView extends StatelessWidget {
           child: Row(
             children: [
               Expanded(
-                child: _CustomPasajerosBox(
+                child: PasajerosBoxContainer(
                   clase: 'C',
                   // total pasajeros = salida + transito - inadmitidos
                   cantidad:
@@ -1612,7 +1621,7 @@ class _TotalPasajerosView extends StatelessWidget {
                 ),
               ),
               Expanded(
-                child: _CustomPasajerosBox(
+                child: PasajerosBoxContainer(
                   clase: 'Y',
                   cantidad:
                       tarea.pasajeros!['salida_economica']! +
@@ -1621,7 +1630,7 @@ class _TotalPasajerosView extends StatelessWidget {
                 ),
               ),
               Expanded(
-                child: _CustomPasajerosBox(
+                child: PasajerosBoxContainer(
                   clase: 'I',
                   cantidad:
                       tarea.pasajeros!['salida_infante']! +
@@ -1654,19 +1663,19 @@ class _LlegadaPasajerosView extends StatelessWidget {
           child: Row(
             children: [
               Expanded(
-                child: _CustomPasajerosBox(
+                child: PasajerosBoxContainer(
                   clase: 'C',
                   cantidad: tarea.pasajeros!['llegada_ejecutivo']!,
                 ),
               ),
               Expanded(
-                child: _CustomPasajerosBox(
+                child: PasajerosBoxContainer(
                   clase: 'Y',
                   cantidad: tarea.pasajeros!['llegada_economica']!,
                 ),
               ),
               Expanded(
-                child: _CustomPasajerosBox(
+                child: PasajerosBoxContainer(
                   clase: 'I',
                   cantidad: tarea.pasajeros!['llegada_infante']!,
                 ),
@@ -1696,19 +1705,19 @@ class _InadmitidosPasajerosView extends StatelessWidget {
           child: Row(
             children: [
               Expanded(
-                child: _CustomPasajerosBox(
+                child: PasajerosBoxContainer(
                   clase: 'C',
                   cantidad: tarea.pasajeros!['inadmitidos_ejecutivo']!,
                 ),
               ),
               Expanded(
-                child: _CustomPasajerosBox(
+                child: PasajerosBoxContainer(
                   clase: 'Y',
                   cantidad: tarea.pasajeros!['inadmitidos_economica']!,
                 ),
               ),
               Expanded(
-                child: _CustomPasajerosBox(
+                child: PasajerosBoxContainer(
                   clase: 'I',
                   cantidad: tarea.pasajeros!['inadmitidos_infante']!,
                 ),
@@ -1738,19 +1747,19 @@ class _TransitoPasajerosView extends StatelessWidget {
           child: Row(
             children: [
               Expanded(
-                child: _CustomPasajerosBox(
+                child: PasajerosBoxContainer(
                   clase: 'C',
                   cantidad: tarea.pasajeros!['transito_ejecutivo']!,
                 ),
               ),
               Expanded(
-                child: _CustomPasajerosBox(
+                child: PasajerosBoxContainer(
                   clase: 'Y',
                   cantidad: tarea.pasajeros!['transito_economica']!,
                 ),
               ),
               Expanded(
-                child: _CustomPasajerosBox(
+                child: PasajerosBoxContainer(
                   clase: 'I',
                   cantidad: tarea.pasajeros!['transito_infante']!,
                 ),
@@ -1780,19 +1789,19 @@ class _SalidaPasajeroView extends StatelessWidget {
           child: Row(
             children: [
               Expanded(
-                child: _CustomPasajerosBox(
+                child: PasajerosBoxContainer(
                   clase: 'C',
                   cantidad: tarea.pasajeros!['salida_ejecutivo']!,
                 ),
               ),
               Expanded(
-                child: _CustomPasajerosBox(
+                child: PasajerosBoxContainer(
                   clase: 'Y',
                   cantidad: tarea.pasajeros!['salida_economica']!,
                 ),
               ),
               Expanded(
-                child: _CustomPasajerosBox(
+                child: PasajerosBoxContainer(
                   clase: 'I',
                   cantidad: tarea.pasajeros!['salida_infante']!,
                 ),
@@ -1801,41 +1810,6 @@ class _SalidaPasajeroView extends StatelessWidget {
           ),
         ),
       ],
-    );
-  }
-}
-
-class _CustomPasajerosBox extends StatelessWidget {
-  final String clase;
-  final int cantidad;
-  const _CustomPasajerosBox({required this.clase, required this.cantidad});
-
-  @override
-  Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 5),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.center,
-        children: [
-          Text(clase),
-          ClipRRect(
-            borderRadius: BorderRadius.circular(10),
-            child: Container(
-              width: double.infinity,
-              height: 40,
-              decoration: BoxDecoration(color: Colors.grey.shade200),
-              child: Center(
-                child: Text(
-                  cantidad.toString(),
-                  style: Theme.of(
-                    context,
-                  ).textTheme.titleSmall?.copyWith(fontWeight: FontWeight.w600),
-                ),
-              ),
-            ),
-          ),
-        ],
-      ),
     );
   }
 }

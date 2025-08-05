@@ -22,6 +22,7 @@ class CustomSnackbar {
 
   static void showErrorSnackbar(String message, BuildContext context) {
     final snackBar = SnackBar(
+      // duration: const Duration(seconds: 2),
       content: Text(message),
       backgroundColor: Colors.red,
     );
@@ -30,6 +31,7 @@ class CustomSnackbar {
 
   static void showSuccessSnackbar(String message, BuildContext context) {
     final snackBar = SnackBar(
+      // duration: const Duration(seconds: 2),
       content: Text(message),
       backgroundColor: Colors.green,
     );
