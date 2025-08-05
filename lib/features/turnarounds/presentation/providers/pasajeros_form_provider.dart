@@ -339,17 +339,17 @@ class PasajerosFormNotifier extends StateNotifier<PasajerosFormState> {
     bool ejecutivo =
         (state.llegadaEjecutivo.value! +
             state.transitoEjecutivo.value! -
-            state.inadmitidosEjecutivo.value!) >
+            state.inadmitidosEjecutivo.value!) >=
         0;
     bool economica =
         (state.llegadaEconomica.value! +
             state.transitoEconomica.value! -
-            state.inadmitidosEconomica.value!) >
+            state.inadmitidosEconomica.value!) >=
         0;
     bool infante =
         (state.llegadaInfante.value! +
             state.transitoInfante.value! -
-            state.inadmitidosInfante.value!) >
+            state.inadmitidosInfante.value!) >=
         0;
 
     //     0;
