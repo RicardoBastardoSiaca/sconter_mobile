@@ -12,6 +12,7 @@ class PasajerosDialog extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    final turnaround = ref.watch(selectedTurnaroundProvider);
     var pasajerosForm = ref.watch(pasajerosFormProvider);
     // PasajerosFormState pasajerosForm = ref
     //     .read(pasajerosFormProvider.notifier)
@@ -34,23 +35,32 @@ class PasajerosDialog extends ConsumerWidget {
                 child: Column(
                   mainAxisSize: MainAxisSize.min,
                   children: [
-                    _LlegadaPasajerosView(tarea: tarea),
+                    if (turnaround?.fkVuelo.tipoServicio.id != 3)
+                      _LlegadaPasajerosView(tarea: tarea),
 
                     const Divider(thickness: 1),
 
-                    _SalidaPasajerosView(tarea: tarea),
+                    if (turnaround?.fkVuelo.tipoServicio.id != 4)
+                      _SalidaPasajerosView(tarea: tarea),
 
-                    SizedBox(height: 5),
+                    if (turnaround?.fkVuelo.tipoServicio.id != 4)
+                      SizedBox(height: 5),
 
-                    _TransitoPasajerosView(tarea: tarea),
-                    SizedBox(height: 5),
+                    if (turnaround?.fkVuelo.tipoServicio.id != 4)
+                      _TransitoPasajerosView(tarea: tarea),
 
-                    _InadmitidosPasajerosView(tarea: tarea),
+                    if (turnaround?.fkVuelo.tipoServicio.id != 4)
+                      SizedBox(height: 5),
+
+                    if (turnaround?.fkVuelo.tipoServicio.id != 4)
+                      _InadmitidosPasajerosView(tarea: tarea),
 
                     // SizedBox(height: 5),
-                    const Divider(thickness: 1),
+                    if (turnaround?.fkVuelo.tipoServicio.id != 4)
+                      const Divider(thickness: 1),
 
-                    _TotalPasajerosView(tarea: tarea),
+                    if (turnaround?.fkVuelo.tipoServicio.id != 4)
+                      _TotalPasajerosView(tarea: tarea),
                     // Pasajeros Input Form Field
                   ],
                 ),

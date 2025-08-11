@@ -52,6 +52,24 @@ final goRouterProvider = Provider((ref) {
         path: '/asignar-equipos-gse-control-actividades',
         builder: (context, state) => AsignarEquiposGseControlActividades(),
       ),
+      GoRoute(
+        path: '/servicios-adicionales-screen',
+        builder: (context, state) => ServiciosAdicionalesScreen(),
+      ),
+      GoRoute(
+        path: '/asignar-equipos-gse-servicios-adicionales-especiales',
+        builder: (context, state) =>
+            AsignarEquiposGseServiciosAdicionalesEspeciales(),
+      ),
+      GoRoute(
+        path: '/asignar-equipos-gse-servicios-control-actividades',
+        builder: (context, state) {
+          // extra data
+          final Map<String, dynamic>? data =
+              state.extra as Map<String, dynamic>?;
+          return AsignarEquiposGseServiciosControlActividades(data);
+        },
+      ),
     ],
 
     // state.params ahora es state.pathParameters

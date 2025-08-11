@@ -6,7 +6,11 @@ class CustomSnackbar {
     ScaffoldMessenger.of(context).showSnackBar(snackBar);
   }
 
-  static void showLoadingSnackbar(String message, BuildContext context) {
+  static void showLoadingSnackbar(
+    String message,
+    BuildContext context, {
+    bool isFixed = false,
+  }) {
     final snackBar = SnackBar(
       content: Row(
         children: [
@@ -16,24 +20,35 @@ class CustomSnackbar {
         ],
       ),
       duration: Duration(days: 1), // Keep it visible until dismissed
+      behavior: isFixed ? SnackBarBehavior.fixed : SnackBarBehavior.floating,
     );
     ScaffoldMessenger.of(context).showSnackBar(snackBar);
   }
 
-  static void showErrorSnackbar(String message, BuildContext context) {
+  static void showErrorSnackbar(
+    String message,
+    BuildContext context, {
+    bool isFixed = false,
+  }) {
     final snackBar = SnackBar(
       // duration: const Duration(seconds: 2),
       content: Text(message),
       backgroundColor: Colors.red,
+      behavior: isFixed ? SnackBarBehavior.fixed : SnackBarBehavior.floating,
     );
     ScaffoldMessenger.of(context).showSnackBar(snackBar);
   }
 
-  static void showSuccessSnackbar(String message, BuildContext context) {
+  static void showSuccessSnackbar(
+    String message,
+    BuildContext context, {
+    bool isFixed = false,
+  }) {
     final snackBar = SnackBar(
       // duration: const Duration(seconds: 2),
       content: Text(message),
       backgroundColor: Colors.green,
+      behavior: isFixed ? SnackBarBehavior.fixed : SnackBarBehavior.floating,
     );
     ScaffoldMessenger.of(context).showSnackBar(snackBar);
   }
@@ -46,15 +61,16 @@ class CustomSnackbar {
   static void showResponseSnackbar(
     String message,
     bool success,
-    BuildContext context,
-  ) {
+    BuildContext context, {
+    bool isFixed = false,
+  }) {
     final snackBar = SnackBar(
       duration: const Duration(seconds: 5),
       padding: const EdgeInsets.all(25),
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
       // margin: const EdgeInsets.all(15),
-      behavior: SnackBarBehavior.floating,
-      elevation: 100,
+      behavior: isFixed ? SnackBarBehavior.fixed : SnackBarBehavior.floating,
+      elevation: 2,
       // Message content with a conditional icon based on success
       // content: Row(
       //   mainAxisAlignment: MainAxisAlignment.center,

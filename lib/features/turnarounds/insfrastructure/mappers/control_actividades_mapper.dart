@@ -139,8 +139,12 @@ class ControlActividadesMapper {
       titulo: json["titulo"],
       tipoId: json["tipo_id"],
       servicioId: json["servicio_id"],
-      horaInicio: DateTime.parse(json["hora_inicio"]),
-      horaFin: DateTime.parse(json["hora_fin"]),
+      horaInicio: json["hora_inicio"] == null
+          ? null
+          : DateTime.parse(json["hora_inicio"]),
+      horaFin: json["hora_fin"] == null
+          ? null
+          : DateTime.parse(json["hora_fin"]),
       cantidad: json["cantidad"],
       comentario: json["comentario"],
       estatus: json["estatus"],
@@ -158,8 +162,12 @@ class ControlActividadesMapper {
       maquinariaId: json["maquinaria_id"],
       maquinariaIdentificador: json["maquinaria_identificador"],
       maquinariaModelo: json["maquinaria_modelo"],
-      horaInicio: DateTime.parse(json["hora_inicio"]),
-      horaFin: DateTime.parse(json["hora_fin"]),
+      horaInicio: json["hora_inicio"] == null
+          ? null
+          : DateTime.parse(json["hora_inicio"]),
+      horaFin: json["hora_fin"] == null
+          ? null
+          : DateTime.parse(json["hora_fin"]),
     );
   }
 }

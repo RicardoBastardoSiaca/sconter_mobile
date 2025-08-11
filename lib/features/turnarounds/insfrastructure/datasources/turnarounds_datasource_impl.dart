@@ -1,4 +1,5 @@
 import 'package:dio/dio.dart';
+import 'package:intl/intl.dart';
 import 'package:turnaround_mobile/config/constants/environment.dart';
 import 'package:turnaround_mobile/features/shared/shared.dart';
 
@@ -438,6 +439,131 @@ class TurnaroundsDatasourceImpl implements TurnaroundsDatasource {
           } else {
             return SimpleApiResponse(
               message: 'Error al actualizar pasajeros.',
+              success: false,
+            );
+          }
+        });
+  }
+
+  @override
+  Future<List<CategoriaServicioAdicional>> getServiciosAdicionales() {
+    return dio.get('/servicios_adicionales/?token=$accessToken').then((
+      response,
+    ) {
+      print('Response from getServiciosAdicionales: $response');
+      if (response.statusCode == 200) {
+        // mapping to CategoriasServiciosAdicionalesMapper map
+        final List<CategoriaServicioAdicional> serviciosAdicionales =
+            CategoriasServiciosAdicionalesMapper.mapJsonListToCategoriasServiciosAdicionales(
+              response.data,
+            );
+        return serviciosAdicionales;
+      } else {
+        return [];
+      }
+    });
+  }
+
+  @override
+  Future<SimpleApiResponse> saveServiciosAdicionales(
+    ServiciosAdicionalRequest body,
+  ) {
+    final requestBody = {
+      'ids_nuevos': body.ids_nuevos,
+      'ids_eliminados': body.ids_eliminados,
+      'turnaround': body.turnaround,
+    };
+    return dio
+        .post(
+          '/servicios_adicionales/servicios_trc/?token=$accessToken',
+          data: requestBody,
+        )
+        .then((response) {
+          print('Response from saveServiciosAdicionales: $response');
+          if (response.statusCode == 201) {
+            return SimpleApiResponse(
+              message: 'Servicios adicionales agregados.',
+              success: true,
+            );
+          } else {
+            return SimpleApiResponse(
+              message: 'Error al agregar los servicios.',
+              success: false,
+            );
+          }
+        });
+  }
+
+  @override
+  Future<SimpleApiResponse> setHoraInicioServicioAdicional(
+    SetHoraServicioAdicionalRequest body,
+  ) {
+    final requestBody = {
+      'id': body.id,
+      // get time from DateTime. Return '2025-08-08T22:30:16.306Z'
+      'hora_inicio':
+          '${DateFormat('yyyy-MM-ddTHH:mm:ss.SSSZ').format(body.horaInicio!)}Z',
+      // 'hora_inicio': body.horaInicio,
+      // 'hora_fin': body.horaFin,
+      'tipo': body.tipo,
+    };
+
+    // {'hora_inicio': '2025-08-08T22:40:55.830Z', 'id': 24, 'tipo': 'Hora de Inicio'}
+    return dio
+        .post(
+          '/servicios_adicionales/horainiciofin/?token=$accessToken',
+          data: requestBody,
+        )
+        .then((response) {
+          print('Response from setHoraInicioFinServicioAdicional: $response');
+          if (response.statusCode == 201) {
+            return SimpleApiResponse(
+              message: 'Hora registrada.',
+              success: true,
+            );
+          } else {
+            return SimpleApiResponse(
+              message: 'Error al registrar hora.',
+              success: false,
+            );
+          }
+        })
+        .catchError((error) {
+          print('Error from setHoraInicioFinServicioAdicional: $error');
+          return SimpleApiResponse(
+            message: 'Error al registrar hora.',
+            success: false,
+          );
+        });
+  }
+
+  @override
+  Future<SimpleApiResponse> setHoraFinServicioAdicional(
+    SetHoraServicioAdicionalRequest body,
+  ) {
+    final requestBody = {
+      'id': body.id,
+      // 'hora_inicio': body.horaInicio,
+      'hora_fin':
+          '${DateFormat('yyyy-MM-ddTHH:mm:ss.SSSZ').format(body.horaFin!)}Z',
+      'tipo': body.tipo,
+    };
+
+    return dio
+        .post(
+          '/servicios_adicionales/horainiciofin/?token=$accessToken',
+          data: requestBody,
+        )
+        .then((response) {
+          print('Response from setHoraInicioFinServicioAdicional: $response');
+          if (response.statusCode == 201) {
+            return SimpleApiResponse(
+              message: 'Hora registrada.',
+              success: true,
+            );
+          } else {
+            return SimpleApiResponse(
+              message: 'Error al registrar hora.',
               success: false,
             );
           }

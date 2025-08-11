@@ -103,4 +103,30 @@ class TurnaroundsRepositoryImpl extends TurnaroundsRepository {
   Future<SimpleApiResponse> savePasajeros(SavePasajerosRequest body) {
     return datasource.savePasajeros(body);
   }
+
+  @override
+  Future<List<CategoriaServicioAdicional>> getServiciosAdicionales() {
+    return datasource.getServiciosAdicionales();
+  }
+
+  @override
+  Future<SimpleApiResponse> saveServiciosAdicionales(
+    ServiciosAdicionalRequest body,
+  ) {
+    return datasource.saveServiciosAdicionales(body);
+  }
+
+  @override
+  Future<SimpleApiResponse> setHoraInicioServicioAdicional(
+    SetHoraServicioAdicionalRequest body,
+  ) {
+    return datasource.setHoraInicioServicioAdicional(body);
+  }
+
+  @override
+  Future<SimpleApiResponse> setHoraFinServicioAdicional(
+    SetHoraServicioAdicionalRequest body,
+  ) {
+    return datasource.setHoraFinServicioAdicional(body);
+  }
 }

@@ -377,8 +377,8 @@ class ServiciosAle {
   String titulo;
   int tipoId;
   int servicioId;
-  DateTime horaInicio;
-  DateTime horaFin;
+  DateTime? horaInicio;
+  DateTime? horaFin;
   int? cantidad;
   String? comentario;
   int estatus;
@@ -406,8 +406,10 @@ class ServiciosAle {
     titulo: json["titulo"],
     tipoId: json["tipo_id"],
     servicioId: json["servicio_id"],
-    horaInicio: DateTime.parse(json["hora_inicio"]),
-    horaFin: DateTime.parse(json["hora_fin"]),
+    horaInicio: json["hora_inicio"] == null
+        ? null
+        : DateTime.parse(json["hora_inicio"]),
+    horaFin: json["hora_fin"] == null ? null : DateTime.parse(json["hora_fin"]),
     cantidad: json["cantidad"],
     comentario: json["comentario"],
     estatus: json["estatus"],
@@ -418,20 +420,20 @@ class ServiciosAle {
     ),
   );
 
-  Map<String, dynamic> toJson() => {
-    "id": id,
-    "titulo": titulo,
-    "tipo_id": tipoId,
-    "servicio_id": servicioId,
-    "hora_inicio": horaInicio.toIso8601String(),
-    "hora_fin": horaFin.toIso8601String(),
-    "cantidad": cantidad,
-    "comentario": comentario,
-    "estatus": estatus,
-    "fk_turnaround_id": fkTurnaroundId,
-    "imagen": List<dynamic>.from((imagen ?? []).map((x) => x)),
-    "maquinaria": List<dynamic>.from(maquinaria.map((x) => x.toJson())),
-  };
+  // Map<String, dynamic> toJson() => {
+  //   "id": id,
+  //   "titulo": titulo,
+  //   "tipo_id": tipoId,
+  //   "servicio_id": servicioId,
+  //   "hora_inicio": horaInicio?.toIso8601String(),
+  //   "hora_fin": horaFin?.toIso8601String(),
+  //   "cantidad": cantidad,
+  //   "comentario": comentario,
+  //   "estatus": estatus,
+  //   "fk_turnaround_id": fkTurnaroundId,
+  //   "imagen": List<dynamic>.from((imagen ?? []).map((x) => x)),
+  //   "maquinaria": List<dynamic>.from(maquinaria.map((x) => x.toJson())),
+  // };
 }
 
 class Maquinaria {
@@ -439,8 +441,8 @@ class Maquinaria {
   int maquinariaId;
   String maquinariaIdentificador;
   String maquinariaModelo;
-  DateTime horaInicio;
-  DateTime horaFin;
+  DateTime? horaInicio;
+  DateTime? horaFin;
 
   Maquinaria({
     required this.id,
@@ -456,8 +458,10 @@ class Maquinaria {
     maquinariaId: json["maquinaria_id"],
     maquinariaIdentificador: json["maquinaria_identificador"],
     maquinariaModelo: json["maquinaria_modelo"],
-    horaInicio: DateTime.parse(json["hora_inicio"]),
-    horaFin: DateTime.parse(json["hora_fin"]),
+    horaInicio: json["hora_inicio"] == null
+        ? null
+        : DateTime.parse(json["hora_inicio"]),
+    horaFin: json["hora_fin"] == null ? null : DateTime.parse(json["hora_fin"]),
   );
 
   Map<String, dynamic> toJson() => {
@@ -465,8 +469,8 @@ class Maquinaria {
     "maquinaria_id": maquinariaId,
     "maquinaria_identificador": maquinariaIdentificador,
     "maquinaria_modelo": maquinariaModelo,
-    "hora_inicio": horaInicio.toIso8601String(),
-    "hora_fin": horaFin.toIso8601String(),
+    "hora_inicio": horaInicio?.toIso8601String(),
+    "hora_fin": horaFin?.toIso8601String(),
   };
 }
 

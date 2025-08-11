@@ -5,8 +5,12 @@ import '../../../shared/shared.dart';
 import '../../domain/entities/entities.dart';
 import '../providers/providers.dart';
 
-class AsignarEquiposGseControlActividades extends ConsumerWidget {
-  const AsignarEquiposGseControlActividades({super.key});
+class AsignarEquiposGseServiciosControlActividades extends ConsumerWidget {
+  const AsignarEquiposGseServiciosControlActividades(
+    Map<String, dynamic>? data, {
+    // YA TENGO LA DATA EXTRA
+    super.key,
+  });
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -87,6 +91,11 @@ class _AsignarEquiposGseViewState
     super.initState();
     // getCategoriasEquiposGse
     // ref.read(categoriasEquiposGseProvider.notifier).getCategoriasEquiposGse();
+
+    // Maquinarias asignadas a servicios adicionales
+    // El servico adicional seleccionado
+    // turnaround
+    // tipo de asignacion
 
     categoriasAux =
         ref.read(categoriasEquiposGseProvider).categoriasEquiposGseResponse !=

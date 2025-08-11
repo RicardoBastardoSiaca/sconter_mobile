@@ -3,31 +3,26 @@ import 'package:formz/formz.dart';
 import '../../../shared/shared.dart';
 import 'auth_provider.dart';
 
-
 // ! 3 - StateNotifierProvider
-final loginFormProvider = StateNotifierProvider.autoDispose<LoginFormNotifier, LoginFormState>((ref) {
-  
-  final loginCallback = ref.watch(authProvider.notifier).loginUser;
-  
-  return LoginFormNotifier(
-    loginUserCallback: loginCallback
-  );
-});
+final loginFormProvider =
+    StateNotifierProvider.autoDispose<LoginFormNotifier, LoginFormState>((ref) {
+      final loginCallback = ref.watch(authProvider.notifier).loginUser;
+
+      return LoginFormNotifier(loginUserCallback: loginCallback);
+    });
 
 // ! 2 - Como implementramos un notifier
 class LoginFormNotifier extends StateNotifier<LoginFormState> {
-
   final Function(String, String) loginUserCallback;
-  
-  LoginFormNotifier({
-    required this.loginUserCallback
-  }): super( LoginFormState() );
+
+  LoginFormNotifier({required this.loginUserCallback})
+    : super(LoginFormState());
 
   onEmailChanged(String value) {
     final newEmail = Email.dirty(value);
     state = state.copyWith(
       email: newEmail,
-      isValid: Formz.validate([ newEmail, state.password ]),
+      isValid: Formz.validate([newEmail, state.password]),
     );
   }
 
@@ -35,27 +30,29 @@ class LoginFormNotifier extends StateNotifier<LoginFormState> {
     final newPassword = Password.dirty(value);
     state = state.copyWith(
       password: newPassword,
-      isValid: Formz.validate([ newPassword, state.email ]),
+      isValid: Formz.validate([newPassword, state.email]),
     );
   }
-  
+
   onFormSubmit() async {
     _touchEveryField();
-    if( !state.isValid){ return ; }
+    if (!state.isValid) {
+      return;
+    }
     state = state.copyWith(isPosting: true);
-    // print(state);
-    await loginUserCallback( state.email.value, state.password.value );
+    // print('state: $state');
+    await loginUserCallback(state.email.value, state.password.value);
     state = state.copyWith(isPosting: false);
   }
 
-  _touchEveryField(){
+  _touchEveryField() {
     final email = Email.dirty(state.email.value);
     final password = Password.dirty(state.password.value);
     state = state.copyWith(
       isFormPosted: true,
       email: email,
       password: password,
-      isValid: Formz.validate([ email, password ]),
+      isValid: Formz.validate([email, password]),
     );
   }
 }
@@ -69,13 +66,12 @@ class LoginFormState {
   final Password password;
 
   LoginFormState({
-    this.isPosting = false, 
-    this.isFormPosted = false, 
-    this.isValid = false, 
-    this.email = const Email.pure(), 
+    this.isPosting = false,
+    this.isFormPosted = false,
+    this.isValid = false,
+    this.email = const Email.pure(),
     this.password = const Password.pure(),
-    });
-
+  });
 
   LoginFormState copyWith({
     bool? isPosting,
@@ -103,7 +99,3 @@ class LoginFormState {
         ''';
   }
 }
-
-
-
-

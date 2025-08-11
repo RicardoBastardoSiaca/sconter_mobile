@@ -1,6 +1,8 @@
 import 'package:carousel_slider/carousel_slider.dart';
+import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_expandable_fab/flutter_expandable_fab.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:go_router/go_router.dart';
@@ -16,35 +18,231 @@ import '../widgets/widgets.dart';
 
 // helpers
 
-class ControlActividadesScreen extends ConsumerWidget {
+class ControlActividadesScreen extends ConsumerStatefulWidget {
   final int trcId;
-  const ControlActividadesScreen({super.key, required this.trcId})
-    : super(
-        // getControlActividades
-      );
+  const ControlActividadesScreen({super.key, required this.trcId});
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
+  ConsumerState<ControlActividadesScreen> createState() =>
+      _ControlActividadesScreenState();
+}
+
+class _ControlActividadesScreenState
+    extends ConsumerState<ControlActividadesScreen> {
+  final key = GlobalKey<ExpandableFabState>();
+  @override
+  Widget build(BuildContext context) {
     // Color
     final Color primaryColor = Theme.of(context).colorScheme.primary;
 
-    // Control de actividades state
-    final controlActividadesState = ref.watch(
-      controlActividadesProvider(trcId),
-    );
-    final controlActividades = ref
-        .watch(controlActividadesProvider(trcId))
+    final ControlActividades? controlActividades = ref
+        .watch(controlActividadesProvider(widget.trcId))
         .controlActividades;
-    // var controlActividades = controlActividadesState.controlActividades;
 
     return DefaultTabController(
       length: controlActividades?.departamentos?.length ?? 0,
       child: Scaffold(
+        // floatingActionButton: FloatingActionButton(
+        //   onPressed: () {
+        //     // Add your menu button logic here
+        //     print('Menu button pressed!');
+        //   },
+        //   child: Icon(Icons.menu),
+        // ),
+        floatingActionButtonLocation: ExpandableFab.location,
+        floatingActionButton: ExpandableFab(
+          // Change icon
+          // child: const Icon(Icons.add, size: 40.0),
+          //   openButton: FloatingActionButton(
+          //   child: const Icon(Icons.add, size: 40.0), // Main FAB icon size
+          //   onPressed: () {},
+          // ),
+          openButtonBuilder: RotateFloatingActionButtonBuilder(
+            child: const Icon(Icons.add), // Your custom icon
+            fabSize: ExpandableFabSize.regular,
+            foregroundColor: Colors.white,
+            backgroundColor: Colors.grey.shade500,
+            shape: const CircleBorder(),
+            angle: 3.14 * 2, // Rotate a full circle
+            elevation: 10,
+          ),
+          closeButtonBuilder: RotateFloatingActionButtonBuilder(
+            child: const Icon(Icons.close), // Your custom icon
+            fabSize: ExpandableFabSize.small,
+            foregroundColor: Colors.white,
+            backgroundColor: Colors.grey.shade500,
+            shape: const CircleBorder(),
+            angle: 3.14 * 2, // Rotate a full circle
+            elevation: 10,
+          ),
+          //   heroTag: null,
+          //   // backgroundColor: primaryColor, // Main FAB icon size
+          //   onPressed: openController,
+          //   child: const Icon(Icons.add, size: 40.0),
+          // ),
+          // )
+          key: key,
+          type: ExpandableFabType.up,
+          childrenAnimation: ExpandableFabAnimation.none,
+          distance: 50,
+
+          overlayStyle: ExpandableFabOverlayStyle(
+            // color: Colors.black.withValues(alpha: 0.1),
+            color: Colors.white.withValues(alpha: 0.8),
+            blur: 5,
+          ),
+          onOpen: () {
+            debugPrint('onOpen');
+          },
+          afterOpen: () {
+            debugPrint('afterOpen');
+          },
+          onClose: () {
+            debugPrint('onClose');
+          },
+          afterClose: () {
+            debugPrint('afterClose');
+          },
+          // overlayStyle: ExpandableFabOverlayStyle(
+          //   color: Colors.white.withOpacity(0.9),
+          // ),
+          children: [
+            // SizedBox(height: 0.2),
+            Row(
+              children: [
+                Text(
+                  'Firma del Supervisor',
+                  style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                    fontWeight: FontWeight.w600,
+                    // Rounded
+
+                    // color: Colors.white,
+                  ),
+                ),
+                SizedBox(width: 20),
+                FloatingActionButton.small(
+                  heroTag: null,
+                  backgroundColor: primaryColor,
+                  onPressed: null,
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(50),
+                  ),
+                  child: Icon(Icons.edit, color: Colors.white),
+                ),
+              ],
+            ),
+            Row(
+              children: [
+                Text(
+                  'Demoras',
+                  style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                    fontWeight: FontWeight.w600,
+                    // color: Colors.white,
+                  ),
+                ),
+                SizedBox(width: 20),
+                FloatingActionButton.small(
+                  heroTag: null,
+                  backgroundColor: primaryColor,
+                  onPressed: null,
+
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(50),
+                  ),
+                  child: Icon(Icons.schedule, color: Colors.white),
+                ),
+              ],
+            ),
+            Row(
+              children: [
+                Text(
+                  'Servicios Adicionales',
+                  style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                    fontWeight: FontWeight.w600,
+                    // color: Colors.white,
+                  ),
+                ),
+                SizedBox(width: 20),
+                FloatingActionButton.small(
+                  heroTag: null,
+                  backgroundColor: primaryColor,
+                  onPressed: () {
+                    print('Servicios adicionales pressed');
+
+                    // push servicios-adicionales-screen
+                    // context.pushNamed(
+                    //   'servicios-adicionales-screen',
+                    //   extra: widget.trcId,
+                    // );
+
+                    // push
+                    context.push('/servicios-adicionales-screen');
+                    // close bottom sheet
+                    // Navigator.pop(context);
+
+                    // push screen with GoRouter
+                    // context.push('servicios-adicionales-screen');
+
+                    // Navigator.pushNamed(
+                    //   context,
+                    //   'servicios-adicionales-screen',
+                    //   // arguments: widget.trcId,
+                    // );
+
+                    // context.pushNamed(
+                    //   'servicios-adicionales-screen/${ref.watch(selectedTurnaroundProvider)?.id}',
+                    //   extra: widget.trcId,
+                    // );
+                  },
+
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(50),
+                  ),
+                  child: Icon(Icons.agriculture, color: Colors.white),
+                ),
+              ],
+            ),
+            Row(
+              children: [
+                Text(
+                  'Servicios Especiales',
+                  style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                    fontWeight: FontWeight.w600,
+                    // color: Colors.white,
+                  ),
+                ),
+                SizedBox(width: 20),
+                FloatingActionButton.small(
+                  heroTag: null,
+                  backgroundColor: primaryColor,
+                  onPressed: () {
+                    // context.pushNamed('servicios-especiales', extra: widget.trcId);
+                  },
+
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(50),
+                  ),
+                  child: Icon(
+                    Icons.add_moderator_outlined,
+                    color: Colors.white,
+                  ),
+                ),
+              ],
+            ),
+            // FloatingActionButton.small(
+            //   heroTag: null,
+            // backgroundColor: primaryColor,
+            //   onPressed: null,
+            //   child: Icon(Icons.add),
+            // ),
+          ],
+        ),
         body: NestedScrollView(
           headerSliverBuilder: (BuildContext context, bool innerBoxIsScrolled) {
             return <Widget>[
               SliverAppBar(
                 backgroundColor: Colors.white,
+                // expandedHeight: 100.0,
                 // elevation: 0,
                 title: Center(
                   child: SvgPicture.asset(
@@ -76,7 +274,7 @@ class ControlActividadesScreen extends ConsumerWidget {
                       controlActividades?.departamentos
                           ?.map(
                             (dep) =>
-                                _customTabBarHeaderItem(title: dep.nombreArea),
+                                _CustomTabBarHeaderItem(title: dep.nombreArea),
                           )
                           .toList() ??
                       [],
@@ -95,11 +293,13 @@ class ControlActividadesScreen extends ConsumerWidget {
             ];
           },
           body: TabBarView(
+            dragStartBehavior: DragStartBehavior.down,
             physics: const BouncingScrollPhysics(),
             children: controlActividades?.departamentos != null
                 ? List<Widget>.generate(
                     controlActividades!.departamentos!.length,
                     (index) => _DepartamentosView(
+                      controlActividades: controlActividades,
                       departamento: controlActividades.departamentos![index],
                       indexDep: index,
                     ),
@@ -126,34 +326,83 @@ class ControlActividadesScreen extends ConsumerWidget {
 class _DepartamentosView extends StatelessWidget {
   final Departamento departamento;
   final int indexDep;
+  final ControlActividades controlActividades;
   const _DepartamentosView({
+    required this.controlActividades,
     required this.departamento,
     required this.indexDep,
   });
 
   @override
   Widget build(BuildContext context) {
+    // scroll
     return Column(
       children: [
         // SizedBox(height: 8),
+        // Expanded(
+        //   child: _ServiciosAdicionalesView(
+        //     controlActividades: controlActividades,
+        //   ),
+        // ),
+        // SizedBox(height: 8),
 
+        // Servicios adicionales
+        // _ServiciosAdicionalesView(controlActividades: controlActividades),
         // Actividades map view
         Expanded(
-          child: ListView.builder(
-            physics: const BouncingScrollPhysics(),
-            itemCount: departamento.actividades.length,
-            itemBuilder: (context, index) {
-              final actividad = departamento.actividades[index];
-              return _ActividadView(
-                actividad: actividad,
-                indexAct: index,
-                indexDep: indexDep,
-              );
-            },
+          child: Column(
+            children: [
+              // Servicios Adicionales
+              // Expanded(child: _ServiciosAdicionalesView(controlActividades: controlActividades)),
+              Expanded(
+                child: ListView.builder(
+                  physics: const BouncingScrollPhysics(),
+                  itemCount: departamento.actividades.length,
+                  itemBuilder: (context, index) {
+                    final actividad = departamento.actividades[index];
+                    return _ActividadView(
+                      actividad: actividad,
+                      indexAct: index,
+                      indexDep: indexDep,
+                    );
+                  },
+                ),
+              ),
+            ],
           ),
         ),
       ],
     );
+
+    //   Column(
+    //     children: [
+    //       // SizedBox(height: 8),
+    //       // Expanded(
+    //       //   child: _ServiciosAdicionalesView(
+    //       //     controlActividades: controlActividades,
+    //       //   ),
+    //       // ),
+    //       // SizedBox(height: 8),
+    //       // Actividades map view
+    //       Expanded(
+    //         child: ListView.builder(
+    //           physics: const BouncingScrollPhysics(),
+    //           itemCount: departamento.actividades.length,
+    //           itemBuilder: (context, index) {
+    //             final actividad = departamento.actividades[index];
+    //             return _ActividadView(
+    //               actividad: actividad,
+    //               indexAct: index,
+    //               indexDep: indexDep,
+    //             );
+    //           },
+    //         ),
+    //       ),
+    //       // Servicios adicionales
+
+    //       // _ServiciosAdicionalesView(controlActividades: controlActividades),
+    //     ],
+    //   );
   }
 }
 
@@ -171,7 +420,7 @@ class _ActividadView extends StatelessWidget {
   Widget build(BuildContext context) {
     bool isExpanded = true;
     return Padding(
-      padding: const EdgeInsets.only(top: 5, bottom: 5),
+      padding: const EdgeInsets.only(bottom: 5),
       child: ExpansionPanelList(
         // elevation: 0,
         expandedHeaderPadding: EdgeInsets.zero,
@@ -319,13 +568,14 @@ class _TareaHoraView extends ConsumerWidget {
               onTap: () async {
                 // print('Hora tapped');
                 // Show time picker dialog
-                final selectedTime = await showTimePickerDialog(
-                  context,
-                  tarea.horaInicio ?? DateTime.now(),
-                  tarea.horaInicio != null
-                      ? TimeOfDay.fromDateTime(tarea.horaInicio!)
-                      : null,
-                );
+                final selectedTime =
+                    await CustomTimePickerDialog.showTimePickerDialog(
+                      context,
+                      tarea.horaInicio ?? DateTime.now(),
+                      tarea.horaInicio != null
+                          ? TimeOfDay.fromDateTime(tarea.horaInicio!)
+                          : null,
+                    );
                 // print('Selected time: $selectedTime');
                 if (selectedTime != null) {
                   final response = await setHoraInicio(
@@ -348,6 +598,7 @@ class _TareaHoraView extends ConsumerWidget {
                     response.success,
                     // ignore: use_build_context_synchronously
                     context,
+                    isFixed: true,
                   );
                 }
               },
@@ -424,6 +675,7 @@ class _TareaHoraView extends ConsumerWidget {
                         response.success,
                         // ignore: use_build_context_synchronously
                         context,
+                        isFixed: true,
                       );
                       ref
                           .read(isLoadingControlActividadesProvider.notifier)
@@ -501,51 +753,49 @@ Future<SnackbarResponse> setHoraFin(
 }
 
 // Centralized showTimePicker function
-Future<TimeOfDay?> showTimePickerDialog(
-  BuildContext context,
-  // WidgetRef ref,
-  DateTime hora,
-  TimeOfDay? initialTime,
-) async {
-  // TODO: 24 hour format
-  final selectedTime = await showTimePicker(
-    confirmText: 'Seleccionar',
-    cancelText: 'Cancelar',
-    minuteLabelText: 'Minutos',
-    hourLabelText: 'Horas',
-    useRootNavigator: true,
-    initialEntryMode: TimePickerEntryMode.input,
-    helpText: 'Seleccionar hora',
-    context: context,
-    initialTime: initialTime != null
-        ? TimeOfDay.fromDateTime(hora)
-        : TimeOfDay.now(),
-  );
-  return selectedTime;
-}
+// Future<TimeOfDay?> showTimePickerDialog(
+//   BuildContext context,
+//   // WidgetRef ref,
+//   DateTime hora,
+//   TimeOfDay? initialTime,
+// ) async {
+//   final selectedTime = await showTimePicker(
+//     confirmText: 'Seleccionar',
+//     cancelText: 'Cancelar',
+//     minuteLabelText: 'Minutos',
+//     hourLabelText: 'Horas',
+//     useRootNavigator: true,
+//     initialEntryMode: TimePickerEntryMode.input,
+//     helpText: 'Seleccionar hora',
+//     context: context,
+//     initialTime: initialTime != null
+//         ? TimeOfDay.fromDateTime(hora)
+//         : TimeOfDay.now(),
+//   );
+//   return selectedTime;
+// }
 
-Future<TimeOfDay?> showTimePickerMaquinariasDialog(
-  BuildContext context,
-  // WidgetRef ref,
-  Maquinaria maquinaria,
-  TimeOfDay? initialTime,
-) async {
-  // TODO: 24 hour format
-  final selectedTime = await showTimePicker(
-    confirmText: 'Seleccionar',
-    cancelText: 'Cancelar',
-    minuteLabelText: 'Minutos',
-    hourLabelText: 'Horas',
-    useRootNavigator: true,
-    initialEntryMode: TimePickerEntryMode.input,
-    helpText: 'Seleccionar hora',
-    context: context,
-    initialTime: initialTime != null
-        ? TimeOfDay.fromDateTime(maquinaria.horaInicio)
-        : TimeOfDay.now(),
-  );
-  return selectedTime;
-}
+// Future<TimeOfDay?> showTimePickerMaquinariasDialog(
+//   BuildContext context,
+//   // WidgetRef ref,
+//   Maquinaria maquinaria,
+//   TimeOfDay? initialTime,
+// ) async {
+//   final selectedTime = await showTimePicker(
+//     confirmText: 'Seleccionar',
+//     cancelText: 'Cancelar',
+//     minuteLabelText: 'Minutos',
+//     hourLabelText: 'Horas',
+//     useRootNavigator: true,
+//     initialEntryMode: TimePickerEntryMode.input,
+//     helpText: 'Seleccionar hora',
+//     context: context,
+//     initialTime: initialTime != null
+//         ? TimeOfDay.fromDateTime(maquinaria.horaInicio )
+//         : TimeOfDay.now(),
+//   );
+//   return selectedTime;
+// }
 
 class _TareaHoraInicioFinView extends ConsumerWidget {
   final Tarea tarea;
@@ -572,14 +822,15 @@ class _TareaHoraInicioFinView extends ConsumerWidget {
               onTap: () async {
                 print('Hora inicio tapped');
                 // Show time picker dialog
-                final selectedTime = await showTimePickerDialog(
-                  context,
-                  // ref,
-                  tarea.horaInicio ?? DateTime.now(),
-                  tarea.horaInicio != null
-                      ? TimeOfDay.fromDateTime(tarea.horaInicio!)
-                      : null,
-                );
+                final selectedTime =
+                    await CustomTimePickerDialog.showTimePickerDialog(
+                      context,
+                      // ref,
+                      tarea.horaInicio ?? DateTime.now(),
+                      tarea.horaInicio != null
+                          ? TimeOfDay.fromDateTime(tarea.horaInicio!)
+                          : null,
+                    );
                 print('Selected time: $selectedTime');
                 if (selectedTime != null) {
                   // TODO: Api call to update tarea with selected time
@@ -603,6 +854,7 @@ class _TareaHoraInicioFinView extends ConsumerWidget {
                     response.success,
                     // ignore: use_build_context_synchronously
                     context,
+                    isFixed: true,
                   );
                 }
               },
@@ -679,6 +931,7 @@ class _TareaHoraInicioFinView extends ConsumerWidget {
                         response.success,
                         // ignore: use_build_context_synchronously
                         context,
+                        isFixed: true,
                       );
                       ref
                           .read(isLoadingControlActividadesProvider.notifier)
@@ -711,13 +964,14 @@ class _TareaHoraInicioFinView extends ConsumerWidget {
               behavior: HitTestBehavior.translucent,
               onTap: () async {
                 // Show time picker dialog
-                final selectedTime = await showTimePickerDialog(
-                  context,
-                  tarea.horaFin ?? DateTime.now(),
-                  tarea.horaFin != null
-                      ? TimeOfDay.fromDateTime(tarea.horaFin!)
-                      : null,
-                );
+                final selectedTime =
+                    await CustomTimePickerDialog.showTimePickerDialog(
+                      context,
+                      tarea.horaFin ?? DateTime.now(),
+                      tarea.horaFin != null
+                          ? TimeOfDay.fromDateTime(tarea.horaFin!)
+                          : null,
+                    );
                 if (selectedTime != null) {
                   // TODO: Api call to update tarea with selected time
                   final response = await setHoraInicio(
@@ -740,6 +994,7 @@ class _TareaHoraInicioFinView extends ConsumerWidget {
                     response.success,
                     // ignore: use_build_context_synchronously
                     context,
+                    isFixed: true,
                   );
                 }
               },
@@ -816,6 +1071,7 @@ class _TareaHoraInicioFinView extends ConsumerWidget {
                         response.success,
                         // ignore: use_build_context_synchronously
                         context,
+                        isFixed: true,
                       );
                       ref
                           .read(isLoadingControlActividadesProvider.notifier)
@@ -973,6 +1229,7 @@ class _TareaCantidadView extends ConsumerWidget {
                                   response.success,
                                   // ignore: use_build_context_synchronously
                                   context,
+                                  isFixed: true,
                                 );
 
                                 Navigator.pop(context);
@@ -1087,6 +1344,7 @@ class _TareaMaquinariaConTiempoView extends ConsumerWidget {
             ),
             ElevatedButton(
               // disable if isLoading
+              // Aca mismo es
               onPressed: () async {
                 ref.read(selectedTaskProvider.notifier).state = {
                   "indexDep": indexDep,
@@ -1122,6 +1380,7 @@ class _TareaMaquinariaConTiempoView extends ConsumerWidget {
             ),
           ],
         ),
+
         // Listado de maquinarias con hora de inicio y fin
         _ListadoMaquinariasConTiempoView(
           tarea: tarea,
@@ -1182,13 +1441,14 @@ class _ListadoMaquinariasConTiempoView extends ConsumerWidget {
                     onTap: () async {
                       print('Hora inicio tapped');
                       // Show time picker dialog
-                      final selectedTime = await showTimePickerDialog(
-                        context,
-                        maquinaria["hora_inicio"] ?? DateTime.now(),
-                        maquinaria["hora_inicio"] != null
-                            ? TimeOfDay.fromDateTime(maquinaria.horaInicio)
-                            : null,
-                      );
+                      final selectedTime =
+                          await CustomTimePickerDialog.showTimePickerDialog(
+                            context,
+                            maquinaria["hora_inicio"] ?? DateTime.now(),
+                            maquinaria["hora_inicio"] != null
+                                ? TimeOfDay.fromDateTime(maquinaria.horaInicio)
+                                : null,
+                          );
                       print('Selected time: $selectedTime');
                       if (selectedTime != null) {
                         var trcDate = ref
@@ -1217,6 +1477,7 @@ class _ListadoMaquinariasConTiempoView extends ConsumerWidget {
                           response.success,
                           // ignore: use_build_context_synchronously
                           context,
+                          isFixed: true,
                         );
                       }
                     },
@@ -1308,6 +1569,7 @@ class _ListadoMaquinariasConTiempoView extends ConsumerWidget {
                               response.success,
                               // ignore: use_build_context_synchronously
                               context,
+                              isFixed: true,
                             );
 
                             ref
@@ -1346,13 +1608,14 @@ class _ListadoMaquinariasConTiempoView extends ConsumerWidget {
                     behavior: HitTestBehavior.translucent,
                     onTap: () async {
                       // Show time picker dialog
-                      final selectedTime = await showTimePickerDialog(
-                        context,
-                        maquinaria['hora_inicio'] ?? DateTime.now(),
-                        maquinaria['hora_inicio'] != null
-                            ? TimeOfDay.fromDateTime(maquinaria['hora_fin'])
-                            : null,
-                      );
+                      final selectedTime =
+                          await CustomTimePickerDialog.showTimePickerDialog(
+                            context,
+                            maquinaria['hora_inicio'] ?? DateTime.now(),
+                            maquinaria['hora_inicio'] != null
+                                ? TimeOfDay.fromDateTime(maquinaria['hora_fin'])
+                                : null,
+                          );
                       print('Selected time: $selectedTime');
                       if (selectedTime != null) {
                         var trcDate = ref
@@ -1382,6 +1645,7 @@ class _ListadoMaquinariasConTiempoView extends ConsumerWidget {
                           response.success,
                           // ignore: use_build_context_synchronously
                           context,
+                          isFixed: true,
                         );
                       }
                     },
@@ -1473,6 +1737,7 @@ class _ListadoMaquinariasConTiempoView extends ConsumerWidget {
                               response.success,
                               // ignore: use_build_context_synchronously
                               context,
+                              isFixed: true,
                             );
 
                             // final response = await setHoraInicio(
@@ -1894,6 +2159,7 @@ class _TareaImagenView extends ConsumerWidget {
                       response.success,
                       // ignore: use_build_context_synchronously
                       context,
+                      isFixed: true,
                     );
                   },
                   style: ElevatedButton.styleFrom(
@@ -1935,6 +2201,7 @@ class _TareaImagenView extends ConsumerWidget {
                       response.success,
                       // ignore: use_build_context_synchronously
                       context,
+                      isFixed: true,
                     );
                   },
                   style: ElevatedButton.styleFrom(
@@ -2087,6 +2354,7 @@ class _ComentarioView extends ConsumerWidget {
                                   response.success,
                                   // ignore: use_build_context_synchronously
                                   context,
+                                  isFixed: true,
                                 );
 
                                 Navigator.pop(context);
@@ -2492,9 +2760,9 @@ class _ImageGallery extends StatelessWidget {
 
 void updateTareaImagenes(Tarea tarea, List<Imagen> imagenes) {}
 
-class _customTabBarHeaderItem extends StatelessWidget {
+class _CustomTabBarHeaderItem extends StatelessWidget {
   final String title;
-  const _customTabBarHeaderItem({required this.title});
+  const _CustomTabBarHeaderItem({required this.title});
 
   @override
   Widget build(BuildContext context) {
@@ -2502,7 +2770,10 @@ class _customTabBarHeaderItem extends StatelessWidget {
       alignment: Alignment.center,
       child: Text(
         title,
-        style: GoogleFonts.openSans().copyWith(fontWeight: FontWeight.w800),
+        style: GoogleFonts.openSans().copyWith(
+          fontWeight: FontWeight.w800,
+          fontSize: 20,
+        ),
       ),
     );
   }

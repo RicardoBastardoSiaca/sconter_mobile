@@ -2,8 +2,8 @@
 modulos y Funcionalidades
 ************************************************************************************************
 Tareas tipo limpieza
-Tareas tipo IT
 Tareas tipo texto
+Tareas tipo IT
 Servicios especiales
 Servicios adicionales
 Codigos de demora

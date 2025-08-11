@@ -55,5 +55,20 @@ abstract class TurnaroundsRepository {
   Future<SimpleApiResponse> setNumero(SetNumeroTareaRequest body);
 
   Future<SimpleApiResponse> savePasajeros(SavePasajerosRequest body);
+
+  // Servicios adicionales
+  Future<List<CategoriaServicioAdicional>> getServiciosAdicionales();
+
+  Future<SimpleApiResponse> saveServiciosAdicionales(
+    ServiciosAdicionalRequest body,
+  );
+
+  Future<SimpleApiResponse> setHoraInicioServicioAdicional(
+    SetHoraServicioAdicionalRequest body,
+  );
+  Future<SimpleApiResponse> setHoraFinServicioAdicional(
+    SetHoraServicioAdicionalRequest body,
+  );
+
   //
 }
