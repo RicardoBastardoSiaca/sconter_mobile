@@ -21,18 +21,16 @@ class LoginScreen extends StatelessWidget {
             child: SizedBox(
               height: MediaQuery.of(context).size.height * .9,
               child: Column(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                mainAxisAlignment: MainAxisAlignment.center,
                 children: [
                   Logo(),
 
+                  SizedBox(height: 20),
+
                   _LoginForm(),
 
-                  Labels(),
+                  // Labels(),
 
-                  Text(
-                    'Terminos y condiciones',
-                    style: TextStyle(fontWeight: FontWeight.w200),
-                  ),
                   // _Form()
                 ],
               ),
@@ -40,6 +38,31 @@ class LoginScreen extends StatelessWidget {
           ),
         ),
       ),
+
+      bottomNavigationBar: Container(
+        height: 50, // Or whatever height your footer needs
+        // color: Colors.blue,
+        alignment: Alignment.center,
+        child: const CustomBottomNavigationBar(),
+      ),
+    );
+  }
+}
+
+class CustomBottomNavigationBar extends StatelessWidget {
+  const CustomBottomNavigationBar({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    int currentYear = DateTime.now().year;
+
+    return Text(
+      // 'Terminos y condiciones',
+      // Copyright © 2023 Turnaround
+      'Copyright Siaca© $currentYear',
+      style: Theme.of(
+        context,
+      ).textTheme.bodySmall?.copyWith(color: Colors.grey),
     );
   }
 }

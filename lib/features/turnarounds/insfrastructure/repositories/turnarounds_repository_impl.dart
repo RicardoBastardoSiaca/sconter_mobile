@@ -169,4 +169,9 @@ class TurnaroundsRepositoryImpl extends TurnaroundsRepository {
   ) {
     return datasource.saveServiciosEspeciales(body);
   }
+
+  @override
+  Future<List<SupervisorUser>> getSupervisores(int idAerolinea) {
+    return datasource.getSupervisores(idAerolinea);
+  }
 }

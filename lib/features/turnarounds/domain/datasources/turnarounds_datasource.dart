@@ -90,4 +90,6 @@ abstract class TurnaroundsDatasource {
   Future<SimpleApiResponse> saveServiciosEspeciales(
     ServiciosAdicionalRequest body,
   );
+
+  Future<List<SupervisorUser>> getSupervisores(int idAerolinea);
 }

@@ -108,28 +108,39 @@ class _ControlActividadesScreenState
           // ),
           children: [
             // SizedBox(height: 0.2),
-            Row(
-              children: [
-                Text(
-                  'Firma del Supervisor',
-                  style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                    fontWeight: FontWeight.w600,
-                    // Rounded
+            GestureDetector(
+              onTap: () {
+                print('Firma del Supervisor pressed');
+                context.push('/firma-supervisor-screen');
+              },
+              child: Row(
+                children: [
+                  Text(
+                    'Firma del Supervisor',
+                    style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                      fontWeight: FontWeight.w600,
+                      // Rounded
 
-                    // color: Colors.white,
+                      // color: Colors.white,
+                    ),
                   ),
-                ),
-                SizedBox(width: 20),
-                FloatingActionButton.small(
-                  heroTag: null,
-                  backgroundColor: primaryColor,
-                  onPressed: null,
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(50),
+                  SizedBox(width: 20),
+                  FloatingActionButton.small(
+                    heroTag: null,
+                    backgroundColor: primaryColor,
+                    onPressed: () {
+                      print('Firma del Supervisor pressed - BUTTON');
+                      context.push('/firma-supervisor-screen');
+                      // close bottom sheet
+                      // Navigator.pop(context);
+                    },
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(50),
+                    ),
+                    child: Icon(Icons.edit, color: Colors.white),
                   ),
-                  child: Icon(Icons.edit, color: Colors.white),
-                ),
-              ],
+                ],
+              ),
             ),
             Row(
               children: [

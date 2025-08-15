@@ -742,4 +742,25 @@ class TurnaroundsDatasourceImpl implements TurnaroundsDatasource {
           }
         });
   }
+
+  @override
+  Future<List<SupervisorUser>> getSupervisores(int idAerolinea) {
+    return dio
+        .get(
+          '/usuarios/personal_by_aerolinea/id_aerolinea=$idAerolinea/?token=$accessToken',
+        )
+        .then((response) {
+          print('Response from getSupervisores: $response');
+          if (response.statusCode == 200) {
+            // mapping to SupervisorUser map
+            final List<SupervisorUser> supervisores =
+                SupervisorUserMapper.mapJsonListToSupervisorUsers(
+                  response.data,
+                );
+            return supervisores;
+          } else {
+            return [];
+          }
+        });
+  }
 }

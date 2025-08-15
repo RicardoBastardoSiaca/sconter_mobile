@@ -4,13 +4,17 @@ modulos y Funcionalidades
 Tareas tipo limpieza
 Tareas tipo texto
 Tareas tipo IT
-Servicios especiales
-Servicios adicionales
+Firma del supervisor
+Asignacion de personal
 Codigos de demora
 Cerrar vuelo
 Usuarios 
 cerrar sesion
 Reportes
+
+
+Servicios especiales
+Servicios adicionales
 
 
 Asignacion de maquinarias

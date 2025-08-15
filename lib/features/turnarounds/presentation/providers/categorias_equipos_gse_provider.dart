@@ -79,6 +79,8 @@ class CategoriasEquiposGseNotifier
       // print("Error getting control de actividades: $e");
       print('Error $e');
       // state = state.copyWith(isLoading: false);
+    } finally {
+      state = state.copyWith(isLoading: false);
     }
 
     // asignarMaquinariasTareas

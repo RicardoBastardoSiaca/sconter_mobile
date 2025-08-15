@@ -4,3 +4,4 @@ export 'control_actividades_mapper.dart';
 export 'categorias_equipos_gse_mapper.dart';
 
 export 'categorias_servicios_adicionales_mapper.dart';
+export 'supervisor_aerolinea_mapper.dart';
