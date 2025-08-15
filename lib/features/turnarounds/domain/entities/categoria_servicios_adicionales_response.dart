@@ -66,11 +66,20 @@ class TipoServicio {
   // For example:
   int id;
   String nombre;
+  bool servicios_adicionales;
 
-  TipoServicio({required this.id, required this.nombre});
+  TipoServicio({
+    required this.id,
+    required this.nombre,
+    required this.servicios_adicionales,
+  });
 
   factory TipoServicio.fromJson(Map<String, dynamic> json) {
-    return TipoServicio(id: json['id'], nombre: json['nombre']);
+    return TipoServicio(
+      id: json['id'],
+      nombre: json['nombre'],
+      servicios_adicionales: json['servicios_adicionales'],
+    );
   }
 }
 
@@ -97,5 +106,49 @@ class SetHoraServicioAdicionalRequest {
     required this.horaInicio,
     required this.horaFin,
     required this.tipo,
+  });
+}
+
+class HoraMaquinariaServicioAdicionalResponse {
+  final int id;
+  final int servicioAdicionalId;
+  final DateTime? horaInicio;
+  final DateTime? horaFin;
+  final String? tipo;
+
+  HoraMaquinariaServicioAdicionalResponse({
+    required this.id,
+    required this.servicioAdicionalId,
+    this.horaInicio,
+    this.horaFin,
+    this.tipo,
+  });
+
+  factory HoraMaquinariaServicioAdicionalResponse.fromJson(
+    Map<String, dynamic> json,
+  ) {
+    return HoraMaquinariaServicioAdicionalResponse(
+      id: json['id'],
+      servicioAdicionalId: json['servicio_adicional_id'],
+      horaInicio: json['hora_inicio'] != null
+          ? DateTime.parse(json['hora_inicio']).toLocal()
+          : null,
+      horaFin: json['hora_fin'] != null
+          ? DateTime.parse(json['hora_fin']).toLocal()
+          : null,
+      tipo: json['tipo'],
+    );
+  }
+}
+
+class ComentarioServiciosAdicionalRequest {
+  final int id;
+  final String comentario;
+  final bool esServicioAdicional;
+
+  ComentarioServiciosAdicionalRequest({
+    required this.id,
+    required this.comentario,
+    required this.esServicioAdicional,
   });
 }

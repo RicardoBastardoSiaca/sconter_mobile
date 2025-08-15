@@ -377,6 +377,7 @@ class _AsignarEquiposGseViewState
                       response.message,
                       // ignore: use_build_context_synchronously
                       context,
+                      isFixed: true,
                     );
                     // ignore: use_build_context_synchronously
                     Navigator.of(context).pop();
@@ -386,6 +387,7 @@ class _AsignarEquiposGseViewState
                       response.message,
                       // ignore: use_build_context_synchronously
                       context,
+                      isFixed: true,
                     );
                   }
                 },

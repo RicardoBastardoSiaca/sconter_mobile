@@ -1,3 +1,5 @@
+import '../domain.dart';
+
 class CategoriasEquiposGseResponse {
   List<CategoriaEquiposGse> categoriasEquiposGse = [];
   bool crear;
@@ -68,4 +70,17 @@ class MaquinariaCategoriaEquipos {
   //   "hora_inicio": horaInicio.toIso8601String(),
   //   "hora_fin": horaFin.toIso8601String(),
   // };
+}
+
+// Entidad data expra para servicios y control de actividades
+class AsignarEquiposDialogData {
+  final ServiciosAle? servicioAdicional;
+  final TurnaroundMain? turnaround;
+  final String? tipoAsignacion;
+
+  AsignarEquiposDialogData({
+    required this.servicioAdicional,
+    required this.turnaround,
+    required this.tipoAsignacion,
+  });
 }

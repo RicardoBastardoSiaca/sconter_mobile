@@ -50,6 +50,21 @@ class ServiciosAdicionalesNotifier
     }
   }
 
+  Future<void> getServiciosEspeciales() async {
+    try {
+      state = state.copyWith(isLoading: true);
+      final result = await turnaroundsRepository.getServiciosEspeciales();
+      if (result.isNotEmpty) {
+        state = state.copyWith(
+          categoriasEquiposGseResponse: result,
+          isLoading: false,
+        );
+      }
+    } catch (e) {
+      state = state.copyWith(isLoading: false);
+    }
+  }
+
   Future<SnackbarResponse> saveServiciosAdicionales(
     ServiciosAdicionalRequest body,
   ) async {
@@ -138,7 +153,7 @@ class ServiciosAdicionalesNotifier
         } finally {
           state = state.copyWith(isSaving: false);
         }
-      case 'Hora final':
+      case 'Hora fin':
         try {
           final response = await turnaroundsRepository
               .setHoraFinServicioAdicional(body);
@@ -169,6 +184,87 @@ class ServiciosAdicionalesNotifier
       default:
         // print("Unknown tipo: $tipo");
         return SnackbarResponse(message: 'Tipo no reconocido.', success: false);
+    }
+  }
+
+  Future<SnackbarResponse> setHoraMaquinariaServicioAdicional(
+    HoraMaquinariaServicioAdicionalResponse body,
+  ) async {
+    state = state.copyWith(isSaving: true);
+    try {
+      final response = await turnaroundsRepository
+          .setHoraMaquinariaServicioAdicional(body);
+      if (response.success) {
+        // get control de actividades
+        // getControlDeActividadesByTrcId(); from control actividades provider
+
+        return SnackbarResponse(message: 'Hora registrada.', success: true);
+        // Show success snackbar
+        // ScaffoldMessenger.of(context).showSnackBar(
+        //   const SnackBar(content: Text('Hora de inicio actualizada correctamente.')),
+        // );
+      } else {
+        // print("Error al actualizar la hora de inicio: ${response.message}");
+        return SnackbarResponse(
+          message: 'Ha ocurrido un error.',
+          success: false,
+        );
+      }
+    } catch (e) {
+      // print("Error setting hora de inicio: $e");
+      return SnackbarResponse(message: 'Ha ocurrido un error.', success: false);
+    } finally {
+      state = state.copyWith(isSaving: false);
+    }
+  }
+
+  Future<SnackbarResponse> setComentarioServicioAdicional(
+    ComentarioServiciosAdicionalRequest body,
+  ) async {
+    state = state.copyWith(isSaving: true);
+    try {
+      final response = await turnaroundsRepository
+          .setComentarioServicioAdicional(body);
+      if (response.success) {
+        return SnackbarResponse(
+          message: 'Comentario registrado.',
+          success: true,
+        );
+        // getControlDeActividadesByTrcId(); from control actividades provider
+      } else {
+        // print("Error al actualizar la hora de inicio: ${response.message}");
+        return SnackbarResponse(
+          message: 'Ha ocurrido un error.',
+          success: false,
+        );
+      }
+    } catch (e) {
+      // print("Error setting hora de inicio: $e");
+      return SnackbarResponse(message: 'Ha ocurrido un error.', success: false);
+    } finally {
+      state = state.copyWith(isSaving: false);
+    }
+  }
+
+  Future<SnackbarResponse> saveServiciosEspeciales(
+    ServiciosAdicionalRequest body,
+  ) async {
+    try {
+      state = state.copyWith(isSaving: true);
+      final SimpleApiResponse result = await turnaroundsRepository
+          .saveServiciosEspeciales(body);
+      state = state.copyWith(isSaving: false);
+      if (!result.success) {
+        return SnackbarResponse(message: result.message, success: false);
+      }
+
+      return SnackbarResponse(message: result.message, success: true);
+    } catch (e) {
+      state = state.copyWith(isSaving: false);
+      return SnackbarResponse(
+        message: 'Error al guardar los servicios adicionales',
+        success: false,
+      );
     }
   }
 }
@@ -202,3 +298,19 @@ class ServiciosAdicionalesState {
     );
   }
 }
+
+// class AsignarEquiposDialogDataNotifier extends StateNotifier<AsignarEquiposDialogData> {
+//   AsignarEquiposDialogDataNotifier(): super(AsignarEquiposDialogData(servicioAdicional: null, turnaround: null, tipoAsignacion: ''));
+
+// }
+
+final asignarEquiposDialogDataProvider =
+    StateProvider<AsignarEquiposDialogData>((ref) {
+      return AsignarEquiposDialogData(
+        servicioAdicional: null,
+        turnaround: null,
+        tipoAsignacion: '',
+      );
+    });
+
+// AsignarEquiposDialogData

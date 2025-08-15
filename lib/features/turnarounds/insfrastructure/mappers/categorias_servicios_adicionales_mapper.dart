@@ -19,6 +19,10 @@ class CategoriasServiciosAdicionalesMapper {
   }
 
   static TipoServicio mapJsonToTipo(Map<String, dynamic> json) {
-    return TipoServicio(id: json["id"], nombre: json["nombre"]);
+    return TipoServicio(
+      id: json["id"],
+      nombre: json["nombre"],
+      servicios_adicionales: json["servicios_adicionales"],
+    );
   }
 }

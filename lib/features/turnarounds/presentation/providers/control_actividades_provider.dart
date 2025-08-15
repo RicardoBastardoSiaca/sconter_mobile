@@ -345,7 +345,7 @@ class ControlActividadesState {
     isSaving: isSaving ?? this.isSaving,
   );
 
-  void getControlDeActividadesByTrcId() {}
+  // void getControlDeActividadesByTrcId() {}
 }
 
 // TurnaroundIdProvider

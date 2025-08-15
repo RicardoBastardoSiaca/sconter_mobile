@@ -6,17 +6,15 @@ import '../../domain/entities/entities.dart';
 import '../providers/providers.dart';
 
 class AsignarEquiposGseServiciosControlActividades extends ConsumerWidget {
-  const AsignarEquiposGseServiciosControlActividades(
-    Map<String, dynamic>? data, {
-    // YA TENGO LA DATA EXTRA
-    super.key,
-  });
+  final AsignarEquiposDialogData data;
+
+  const AsignarEquiposGseServiciosControlActividades(this.data, {super.key});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     return Scaffold(
       appBar: AppBar(title: Text('Asignar Equipos GSE')),
-      body: _AsignarEquiposGseView(),
+      body: _AsignarEquiposGseView(data: data), // Pasar la data
     );
   }
 }
@@ -66,7 +64,8 @@ List<int> _setSelectedTaskMaquinariasIds(
 }
 
 class _AsignarEquiposGseView extends ConsumerStatefulWidget {
-  const _AsignarEquiposGseView();
+  AsignarEquiposDialogData data;
+  _AsignarEquiposGseView({required this.data});
 
   @override
   ConsumerState<_AsignarEquiposGseView> createState() =>
@@ -97,6 +96,10 @@ class _AsignarEquiposGseViewState
     // turnaround
     // tipo de asignacion
 
+    AsignarEquiposDialogData data = ref
+        .read(asignarEquiposDialogDataProvider.notifier)
+        .state;
+
     categoriasAux =
         ref.read(categoriasEquiposGseProvider).categoriasEquiposGseResponse !=
             null
@@ -105,18 +108,25 @@ class _AsignarEquiposGseViewState
               .categoriasEquiposGseResponse!
               .categoriasEquiposGse
         : [];
+
     List<int> idsMaquinarias = _setMaquinariasIds(categoriasAux);
 
-    TurnaroundMain turnaround = ref
-        .read(selectedTurnaroundProvider.notifier)
-        .state!;
+    // TurnaroundMain turnaround = ref
+    //     .read(selectedTurnaroundProvider.notifier)
+    //     .state!;
 
     // selectedMaquinariasTaskProvider
-    selectedMaquinariasTask = ref
-        .read(selectedMaquinariasTaskProvider.notifier)
-        .state;
-    selectedMaquinariasTaskIds = selectedMaquinariasTask
-        .map((maquinaria) => maquinaria['maquinaria_id'])
+    // selectedMaquinariasTask = ref
+    //     .read(selectedMaquinariasTaskProvider.notifier)
+    //     .state;
+    // selectedMaquinariasTaskIds = selectedMaquinariasTask
+    //     .map((maquinaria) => maquinaria['maquinaria_id'])
+    //     .cast<int>()
+    //     .toList();
+
+    // TODO: condicional para tomar servicios especiales
+    selectedMaquinariasTaskIds = data.servicioAdicional!.maquinaria
+        .map((maquinaria) => maquinaria.maquinariaId)
         .cast<int>()
         .toList();
 
@@ -380,23 +390,34 @@ class _AsignarEquiposGseViewState
                     }
                   }
 
+                  // print('maquinariasNuevas: $maquinariasNuevas');
+
                   for (final maquinaria in idsMaquinariasOld) {
                     if (!idsMaquinariasNew.contains(maquinaria)) {
                       maquinariasEliminadas.add(maquinaria);
                     }
                   }
 
+                  // print('maquinariasEliminadas: $maquinariasEliminadas');
+
                   // body
                   final body = {
-                    "id": ref.read(selectedTaskProvider)['tareaId'],
-                    "maquinariasNuevas": maquinariasNuevas,
-                    "maquinariasEliminadas": maquinariasEliminadas,
+                    "id": ref
+                        .read(asignarEquiposDialogDataProvider.notifier)
+                        .state
+                        .servicioAdicional
+                        ?.id,
+                    "ids_nuevos": maquinariasNuevas,
+                    "ids_eliminados": maquinariasEliminadas,
                   };
 
                   final response = await ref
                       .read(categoriasEquiposGseProvider.notifier)
-                      .asignarMaquinariasTareas(body);
+                      .asignarMaquinariasSerivicioAdicional(body);
 
+                  // AsignarEquiposDialogData data = ref
+                  //         .read(asignarEquiposDialogDataProvider.notifier)
+                  //         .state;
                   if (response.success) {
                     // Show success snackbar
                     // Show snackbar response
@@ -408,11 +429,29 @@ class _AsignarEquiposGseViewState
                     );
 
                     // get control de actividades
-                    ref.watch(
-                      controlActividadesProvider(
-                        ref.read(selectedTurnaroundProvider)!.id,
-                      ),
-                    );
+                    await ref
+                        .read(
+                          controlActividadesProvider(
+                            widget.data.turnaround!.id,
+                          ).notifier,
+                        )
+                        .getControlDeActividadesByTrcId();
+                    // ref.watch(
+                    //   controlActividadesProvider(
+                    //     ref.read(selectedTurnaroundProvider)!.id,
+                    //   ),
+                    // );
+                    // ref
+                    //     .read(
+                    //       controlActividadesProvider(
+                    //         ref.read(selectedTurnaroundProvider)!.id,
+                    //       ),
+                    //     )
+                    //     .getControlDeActividadesByTrcId();
+                    // ref
+                    // .read(controlActividadesProvider.notifier).
+                    // .read(controlActividadesProvider.notifier)
+                    // .getControlDeActividadesByTrcId();
                     // ignore: use_build_context_synchronously
                     Navigator.of(context).pop();
                   } else {
@@ -421,6 +460,7 @@ class _AsignarEquiposGseViewState
                       response.message,
                       // ignore: use_build_context_synchronously
                       context,
+                      isFixed: true,
                     );
                   }
                 },

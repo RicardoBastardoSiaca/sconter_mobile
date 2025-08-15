@@ -5,8 +5,12 @@ import 'package:intl/date_symbol_data_local.dart';
 
 void main() async {
   await Environment.initEnvironment();
+  // WidgetsFlutterBinding.ensureInitialized();
+  // tz.initializeTimeZones(); // Initialize timezone data
+  // const ProviderScope(child: MainApp());
   initializeDateFormatting(
-    'pt_BR', // Change to your desired locale, e.g., 'en_US' for English
+    // 'pt_BR', // Change to your desired locale, e.g., 'en_US' for English
+    'es_VE', // Change to your desired locale, e.g., 'en_US' for English
     null,
   ).then((_) => runApp(const ProviderScope(child: MainApp())));
 }
@@ -16,8 +20,16 @@ class MainApp extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    // final tz.Location caracas = tz.getLocation('America/Caracas');
+    // final tz.TZDateTime nowInCaracas = tz.TZDateTime.now(caracas);
     final appRouter = ref.watch(goRouterProvider);
-    // initializeDateFormatting('pt_BR', null);
+    initializeDateFormatting('es_VE', null);
+
+    // Get the device's local location
+    // final tz.Location localLocation = tz.local;
+    // final tz.TZDateTime nowInLocalTimezone = tz.TZDateTime.now(localLocation);
+
+    // Example: get a specific timezone
 
     return MaterialApp.router(
       // builder: (context, child) =>

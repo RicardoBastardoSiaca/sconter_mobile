@@ -100,11 +100,11 @@ class ControlActividades {
   //     numeroVueloIn: json["numero_vuelo_in"],
   //     etdIn: json["ETD_in"],
   //     etaIn: json["ETA_in"],
-  //     etaFechaIn: DateTime.parse(json["ETA_fecha_in"]),
+  //     etaFechaIn: DateTime.parse(json["ETA_fecha_in"]).toLocal(),
   //     numeroVueloOut: json["numero_vuelo_out"],
   //     etdOut: json["ETD_out"],
   //     etaOut: json["ETA_out"],
-  //     etdFechaOut: DateTime.parse(json["ETD_fecha_out"]),
+  //     etdFechaOut: DateTime.parse(json["ETD_fecha_out"]).toLocal(),
   //     gate: json["gate"],
   //     tipoVueloId: json["tipo_vuelo_id"],
   //     tipoServicioId: json["tipo_servicio_id"],
@@ -116,12 +116,12 @@ class ControlActividades {
   //     numeroVueloLlegada: json["numero_vuelo_llegada"],
   //     horaInicio: json["hora_inicio"],
   //     horaFin: json["hora_fin"],
-  //     fechaInicio: DateTime.parse(json["fecha_inicio"]),
-  //     fechaFin: DateTime.parse(json["fecha_fin"]),
+  //     fechaInicio: DateTime.parse(json["fecha_inicio"]).toLocal(),
+  //     fechaFin: DateTime.parse(json["fecha_fin"]).toLocal(),
   //     horaInicioReal: json["hora_inicio_real"],
   //     horaFinReal: json["hora_fin_real"],
-  //     fechaInicioReal: DateTime.parse(json["fecha_inicio_real"]),
-  //     fechaFinReal: DateTime.parse(json["fecha_fin_real"]),
+  //     fechaInicioReal: DateTime.parse(json["fecha_inicio_real"]).toLocal(),
+  //     fechaFinReal: DateTime.parse(json["fecha_fin_real"]).toLocal(),
   //     tiempoExtimado: json["tiempo_extimado"],
   //     departamentos: List<Departamento>.from(json["departamentos"].map((x) => Departamento.fromJson(x))),
   //     serviciosAdicionales: List<ServiciosAle>.from(json["servicios_adicionales"].map((x) => ServiciosAle.fromJson(x))),
@@ -213,12 +213,14 @@ class Actividades {
   String nombreActividad;
   List<Tarea>? tareas;
   bool todasTareasHechas;
+  bool isExpanded;
 
   Actividades({
     required this.index,
     required this.nombreActividad,
     required this.tareas,
     required this.todasTareasHechas,
+    this.isExpanded = true,
   });
 
   // factory Actividades.fromJson(Map<String, dynamic> json) => Actividades(
@@ -258,6 +260,7 @@ class Tarea {
   List<Imagen>? imagen;
   Map<String, int>? pasajeros;
   List<dynamic>? equipo;
+  bool isExpanded;
 
   Tarea({
     required this.id,
@@ -281,6 +284,7 @@ class Tarea {
     this.imagen,
     this.pasajeros,
     this.equipo,
+    this.isExpanded = true,
   });
 
   // factory Tarea.fromJson(Map<String, dynamic> json) => Tarea(
@@ -289,8 +293,8 @@ class Tarea {
   //     titulo: json["titulo"],
   //     primeraTarea: json["primera_tarea"],
   //     ultimaTarea: json["ultima_tarea"],
-  //     horaInicio: json["hora_inicio"] == null ? null : DateTime.parse(json["hora_inicio"]),
-  //     horaFin: json["hora_fin"] == null ? null : DateTime.parse(json["hora_fin"]),
+  //     horaInicio: json["hora_inicio"] == null ? null : DateTime.parse(json["hora_inicio"]).toLocal(),
+  //     horaFin: json["hora_fin"] == null ? null : DateTime.parse(json["hora_fin"]).toLocal(),
   //     numero: json["numero"],
   //     texto: json["texto"],
   //     estatus: json["estatus"],
@@ -408,8 +412,10 @@ class ServiciosAle {
     servicioId: json["servicio_id"],
     horaInicio: json["hora_inicio"] == null
         ? null
-        : DateTime.parse(json["hora_inicio"]),
-    horaFin: json["hora_fin"] == null ? null : DateTime.parse(json["hora_fin"]),
+        : DateTime.parse(json["hora_inicio"]).toLocal(),
+    horaFin: json["hora_fin"] == null
+        ? null
+        : DateTime.parse(json["hora_fin"]).toLocal(),
     cantidad: json["cantidad"],
     comentario: json["comentario"],
     estatus: json["estatus"],
@@ -460,8 +466,10 @@ class Maquinaria {
     maquinariaModelo: json["maquinaria_modelo"],
     horaInicio: json["hora_inicio"] == null
         ? null
-        : DateTime.parse(json["hora_inicio"]),
-    horaFin: json["hora_fin"] == null ? null : DateTime.parse(json["hora_fin"]),
+        : DateTime.parse(json["hora_inicio"]).toLocal(),
+    horaFin: json["hora_fin"] == null
+        ? null
+        : DateTime.parse(json["hora_fin"]).toLocal(),
   );
 
   Map<String, dynamic> toJson() => {
@@ -504,8 +512,8 @@ class HoraInicioFinMaquinaria {
 
   // factory HoraInicioFinMaquinaria.fromJson(Map<String, dynamic> json) =>
   //     HoraInicioFinMaquinaria(
-  //       horaInicio: DateTime.parse(json["horaInicio"]),
-  //       horaFin: DateTime.parse(json["horaFin"]),
+  //       horaInicio: DateTime.parse(json["horaInicio"]).toLocal(),
+  //       horaFin: DateTime.parse(json["horaFin"]).toLocal(),
   //       id: json["id"],
   //       tareaId: json["tareaId"],
   //       tipo: json["tipo"],

@@ -129,4 +129,44 @@ class TurnaroundsRepositoryImpl extends TurnaroundsRepository {
   ) {
     return datasource.setHoraFinServicioAdicional(body);
   }
+
+  @override
+  Future<SimpleApiResponse> asignarMaquinariasSerivicioAdicional(
+    Map<String, dynamic> body,
+  ) {
+    return datasource.asignarMaquinariasSerivicioAdicional(body);
+  }
+
+  @override
+  Future setHoraMaquinariaServicioAdicional(
+    HoraMaquinariaServicioAdicionalResponse body,
+  ) {
+    return datasource.setHoraMaquinariaServicioAdicional(body);
+  }
+
+  @override
+  Future<SimpleApiResponse> setComentarioServicioAdicional(
+    ComentarioServiciosAdicionalRequest body,
+  ) {
+    return datasource.setComentarioServicioAdicional(body);
+  }
+
+  @override
+  Future<SimpleApiResponse> setComentarioServicioEspecial(
+    ComentarioServiciosAdicionalRequest body,
+  ) {
+    return datasource.setComentarioServicioEspecial(body);
+  }
+
+  @override
+  Future<List<CategoriaServicioAdicional>> getServiciosEspeciales() {
+    return datasource.getServiciosEspeciales();
+  }
+
+  @override
+  Future<SimpleApiResponse> saveServiciosEspeciales(
+    ServiciosAdicionalRequest body,
+  ) {
+    return datasource.saveServiciosEspeciales(body);
+  }
 }

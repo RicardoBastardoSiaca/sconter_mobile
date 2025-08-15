@@ -68,4 +68,26 @@ abstract class TurnaroundsDatasource {
   Future<SimpleApiResponse> setHoraFinServicioAdicional(
     SetHoraServicioAdicionalRequest body,
   );
+
+  Future<SimpleApiResponse> asignarMaquinariasSerivicioAdicional(
+    Map<String, dynamic> body,
+  );
+
+  Future setHoraMaquinariaServicioAdicional(
+    HoraMaquinariaServicioAdicionalResponse body,
+  );
+
+  Future<SimpleApiResponse> setComentarioServicioAdicional(
+    ComentarioServiciosAdicionalRequest body,
+  );
+
+  Future<SimpleApiResponse> setComentarioServicioEspecial(
+    ComentarioServiciosAdicionalRequest body,
+  );
+
+  Future<List<CategoriaServicioAdicional>> getServiciosEspeciales();
+
+  Future<SimpleApiResponse> saveServiciosEspeciales(
+    ServiciosAdicionalRequest body,
+  );
 }

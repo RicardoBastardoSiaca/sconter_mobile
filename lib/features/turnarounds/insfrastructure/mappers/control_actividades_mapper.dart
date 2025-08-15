@@ -17,13 +17,13 @@ class ControlActividadesMapper {
       etaIn: json["ETA_in"],
       etaFechaIn: json["ETA_fecha_in"] == null
           ? null
-          : DateTime.parse(json["ETA_fecha_in"]),
+          : DateTime.parse(json["ETA_fecha_in"]).toLocal(),
       numeroVueloOut: json["numero_vuelo_out"],
       etdOut: json["ETD_out"],
       etaOut: json["ETA_out"],
       etdFechaOut: json["ETD_fecha_out"] == null
           ? null
-          : DateTime.parse(json["ETD_fecha_out"]),
+          : DateTime.parse(json["ETD_fecha_out"]).toLocal(),
       gate: json["gate"],
       tipoVueloId: json["tipo_vuelo_id"],
       tipoServicioId: json["tipo_servicio_id"],
@@ -37,18 +37,18 @@ class ControlActividadesMapper {
       horaFin: json["hora_fin"],
       fechaInicio: json["fecha_inicio"] == null
           ? null
-          : DateTime.parse(json["fecha_inicio"]),
+          : DateTime.parse(json["fecha_inicio"]).toLocal(),
       fechaFin: json["fecha_fin"] == null
           ? null
-          : DateTime.parse(json["fecha_fin"]),
+          : DateTime.parse(json["fecha_fin"]).toLocal(),
       horaInicioReal: json["hora_inicio_real"],
       horaFinReal: json["hora_fin_real"],
       fechaInicioReal: json["fecha_inicio_real"] == null
           ? null
-          : DateTime.parse(json["fecha_inicio_real"]),
+          : DateTime.parse(json["fecha_inicio_real"]).toLocal(),
       fechaFinReal: json["fecha_fin_real"] == null
           ? null
-          : DateTime.parse(json["fecha_fin_real"]),
+          : DateTime.parse(json["fecha_fin_real"]).toLocal(),
       tiempoExtimado: json["tiempo_extimado"],
       departamentos: List<Departamento>.from(
         (json["departamentos"] as List).map((x) => mapJsonToDepartamento(x)),
@@ -97,10 +97,10 @@ class ControlActividadesMapper {
       ultimaTarea: json["ultima_tarea"],
       horaInicio: json["hora_inicio"] == null
           ? null
-          : DateTime.parse(json["hora_inicio"]),
+          : DateTime.parse(json["hora_inicio"]).toLocal(),
       horaFin: json["hora_fin"] == null
           ? null
-          : DateTime.parse(json["hora_fin"]),
+          : DateTime.parse(json["hora_fin"]).toLocal(),
       numero: json["numero"],
       texto: json["texto"],
       estatus: json["estatus"],
@@ -141,10 +141,10 @@ class ControlActividadesMapper {
       servicioId: json["servicio_id"],
       horaInicio: json["hora_inicio"] == null
           ? null
-          : DateTime.parse(json["hora_inicio"]),
+          : DateTime.parse(json["hora_inicio"]).toLocal(),
       horaFin: json["hora_fin"] == null
           ? null
-          : DateTime.parse(json["hora_fin"]),
+          : DateTime.parse(json["hora_fin"]).toLocal(),
       cantidad: json["cantidad"],
       comentario: json["comentario"],
       estatus: json["estatus"],
@@ -164,10 +164,10 @@ class ControlActividadesMapper {
       maquinariaModelo: json["maquinaria_modelo"],
       horaInicio: json["hora_inicio"] == null
           ? null
-          : DateTime.parse(json["hora_inicio"]),
+          : DateTime.parse(json["hora_inicio"]).toLocal(),
       horaFin: json["hora_fin"] == null
           ? null
-          : DateTime.parse(json["hora_fin"]),
+          : DateTime.parse(json["hora_fin"]).toLocal(),
     );
   }
 }

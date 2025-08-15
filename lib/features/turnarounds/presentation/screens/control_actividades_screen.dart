@@ -84,7 +84,7 @@ class _ControlActividadesScreenState
           key: key,
           type: ExpandableFabType.up,
           childrenAnimation: ExpandableFabAnimation.none,
-          distance: 50,
+          distance: 60,
 
           overlayStyle: ExpandableFabOverlayStyle(
             // color: Colors.black.withValues(alpha: 0.1),
@@ -153,81 +153,76 @@ class _ControlActividadesScreenState
                 ),
               ],
             ),
-            Row(
-              children: [
-                Text(
-                  'Servicios Adicionales',
-                  style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                    fontWeight: FontWeight.w600,
-                    // color: Colors.white,
+            GestureDetector(
+              onTap: () {
+                print('Servicios adicionales pressed - ROW');
+                context.push('/servicios-adicionales-screen');
+              },
+              child: Row(
+                children: [
+                  Text(
+                    'Servicios Adicionales',
+                    style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                      fontWeight: FontWeight.w600,
+                      // color: Colors.white,
+                    ),
                   ),
-                ),
-                SizedBox(width: 20),
-                FloatingActionButton.small(
-                  heroTag: null,
-                  backgroundColor: primaryColor,
-                  onPressed: () {
-                    print('Servicios adicionales pressed');
+                  SizedBox(width: 20),
+                  FloatingActionButton.small(
+                    heroTag: null,
+                    backgroundColor: primaryColor,
+                    onPressed: () {
+                      print('Servicios adicionales pressed - BUTTON');
+                      context.push('/servicios-adicionales-screen');
+                      // close bottom sheet
+                      // Navigator.pop(context);
+                    },
 
-                    // push servicios-adicionales-screen
-                    // context.pushNamed(
-                    //   'servicios-adicionales-screen',
-                    //   extra: widget.trcId,
-                    // );
-
-                    // push
-                    context.push('/servicios-adicionales-screen');
-                    // close bottom sheet
-                    // Navigator.pop(context);
-
-                    // push screen with GoRouter
-                    // context.push('servicios-adicionales-screen');
-
-                    // Navigator.pushNamed(
-                    //   context,
-                    //   'servicios-adicionales-screen',
-                    //   // arguments: widget.trcId,
-                    // );
-
-                    // context.pushNamed(
-                    //   'servicios-adicionales-screen/${ref.watch(selectedTurnaroundProvider)?.id}',
-                    //   extra: widget.trcId,
-                    // );
-                  },
-
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(50),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(50),
+                    ),
+                    child: Icon(Icons.agriculture, color: Colors.white),
                   ),
-                  child: Icon(Icons.agriculture, color: Colors.white),
-                ),
-              ],
+                ],
+              ),
             ),
-            Row(
-              children: [
-                Text(
-                  'Servicios Especiales',
-                  style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                    fontWeight: FontWeight.w600,
-                    // color: Colors.white,
+            GestureDetector(
+              onTap: () {
+                print('Servicios especiales pressed - ROW');
+                context.push('/servicios-especiales-screen');
+                // print('Servicios especiales pressed');
+                // push servicios-especiales
+                // context.pushNamed('servicios-especiales', extra: widget.trcId);
+                // context.push('/servicios-especiales');
+              },
+              child: Row(
+                children: [
+                  Text(
+                    'Servicios Especiales',
+                    style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                      fontWeight: FontWeight.w600,
+                      // color: Colors.white,
+                    ),
                   ),
-                ),
-                SizedBox(width: 20),
-                FloatingActionButton.small(
-                  heroTag: null,
-                  backgroundColor: primaryColor,
-                  onPressed: () {
-                    // context.pushNamed('servicios-especiales', extra: widget.trcId);
-                  },
+                  SizedBox(width: 20),
+                  FloatingActionButton.small(
+                    heroTag: null,
+                    backgroundColor: primaryColor,
+                    onPressed: () {
+                      print('Servicios especiales pressed - ROW');
+                      context.push('/servicios-especiales-screen');
+                    },
 
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(50),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(50),
+                    ),
+                    child: Icon(
+                      Icons.add_moderator_outlined,
+                      color: Colors.white,
+                    ),
                   ),
-                  child: Icon(
-                    Icons.add_moderator_outlined,
-                    color: Colors.white,
-                  ),
-                ),
-              ],
+                ],
+              ),
             ),
             // FloatingActionButton.small(
             //   heroTag: null,
@@ -323,7 +318,7 @@ class _ControlActividadesScreenState
   }
 }
 
-class _DepartamentosView extends StatelessWidget {
+class _DepartamentosView extends StatefulWidget {
   final Departamento departamento;
   final int indexDep;
   final ControlActividades controlActividades;
@@ -334,36 +329,72 @@ class _DepartamentosView extends StatelessWidget {
   });
 
   @override
+  State<_DepartamentosView> createState() => _DepartamentosViewState();
+}
+
+class _DepartamentosViewState extends State<_DepartamentosView> {
+  @override
   Widget build(BuildContext context) {
     // scroll
     return Column(
+      mainAxisAlignment: MainAxisAlignment.start,
       children: [
         // SizedBox(height: 8),
-        // Expanded(
-        //   child: _ServiciosAdicionalesView(
-        //     controlActividades: controlActividades,
-        //   ),
-        // ),
-        // SizedBox(height: 8),
-
-        // Servicios adicionales
-        // _ServiciosAdicionalesView(controlActividades: controlActividades),
-        // Actividades map view
         Expanded(
           child: Column(
+            mainAxisAlignment: MainAxisAlignment.start,
             children: [
+              Padding(
+                padding: EdgeInsets.symmetric(horizontal: 12),
+                child: Row(
+                  children: [
+                    // icon button
+                    IconButton(
+                      icon: const Icon(Icons.expand_more),
+                      onPressed: () {
+                        setState(() {
+                          for (
+                            int i = 0;
+                            i < widget.departamento.actividades.length;
+                            i++
+                          ) {
+                            widget.departamento.actividades[i].isExpanded =
+                                true;
+                          }
+                        });
+                      },
+                    ),
+                    IconButton(
+                      icon: const Icon(Icons.expand_less),
+                      onPressed: () {
+                        setState(() {
+                          for (
+                            int i = 0;
+                            i < widget.departamento.actividades.length;
+                            i++
+                          ) {
+                            widget.departamento.actividades[i].isExpanded =
+                                false;
+                          }
+                        });
+                      },
+                    ),
+                  ],
+                ),
+              ),
               // Servicios Adicionales
               // Expanded(child: _ServiciosAdicionalesView(controlActividades: controlActividades)),
               Expanded(
                 child: ListView.builder(
                   physics: const BouncingScrollPhysics(),
-                  itemCount: departamento.actividades.length,
+                  itemCount: widget.departamento.actividades.length,
                   itemBuilder: (context, index) {
-                    final actividad = departamento.actividades[index];
+                    final actividad = widget.departamento.actividades[index];
                     return _ActividadView(
+                      departamento: widget.departamento,
                       actividad: actividad,
                       indexAct: index,
-                      indexDep: indexDep,
+                      indexDep: widget.indexDep,
                     );
                   },
                 ),
@@ -373,87 +404,86 @@ class _DepartamentosView extends StatelessWidget {
         ),
       ],
     );
-
-    //   Column(
-    //     children: [
-    //       // SizedBox(height: 8),
-    //       // Expanded(
-    //       //   child: _ServiciosAdicionalesView(
-    //       //     controlActividades: controlActividades,
-    //       //   ),
-    //       // ),
-    //       // SizedBox(height: 8),
-    //       // Actividades map view
-    //       Expanded(
-    //         child: ListView.builder(
-    //           physics: const BouncingScrollPhysics(),
-    //           itemCount: departamento.actividades.length,
-    //           itemBuilder: (context, index) {
-    //             final actividad = departamento.actividades[index];
-    //             return _ActividadView(
-    //               actividad: actividad,
-    //               indexAct: index,
-    //               indexDep: indexDep,
-    //             );
-    //           },
-    //         ),
-    //       ),
-    //       // Servicios adicionales
-
-    //       // _ServiciosAdicionalesView(controlActividades: controlActividades),
-    //     ],
-    //   );
   }
 }
 
-class _ActividadView extends StatelessWidget {
+class _ActividadView extends StatefulWidget {
   final Actividades actividad;
   final int indexAct;
   final int indexDep;
+  final Departamento departamento;
+
   const _ActividadView({
     required this.actividad,
     required this.indexDep,
     required this.indexAct,
+    required this.departamento,
   });
 
   @override
-  Widget build(BuildContext context) {
-    bool isExpanded = true;
-    return Padding(
-      padding: const EdgeInsets.only(bottom: 5),
-      child: ExpansionPanelList(
-        // elevation: 0,
-        expandedHeaderPadding: EdgeInsets.zero,
-        expansionCallback: (int index, bool isExpanded) {
-          isExpanded = !isExpanded;
-        },
-        children: [
-          ExpansionPanel(
-            canTapOnHeader: true,
+  State<_ActividadView> createState() => _ActividadViewState();
+}
 
-            // borderRadius: BorderRadius.circular(8),
-            backgroundColor: Colors.white,
-            headerBuilder: (BuildContext context, bool isExpanded) {
-              return ListTile(
-                title: Text(
-                  '${indexAct + 1}. ${actividad.nombreActividad}',
-                  style: Theme.of(context).textTheme.titleLarge?.copyWith(
-                    fontWeight: FontWeight.w800,
-                    // color: Theme.of(context).colorScheme.primary,
+class _ActividadViewState extends State<_ActividadView> {
+  //  bool active = false;
+  // bool isExpanded = true;
+
+  @override
+  Widget build(BuildContext context) {
+    return SingleChildScrollView(
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.start,
+        children: <Widget>[
+          // Padding for the expansion panel
+          Padding(
+            padding: const EdgeInsets.only(bottom: 5),
+            child: ExpansionPanelList(
+              // elevation: 0,
+              expandedHeaderPadding: EdgeInsets.zero,
+              // expansionCallback: (int index, bool isExpanded) {
+              //   isExpanded = !isExpanded;
+              // },
+              expansionCallback: (panelIndex, expanded) {
+                widget.departamento.actividades[panelIndex].isExpanded =
+                    !widget.departamento.actividades[panelIndex].isExpanded;
+                setState(() {});
+              },
+              children: [
+                ExpansionPanel(
+                  isExpanded: widget.actividad.isExpanded,
+                  canTapOnHeader: true,
+
+                  // borderRadius: BorderRadius.circular(8),
+                  backgroundColor: Colors.white,
+                  headerBuilder: (BuildContext context, bool isExpanded) {
+                    return ListTile(
+                      title: Text(
+                        '${widget.indexAct + 1}. ${widget.actividad.nombreActividad}',
+                        style: Theme.of(context).textTheme.titleLarge?.copyWith(
+                          fontWeight: FontWeight.w800,
+                          // color: Theme.of(context).colorScheme.primary,
+                        ),
+                      ),
+                    );
+                  },
+                  // isExpanded: isExpanded
+                  body: Column(
+                    children: widget.actividad.tareas!.asMap().entries.map((
+                      entry,
+                    ) {
+                      final indexTar = entry.key;
+                      final tarea = entry.value;
+                      return _TareaView(
+                        actividad: widget.actividad,
+                        tarea: tarea,
+                        indexTar: indexTar,
+                        indexAct: widget.indexAct,
+                        indexDep: widget.indexDep,
+                      );
+                    }).toList(),
                   ),
                 ),
-              );
-            },
-            isExpanded: isExpanded,
-            body: Column(
-              children: actividad.tareas!.map((tarea) {
-                return _TareaView(
-                  tarea: tarea,
-                  indexTar: indexAct,
-                  indexAct: indexAct,
-                  indexDep: indexDep,
-                );
-              }).toList(),
+              ],
             ),
           ),
         ],
@@ -462,13 +492,15 @@ class _ActividadView extends StatelessWidget {
   }
 }
 
-class _TareaView extends StatelessWidget {
+class _TareaView extends StatefulWidget {
+  final Actividades actividad;
   final Tarea tarea;
   final int indexTar;
   final int indexAct;
   final int indexDep;
 
   const _TareaView({
+    required this.actividad,
     required this.tarea,
     required this.indexTar,
     required this.indexAct,
@@ -476,22 +508,34 @@ class _TareaView extends StatelessWidget {
   });
 
   @override
+  State<_TareaView> createState() => _TareaViewState();
+}
+
+class _TareaViewState extends State<_TareaView> {
+  @override
   Widget build(BuildContext context) {
     return ExpansionPanelList(
       // elevation: 0,
       expandedHeaderPadding: EdgeInsets.zero,
-      expansionCallback: (int index, bool isExpanded) {
+      expansionCallback: (index, isExpanded) {
         // isExpanded = !isExpanded;
+        // widget.actividad.tareas?[index].isExpanded =
+        // !widget.actividad.tareas![index].isExpanded;
+
+        widget.tarea.isExpanded = !widget.tarea.isExpanded;
+        setState(() {});
       },
       children: [
         ExpansionPanel(
+          canTapOnHeader: true,
+          isExpanded: widget.tarea.isExpanded,
           backgroundColor: Colors.white,
           headerBuilder: (BuildContext context, bool isExpanded) {
             return ListTile(
               // set min height
               // minVerticalPadding: 40,
               title: Text(
-                tarea.titulo,
+                widget.tarea.titulo,
                 style: Theme.of(context).textTheme.bodyLarge?.copyWith(
                   fontWeight: FontWeight.w600,
                   // color: Theme.of(context).colorScheme.primary,
@@ -499,35 +543,34 @@ class _TareaView extends StatelessWidget {
               ),
             );
           },
-          isExpanded: true,
           body: Padding(
             padding: const EdgeInsets.symmetric(horizontal: 32),
             child: Column(
               children: [
-                switch (tarea.tipoId) {
-                  2 => _TareaHoraView(tarea: tarea),
-                  3 => _TareaHoraInicioFinView(tarea: tarea),
-                  1 => _TareaCantidadView(tarea: tarea),
-                  4 => _TareaMaquinariaSinTiempoView(tarea: tarea),
+                switch (widget.tarea.tipoId) {
+                  2 => _TareaHoraView(tarea: widget.tarea),
+                  3 => _TareaHoraInicioFinView(tarea: widget.tarea),
+                  1 => _TareaCantidadView(tarea: widget.tarea),
+                  4 => _TareaMaquinariaSinTiempoView(tarea: widget.tarea),
                   5 => _TareaMaquinariaConTiempoView(
-                    tarea: tarea,
-                    indexTar: indexTar,
-                    indexAct: indexAct,
-                    indexDep: indexDep,
+                    tarea: widget.tarea,
+                    indexTar: widget.indexTar,
+                    indexAct: widget.indexAct,
+                    indexDep: widget.indexDep,
                   ),
-                  6 => _TareaTextoView(tarea: tarea),
-                  7 => _TareaPasajerosView(tarea: tarea),
-                  8 => _TareaExcesoEquipajeView(tarea: tarea),
-                  9 => _TareaITView(tarea: tarea),
-                  10 => _TareaLimpiezaView(tarea: tarea),
+                  6 => _TareaTextoView(tarea: widget.tarea),
+                  7 => _TareaPasajerosView(tarea: widget.tarea),
+                  8 => _TareaExcesoEquipajeView(tarea: widget.tarea),
+                  9 => _TareaITView(tarea: widget.tarea),
+                  10 => _TareaLimpiezaView(tarea: widget.tarea),
                   // Default case
-                  _ => _TareaHoraView(tarea: tarea),
+                  _ => _TareaHoraView(tarea: widget.tarea),
                 },
 
                 // Image list display
-                _TareaImagenView(tarea: tarea),
+                _TareaImagenView(tarea: widget.tarea),
 
-                _ComentarioView(tarea: tarea),
+                _ComentarioView(tarea: widget.tarea),
               ],
             ),
           ),
@@ -1457,10 +1500,11 @@ class _ListadoMaquinariasConTiempoView extends ConsumerWidget {
                             ?.fechaInicio;
                         final body = HoraInicioFinMaquinaria(
                           // ignore: use_build_context_synchronously
-                          horaInicio: getDateTimeFromTimeOfDay(
-                            trcDate,
-                            selectedTime,
-                          ),
+                          horaInicio:
+                              CustomDateTimeFunctions.getDateTimeFromTimeOfDay(
+                                trcDate,
+                                selectedTime,
+                              ),
                           horaFin: null,
                           id: maquinaria['id'],
                           tareaId: tarea.id,
@@ -1622,18 +1666,19 @@ class _ListadoMaquinariasConTiempoView extends ConsumerWidget {
                             .read(selectedTurnaroundProvider.notifier)
                             .state
                             ?.fechaInicio;
-                        final HoraInicioFinMaquinaria body =
-                            HoraInicioFinMaquinaria(
-                              id: maquinaria['id'],
-                              horaInicio: null,
-                              // ignore: use_build_context_synchronously
-                              horaFin: getDateTimeFromTimeOfDay(
+                        final HoraInicioFinMaquinaria
+                        body = HoraInicioFinMaquinaria(
+                          id: maquinaria['id'],
+                          horaInicio: null,
+                          // ignore: use_build_context_synchronously
+                          horaFin:
+                              CustomDateTimeFunctions.getDateTimeFromTimeOfDay(
                                 trcDate,
                                 selectedTime,
                               ),
-                              tareaId: tarea.id,
-                              tipo: 'Hora final',
-                            );
+                          tareaId: tarea.id,
+                          tipo: 'Hora final',
+                        );
                         final trcId = ref.read(trcIdProvider);
                         final response = await ref
                             .read(controlActividadesProvider(trcId).notifier)
@@ -2326,7 +2371,7 @@ class _ComentarioView extends ConsumerWidget {
                             ),
 
                             CustomFilledButton(
-                              text: 'Asignar',
+                              text: 'Guardar',
                               // buttonColor: Colors.green,
                               onPressed: () async {
                                 final ComentarioRequest body =
@@ -2821,13 +2866,13 @@ class _ControlActividadesMainView extends ConsumerWidget {
   }
 }
 
-getDateTimeFromTimeOfDay(String date, TimeOfDay time) {
-  DateTime parsedDate = DateFormat('yyyy-MM-dd').parse(date);
-  return DateTime(
-    parsedDate.year,
-    parsedDate.month,
-    parsedDate.day,
-    time.hour,
-    time.minute,
-  );
-}
+// getDateTimeFromTimeOfDay(String date, TimeOfDay time) {
+//   DateTime parsedDate = DateFormat('yyyy-MM-dd').parse(date);
+//   return DateTime(
+//     parsedDate.year,
+//     parsedDate.month,
+//     parsedDate.day,
+//     time.hour,
+//     time.minute,
+//   );
+// }

@@ -4,6 +4,7 @@ import 'package:turnaround_mobile/features/auth/auth.dart';
 import 'package:turnaround_mobile/features/turnarounds/turnarounds.dart';
 
 import '../../features/auth/presentation/providers/auth_provider.dart';
+import '../../features/turnarounds/domain/domain.dart';
 import 'app_router_notifier.dart';
 
 final goRouterProvider = Provider((ref) {
@@ -56,6 +57,7 @@ final goRouterProvider = Provider((ref) {
         path: '/servicios-adicionales-screen',
         builder: (context, state) => ServiciosAdicionalesScreen(),
       ),
+
       GoRoute(
         path: '/asignar-equipos-gse-servicios-adicionales-especiales',
         builder: (context, state) =>
@@ -65,10 +67,18 @@ final goRouterProvider = Provider((ref) {
         path: '/asignar-equipos-gse-servicios-control-actividades',
         builder: (context, state) {
           // extra data
-          final Map<String, dynamic>? data =
-              state.extra as Map<String, dynamic>?;
-          return AsignarEquiposGseServiciosControlActividades(data);
+          final AsignarEquiposDialogData? data =
+              state.extra as AsignarEquiposDialogData?;
+          return AsignarEquiposGseServiciosControlActividades(data!);
         },
+      ),
+      GoRoute(
+        path: '/servicios-especiales-screen',
+        builder: (context, state) => ServiciosEspecialesScreen(),
+      ),
+      GoRoute(
+        path: '/asignar-servicios-especiales-screen',
+        builder: (context, state) => AsignarServiciosEspecialesScreen(),
       ),
     ],
 

@@ -134,6 +134,36 @@ class CategoriasEquiposGseNotifier
       );
     }
   }
+
+  Future<SnackbarResponse> asignarMaquinariasSerivicioAdicional(
+    Map<String, dynamic> body,
+  ) async {
+    try {
+      final SimpleApiResponse response = await turnaroundsRepository
+          .asignarMaquinariasSerivicioAdicional(body);
+      if (response.success) {
+        // snackbar response
+        // getCategoriasEquiposGse();
+        return SnackbarResponse(message: 'Equipos asignados.', success: true);
+      } else {
+        // get control de actividades
+        // await ref
+        //     .read(controlActividadesProvider(trcId).notifier)
+        //     .getControlDeActividadesByTrcId();
+        // Optionally, you can show a snackbar or a dialog
+        return SnackbarResponse(
+          message: 'Error al asignar los equipos.',
+          success: false,
+        );
+      }
+    } catch (e) {
+      // print("Error deleting image: $e");
+      return SnackbarResponse(
+        message: 'Error al asignar los equipos.',
+        success: false,
+      );
+    }
+  }
 }
 
 class CategoriasEquiposGseState {
