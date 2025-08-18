@@ -1,16 +1,28 @@
-import 'package:flutter/material.dart';
-import 'package:signature/signature.dart';
+import 'dart:convert';
+import 'dart:typed_data';
 
-class FirmaSupervisorScreen extends StatefulWidget {
+import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:intl/intl.dart';
+import 'package:signature/signature.dart';
+import 'package:turnaround_mobile/features/auth/presentation/providers/auth_provider.dart';
+import 'package:turnaround_mobile/features/auth/presentation/providers/login_form_provider.dart';
+
+import '../../../shared/shared.dart';
+import '../../domain/domain.dart';
+import '../providers/providers.dart';
+
+class FirmaSupervisorScreen extends ConsumerStatefulWidget {
   const FirmaSupervisorScreen({super.key});
 
   @override
-  State<FirmaSupervisorScreen> createState() => _FirmaSupervisorScreenState();
+  ConsumerState<FirmaSupervisorScreen> createState() =>
+      _FirmaSupervisorScreenState();
 }
 
-class _FirmaSupervisorScreenState extends State<FirmaSupervisorScreen> {
+class _FirmaSupervisorScreenState extends ConsumerState<FirmaSupervisorScreen> {
   // Dropdown variables
-  String? selectedValue;
+  SupervisorUser? selectedValue;
   final List<String> dropdownItems = ['Option 1', 'Option 2', 'Option 3'];
 
   // Password controller
@@ -32,7 +44,9 @@ class _FirmaSupervisorScreenState extends State<FirmaSupervisorScreen> {
   @override
   Widget build(BuildContext context) {
     ThemeData theme = Theme.of(context);
-
+    final List<SupervisorUser> supervisores = ref
+        .watch(supervisorAerolineaProvider)
+        .supervisores;
     return Scaffold(
       appBar: AppBar(title: const Text('Firma del Supervisor')),
       body: SingleChildScrollView(
@@ -46,18 +60,24 @@ class _FirmaSupervisorScreenState extends State<FirmaSupervisorScreen> {
               style: theme.textTheme.titleSmall,
             ),
             const SizedBox(height: 8),
-            DropdownButtonFormField<String>(
+            DropdownButtonFormField<SupervisorUser>(
               value: selectedValue,
               decoration: InputDecoration(
                 border: OutlineInputBorder(),
                 // hintText: 'Selccione el supervisor',
               ),
-              items: dropdownItems.map((String value) {
-                return DropdownMenuItem<String>(
-                  value: value,
-                  child: Text(value),
+              items: supervisores.map((SupervisorUser supervisor) {
+                return DropdownMenuItem<SupervisorUser>(
+                  value: supervisor,
+                  child: Text(supervisor.nombre),
                 );
               }).toList(),
+              // items: dropdownItems.map((String value) {
+              //   return DropdownMenuItem<String>(
+              //     value: value,
+              //     child: Text(value),
+              //   );
+              // }).toList(),
               onChanged: (newValue) {
                 setState(() {
                   selectedValue = newValue;
@@ -75,8 +95,9 @@ class _FirmaSupervisorScreenState extends State<FirmaSupervisorScreen> {
             TextFormField(
               controller: _passwordController,
               decoration: const InputDecoration(
-                labelText: 'Ingrese su código',
+                // labelText: 'Ingrese su código',
                 border: OutlineInputBorder(),
+                hintText: 'Ingrese su código',
                 // hintText: 'Enter numbers only',
               ),
               keyboardType: TextInputType.text,
@@ -100,14 +121,14 @@ class _FirmaSupervisorScreenState extends State<FirmaSupervisorScreen> {
             Container(
               decoration: BoxDecoration(
                 border: Border.all(color: Colors.grey),
-                borderRadius: BorderRadius.circular(4),
+                borderRadius: BorderRadius.circular(20),
               ),
               child: Column(
                 children: [
                   Signature(
                     controller: _signatureController,
-                    height: 200,
-                    backgroundColor: Colors.white,
+                    height: 230,
+                    backgroundColor: Colors.transparent,
                   ),
                   Padding(
                     padding: const EdgeInsets.all(8.0),
@@ -146,7 +167,7 @@ class _FirmaSupervisorScreenState extends State<FirmaSupervisorScreen> {
                 const SizedBox(width: 16),
                 Expanded(
                   child: ElevatedButton(
-                    onPressed: () {
+                    onPressed: () async {
                       if (selectedValue == null) {
                         ScaffoldMessenger.of(context).showSnackBar(
                           const SnackBar(
@@ -174,8 +195,63 @@ class _FirmaSupervisorScreenState extends State<FirmaSupervisorScreen> {
                         return;
                       }
 
+                      // final datetime = DateFormat('yyyy-MM-dd').parse(DateTime.now().toString());
+                      // final datetime = DateFormat('yyyy-MM-dd HH:mm:ss')
+                      //     .parse(DateTime.now().toString());
+
+                      final user = ref.read(authProvider).loginResponse!;
+                      final signatureImage = await _signatureController
+                          .toPngBytes();
+                      final body = {
+                        'username': user.username,
+                        'fk_usuario': user.id,
+                        'fecha': DateFormat(
+                          'yyyy-MM-dd',
+                        ).format(DateTime.now()).toString(),
+                        'hora': DateFormat(
+                          'HH:mm',
+                        ).format(DateTime.now()).toString(),
+                        'fk_turnaround': ref
+                            .read(selectedTurnaroundProvider)!
+                            .id,
+                        'supervisor': selectedValue!.id,
+                        'codigo': _passwordController.text,
+                        'signatureImage': signatureImage,
+                        // .toPngBytes(),
+                      };
+
+                      final response = await ref
+                          .read(
+                            controlActividadesProvider(
+                              ref.read(selectedTurnaroundProvider)!.id,
+                            ).notifier,
+                          )
+                          .firmaSupervisor(body);
+                      if (response == null) {
+                        return;
+                      }
+                      // Show snackbar response
+                      CustomSnackbar.showResponseSnackbar(
+                        response.message,
+                        response.success,
+                        // ignore: use_build_context_synchronously
+                        context,
+                        isFixed: true,
+                      );
+
+                      if (response.success) {
+                        // Clear the form
+                        setState(() {
+                          selectedValue = null;
+                          _passwordController.clear();
+                          _signatureController.clear();
+                        });
+                        // Close
+                        Navigator.pop(context);
+                      }
+
                       // Form is valid - process data
-                      _submitForm();
+                      // _submitForm();
                     },
                     style: ElevatedButton.styleFrom(
                       padding: const EdgeInsets.symmetric(vertical: 16),
@@ -196,7 +272,8 @@ class _FirmaSupervisorScreenState extends State<FirmaSupervisorScreen> {
     final formData = {
       'selectedOption': selectedValue,
       'password': _passwordController.text,
-      'signatureImage': await _signatureController.toImage(),
+      'signatureImage': await _signatureController.toPngBytes(),
+      // 'signatureImage': await _signatureController.toImage(),
       // 'signature': _signatureController.isNotEmpty
       //     ? 'Signature provided'
       //     : 'No signature',
@@ -209,6 +286,20 @@ class _FirmaSupervisorScreenState extends State<FirmaSupervisorScreen> {
         duration: const Duration(seconds: 2),
       ),
     );
+
+    Uint8List dataUriToBytes(String dataUri) {
+      // Split the data URI
+      final uriParts = dataUri.split(',');
+      if (uriParts.length != 2) {
+        throw FormatException('Invalid data URI');
+      }
+
+      // Get the base64 part
+      final base64Str = uriParts[1];
+
+      // Decode base64 to bytes
+      return base64Decode(base64Str);
+    }
 
     // In a real app, you would send this data to your backend
     // Navigator.pop(context); // Uncomment to close after submit

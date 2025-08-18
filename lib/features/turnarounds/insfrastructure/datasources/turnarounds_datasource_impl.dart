@@ -746,9 +746,7 @@ class TurnaroundsDatasourceImpl implements TurnaroundsDatasource {
   @override
   Future<List<SupervisorUser>> getSupervisores(int idAerolinea) {
     return dio
-        .get(
-          '/usuarios/personal_by_aerolinea/id_aerolinea=$idAerolinea/?token=$accessToken',
-        )
+        .get('/usuarios/personal_by_aerolinea/$idAerolinea/?token=$accessToken')
         .then((response) {
           print('Response from getSupervisores: $response');
           if (response.statusCode == 200) {
@@ -760,6 +758,26 @@ class TurnaroundsDatasourceImpl implements TurnaroundsDatasource {
             return supervisores;
           } else {
             return [];
+          }
+        });
+  }
+
+  @override
+  Future firmaSupervisor(FormData formData) {
+    return dio
+        .post('/turnarounds/firma_trc/?token=$accessToken', data: formData)
+        .then((response) {
+          print('Response from firmaSupervisor: $response');
+          if (response.statusCode == 201) {
+            return SimpleApiResponse(
+              message: 'Firma registrada.',
+              success: true,
+            );
+          } else {
+            return SimpleApiResponse(
+              message: 'Error al registrar firma.',
+              success: false,
+            );
           }
         });
   }

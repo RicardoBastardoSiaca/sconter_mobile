@@ -109,8 +109,12 @@ class _ControlActividadesScreenState
           children: [
             // SizedBox(height: 0.2),
             GestureDetector(
-              onTap: () {
+              onTap: () async {
                 print('Firma del Supervisor pressed');
+
+                await ref
+                    .read(supervisorAerolineaProvider.notifier)
+                    .getSupervisores();
                 context.push('/firma-supervisor-screen');
               },
               child: Row(

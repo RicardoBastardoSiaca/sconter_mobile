@@ -217,6 +217,7 @@ class _ListTileCardContainer extends StatelessWidget {
                 semanticsLabel: 'Image',
                 fit: BoxFit.fill,
                 alignment: Alignment.center,
+                // maxHeight: 140,
                 // Box shadow
               ),
             ),
@@ -238,6 +239,7 @@ class _ListTileCardContainer extends StatelessWidget {
               children: [
                 // Cola de aerolinea
                 Flexible(
+                  // backkground color
                   flex: 1,
                   child: _TailView(
                     image: turnaround.fkVuelo.fkAerolinea.imagen ?? "",
@@ -548,33 +550,30 @@ class _TailView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Column(
-      // mainAxisSize: MainAxisSize.max,
-      crossAxisAlignment: CrossAxisAlignment.center,
-      mainAxisAlignment: MainAxisAlignment.center,
-      children: [
-        Padding(
-          padding: const EdgeInsets.only(
-            // top: 0,
-            // bottom: 0,
-            left: 23,
-            right: 10,
-          ),
-          child: Image.network(image),
-        ),
-        // Uppercase
-        Padding(
-          padding: const EdgeInsets.only(left: 20),
-          child: Text(
-            name.toUpperCase(),
-            style: Theme.of(context).textTheme.labelMedium?.copyWith(
-              fontFamily: GoogleFonts.openSans(
-                fontWeight: FontWeight.w700,
-              ).fontFamily,
+    return Padding(
+      padding: const EdgeInsets.only(left: 20),
+      child: Center(
+        child: Column(
+          // mainAxisSize: MainAxisSize.max,
+          crossAxisAlignment: CrossAxisAlignment.center,
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            SizedBox(
+              height: 90,
+              child: Image.network(image, fit: BoxFit.contain),
             ),
-          ),
+            // Uppercase
+            Text(
+              name.toUpperCase(),
+              style: Theme.of(context).textTheme.labelMedium?.copyWith(
+                fontFamily: GoogleFonts.openSans(
+                  fontWeight: FontWeight.w700,
+                ).fontFamily,
+              ),
+            ),
+          ],
         ),
-      ],
+      ),
     );
   }
 }
@@ -600,26 +599,77 @@ class _InboundView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Padding(
-      // padding: const EdgeInsets.only(left: 15, right: 15),
-      padding: const EdgeInsets.only(top: 15, bottom: 15, left: 15, right: 15),
-      child: Column(
-        children: [
-          Row(
-            mainAxisSize: MainAxisSize.max,
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+    return Center(
+      child: Container(
+        constraints: BoxConstraints(
+          maxWidth: 140.0, // Sets the maximum width to 300 logical pixels
+        ),
+        child: Padding(
+          // padding: const EdgeInsets.only(left: 15, right: 15),
+          padding: const EdgeInsets.only(
+            top: 15,
+            bottom: 15,
+            left: 15,
+            right: 15,
+          ),
+          child: Column(
             children: [
+              Row(
+                mainAxisSize: MainAxisSize.max,
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Text(
+                    lugarSalida,
+                    style: Theme.of(context).textTheme.titleLarge?.copyWith(
+                      fontFamily: GoogleFonts.openSans(
+                        fontWeight: FontWeight.w700,
+                      ).fontFamily,
+                    ),
+                  ),
+                  Text(
+                    lugarLlegada,
+                    style: Theme.of(context).textTheme.titleLarge?.copyWith(
+                      fontFamily: GoogleFonts.openSans(
+                        fontWeight: FontWeight.w700,
+                      ).fontFamily,
+                    ),
+                  ),
+                ],
+              ),
+              isInbound
+                  ? SvgPicture.asset("assets/icons/llegada.svg", height: 30)
+                  : SvgPicture.asset("assets/icons/salida.svg", height: 30),
+              // hora
               Text(
-                lugarSalida,
+                hora,
                 style: Theme.of(context).textTheme.titleLarge?.copyWith(
                   fontFamily: GoogleFonts.openSans(
                     fontWeight: FontWeight.w700,
                   ).fontFamily,
                 ),
               ),
+              // isInbound
+              //     ? Text(
+              //         "LLEGADA",
+              //         style: Theme.of(context).textTheme.labelSmall?.copyWith(
+              //           fontFamily: GoogleFonts.openSans(
+              //             fontWeight: FontWeight.w500,
+              //           ).fontFamily,
+              //         ),
+              //       )
+              //     : Text(
+              //         "SALIDA",
+              //         style: Theme.of(context).textTheme.labelSmall?.copyWith(
+              //           fontFamily: GoogleFonts.openSans(
+              //             fontWeight: FontWeight.w500,
+              //           ).fontFamily,
+              //         ),
+              //       ),
+
+              // SizedBox(height: 10),
               Text(
-                lugarLlegada,
-                style: Theme.of(context).textTheme.titleLarge?.copyWith(
+                numeroVuelo,
+                style: Theme.of(context).textTheme.labelLarge?.copyWith(
                   fontFamily: GoogleFonts.openSans(
                     fontWeight: FontWeight.w700,
                   ).fontFamily,
@@ -627,46 +677,7 @@ class _InboundView extends StatelessWidget {
               ),
             ],
           ),
-          isInbound
-              ? SvgPicture.asset("assets/icons/llegada.svg", height: 30)
-              : SvgPicture.asset("assets/icons/salida.svg", height: 30),
-          // hora
-          Text(
-            hora,
-            style: Theme.of(context).textTheme.titleLarge?.copyWith(
-              fontFamily: GoogleFonts.openSans(
-                fontWeight: FontWeight.w700,
-              ).fontFamily,
-            ),
-          ),
-          // isInbound
-          //     ? Text(
-          //         "LLEGADA",
-          //         style: Theme.of(context).textTheme.labelSmall?.copyWith(
-          //           fontFamily: GoogleFonts.openSans(
-          //             fontWeight: FontWeight.w500,
-          //           ).fontFamily,
-          //         ),
-          //       )
-          //     : Text(
-          //         "SALIDA",
-          //         style: Theme.of(context).textTheme.labelSmall?.copyWith(
-          //           fontFamily: GoogleFonts.openSans(
-          //             fontWeight: FontWeight.w500,
-          //           ).fontFamily,
-          //         ),
-          //       ),
-
-          // SizedBox(height: 10),
-          Text(
-            numeroVuelo,
-            style: Theme.of(context).textTheme.labelLarge?.copyWith(
-              fontFamily: GoogleFonts.openSans(
-                fontWeight: FontWeight.w700,
-              ).fontFamily,
-            ),
-          ),
-        ],
+        ),
       ),
     );
   }

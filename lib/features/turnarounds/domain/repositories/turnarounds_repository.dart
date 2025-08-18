@@ -1,3 +1,4 @@
+import 'package:dio/src/form_data.dart';
 import 'package:turnaround_mobile/features/shared/shared.dart';
 
 import '../domain.dart';
@@ -93,4 +94,6 @@ abstract class TurnaroundsRepository {
   );
 
   Future<List<SupervisorUser>> getSupervisores(int idAerolinea);
+
+  Future firmaSupervisor(FormData formData);
 }

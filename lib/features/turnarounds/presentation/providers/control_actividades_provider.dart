@@ -203,6 +203,7 @@ class ControlActividadesNotifier
 
     FormData formData = FormData();
     formData = FormData.fromMap({
+      // 'documento': await MultipartFile.fromFile(photoPath, filename: photoPath),
       'documento': await MultipartFile.fromFile(photoPath, filename: photoPath),
       'formato': 'documento',
       'nombre': 'avatar',
@@ -310,6 +311,48 @@ class ControlActividadesNotifier
       } else {
         return SnackbarResponse(
           message: 'Ha ocurrido un error.',
+          success: false,
+        );
+      }
+    } catch (e) {
+      return SnackbarResponse(message: 'Ha ocurrido un error.', success: false);
+    }
+  }
+
+  Future<SnackbarResponse> firmaSupervisor(Map<String, dynamic> data) async {
+    final body = {
+      'fk_usuario': data['fk_usuario'],
+      'fecha': data['fecha'],
+      'hora': data['hora'],
+      'fk_turnaround': data['fk_turnaround'],
+      'supervisor': data['supervisor'],
+      'codigo': data['codigo'], // Added codigo field
+      // 'documento': data['signatureImage'],
+      // 'formato': 'documento',
+      // 'nombre': '${data['username']}.jpeg',
+      // 'type': 'jpeg',
+      // 'encryptedBody': EncryptDecrypt().encryptUsingAES256(json.encode(body)),
+    };
+    FormData formData = FormData();
+    formData = FormData.fromMap({
+      'documento': MultipartFile.fromBytes(
+        data['signatureImage'],
+        filename: '${data['username']}.jpeg',
+      ),
+      'formato': 'documento',
+      'nombre': '${data['username']}.jpeg',
+      'type': 'jpeg',
+      'encryptedBody': EncryptDecrypt().encryptUsingAES256(json.encode(body)),
+    });
+
+    try {
+      final response = await turnaroundsRepository.firmaSupervisor(formData);
+      if (response.success) {
+        getControlDeActividadesByTrcId();
+        return SnackbarResponse(message: 'Firma registrada.', success: true);
+      } else {
+        return SnackbarResponse(
+          message: 'Ha ocurrido un error al registrar la firma.',
           success: false,
         );
       }

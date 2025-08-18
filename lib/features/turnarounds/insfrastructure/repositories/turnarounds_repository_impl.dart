@@ -1,3 +1,4 @@
+import 'package:dio/src/form_data.dart';
 import 'package:turnaround_mobile/features/shared/shared.dart';
 
 import '../../domain/domain.dart';
@@ -173,5 +174,10 @@ class TurnaroundsRepositoryImpl extends TurnaroundsRepository {
   @override
   Future<List<SupervisorUser>> getSupervisores(int idAerolinea) {
     return datasource.getSupervisores(idAerolinea);
+  }
+
+  @override
+  Future firmaSupervisor(FormData formData) {
+    return datasource.firmaSupervisor(formData);
   }
 }
