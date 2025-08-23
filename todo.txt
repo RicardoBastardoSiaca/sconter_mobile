@@ -5,13 +5,13 @@ Tareas tipo limpieza
 Tareas tipo texto
 Tareas tipo IT
 Asignacion de personal
-Codigos de demora
 Cerrar vuelo
 Usuarios 
 cerrar sesion
 Reportes
 
 
+Codigos de demora
 Servicios especiales
 Servicios adicionales
 Firma del supervisor
@@ -27,6 +27,7 @@ tareas tipo comentario
 Frank:
 En ver demoras hace falta la variables con las 2 letras del identificador
 nombre cortos de las gerencias para tabs de control de actividades
+Cuando se eleimina una demora siempre viene con el success en false, y sin
 
 
 

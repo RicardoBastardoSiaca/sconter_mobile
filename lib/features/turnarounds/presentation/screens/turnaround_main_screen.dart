@@ -120,7 +120,20 @@ class _DateFilter extends ConsumerWidget {
 
       children: [
         IconButton(
-          onPressed: () {},
+          onPressed: () {
+            // subtract one day from selectedDate
+            final newDate = selectedDate.subtract(const Duration(days: 1));
+            ref.read(datetimeProvider.notifier).state = newDate;
+
+            // setSelectedDate
+            ref.read(turnaroundProvider.notifier).setSelectedDate(newDate);
+
+            // ref.read(turnaroundProvider.notifier).state = ref
+            //     .read(turnaroundProvider.notifier)
+            //     .state
+            //     .copyWith(selectedDate: newDate);
+            // ref.read(turnaroundProvider.notifier).getTurnarounds();
+          },
           icon: Icon(Icons.arrow_back_ios_outlined, size: 20),
         ),
         GestureDetector(
@@ -148,12 +161,25 @@ class _DateFilter extends ConsumerWidget {
           child: Text(
             // "${selectedDate.toLocal()}".split(' ')[0],
             inputFormat.format(selectedDate).split(' ')[0],
-            style: Theme.of(context).textTheme.bodyLarge,
+            style: Theme.of(context).textTheme.bodyMedium,
           ),
         ),
         IconButton(
           icon: Icon(Icons.arrow_forward_ios_rounded, size: 20),
-          onPressed: () {},
+          onPressed: () {
+            // add one day to selectedDate
+            final newDate = selectedDate.add(const Duration(days: 1));
+            ref.read(datetimeProvider.notifier).state = newDate;
+
+            // setSelectedDate
+            ref.read(turnaroundProvider.notifier).setSelectedDate(newDate);
+
+            // ref.read(turnaroundProvider.notifier).state = ref
+            //     .read(turnaroundProvider.notifier)
+            //     .state
+            //     .copyWith(selectedDate: newDate);
+            // ref.read(turnaroundProvider.notifier).getTurnarounds();
+          },
         ),
       ],
     );
@@ -201,7 +227,7 @@ class _ListTileCardContainer extends StatelessWidget {
               // Shadow
 
               // altura de la tarjeta
-              height: 140,
+              height: 150,
               width: MediaQuery.of(context).size.width,
               alignment: Alignment.center, // <---- The magic
               child: SvgPicture.asset(
