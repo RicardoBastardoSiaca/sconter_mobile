@@ -4,7 +4,6 @@ modulos y Funcionalidades
 Tareas tipo limpieza
 Tareas tipo texto
 Tareas tipo IT
-Firma del supervisor
 Asignacion de personal
 Codigos de demora
 Cerrar vuelo
@@ -15,6 +14,7 @@ Reportes
 
 Servicios especiales
 Servicios adicionales
+Firma del supervisor
 
 
 Asignacion de maquinarias
@@ -22,6 +22,13 @@ Tareas tipo maquinarias
 tareas tipo pasajeros
 tareas tipo cantidad
 tareas tipo comentario
+
+
+Frank:
+En ver demoras hace falta la variables con las 2 letras del identificador
+nombre cortos de las gerencias para tabs de control de actividades
+
+
 
 MISCELLANEOUS
 ************************************************************************************************

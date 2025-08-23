@@ -5,3 +5,4 @@ export 'categorias_equipos_gse_mapper.dart';
 
 export 'categorias_servicios_adicionales_mapper.dart';
 export 'supervisor_aerolinea_mapper.dart';
+export 'demora_mapper.dart';

@@ -32,7 +32,15 @@ class CustomSnackbar {
   }) {
     final snackBar = SnackBar(
       // duration: const Duration(seconds: 2),
-      content: Text(message),
+      content: Center(
+        child: Text(
+          message,
+          style: Theme.of(context).textTheme.titleSmall?.copyWith(
+            color: Colors.white,
+            fontWeight: FontWeight.bold,
+          ),
+        ),
+      ),
       backgroundColor: Colors.red,
       behavior: isFixed ? SnackBarBehavior.fixed : SnackBarBehavior.floating,
     );

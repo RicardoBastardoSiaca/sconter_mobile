@@ -32,6 +32,7 @@ class _ControlActividadesScreenState
   final key = GlobalKey<ExpandableFabState>();
   @override
   Widget build(BuildContext context) {
+    final turnaround = ref.watch(selectedTurnaroundProvider);
     // Color
     final Color primaryColor = Theme.of(context).colorScheme.primary;
 
@@ -146,27 +147,37 @@ class _ControlActividadesScreenState
                 ],
               ),
             ),
-            Row(
-              children: [
-                Text(
-                  'Demoras',
-                  style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                    fontWeight: FontWeight.w600,
-                    // color: Colors.white,
-                  ),
-                ),
-                SizedBox(width: 20),
-                FloatingActionButton.small(
-                  heroTag: null,
-                  backgroundColor: primaryColor,
-                  onPressed: null,
+            GestureDetector(
+              onTap: () async {
+                print('Demoras pressed');
 
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(50),
+                await ref
+                    .read(demorasProvider.notifier)
+                    .getDemorasByTrc(turnaround!.id);
+                context.push('/demoras-screen');
+              },
+              child: Row(
+                children: [
+                  Text(
+                    'Demoras',
+                    style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                      fontWeight: FontWeight.w600,
+                      // color: Colors.white,
+                    ),
                   ),
-                  child: Icon(Icons.schedule, color: Colors.white),
-                ),
-              ],
+                  SizedBox(width: 20),
+                  FloatingActionButton.small(
+                    heroTag: null,
+                    backgroundColor: primaryColor,
+                    onPressed: null,
+
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(50),
+                    ),
+                    child: Icon(Icons.schedule, color: Colors.white),
+                  ),
+                ],
+              ),
             ),
             GestureDetector(
               onTap: () {

@@ -84,6 +84,14 @@ final goRouterProvider = Provider((ref) {
         path: '/firma-supervisor-screen',
         builder: (context, state) => FirmaSupervisorScreen(),
       ),
+      GoRoute(
+        path: '/demoras-screen',
+        builder: (context, state) => DemorasScreen(),
+      ),
+      GoRoute(
+        path: '/asignar-demoras-screen',
+        builder: (context, state) => AsignarDemorasScreen(),
+      ),
     ],
 
     // state.params ahora es state.pathParameters

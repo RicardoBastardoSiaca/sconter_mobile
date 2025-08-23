@@ -180,4 +180,29 @@ class TurnaroundsRepositoryImpl extends TurnaroundsRepository {
   Future firmaSupervisor(FormData formData) {
     return datasource.firmaSupervisor(formData);
   }
+
+  @override
+  Future getDemorasByTrc(int trcId) {
+    return datasource.getDemorasByTrc(trcId);
+  }
+
+  @override
+  Future getDemoras() {
+    return datasource.getDemoras();
+  }
+
+  @override
+  Future getDemorasByAirline(int airlineId) {
+    return datasource.getDemorasByAirline(airlineId);
+  }
+
+  @override
+  Future asignarDemora(Map<String, Object?> body) {
+    return datasource.asignarDemora(body);
+  }
+
+  @override
+  Future eliminarDemoraTrc(int demoraId) {
+    return datasource.eliminarDemoraTrc(demoraId);
+  }
 }

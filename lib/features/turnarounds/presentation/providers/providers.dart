@@ -6,3 +6,4 @@ export 'categorias_equipos_gse_provider.dart';
 export 'pasajeros_form_provider.dart';
 export 'servicios_adicionales_provider.dart';
 export 'supervisor_aerolinea_provider.dart';
+export 'demoras_provider.dart';

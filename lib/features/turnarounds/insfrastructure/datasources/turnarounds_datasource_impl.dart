@@ -781,4 +781,104 @@ class TurnaroundsDatasourceImpl implements TurnaroundsDatasource {
           }
         });
   }
+
+  @override
+  Future getDemorasByTrc(int trcId) {
+    return dio
+        .get('/turnarounds/codigos_trc_api/$trcId/?token=$accessToken')
+        .then((response) {
+          print('Response from getDemorasByTrc: $response');
+          if (response.statusCode == 200) {
+            // mapping to Demora map
+            final List<Demora> demoras = DemoraMapper.mapJsonListToDemoras(
+              response.data,
+            );
+            return demoras;
+          } else {
+            return [];
+          }
+        });
+  }
+
+  @override
+  Future getDemoras() {
+    return dio.get('/turnarounds/codigos_api/?token=$accessToken').then((
+      response,
+    ) {
+      print('Response from getDemoras: $response');
+      if (response.statusCode == 200) {
+        // mapping to Demora map
+        final List<Demora> demoras = DemoraMapper.mapJsonListToDemoras(
+          response.data,
+        );
+        return demoras;
+      } else {
+        return [];
+      }
+    });
+  }
+
+  @override
+  Future getDemorasByAirline(int airlineId) {
+    return dio
+        .get(
+          '/turnarounds/codigos_api/?token=$accessToken&airline_id=$airlineId',
+        )
+        .then((response) {
+          print('Response from getDemorasByAirline: $response');
+          if (response.statusCode == 200) {
+            // mapping to Demora map
+            final List<DemoraCategoria> demoras =
+                DemoraMapper.mapJsonListToCategorias(response.data);
+            return demoras;
+          } else {
+            return [];
+          }
+        });
+  }
+
+  @override
+  Future asignarDemora(Map<String, Object?> body) {
+    return dio
+        .post('/turnarounds/codigos_trc_api/?token=$accessToken', data: body)
+        .then((response) {
+          // print('Response from asignarDemora: $response');
+          if (response.statusCode == 201) {
+            return SimpleApiResponse(
+              message: 'Demora asignada.',
+              success: true,
+            );
+          } else {
+            return SimpleApiResponse(
+              message: 'Error al asignar demora.',
+              success: false,
+            );
+          }
+        });
+  }
+
+  @override
+  Future eliminarDemoraTrc(int demoraId) {
+    final body = {'id': demoraId};
+
+    return dio
+        .put(
+          '/turnarounds/codigos_trc_api/$demoraId/?token=$accessToken',
+          data: body,
+        )
+        .then((response) {
+          print('Response from eliminarDemoraTrc: $response');
+          if (response.statusCode == 201) {
+            return SimpleApiResponse(
+              message: 'Demora eliminada.',
+              success: true,
+            );
+          } else {
+            return SimpleApiResponse(
+              message: 'Error al eliminar demora.',
+              success: false,
+            );
+          }
+        });
+  }
 }

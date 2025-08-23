@@ -96,4 +96,15 @@ abstract class TurnaroundsRepository {
   Future<List<SupervisorUser>> getSupervisores(int idAerolinea);
 
   Future firmaSupervisor(FormData formData);
+
+  // Demoras
+  Future getDemorasByTrc(int trcId);
+
+  Future getDemoras();
+
+  Future getDemorasByAirline(int airlineId);
+
+  Future asignarDemora(Map<String, Object?> body);
+
+  Future eliminarDemoraTrc(int demoraId);
 }

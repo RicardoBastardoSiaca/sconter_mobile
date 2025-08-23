@@ -161,7 +161,10 @@ class _FirmaSupervisorScreenState extends ConsumerState<FirmaSupervisorScreen> {
                     style: OutlinedButton.styleFrom(
                       padding: const EdgeInsets.symmetric(vertical: 16),
                     ),
-                    child: const Text('Cancel'),
+                    child: const Text(
+                      'Cancelar',
+                      style: TextStyle(fontSize: 18),
+                    ),
                   ),
                 ),
                 const SizedBox(width: 16),
@@ -256,7 +259,10 @@ class _FirmaSupervisorScreenState extends ConsumerState<FirmaSupervisorScreen> {
                     style: ElevatedButton.styleFrom(
                       padding: const EdgeInsets.symmetric(vertical: 16),
                     ),
-                    child: const Text('Submit'),
+                    child: const Text(
+                      'Guardar',
+                      style: TextStyle(fontSize: 18),
+                    ),
                   ),
                 ),
               ],

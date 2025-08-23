@@ -14,3 +14,5 @@ export 'asignar_equipos_gse_servicios_adicionales_especiales_screen.dart';
 export 'asignar_equipos_gse_servicios_control_actividades.dart';
 
 export 'firma_supervisor_screen.dart';
+export 'demoras_screen.dart';
+export 'asignar_demoras_screen.dart';
