@@ -352,7 +352,7 @@ class ControlActividadesNotifier
         return SnackbarResponse(message: 'Firma registrada.', success: true);
       } else {
         return SnackbarResponse(
-          message: 'Ha ocurrido un error al registrar la firma.',
+          message: response.message,
           success: false,
         );
       }

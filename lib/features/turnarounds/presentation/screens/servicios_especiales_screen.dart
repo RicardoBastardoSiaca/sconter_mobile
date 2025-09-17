@@ -80,6 +80,7 @@ class _ServiciosEspecialesView extends ConsumerWidget {
             ],
           ),
 
+          const SizedBox(height: 16),
           // ListadoServicioEspecial
           Expanded(child: _ListadoServiciosEspeciales(trcId: trcId)),
         ],
@@ -118,10 +119,28 @@ class _ListadoServiciosEspeciales extends ConsumerWidget {
                     context,
                   ).textTheme.titleSmall?.copyWith(fontWeight: FontWeight.w600),
                 ),
+                Text(
+                  // servicioEspecial.descripcion,
+                  " - Descripcion de servicio especial",
+                  style: Theme.of(context).textTheme.labelMedium?.copyWith(
+                    fontWeight: FontWeight.w400,
+                  ),
+                ),
               ],
             ),
-            _HoraInicioServicioEspecialView(servicio: servicioEspecial),
-            _HoraFinServicioEspecialView(servicio: servicioEspecial),
+
+            servicioEspecial.tipoId != 1
+                ? _HoraInicioServicioEspecialView(servicio: servicioEspecial)
+                : const SizedBox.shrink(),
+            servicioEspecial.tipoId != 1
+                ? _HoraFinServicioEspecialView(servicio: servicioEspecial)
+                : const SizedBox.shrink(),
+
+            const SizedBox(height: 15),
+            // Cantidad
+            servicioEspecial.tipoId == 1
+                ? _CantidadServicioEspecialView(servicio: servicioEspecial)
+                : const SizedBox.shrink(),
 
             // Comentarios
             _ComentarioViewServiciosEspeciales(
@@ -296,6 +315,114 @@ class _ComentarioViewServiciosEspeciales extends ConsumerWidget {
             borderRadius: BorderRadius.circular(10),
           ),
           child: Text(servicioEspecial.comentario ?? ''),
+        ),
+      ],
+    );
+  }
+}
+
+class _CantidadServicioEspecialView extends ConsumerWidget {
+  final ServiciosAle servicio;
+  const _CantidadServicioEspecialView({required this.servicio});
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    bool isLoading = ref.watch(isLoadingControlActividadesProvider);
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+      children: [
+        // Text('Cantidad: '),
+        // Text(servicio.cantidad.toString()),
+        GestureDetector(
+          behavior: HitTestBehavior.translucent,
+          onTap: () async {
+            final result = await showNumberInputDialog(
+              context: context,
+              title: '${servicio.titulo} - Cantidad',
+              initialValue: servicio.cantidad?.toString() ?? '',
+            );
+
+            if (result != null) {
+              final cantidad = int.tryParse(result);
+              if (cantidad != null) {
+                // Call the API to update the comment
+
+                final body = {"id": servicio.id, "cantidad": cantidad};
+                print("Cantidad: $cantidad");
+                final response = await ref
+                    .read(serviciosAdicionalesProvider.notifier)
+                    .setCantidadServicioEspecial(body);
+
+                // Show snackbar response
+                CustomSnackbar.showResponseSnackbar(
+                  response.message,
+                  response.success,
+                  // ignore: use_build_context_synchronously
+                  context,
+                  isFixed: true,
+                );
+
+                // getControlDeActividadesByTrcId(); from control actividades provider
+                if (response.success) {
+                  ref
+                      .read(
+                        controlActividadesProvider(
+                          ref
+                              .read(selectedTurnaroundProvider.notifier)
+                              .state!
+                              .id,
+                        ).notifier,
+                      )
+                      .getControlDeActividadesByTrcId();
+                }
+              }
+            }
+          },
+          child: SizedBox(
+            // width: 100,
+            child: Row(
+              children: [
+                Text(
+                  'Cantidad: ',
+                  style: Theme.of(
+                    context,
+                  ).textTheme.titleSmall?.copyWith(fontWeight: FontWeight.w400),
+                ),
+                Container(
+                  margin: const EdgeInsets.only(left: 8),
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 8,
+                    vertical: 4,
+                  ),
+                  // min width: 100,
+                  constraints: const BoxConstraints(minWidth: 60),
+                  decoration: BoxDecoration(
+                    color: Colors.grey.shade200,
+                    borderRadius: BorderRadius.circular(8),
+                  ),
+                  child: Text(
+                    (servicio.cantidad != null
+                            ? servicio.cantidad.toString()
+                            : '')
+                        .toString(),
+                    style: Theme.of(context).textTheme.titleSmall?.copyWith(
+                      fontWeight: FontWeight.w600,
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          ),
+
+          //   Container(
+          //     padding: const EdgeInsets.all(10),
+          //     margin: const EdgeInsets.symmetric(vertical: 10),
+          //     decoration: BoxDecoration(
+          //       color: Colors.grey.shade200,
+          //       borderRadius: BorderRadius.circular(10),
+          //     ),
+          //     child: Text(servicio.cantidad.toString()),
+          // )
         ),
       ],
     );
@@ -616,12 +743,6 @@ Future<SnackbarResponse> _setHoraInicioFinServicioEspecial(
   String tipo,
   BuildContext context,
 ) async {
-  // transform horaInicio to the format required by the API '2025-07-16T19:23:18.861Z'
-  // final String formattedDate = DateFormat('yyyy-MM-ddTHH:mm:ss').format(horaInicio);
-  // const formattedDate = new Date( this.myForm.value.fecha.getFullYear() + '-' + (this.myForm.value.fecha.getMonth() + 1) + '-' + this.myForm.value.fecha.getDate() + ' ' + this.myForm.value.hora + ':' +'00' );
-
-  // Call the repository method to set horaInicio
-  // final trcId = ref.read(trcIdProvider);
   final body = SetHoraServicioAdicionalRequest(
     horaInicio: horaInicio,
     horaFin: horaInicio,

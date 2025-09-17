@@ -74,6 +74,7 @@ class _AsignarEquiposGseViewState
   // Local categorias valiable list
   List<CategoriaEquiposGse> categorias = [];
   List<CategoriaEquiposGse> categoriasAux = [];
+
   List<int> idsMaquinarias = [];
   List<int> selectedMaquinariasTaskIds = [];
   List<dynamic> selectedMaquinariasTask = [];
@@ -212,214 +213,218 @@ class _AsignarEquiposGseViewState
     // *************************************************************************************************************************************************
     // *************************************************************************************************************************************************
 
-    return Column(
-      children: [
-        Expanded(
-          child: ListView.builder(
-            // Background color
-            shrinkWrap: true,
-            itemCount: categorias.length,
-            itemBuilder: (context, indexCategoria) {
-              final categoria = categorias[indexCategoria];
-              return Card(
-                child: Column(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    ListTile(
-                      // leading: Icon(Icons.album),
-                      title: Text(
-                        categoria.categoriaNombre,
-                        style: theme.textTheme.bodyLarge,
+    return SafeArea(
+      child: Column(
+        children: [
+          Expanded(
+            child: ListView.builder(
+              // Background color
+              shrinkWrap: true,
+              itemCount: categorias.length,
+              itemBuilder: (context, indexCategoria) {
+                final categoria = categorias[indexCategoria];
+                return Card(
+                  child: Column(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      ListTile(
+                        // leading: Icon(Icons.album),
+                        title: Text(
+                          categoria.categoriaNombre,
+                          style: theme.textTheme.bodyLarge,
+                        ),
+                        // subtitle: Text('Music by Julie Gable. Lyrics by Sidney Stein.'),
+                        // trailing: Icon(Icons.more_vert),
+                        tileColor: Colors.white,
+                        dense: true,
                       ),
-                      // subtitle: Text('Music by Julie Gable. Lyrics by Sidney Stein.'),
-                      // trailing: Icon(Icons.more_vert),
-                      tileColor: Colors.white,
-                      dense: true,
-                    ),
-
-                    ListView.builder(
-                      physics: NeverScrollableScrollPhysics(),
-                      shrinkWrap: true,
-                      itemCount: categoria.maquinarias.length,
-                      itemBuilder: (context, indexMaquinaria) {
-                        final maquinaria =
-                            categoria.maquinarias[indexMaquinaria];
-                        return CheckboxListTile(
-                          tileColor: Colors.white,
-                          title: Text(
-                            '${maquinaria.identificador} - ${maquinaria.modelo} - ${maquinaria.selectedTask}',
-                            style: theme.textTheme.bodyMedium,
-                          ),
-                          value: maquinaria.selectedTask,
-                          onChanged: (value) {
-                            print(value);
-
-                            // ref
-                            //     .read(selectedMaquinariasTaskProvider
-                            //         .notifier)
-
-                            // maquinaria.selectedTask = value;
-                            // ref
-                            //     .read(
-                            //       selectedMaquinariasTaskProvider.notifier,
-                            //     )
-                            //     .addMaquinaria(maquinaria);
-                            setState(() {
+      
+                      ListView.builder(
+                        physics: NeverScrollableScrollPhysics(),
+                        shrinkWrap: true,
+                        itemCount: categoria.maquinarias.length,
+                        itemBuilder: (context, indexMaquinaria) {
+                          final maquinaria =
+                              categoria.maquinarias[indexMaquinaria];
+                          return CheckboxListTile(
+                            tileColor: Colors.white,
+                            title: Text(
+                              '${maquinaria.identificador} - ${maquinaria.modelo}',
+                              style: theme.textTheme.bodyMedium,
+                            ),
+                            value: maquinaria.selectedTask,
+                            onChanged: (value) {
+                              print(value);
+      
                               // ref
-                              //         .read(categoriasEquiposGseProvider)
-                              //         .categoriasEquiposGseResponse
-                              //         ?.categoriasEquiposGse[indexCategoria]
-                              //         .maquinarias[indexMaquinaria]
-                              //         .selectedTask =
-                              //     value;
-
-                              print('value: $value');
-                              print(
-                                ref
-                                    .read(
-                                      selectedMaquinariasTaskProvider.notifier,
-                                    )
-                                    .state,
-                              );
-                              print(
-                                categorias[indexCategoria]
-                                    .maquinarias[indexMaquinaria]
-                                    .selectedTask,
-                              );
-                              print(maquinaria.id);
-                              // actualizar provider
-                              // ref
-                              //     .read(selectedMaquinariasTaskProvider
-                              //         .notifier).state = ref
                               //     .read(selectedMaquinariasTaskProvider
                               //         .notifier)
-                              //     .state
-                              //     // map and change value
-                              //     .map((maquinaria) {
-                              //       if (maquinaria['maquinaria_id'] ==
-                              //           maquinaria.id) {
-                              //         return {
-                              //           'maquinaria_id': maquinaria.id,
-                              //           'selectedTask': value,
-                              //         };
-                              //       }
-                              //       return maquinaria;
-                              //     });
-                              categorias[indexCategoria]
+      
+                              // maquinaria.selectedTask = value;
+                              // ref
+                              //     .read(
+                              //       selectedMaquinariasTaskProvider.notifier,
+                              //     )
+                              //     .addMaquinaria(maquinaria);
+                              setState(() {
+                                // ref
+                                //         .read(categoriasEquiposGseProvider)
+                                //         .categoriasEquiposGseResponse
+                                //         ?.categoriasEquiposGse[indexCategoria]
+                                //         .maquinarias[indexMaquinaria]
+                                //         .selectedTask =
+                                //     value;
+      
+                                print('value: $value');
+                                print(
+                                  ref
+                                      .read(
+                                        selectedMaquinariasTaskProvider.notifier,
+                                      )
+                                      .state,
+                                );
+                                print(
+                                  categorias[indexCategoria]
                                       .maquinarias[indexMaquinaria]
-                                      .selectedTask =
-                                  value;
-                              maquinaria.selectedTask = value;
-                            });
-                          },
-                        );
-                      },
-                    ),
-                  ],
-                ),
-              );
-            },
-          ),
-        ),
-
-        Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 26, vertical: 8),
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.end,
-            children: [
-              // Cancel button
-
-              // Save button
-              Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 10),
-                child: FilledButton(
-                  style: FilledButton.styleFrom(
-                    // primary
-                    backgroundColor: Colors.grey,
-                    shape: const RoundedRectangleBorder(
-                      borderRadius: BorderRadius.all(Radius.circular(30)),
-                    ),
-                  ),
-                  onPressed: () {
-                    Navigator.pop(context);
-                  },
-                  child: Text(
-                    'Salir',
-                    style: const TextStyle(
-                      fontSize: 18,
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ),
-                ),
-              ),
-
-              CustomFilledButton(
-                text: 'Asignar',
-                // buttonColor: Colors.green,
-                onPressed: () async {
-                  // get maquinarias ids with selected task in true
-                  final idsMaquinariasNew = _setMaquinariasSelectedIds(
-                    categorias,
-                  );
-
-                  final maquinariasNuevas = [];
-                  final maquinariasEliminadas = [];
-
-                  for (final maquinaria in idsMaquinariasNew) {
-                    if (!idsMaquinariasOld.contains(maquinaria)) {
-                      maquinariasNuevas.add(maquinaria);
-                    }
-                  }
-
-                  for (final maquinaria in idsMaquinariasOld) {
-                    if (!idsMaquinariasNew.contains(maquinaria)) {
-                      maquinariasEliminadas.add(maquinaria);
-                    }
-                  }
-
-                  // body
-                  final body = {
-                    "id": ref.read(selectedTaskProvider)['tareaId'],
-                    "maquinariasNuevas": maquinariasNuevas,
-                    "maquinariasEliminadas": maquinariasEliminadas,
-                  };
-
-                  final response = await ref
-                      .read(categoriasEquiposGseProvider.notifier)
-                      .asignarMaquinariasTareas(body);
-
-                  if (response.success) {
-                    // Show success snackbar
-                    // Show snackbar response
-                    CustomSnackbar.showSuccessSnackbar(
-                      response.message,
-                      // ignore: use_build_context_synchronously
-                      context,
-                      isFixed: true,
-                    );
-
-                    // get control de actividades
-                    ref.watch(
-                      controlActividadesProvider(
-                        ref.read(selectedTurnaroundProvider)!.id,
+                                      .selectedTask,
+                                );
+                                print(maquinaria.id);
+                                // actualizar provider
+                                // ref
+                                //     .read(selectedMaquinariasTaskProvider
+                                //         .notifier).state = ref
+                                //     .read(selectedMaquinariasTaskProvider
+                                //         .notifier)
+                                //     .state
+                                //     // map and change value
+                                //     .map((maquinaria) {
+                                //       if (maquinaria['maquinaria_id'] ==
+                                //           maquinaria.id) {
+                                //         return {
+                                //           'maquinaria_id': maquinaria.id,
+                                //           'selectedTask': value,
+                                //         };
+                                //       }
+                                //       return maquinaria;
+                                //     });
+                                categorias[indexCategoria]
+                                        .maquinarias[indexMaquinaria]
+                                        .selectedTask =
+                                    value;
+                                maquinaria.selectedTask = value;
+                              });
+                            },
+                          );
+                        },
                       ),
-                    );
-                    // ignore: use_build_context_synchronously
-                    Navigator.of(context).pop();
-                  } else {
-                    // Show error snackbarresponse
-                    CustomSnackbar.showErrorSnackbar(
-                      response.message,
-                      // ignore: use_build_context_synchronously
-                      context,
-                    );
-                  }
-                },
-              ),
-            ],
+                    ],
+                  ),
+                );
+              },
+            ),
           ),
-        ),
-      ],
+      
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 26, vertical: 8),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.end,
+              children: [
+                // Cancel button
+      
+                // Save button
+                Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 10),
+                  child: FilledButton(
+                    style: FilledButton.styleFrom(
+                      // primary
+                      backgroundColor: Colors.grey,
+                      shape: const RoundedRectangleBorder(
+                        borderRadius: BorderRadius.all(Radius.circular(30)),
+                      ),
+                    ),
+                    onPressed: () {
+                      Navigator.pop(context);
+                    },
+                    child: Text(
+                      'Salir',
+                      style: const TextStyle(
+                        fontSize: 18,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                  ),
+                ),
+      
+                CustomFilledButton(
+                  text: 'Asignar',
+                  // buttonColor: Colors.green,
+                  onPressed: () async {
+                    // get maquinarias ids with selected task in true
+                    final idsMaquinariasNew = _setMaquinariasSelectedIds(
+                      categorias,
+                    );
+      
+                    final maquinariasNuevas = [];
+                    final maquinariasEliminadas = [];
+      
+                    for (final maquinaria in idsMaquinariasNew) {
+                      if (!idsMaquinariasOld.contains(maquinaria)) {
+                        maquinariasNuevas.add(maquinaria);
+                      }
+                    }
+      
+                    for (final maquinaria in idsMaquinariasOld) {
+                      if (!idsMaquinariasNew.contains(maquinaria)) {
+                        maquinariasEliminadas.add(maquinaria);
+                      }
+                    }
+      
+                    // body
+                    final body = {
+                      "id": ref.read(selectedTaskProvider)['tareaId'],
+                      "maquinariasNuevas": maquinariasNuevas,
+                      "maquinariasEliminadas": maquinariasEliminadas,
+                    };
+      
+                    final response = await ref
+                        .read(categoriasEquiposGseProvider.notifier)
+                        .asignarMaquinariasTareas(body);
+      
+                    if (response.success) {
+                      // Show success snackbar
+                      // Show snackbar response
+
+                      CustomSnackbar.showSuccessSnackbar(
+                        response.message,
+                        // ignore: use_build_context_synchronously
+                        context,
+                        isFixed: true,
+                      );
+      
+                      // get control de actividades from api
+                      ref.read(controlActividadesProvider(ref.read(selectedTurnaroundProvider)!.id,).notifier).getControlDeActividadesByTrcId();
+                      // ref.watch(
+                      //   controlActividadesProvider(
+                      //     ref.read(selectedTurnaroundProvider)!.id,
+                      //   ),
+                      // );
+                      // ignore: use_build_context_synchronously
+                      Navigator.of(context).pop();
+                    } else {
+                      // Show error snackbarresponse
+                      CustomSnackbar.showErrorSnackbar(
+                        response.message,
+                        // ignore: use_build_context_synchronously
+                        context,
+                      );
+                    }
+                  },
+                ),
+              ],
+            ),
+          ),
+        ],
+      ),
     );
   }
 }

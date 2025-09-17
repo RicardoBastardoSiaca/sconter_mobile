@@ -10,6 +10,7 @@ class CategoriaServicioAdicional {
   int id;
   TipoServicio tipoServicio;
   String titulo;
+  String descripcion;
   bool isAdicional;
   int estatus;
   bool selected = false;
@@ -18,15 +19,36 @@ class CategoriaServicioAdicional {
     required this.id,
     required this.tipoServicio,
     required this.titulo,
+    required this.descripcion,
     required this.isAdicional,
     required this.estatus,
   });
+
+  // copywith
+  CategoriaServicioAdicional copyWith({
+    int? id,
+    TipoServicio? tipoServicio,
+    String? titulo,
+    String? descripcion,
+    bool? isAdicional,
+    int? estatus,
+  }) {
+    return CategoriaServicioAdicional(
+      id: id ?? this.id,
+      tipoServicio: tipoServicio ?? this.tipoServicio,
+      titulo: titulo ?? this.titulo,
+      descripcion: descripcion ?? this.descripcion,
+      isAdicional: isAdicional ?? this.isAdicional,
+      estatus: estatus ?? this.estatus,
+    );
+  }
 
   factory CategoriaServicioAdicional.fromJson(Map<String, dynamic> json) {
     return CategoriaServicioAdicional(
       id: json['id'],
       tipoServicio: TipoServicio.fromJson(json['tipo_servicio']),
       titulo: json['titulo'],
+      descripcion: json['descripcion'],
       isAdicional: json['isadicional'],
       estatus: json['estatus'],
     );

@@ -28,7 +28,7 @@ class TurnaroundsDatasourceImpl implements TurnaroundsDatasource {
     // final List<TurnaroundMain> turnarounds = [];
     try {
       final response = await dio.get<Map<String, dynamic>>(
-        '/plantillas/control_actividades_by_id/$id/?token=$accessToken',
+        '/plantillas/cerrar_operaciones_vista/$id/?token=$accessToken',
       );
       print('Response from getControlDeActividades: ${response.data}');
       final ControlActividades controlActividades =
@@ -177,7 +177,7 @@ class TurnaroundsDatasourceImpl implements TurnaroundsDatasource {
           )
           .then((response) {
             print('Response from setHoraInicio: $response');
-            if (response.statusCode == 201) {
+            if (response.statusCode == 200) {
               // final data = response.data;
               // print('Response from setHoraInicio: $data');
               return SimpleApiResponse(
@@ -775,10 +775,16 @@ class TurnaroundsDatasourceImpl implements TurnaroundsDatasource {
             );
           } else {
             return SimpleApiResponse(
-              message: 'Error al registrar firma.',
+              message: response.data['mensaje'],
               success: false,
             );
           }
+        }, onError: (error) {
+          print('Error from firmaSupervisor: $error');
+          return SimpleApiResponse(
+            message: 'Error al registrar firma.',
+            success: false,
+          );
         });
   }
 
@@ -876,6 +882,106 @@ class TurnaroundsDatasourceImpl implements TurnaroundsDatasource {
           } else {
             return SimpleApiResponse(
               message: 'Error al eliminar demora.',
+              success: false,
+            );
+          }
+        });
+  }
+
+  @override
+  Future getDepartamentosConPersonal(int idTrc) {
+    final body = {'id_turnaround': idTrc};
+    return dio
+        .post('/usuarios/filtro_personal/?token=$accessToken', data: body)
+        .then(
+          (response) {
+            print('Response from getDepartamentosConPersonal: $response');
+            if (response.statusCode == 200) {
+              // mapping to Departamento map
+              final DepartamentoPersonalResponse departamentos =
+                  DepartamentoPersonalResponseMapper.mapJsonToDepartamentoPersonalResponse(
+                    response.data,
+                  );
+              return departamentos;
+            } else {
+              return [];
+            }
+          },
+          onError: (error) {
+            print('Error from getDepartamentosConPersonal: $error');
+            return [];
+          },
+        );
+  }
+
+  @override
+  Future<SimpleApiResponse> asignarPersonal(Map<String, dynamic> body) {
+    return dio
+        .post('/turnarounds/asignar_personal/?token=$accessToken', data: body)
+        .then((response) {
+          print('Response from asignarPersonal: $response');
+          if (response.statusCode == 200) {
+            return SimpleApiResponse(
+              message: 'Personal asignado.',
+              success: true,
+            );
+          } else {
+            return SimpleApiResponse(
+              message: 'Error al asignar personal.',
+              success: false,
+            );
+          }
+        });
+  }
+
+  @override
+  Future<SimpleApiResponse> cerrarVuelo(Map<String, Object?> body) {
+    return dio
+        .post('/turnarounds/cerrar_vuelo/?token=$accessToken', data: body)
+        .then(
+          (response) {
+            print('Response from cerrarVuelo: $response');
+            if (response.statusCode == 200) {
+              return SimpleApiResponse(
+                message: 'Vuelo cerrado.',
+                success: true,
+              );
+            } else if (response.statusCode == 400) {
+              return SimpleApiResponse(
+                message: 'Error al cerrar vuelo. Asegurese de llenar los datos del vuelo',
+                success: false,
+              );
+            } else {
+              return SimpleApiResponse(
+                message: 'Error al cerrar vuelo.',
+                success: false,
+              );
+            }
+          },
+          onError: (error) {
+            print('Error from cerrarVuelo: $error');
+            return SimpleApiResponse(
+              message: 'Error al cerrar vuelo.',
+              success: false,
+            );
+          },
+        );
+  }
+  
+  @override
+  Future<SimpleApiResponse> setCantidadServicioAdicional(Map<String, Object?> body) {
+    return dio
+        .post('/servicios_adicionales/cantidad/?token=$accessToken', data: body)
+        .then((response) {
+          print('Response from setCantidadServicioAdicional: $response');
+          if (response.statusCode == 201) {
+            return SimpleApiResponse(
+              message: 'Servicio adicional asignado.',
+              success: true,
+            );
+          } else {
+            return SimpleApiResponse(
+              message: 'Error al asignar servicio adicional.',
               success: false,
             );
           }

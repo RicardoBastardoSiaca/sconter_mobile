@@ -1,3 +1,11 @@
+Expandable panel solo funciona el primero
+no muiestra el estado gris en turnarounds / el rojo tambien
+ocultar firma cuando ya se ha firmado 
+no trae el supervisor en firma
+
+en el status 7 falta consultar control de actividades y ver reporte
+
+
 
 modulos y Funcionalidades
 ************************************************************************************************
@@ -7,10 +15,19 @@ Tareas tipo IT
 Asignacion de personal
 Cerrar vuelo
 Usuarios 
-cerrar sesion
 Reportes
+Agregar widget de equipo sin internet
+VUelos Cancelados
+
+**NUEVOS
+Tipo cantidad en Servicios adicionales
+En asignar personal, los usuarios debe asignarsele 
+A 
+
+GREGAR Visualizacion de reportes
 
 
+cerrar sesion
 Codigos de demora
 Servicios especiales
 Servicios adicionales
@@ -28,8 +45,11 @@ Frank:
 En ver demoras hace falta la variables con las 2 letras del identificador
 nombre cortos de las gerencias para tabs de control de actividades
 Cuando se eleimina una demora siempre viene con el success en false, y sin
+agregar nombre se usuario en el json de logueo y verificar token
 
 
+Pewque;os pendientes fixes:
+cuando se llame de fecha en el main de turnaround, siempre se debe hacer la llamada, no solomane te al inicio.
 
 MISCELLANEOUS
 ************************************************************************************************

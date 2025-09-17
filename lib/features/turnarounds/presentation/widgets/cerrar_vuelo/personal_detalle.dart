@@ -1,0 +1,67 @@
+import 'package:flutter/material.dart';
+
+import '../../../domain/domain.dart';
+import '../../providers/providers.dart';
+
+class PersonalDetalle extends StatelessWidget {
+  final DepartamentoPersonalResponse? departamentosPersona;
+  const PersonalDetalle({super.key, required this.departamentosPersona});
+
+  @override
+  Widget build(BuildContext context) {
+    return _PersonalDetalleView(departamentosPersona);
+  }
+}
+
+class _PersonalDetalleView extends StatelessWidget {
+  final DepartamentoPersonalResponse? departamentosPersona;
+  const _PersonalDetalleView(this.departamentosPersona);
+
+  @override
+  Widget build(BuildContext context) {
+    return SafeArea(
+      child: SingleChildScrollView(
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            // Gerentes
+            _GerenciasPersonalView(nommbre: 'Gerentes', departamentos: departamentosPersona!.gerenteTurno),
+            // Supervisores
+            _GerenciasPersonalView(nommbre: 'Supervisores', departamentos: departamentosPersona!.supervisor),
+            // Personal
+            _GerenciasPersonalView(nommbre: 'Personal', departamentos: departamentosPersona!.departamentosPersonal),
+            // _PersonalView(departamentosPersona: departamentosPersona)
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+class _GerenciasPersonalView extends StatelessWidget {
+  final String nommbre;
+  final List<DepartamentoPersonal> departamentos;
+  const _GerenciasPersonalView({required this.nommbre, required this.departamentos});
+
+  @override
+  Widget build(BuildContext context) {
+    ThemeData theme = Theme.of(context);
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Center(child: Text(nommbre, style: theme.textTheme.titleMedium?.copyWith(fontWeight: FontWeight.bold))),
+        ...departamentos.map((e) {
+          return Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+        SizedBox(height: 8,),
+              Text(e.nombreDepartamento, style: theme.textTheme.bodyMedium?.copyWith(fontWeight: FontWeight.bold)),
+              ...e.personal.map((e) {
+                return e.selected == true ? Text(e.nombre.toString()) : Container();
+              }),
+            ],
+          );
+        }),
+    ]);
+  }
+}

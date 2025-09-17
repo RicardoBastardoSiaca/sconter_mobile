@@ -45,6 +45,7 @@ class ControlActividades {
   List<Departamento>? departamentos;
   List<ServiciosAle>? serviciosAdicionales;
   List<ServiciosAle>? serviciosEspeciales;
+  List<Sla>? sla;
   String estatusNombre;
   int estatusId;
 
@@ -87,6 +88,7 @@ class ControlActividades {
     this.departamentos,
     this.serviciosAdicionales,
     this.serviciosEspeciales,
+    this.sla,
   });
 
   // factory TurnaroundControlActividades.fromJson(Map<String, dynamic> json) => TurnaroundControlActividades(
@@ -172,9 +174,74 @@ class ControlActividades {
   // };
 }
 
+class Sla {
+  final int id;
+  final String descripcion;
+  final String categoria;
+  final int tareaPrincipal;
+  final String horaDeComparacion;
+  final String horaOperacion;
+  final String tiempo;
+  final String horaTarea;
+  final bool operacion;
+  final String resultado;
+  final String tareaNombre;
+  final bool aprobado;
+
+  Sla({
+    required this.id,
+    required this.descripcion,
+    required this.categoria,
+    required this.tareaPrincipal,
+    required this.horaDeComparacion,
+    required this.horaOperacion,
+    required this.tiempo,
+    required this.horaTarea,
+    required this.operacion,
+    required this.resultado,
+    required this.tareaNombre,
+    required this.aprobado,
+  });
+
+  factory Sla.fromJson(Map<String, dynamic> json) {
+    return Sla(
+      id: json['trc_sla_id'] as int,
+      descripcion: json['trc_sla_descripcion'] as String,
+      categoria: json['trc_sla_categoria'] as String,
+      tareaPrincipal: json['trc_sla_tarea_principal'] as int,
+      horaDeComparacion: json['hora_de_comparacion'] as String,
+      horaOperacion: json['hora_operacion'] as String,
+      tiempo: json['tiempo'] as String,
+      horaTarea: json['hora_tarea'] as String,
+      operacion: json['operacion'] as bool,
+      resultado: json['resultado'] as String,
+      tareaNombre: json['tarea_nombre'] as String,
+      aprobado: json['aprobado'] as bool,
+    );
+  }
+
+  Map<String, dynamic> toJson() {
+    return {
+      'trc_sla_id': id,
+      'trc_sla_descripcion': descripcion,
+      'trc_sla_categoria': categoria,
+      'trc_sla_tarea_principal': tareaPrincipal,
+      'hora_de_comparacion': horaDeComparacion,
+      'hora_operacion': horaOperacion,
+      'tiempo': tiempo,
+      'hora_tarea': horaTarea,
+      'operacion': operacion,
+      'resultado': resultado,
+      'tarea_nombre': tareaNombre,
+      'aprobado': aprobado,
+    };
+  }
+}
+
 class Departamento {
   int index;
   String nombreArea;
+  String nombreCorto;
   List<Actividades> actividades;
   bool isDepartamentAproved;
   bool isAproved;
@@ -183,6 +250,7 @@ class Departamento {
   Departamento({
     required this.index,
     required this.nombreArea,
+    required this.nombreCorto,
     required this.actividades,
     required this.isDepartamentAproved,
     required this.isAproved,

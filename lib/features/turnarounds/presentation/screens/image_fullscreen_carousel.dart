@@ -30,203 +30,205 @@ class ImageFullscreenCarousel extends ConsumerWidget {
     ); // Get the trcId from the provider
     return Scaffold(
       // appBar: AppBar(title: Text('Fullscreen sliding carousel demo')),
-      body: Builder(
-        builder: (context) {
-          final double height = MediaQuery.of(context).size.height;
-          return CarouselSlider(
-            options: CarouselOptions(
-              height: height,
-              viewportFraction: 1.0,
-              enlargeCenterPage: false,
-              initialPage: indexStart,
-              autoPlay: false,
-            ),
-            items: imagenes
-                .map(
-                  (imagen) => Center(
-                    child: Stack(
-                      children: [
-                        Image.network(
-                          '${Environment.apiUrl}/aerolineas/media/${imagen.imagen}',
-                          fit: BoxFit.cover,
-                          height: height,
-                        ),
-
-                        //  bottom Gradient overlay
-                        Positioned.fill(
-                          child: DecoratedBox(
-                            decoration: BoxDecoration(
-                              gradient: LinearGradient(
-                                colors: const [
-                                  Colors.transparent,
-                                  Colors.black54,
-                                ],
-                                stops: const [0.8, 1.0],
-                                begin: Alignment.topCenter,
-                                end: Alignment.bottomCenter,
-                              ),
-                            ),
+      body: SafeArea(
+        child: Builder(
+          builder: (context) {
+            final double height = MediaQuery.of(context).size.height;
+            return CarouselSlider(
+              options: CarouselOptions(
+                height: height,
+                viewportFraction: 1.0,
+                enlargeCenterPage: false,
+                initialPage: indexStart,
+                autoPlay: false,
+              ),
+              items: imagenes
+                  .map(
+                    (imagen) => Center(
+                      child: Stack(
+                        children: [
+                          Image.network(
+                            '${Environment.apiUrl}/aerolineas/media/${imagen.imagen}',
+                            fit: BoxFit.cover,
+                            height: height,
                           ),
-                        ),
-
-                        // top left corner Gradient overlay
-                        Positioned.fill(
-                          child: DecoratedBox(
-                            decoration: BoxDecoration(
-                              gradient: LinearGradient(
-                                colors: const [
-                                  Colors.transparent,
-                                  Colors.black54,
-                                ],
-                                stops: const [0.85, 1.0],
-                                begin: Alignment.bottomRight,
-                                end: Alignment.topLeft,
-                              ),
-                            ),
-                          ),
-                        ),
-
-                        // back button
-                        Positioned(
-                          top: 20,
-                          left: 10,
-                          child: IconButton(
-                            icon: const Icon(
-                              Icons.arrow_back_ios_rounded,
-                              color: Colors.white,
-                            ),
-                            onPressed: () {
-                              // Handle back button action with GoRouter
-                              context.pop();
-                              // or Navigator.pop(context);
-                            },
-                          ),
-                        ),
-
-                        // Menu button bottom right
-                        // Positioned(
-                        //   bottom: 20,
-                        //   right: 10,
-                        //   child: IconButton(
-                        //     icon: const Icon(Icons.menu, color: Colors.white),
-                        //     onPressed: () {
-                        //       // Handle menu button action
-                        //       ScaffoldMessenger.of(context).showSnackBar(
-                        //         const SnackBar(
-                        //           content: Text('Menu button pressed'),
-                        //         ),
-                        //       );
-                        //     },
-                        //   ),
-                        // ),
-
-                        // Delete button bottom right
-                        Positioned(
-                          bottom: 15,
-                          right: 10,
-                          child: IconButton(
-                            icon: const Icon(
-                              Icons.delete_outline_rounded,
-                              color: Colors.white,
-                            ),
-                            onPressed: () {
-                              // dialog to confirm deletion
-                              showDialog(
-                                context: context,
-                                builder: (context) => AlertDialog(
-                                  title: const Text('Confirmar eliminación'),
-                                  content: const Text(
-                                    '¿Estás seguro de que deseas eliminar esta imagen?',
-                                  ),
-                                  actions: [
-                                    TextButton(
-                                      onPressed: () {
-                                        // Close the dialog
-                                        Navigator.of(context).pop();
-                                      },
-                                      child: const Text('Cancelar'),
-                                    ),
-                                    TextButton(
-                                      onPressed: () async {
-                                        // Handle delete action
-                                        // For example, call a delete function
-
-                                        final response = await ref
-                                            .read(
-                                              controlActividadesProvider(
-                                                trcId,
-                                              ).notifier,
-                                            )
-                                            .deleteImage(imagen.id);
-
-                                        if (response.success) {
-                                          // Show success snackbar// Show snackbar response
-                                          CustomSnackbar.showResponseSnackbar(
-                                            response.message,
-                                            response.success,
-                                            // ignore: use_build_context_synchronously
-                                            context,
-                                          );
-                                        } else {
-                                          // Show error snackbar
-                                          CustomSnackbar.showResponseSnackbar(
-                                            response.message,
-                                            response.success,
-                                            // ignore: use_build_context_synchronously
-                                            context,
-                                          );
-                                        }
-                                        // ignore: use_build_context_synchronously
-                                        ref
-                                            .read(
-                                              controlActividadesProvider(
-                                                trcId,
-                                              ).notifier,
-                                            )
-                                            .getControlDeActividadesByTrcId();
-
-                                        // Pop with GoRouter
-                                        // ignore: use_build_context_synchronously
-                                        context.pop();
-                                        // ignore: use_build_context_synchronously
-                                        context.pop();
-                                        // or Navigator.pop(context);
-                                      },
-                                      child: const Text('Eliminar'),
-                                    ),
+        
+                          //  bottom Gradient overlay
+                          Positioned.fill(
+                            child: DecoratedBox(
+                              decoration: BoxDecoration(
+                                gradient: LinearGradient(
+                                  colors: const [
+                                    Colors.transparent,
+                                    Colors.black54,
                                   ],
+                                  stops: const [0.8, 1.0],
+                                  begin: Alignment.topCenter,
+                                  end: Alignment.bottomCenter,
                                 ),
-                              );
-                              // Handle delete button action
-                              // ScaffoldMessenger.of(context).showSnackBar(
-                              //   const SnackBar(
-                              //     content: Text('Delete button pressed'),
-                              //   ),
-                              // );
-                            },
-                          ),
-                        ),
-
-                        // enumerate the list of images
-                        Positioned(
-                          bottom: 20,
-                          left: 30,
-                          child: Text(
-                            '${imagenes.indexOf(imagen) + 1}/${imagenes.length}',
-                            style: const TextStyle(
-                              color: Colors.white,
-                              fontSize: 16,
-                              fontWeight: FontWeight.bold,
+                              ),
                             ),
                           ),
-                        ),
-                      ],
+        
+                          // top left corner Gradient overlay
+                          Positioned.fill(
+                            child: DecoratedBox(
+                              decoration: BoxDecoration(
+                                gradient: LinearGradient(
+                                  colors: const [
+                                    Colors.transparent,
+                                    Colors.black54,
+                                  ],
+                                  stops: const [0.85, 1.0],
+                                  begin: Alignment.bottomRight,
+                                  end: Alignment.topLeft,
+                                ),
+                              ),
+                            ),
+                          ),
+        
+                          // back button
+                          Positioned(
+                            top: 20,
+                            left: 10,
+                            child: IconButton(
+                              icon: const Icon(
+                                Icons.arrow_back_ios_rounded,
+                                color: Colors.white,
+                              ),
+                              onPressed: () {
+                                // Handle back button action with GoRouter
+                                context.pop();
+                                // or Navigator.pop(context);
+                              },
+                            ),
+                          ),
+        
+                          // Menu button bottom right
+                          // Positioned(
+                          //   bottom: 20,
+                          //   right: 10,
+                          //   child: IconButton(
+                          //     icon: const Icon(Icons.menu, color: Colors.white),
+                          //     onPressed: () {
+                          //       // Handle menu button action
+                          //       ScaffoldMessenger.of(context).showSnackBar(
+                          //         const SnackBar(
+                          //           content: Text('Menu button pressed'),
+                          //         ),
+                          //       );
+                          //     },
+                          //   ),
+                          // ),
+        
+                          // Delete button bottom right
+                          Positioned(
+                            bottom: 15,
+                            right: 10,
+                            child: IconButton(
+                              icon: const Icon(
+                                Icons.delete_outline_rounded,
+                                color: Colors.white,
+                              ),
+                              onPressed: () {
+                                // dialog to confirm deletion
+                                showDialog(
+                                  context: context,
+                                  builder: (context) => AlertDialog(
+                                    title: const Text('Confirmar eliminación'),
+                                    content: const Text(
+                                      '¿Estás seguro de que deseas eliminar esta imagen?',
+                                    ),
+                                    actions: [
+                                      TextButton(
+                                        onPressed: () {
+                                          // Close the dialog
+                                          Navigator.of(context).pop();
+                                        },
+                                        child: const Text('Cancelar'),
+                                      ),
+                                      TextButton(
+                                        onPressed: () async {
+                                          // Handle delete action
+                                          // For example, call a delete function
+        
+                                          final response = await ref
+                                              .read(
+                                                controlActividadesProvider(
+                                                  trcId,
+                                                ).notifier,
+                                              )
+                                              .deleteImage(imagen.id);
+        
+                                          if (response.success) {
+                                            // Show success snackbar// Show snackbar response
+                                            CustomSnackbar.showResponseSnackbar(
+                                              response.message,
+                                              response.success,
+                                              // ignore: use_build_context_synchronously
+                                              context,
+                                            );
+                                          } else {
+                                            // Show error snackbar
+                                            CustomSnackbar.showResponseSnackbar(
+                                              response.message,
+                                              response.success,
+                                              // ignore: use_build_context_synchronously
+                                              context,
+                                            );
+                                          }
+                                          // ignore: use_build_context_synchronously
+                                          ref
+                                              .read(
+                                                controlActividadesProvider(
+                                                  trcId,
+                                                ).notifier,
+                                              )
+                                              .getControlDeActividadesByTrcId();
+        
+                                          // Pop with GoRouter
+                                          // ignore: use_build_context_synchronously
+                                          context.pop();
+                                          // ignore: use_build_context_synchronously
+                                          context.pop();
+                                          // or Navigator.pop(context);
+                                        },
+                                        child: const Text('Eliminar'),
+                                      ),
+                                    ],
+                                  ),
+                                );
+                                // Handle delete button action
+                                // ScaffoldMessenger.of(context).showSnackBar(
+                                //   const SnackBar(
+                                //     content: Text('Delete button pressed'),
+                                //   ),
+                                // );
+                              },
+                            ),
+                          ),
+        
+                          // enumerate the list of images
+                          Positioned(
+                            bottom: 20,
+                            left: 30,
+                            child: Text(
+                              '${imagenes.indexOf(imagen) + 1}/${imagenes.length}',
+                              style: const TextStyle(
+                                color: Colors.white,
+                                fontSize: 16,
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
                     ),
-                  ),
-                )
-                .toList(),
-          );
-        },
+                  )
+                  .toList(),
+            );
+          },
+        ),
       ),
     );
   }

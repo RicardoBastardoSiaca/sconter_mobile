@@ -92,6 +92,10 @@ final goRouterProvider = Provider((ref) {
         path: '/asignar-demoras-screen',
         builder: (context, state) => AsignarDemorasScreen(),
       ),
+      GoRoute(
+        path: '/cerrar-vuelo-screen',
+        builder: (context, state) => CerrarVueloScreen(),
+      ),
     ],
 
     // state.params ahora es state.pathParameters

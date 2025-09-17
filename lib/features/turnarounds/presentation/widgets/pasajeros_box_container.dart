@@ -16,7 +16,7 @@ class PasajerosBoxContainer extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.center,
         children: [
-          Text(clase),
+          Text(clase, style: Theme.of(context).textTheme.labelMedium),
           ClipRRect(
             borderRadius: BorderRadius.circular(10),
             child: Container(

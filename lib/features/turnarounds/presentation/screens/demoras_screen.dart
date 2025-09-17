@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
-import 'package:turnaround_mobile/features/shared/widgets/widgets.dart';
 import 'package:turnaround_mobile/features/turnarounds/domain/domain.dart';
 import 'package:turnaround_mobile/features/turnarounds/presentation/providers/providers.dart';
 
@@ -104,7 +103,7 @@ class _DemorasView extends ConsumerWidget {
 }
 
 class _DemoraListTile extends ConsumerWidget {
-  const _DemoraListTile({super.key, required this.demora, required this.index});
+  const _DemoraListTile({required this.demora, required this.index});
 
   final Demora demora;
   final int index;

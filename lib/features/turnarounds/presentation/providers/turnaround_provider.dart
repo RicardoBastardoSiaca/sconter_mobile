@@ -50,6 +50,14 @@ class TurnaroundNotifier extends StateNotifier<TurnaroundState> {
 
     return response;
   }
+
+  Future<SimpleApiResponse> cerrarVuelo(Map<String, Object?> body) async {
+    final response = await turnaroundsRepository.cerrarVuelo(body);
+    if (response.success) {
+      getTurnarounds();
+    }
+    return response;
+  }
 }
 
 // STATE

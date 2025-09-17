@@ -16,6 +16,14 @@ class CustomTimePickerDialog {
       initialEntryMode: TimePickerEntryMode.input,
       helpText: 'Seleccionar hora',
       context: context,
+      builder: (context, childWidget) {
+        return MediaQuery(
+        data: MediaQuery.of(context).copyWith(
+        // textScaler: TextScaler.linear(1)),
+        textScaler: TextScaler.linear(0.77)),
+        child: childWidget!,
+        );
+      },
       initialTime: initialTime != null
           ? TimeOfDay.fromDateTime(hora)
           : TimeOfDay.now(),

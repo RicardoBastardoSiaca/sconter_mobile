@@ -210,3 +210,17 @@ final selectedTaskProvider = StateProvider<Map<String, int>>((ref) {
 final selectedMaquinariasTaskProvider = StateProvider<List<dynamic>>((ref) {
   return [];
 });
+
+
+
+
+
+
+
+
+
+
+// Provider para dialogo de seleccion de equipos
+final selectedEquiposGseDialogProvider = StateProvider<List<bool>>((ref) {
+  return [];
+});

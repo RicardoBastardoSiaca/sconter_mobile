@@ -11,3 +11,7 @@ export 'custom_snackbar.dart';
 export 'pasajeros_input_form_field.dart';
 export 'timepicker_dropdown.dart';
 export 'custom_dialogs.dart';
+export 'side_menu_drawer.dart';
+export 'dialogs/confirmation_dialog.dart';
+export 'dialogs/dialog_utils.dart';
+export 'dialogs/numer_input_dialog.dart';

@@ -205,4 +205,24 @@ class TurnaroundsRepositoryImpl extends TurnaroundsRepository {
   Future eliminarDemoraTrc(int demoraId) {
     return datasource.eliminarDemoraTrc(demoraId);
   }
+
+  @override
+  Future getDepartamentosConPersonal(int idTrc) {
+    return datasource.getDepartamentosConPersonal(idTrc);
+  }
+  
+  @override
+  Future<SimpleApiResponse> asignarPersonal(Map<String, dynamic> body) {
+    return datasource.asignarPersonal(body);
+  }
+  
+  @override
+  Future<SimpleApiResponse> cerrarVuelo(Map<String, Object?> body) {
+    return datasource.cerrarVuelo(body);
+  }
+  
+  @override
+  Future<SimpleApiResponse> setCantidadServicioAdicional(Map<String, Object?> body) {
+    return datasource.setCantidadServicioAdicional(body);
+  }
 }

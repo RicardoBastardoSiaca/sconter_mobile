@@ -1,5 +1,3 @@
-
-
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:turnaround_mobile/features/auth/domain/domain.dart';
 import 'package:turnaround_mobile/features/shared/infrastructure/services/key_value_storage_service.dart';
@@ -7,100 +5,86 @@ import 'package:turnaround_mobile/features/shared/infrastructure/services/key_va
 
 import '../../infrastructure/infrastructure.dart';
 
-
-
 // ! PROVIDER
 final authProvider = StateNotifierProvider<AuthNotifier, AuthState>((ref) {
-
   final authRepository = AuthRepositoryImpl();
-  final KeyValueStorageService keyValueStorageService = KeyValueStorageServiceImpl();
+  final KeyValueStorageService keyValueStorageService =
+      KeyValueStorageServiceImpl();
 
   return AuthNotifier(
     authRepository: authRepository,
-    keyValueStorageService: keyValueStorageService
+    keyValueStorageService: keyValueStorageService,
   );
 });
 
-
 //! NOTIFIER
 class AuthNotifier extends StateNotifier<AuthState> {
-
-  final AuthRepository authRepository ;
+  final AuthRepository authRepository;
   final KeyValueStorageService keyValueStorageService;
-  
+
   AuthNotifier({
     required this.authRepository,
-    required this.keyValueStorageService
-  }): super( AuthState() ){
+    required this.keyValueStorageService,
+  }) : super(AuthState()) {
     // Cuando se crea la primera instancia
     checkAuthStatus();
   }
 
-  Future<void> loginUser ( String email, String password ) async {
-
-    await Future.delayed( const Duration(milliseconds: 500) );
+  Future<void> loginUser(String email, String password) async {
+    await Future.delayed(const Duration(milliseconds: 500));
 
     try {
       final response = await authRepository.login(email, password);
-      _setLoggedCredentials( response );
-      
+      _setLoggedCredentials(response);
     } on CustomError catch (e) {
-      logout( e.message );
+      logout(e.message);
     } catch (e) {
-      logout( );
+      logout();
     }
 
     // final loginResponse = await authRepository.login(email, password);
     // state = state.copyWith( loginResponse: loginResponse, authStatus: AuthStatus.authenticated );
   }
 
-  void registerUser ( String email, String password, String fullName ) {
-    
-  }
+  void registerUser(String email, String password, String fullName) {}
 
-  void checkAuthStatus (  ) async{
+  void checkAuthStatus() async {
     final token = await keyValueStorageService.getValue<String>('token');
 
-    if( token == null ) return logout();
+    if (token == null) return logout();
 
     try {
       final user = await authRepository.checkAuthStatus(token);
       _setLoggedCredentials(user);
-
     } catch (e) {
       logout();
     }
   }
 
-  Future<void> logout ( [String errorMessage = ''] ) async {
-
+  Future<void> logout([String errorMessage = '']) async {
     await keyValueStorageService.removeKey('token');
-    
-    state = state.copyWith( 
-      authStatus: AuthStatus.notAuthenticated, 
-      authResponse: null, 
-      errorMessage: errorMessage, 
+
+    state = state.copyWith(
+      authStatus: AuthStatus.notAuthenticated,
+      authResponse: null,
+      errorMessage: errorMessage,
     );
   }
-  _setLoggedCredentials ( AuthResponse authResponse ) async  {
 
+  _setLoggedCredentials(AuthResponse authResponse) async {
     await keyValueStorageService.setKeyValue('token', authResponse.token);
 
-    state = state.copyWith( 
-      authResponse: authResponse, 
-      authStatus: AuthStatus.authenticated, 
-      errorMessage: ''
+    state = state.copyWith(
+      authResponse: authResponse,
+      authStatus: AuthStatus.authenticated,
+      errorMessage: '',
     );
   }
 }
 
 //! STATE
 
-enum AuthStatus {
-  checking,
-  authenticated,
-  notAuthenticated
-}
+enum AuthStatus { checking, authenticated, notAuthenticated }
 
 class AuthState {
   final AuthStatus authStatus;
@@ -110,7 +94,7 @@ class AuthState {
   AuthState({
     this.authStatus = AuthStatus.checking,
     this.errorMessage = '',
-    this.loginResponse
+    this.loginResponse,
   });
 
   // get accessToken => null;
@@ -118,11 +102,11 @@ class AuthState {
   copyWith({
     AuthStatus? authStatus,
     String? errorMessage,
-    AuthResponse? authResponse
+    AuthResponse? authResponse,
   }) => AuthState(
     authStatus: authStatus ?? this.authStatus,
     errorMessage: errorMessage ?? this.errorMessage,
-    loginResponse: authResponse ?? loginResponse
+    loginResponse: authResponse ?? loginResponse,
   );
 }
 

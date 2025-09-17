@@ -99,6 +99,10 @@ class CustomSnackbar {
             fontWeight: FontWeight.bold,
             fontSize: 18,
             color: Colors.white,
+          // style: const TextStyle(
+          //   fontWeight: FontWeight.bold,
+          //   fontSize: ,
+          //   color: Colors.white,
           ),
         ),
       ),

@@ -107,4 +107,14 @@ abstract class TurnaroundsRepository {
   Future asignarDemora(Map<String, Object?> body);
 
   Future eliminarDemoraTrc(int demoraId);
+
+  // Departamento con personal TRC
+  Future getDepartamentosConPersonal(int idTrc);
+
+  // Asignar personal en main
+  Future<SimpleApiResponse> asignarPersonal(Map<String, dynamic> body);
+
+  Future<SimpleApiResponse> cerrarVuelo(Map<String, Object?> body);
+
+  Future<SimpleApiResponse> setCantidadServicioAdicional(Map<String, Object?> body);
 }

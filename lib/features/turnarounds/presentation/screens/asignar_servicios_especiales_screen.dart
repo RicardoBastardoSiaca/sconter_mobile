@@ -103,6 +103,7 @@ class _AsignarEquiposGseViewState
               final servicioAdicional = serviciosAdicionales[index];
               return CheckboxListTile(
                 title: Text(servicioAdicional.titulo),
+                subtitle: Text(servicioAdicional.descripcion),
                 value: servicioAdicional.selected,
                 onChanged: (value) {
                   setState(() {

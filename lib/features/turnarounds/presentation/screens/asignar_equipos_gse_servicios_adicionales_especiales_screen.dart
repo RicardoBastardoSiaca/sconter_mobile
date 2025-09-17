@@ -87,144 +87,146 @@ class _AsignarEquiposGseViewState
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
-    return Column(
-      children: [
-        Expanded(
-          child: ListView.builder(
-            shrinkWrap: true,
-            itemCount: serviciosAdicionales.length,
-            itemBuilder: (context, index) {
-              final servicioAdicional = serviciosAdicionales[index];
-              return CheckboxListTile(
-                title: Text(servicioAdicional.titulo),
-                value: servicioAdicional.selected,
-                onChanged: (value) {
-                  setState(() {
-                    servicioAdicional.selected = value!;
-                  });
-                },
-              );
-            },
-          ),
-        ),
-
-        Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 26, vertical: 8),
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.end,
-            children: [
-              // Cancel button
-
-              // Save button
-              Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 10),
-                child: FilledButton(
-                  style: FilledButton.styleFrom(
-                    // primary
-                    backgroundColor: Colors.grey,
-                    shape: const RoundedRectangleBorder(
-                      borderRadius: BorderRadius.all(Radius.circular(30)),
-                    ),
-                  ),
-                  onPressed: () {
-                    Navigator.pop(context);
+    return SafeArea(
+      child: Column(
+        children: [
+          Expanded(
+            child: ListView.builder(
+              shrinkWrap: true,
+              itemCount: serviciosAdicionales.length,
+              itemBuilder: (context, index) {
+                final servicioAdicional = serviciosAdicionales[index];
+                return CheckboxListTile(
+                  title: Text(servicioAdicional.titulo),
+                  value: servicioAdicional.selected,
+                  onChanged: (value) {
+                    setState(() {
+                      servicioAdicional.selected = value!;
+                    });
                   },
-                  child: Text(
-                    'Salir',
-                    style: const TextStyle(
-                      fontSize: 18,
-                      fontWeight: FontWeight.bold,
+                );
+              },
+            ),
+          ),
+      
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 26, vertical: 8),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.end,
+              children: [
+                // Cancel button
+      
+                // Save button
+                Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 10),
+                  child: FilledButton(
+                    style: FilledButton.styleFrom(
+                      // primary
+                      backgroundColor: Colors.grey,
+                      shape: const RoundedRectangleBorder(
+                        borderRadius: BorderRadius.all(Radius.circular(30)),
+                      ),
+                    ),
+                    onPressed: () {
+                      Navigator.pop(context);
+                    },
+                    child: Text(
+                      'Salir',
+                      style: const TextStyle(
+                        fontSize: 18,
+                        fontWeight: FontWeight.bold,
+                      ),
                     ),
                   ),
                 ),
-              ),
-
-              CustomFilledButton(
-                text: 'Agregar',
-                // buttonColor: Colors.green,
-                onPressed: () async {
-                  // get maquinarias ids with selected task in true
-                  // final idsMaquinariasNew = _setMaquinariasSelectedIds(
-                  //   categorias,
-                  // );
-
-                  // get servicios ids with selected task in true
-                  final selectedServiciosAdicionalesIds =
-                      _setSelectedServiciosAdicionalesIds(serviciosAdicionales);
-
-                  final List<int> serviciosNuevos = [];
-                  final List<int> serviciosEliminados = [];
-
-                  // set servicios nuevos
-                  for (final servicio in selectedServiciosAdicionalesIds) {
-                    if (!idsserviciosOld.contains(servicio)) {
-                      serviciosNuevos.add(servicio);
+      
+                CustomFilledButton(
+                  text: 'Agregar',
+                  // buttonColor: Colors.green,
+                  onPressed: () async {
+                    // get maquinarias ids with selected task in true
+                    // final idsMaquinariasNew = _setMaquinariasSelectedIds(
+                    //   categorias,
+                    // );
+      
+                    // get servicios ids with selected task in true
+                    final selectedServiciosAdicionalesIds =
+                        _setSelectedServiciosAdicionalesIds(serviciosAdicionales);
+      
+                    final List<int> serviciosNuevos = [];
+                    final List<int> serviciosEliminados = [];
+      
+                    // set servicios nuevos
+                    for (final servicio in selectedServiciosAdicionalesIds) {
+                      if (!idsserviciosOld.contains(servicio)) {
+                        serviciosNuevos.add(servicio);
+                      }
                     }
-                  }
-
-                  // set servicios eliminados
-                  for (final servicio in idsserviciosOld) {
-                    if (!selectedServiciosAdicionalesIds.contains(servicio)) {
-                      serviciosEliminados.add(servicio);
+      
+                    // set servicios eliminados
+                    for (final servicio in idsserviciosOld) {
+                      if (!selectedServiciosAdicionalesIds.contains(servicio)) {
+                        serviciosEliminados.add(servicio);
+                      }
                     }
-                  }
-
-                  // body
-                  final body = ServiciosAdicionalRequest(
-                    turnaround: ref.read(selectedTurnaroundProvider)!.id,
-                    ids_nuevos: serviciosNuevos,
-                    ids_eliminados: serviciosEliminados,
-                  );
-
-                  final response = await ref
-                      .read(serviciosAdicionalesProvider.notifier)
-                      .saveServiciosAdicionales(body);
-
-                  if (response.success) {
-                    // Show success snackbar
-                    // Show snackbar response
-                    CustomSnackbar.showSuccessSnackbar(
-                      response.message,
-                      context,
-                      isFixed: true,
+      
+                    // body
+                    final body = ServiciosAdicionalRequest(
+                      turnaround: ref.read(selectedTurnaroundProvider)!.id,
+                      ids_nuevos: serviciosNuevos,
+                      ids_eliminados: serviciosEliminados,
                     );
-                    // get control de actividades
-                    ref
-                        .read(
-                          controlActividadesProvider(
-                            ref.read(selectedTurnaroundProvider)!.id,
-                          ).notifier,
-                        )
-                        .getControlDeActividadesByTrcId();
-                    // ignore: use_build_context_synchronously
-                    Navigator.of(context).pop();
-                  } else {
-                    // Show error snackbar
-                    // Show snackbar response
-                    CustomSnackbar.showErrorSnackbar(
-                      response.message,
-                      context,
-                      isFixed: true,
-                    );
-                  }
-
-                  // final body = {
-                  //   "id": ref.read(selectedTaskProvider)['tareaId'],
-                  //   "maquinariasNuevas": maquinariasNuevas,
-                  //   "maquinariasEliminadas": maquinariasEliminadas,
-                  // };
-
-                  // final response = await ref
-                  //     .read(categoriasEquiposGseProvider.notifier)
-                  //     .asignarMaquinariasTareas(body);
-
-                  // Navigator.pop(context);
-                },
-              ),
-            ],
+      
+                    final response = await ref
+                        .read(serviciosAdicionalesProvider.notifier)
+                        .saveServiciosAdicionales(body);
+      
+                    if (response.success) {
+                      // Show success snackbar
+                      // Show snackbar response
+                      CustomSnackbar.showSuccessSnackbar(
+                        response.message,
+                        context,
+                        isFixed: true,
+                      );
+                      // get control de actividades
+                      ref
+                          .read(
+                            controlActividadesProvider(
+                              ref.read(selectedTurnaroundProvider)!.id,
+                            ).notifier,
+                          )
+                          .getControlDeActividadesByTrcId();
+                      // ignore: use_build_context_synchronously
+                      Navigator.of(context).pop();
+                    } else {
+                      // Show error snackbar
+                      // Show snackbar response
+                      CustomSnackbar.showErrorSnackbar(
+                        response.message,
+                        context,
+                        isFixed: true,
+                      );
+                    }
+      
+                    // final body = {
+                    //   "id": ref.read(selectedTaskProvider)['tareaId'],
+                    //   "maquinariasNuevas": maquinariasNuevas,
+                    //   "maquinariasEliminadas": maquinariasEliminadas,
+                    // };
+      
+                    // final response = await ref
+                    //     .read(categoriasEquiposGseProvider.notifier)
+                    //     .asignarMaquinariasTareas(body);
+      
+                    // Navigator.pop(context);
+                  },
+                ),
+              ],
+            ),
           ),
-        ),
-      ],
+        ],
+      ),
     );
   }
 }

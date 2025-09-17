@@ -17,9 +17,9 @@ class CustomDialog {
           title: Text(title),
           content: Text(content, style: theme.textTheme.bodySmall),
           // backgroundColor: Colors.transparent,
-          // shape: RoundedRectangleBorder(
-          //   borderRadius: BorderRadius.circular(16.0),
-          // ),
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(18.0),
+          ),
           // elevation
           elevation: 4,
           backgroundColor: Colors.white,
@@ -33,7 +33,7 @@ class CustomDialog {
                 backgroundColor: Colors.grey.shade100,
                 // foregroundColor: theme.colorScheme.primary,
                 // foregroundColor: Colors.black54,
-                padding: const EdgeInsets.all(16.0),
+                padding: const EdgeInsets.all(12.0),
 
                 // remove border
                 side: BorderSide(color: Colors.transparent),
@@ -59,7 +59,7 @@ class CustomDialog {
               style: ElevatedButton.styleFrom(
                 backgroundColor: theme.colorScheme.primary,
                 foregroundColor: Colors.white,
-                padding: const EdgeInsets.all(16.0),
+                padding: const EdgeInsets.all(12.0),
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(16.0),
                 ),

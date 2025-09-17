@@ -6,6 +6,7 @@ class LoginResponseMapper {
 
   static AuthResponse loginResponseJsonToEntity(Map<String, dynamic> json) => AuthResponse(
     token: json['token'] ?? '', 
+    name: json['name'] ?? '',
     username: json['username'] ?? '', 
     cedula: json['cedula'] ?? '', 
     id: json['id'], 

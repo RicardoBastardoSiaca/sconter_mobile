@@ -109,6 +109,7 @@ class _ControlActividadesScreenState
           // ),
           children: [
             // SizedBox(height: 0.2),
+            if(turnaround?.estatus == 2) 
             GestureDetector(
               onTap: () async {
                 print('Firma del Supervisor pressed');
@@ -147,6 +148,8 @@ class _ControlActividadesScreenState
                 ],
               ),
             ),
+
+            if(turnaround?.estatus == 2 || turnaround?.estatus == 3 || turnaround?.estatus == 7) 
             GestureDetector(
               onTap: () async {
                 print('Demoras pressed');
@@ -179,6 +182,7 @@ class _ControlActividadesScreenState
                 ],
               ),
             ),
+            if(turnaround?.estatus == 2 || turnaround?.estatus == 3 || turnaround?.estatus == 7) 
             GestureDetector(
               onTap: () {
                 print('Servicios adicionales pressed - ROW');
@@ -212,6 +216,7 @@ class _ControlActividadesScreenState
                 ],
               ),
             ),
+            if(turnaround?.estatus == 2 || turnaround?.estatus == 3 || turnaround?.estatus == 7) 
             GestureDetector(
               onTap: () {
                 print('Servicios especiales pressed - ROW');
@@ -295,14 +300,19 @@ class _ControlActividadesScreenState
                       controlActividades?.departamentos
                           ?.map(
                             (dep) =>
-                                _CustomTabBarHeaderItem(title: dep.nombreArea),
+                                _CustomTabBarHeaderItem(title: dep.nombreCorto),
                           )
                           .toList() ??
                       [],
                 ),
                 leading: IconButton(
                   icon: const Icon(Icons.arrow_back_sharp),
-                  onPressed: () => Navigator.of(context).pop(),
+                  onPressed: () {
+                    print("Close Control Actividades");
+                    // Getting turnaround data
+                    ref.read(turnaroundProvider.notifier).getTurnarounds();
+                    Navigator.of(context).pop();
+                  },
                 ),
                 actions: [
                   IconButton(
@@ -1007,7 +1017,10 @@ class _TareaHoraInicioFinView extends ConsumerWidget {
                           .update((state) => false);
                     },
                     style: ElevatedButton.styleFrom(
-                      shape: CircleBorder(),
+                      // shape: RoundedRectangleBorder(
+                      //   borderRadius: BorderRadius.circular(8),
+                      // ),
+                      shape: const CircleBorder(),
                       padding: EdgeInsets.all(5),
                       fixedSize: const Size(45, 45),
                       backgroundColor: Theme.of(
@@ -2839,11 +2852,14 @@ class _CustomTabBarHeaderItem extends StatelessWidget {
   Widget build(BuildContext context) {
     return Align(
       alignment: Alignment.center,
-      child: Text(
-        title,
-        style: GoogleFonts.openSans().copyWith(
-          fontWeight: FontWeight.w800,
-          fontSize: 20,
+      child: Padding(
+        padding: const EdgeInsets.all(6.0),
+        child: Text(
+          title,
+          style: GoogleFonts.openSans().copyWith(
+            fontWeight: FontWeight.w800,
+            fontSize: 24,
+          ),
         ),
       ),
     );

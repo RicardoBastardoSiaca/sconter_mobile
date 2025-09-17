@@ -3,6 +3,7 @@
 class AuthResponse {
   final String token;
   final int id;
+  final String name;
   final String username;
   final String cedula;
   final String? imagen;
@@ -11,6 +12,7 @@ class AuthResponse {
 
   AuthResponse({
     required this.token,
+    required this.name,
     required this.username,
     required this.cedula,
     required this.id,

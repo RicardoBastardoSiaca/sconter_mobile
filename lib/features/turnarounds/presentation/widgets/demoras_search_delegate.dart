@@ -138,7 +138,7 @@ class DemoraSearchDelegate extends SearchDelegate<DemoraCodigo?> {
         // List of códigos
         ...categoria.codigo.map((codigo) {
           return _buildCodigoTile(codigo, categoria, context, theme);
-        }).toList(),
+        }),
       ],
     );
     // Card(

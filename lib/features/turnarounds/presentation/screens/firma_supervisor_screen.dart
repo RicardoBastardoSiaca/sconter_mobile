@@ -6,7 +6,6 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:intl/intl.dart';
 import 'package:signature/signature.dart';
 import 'package:turnaround_mobile/features/auth/presentation/providers/auth_provider.dart';
-import 'package:turnaround_mobile/features/auth/presentation/providers/login_form_provider.dart';
 
 import '../../../shared/shared.dart';
 import '../../domain/domain.dart';
@@ -230,9 +229,6 @@ class _FirmaSupervisorScreenState extends ConsumerState<FirmaSupervisorScreen> {
                             ).notifier,
                           )
                           .firmaSupervisor(body);
-                      if (response == null) {
-                        return;
-                      }
                       // Show snackbar response
                       CustomSnackbar.showResponseSnackbar(
                         response.message,
@@ -249,6 +245,9 @@ class _FirmaSupervisorScreenState extends ConsumerState<FirmaSupervisorScreen> {
                           _passwordController.clear();
                           _signatureController.clear();
                         });
+
+                        // get turnarounds
+                        ref.read(turnaroundProvider.notifier).getTurnarounds();
                         // Close
                         Navigator.pop(context);
                       }

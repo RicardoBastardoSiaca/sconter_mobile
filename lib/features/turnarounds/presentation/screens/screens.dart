@@ -16,3 +16,5 @@ export 'asignar_equipos_gse_servicios_control_actividades.dart';
 export 'firma_supervisor_screen.dart';
 export 'demoras_screen.dart';
 export 'asignar_demoras_screen.dart';
+
+export 'cerrar_vuelo_screen.dart';

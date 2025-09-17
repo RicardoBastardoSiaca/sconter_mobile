@@ -9,20 +9,39 @@ import '../../../shared/shared.dart';
 import '../../domain/domain.dart';
 import '../providers/providers.dart';
 
-class TurnaroundMainScreen extends StatelessWidget {
+class TurnaroundMainScreen extends StatefulWidget {
   const TurnaroundMainScreen({super.key});
 
   @override
-  Widget build(BuildContext context) {
-    final scaffoldKey = GlobalKey<ScaffoldState>();
+  State<TurnaroundMainScreen> createState() => _TurnaroundMainScreenState();
+}
 
+class _TurnaroundMainScreenState extends State<TurnaroundMainScreen> {
+  // final scaffoldKey = GlobalKey<ScaffoldState>();
+  final GlobalKey<ScaffoldState> scaffoldKey = GlobalKey<ScaffoldState>();
+  @override
+  Widget build(BuildContext context) {
+    final theme = Theme.of(context);
     return Scaffold(
+      key: scaffoldKey,
       // backgroundColor: Color.fromRGBO(58, 66, 86, 1.0),
       drawer: SideMenu(scaffoldKey: scaffoldKey),
+      // drawer: CustomNavigationDrawer(
+      //   selectedIndex: 0,
+      //   onItemTapped: (index) {
+      //     // Handle navigation item tap
+      //   },
+      // ),
       appBar: AppBar(
+        // key: scaffoldKey,
         leading: IconButton(
           icon: const Icon(Icons.more_vert),
-          onPressed: () => scaffoldKey.currentState?.openDrawer(),
+          onPressed: () {
+            // Open the SideMenu SideMenu(scaffoldKey: scaffoldKey),
+            // SideMenu(scaffoldKey: scaffoldKey);
+            scaffoldKey.currentState?.openDrawer();
+          },
+          //   // scaffoldKey.currentState?.openDrawer();
         ),
         // title: const Text('Turnaround 2'),
         title: Center(
@@ -34,7 +53,66 @@ class TurnaroundMainScreen extends StatelessWidget {
         ),
         // user icon menu
         actions: [
-          IconButton(onPressed: () {}, icon: const Icon(Icons.manage_accounts)),
+          // IconButton(
+          //   onPressed: () {
+          //     // display dialog menu user management options
+          //     showDialog(
+          //       context: context,
+          //       builder: (context) {
+          //         return AlertDialog(
+          //           // title: Text('Gestionar usuario'),
+          //           content: Column(
+          //             mainAxisSize: MainAxisSize.min,
+          //             children: [
+          //               ListTile(
+          //                 title: Text(
+          //                   'Cambiar Contraseña',
+          //                   style: theme.textTheme.bodyMedium,
+          //                 ),
+          //                 onTap: () {
+          //                   // Handle manage users tap
+          //                   Navigator.of(context).pop();
+          //                 },
+          //               ),
+          //               // ListTile(
+          //               //   title: Text(
+          //               //     'Permisos de Usuario',
+          //               //     style: theme.textTheme.bodyMedium,
+          //               //   ),
+          //               //   onTap: () {
+          //               //     // Handle user permissions tap
+          //               //     Navigator.of(context).pop();
+          //               //   },
+          //               // ),
+          //               ListTile(
+          //                 title: Text(
+          //                   'Cerrar Sesión',
+          //                   style: theme.textTheme.bodyMedium,
+          //                 ),
+          //                 onTap: () {
+          //                   // Handle user permissions tap
+          //                   Navigator.of(context).pop();
+          //                 },
+          //               ),
+          //             ],
+          //           ),
+          //         );
+          //       },
+          //     );
+          //   },
+          //   //       child: Text('Manage Users'),
+          //   //       value: 'manage_users',
+          //   //     ),
+          //   //     PopupMenuItem(
+          //   //       child: Text('User Permissions'),
+          //   //       value: 'user_permissions',
+          //   //     ),
+          //   //   ],
+          //   // );
+          //   // , icon: },
+          //   icon: const Icon(Icons.manage_accounts),
+          // ),
+          const SizedBox(width: 60),
         ],
       ),
       body: _TuraroundMainView(),
@@ -58,8 +136,8 @@ class _TuraroundMainViewState extends ConsumerState {
   void initState() {
     super.initState();
 
-    ref.read(turnaroundProvider.notifier).getTurnarounds();
     // _scrollController.addListener(_scrollListener);
+    ref.read(turnaroundProvider.notifier).getTurnarounds();
   }
 
   @override
@@ -75,11 +153,11 @@ class _TuraroundMainViewState extends ConsumerState {
     if (turnaroundsState.isLoading) {
       return const Center(child: CircularProgressIndicator());
     }
-    return Stack(
-      children: [
-        BackgroundImg(),
-        SafeArea(
-          child: SingleChildScrollView(
+    return SafeArea(
+      child: Stack(
+        children: [
+          BackgroundImg(),
+          SingleChildScrollView(
             physics: BouncingScrollPhysics(),
             child: Column(
               children: [
@@ -102,8 +180,8 @@ class _TuraroundMainViewState extends ConsumerState {
               ],
             ),
           ),
-        ),
-      ],
+        ],
+      ),
     );
   }
 }
@@ -118,7 +196,16 @@ class _DateFilter extends ConsumerWidget {
     return Row(
       mainAxisAlignment: MainAxisAlignment.center,
 
+      // mainAxisSize: MainAxisSize.min,
       children: [
+        // calendar green icon
+        // IconButton(
+        //   onPressed: () {},
+        //   icon: Icon(
+        //     Icons.calendar_month_sharp,
+        //     color: Theme.of(context).colorScheme.primary,
+        //   ),
+        // ),
         IconButton(
           onPressed: () {
             // subtract one day from selectedDate
@@ -127,14 +214,12 @@ class _DateFilter extends ConsumerWidget {
 
             // setSelectedDate
             ref.read(turnaroundProvider.notifier).setSelectedDate(newDate);
-
-            // ref.read(turnaroundProvider.notifier).state = ref
-            //     .read(turnaroundProvider.notifier)
-            //     .state
-            //     .copyWith(selectedDate: newDate);
-            // ref.read(turnaroundProvider.notifier).getTurnarounds();
           },
-          icon: Icon(Icons.arrow_back_ios_outlined, size: 20),
+          icon: Icon(
+            Icons.arrow_back_ios_new,
+            size: 18,
+            // color: Theme.of(context).colorScheme.primary,
+          ),
         ),
         GestureDetector(
           onTap: () async {
@@ -165,7 +250,11 @@ class _DateFilter extends ConsumerWidget {
           ),
         ),
         IconButton(
-          icon: Icon(Icons.arrow_forward_ios_rounded, size: 20),
+          icon: Icon(
+            Icons.arrow_forward_ios_rounded,
+            size: 18,
+            // color: Theme.of(context).colorScheme.primary,
+          ),
           onPressed: () {
             // add one day to selectedDate
             final newDate = selectedDate.add(const Duration(days: 1));
@@ -227,7 +316,7 @@ class _ListTileCardContainer extends StatelessWidget {
               // Shadow
 
               // altura de la tarjeta
-              height: 150,
+              height: 160,
               width: MediaQuery.of(context).size.width,
               alignment: Alignment.center, // <---- The magic
               child: SvgPicture.asset(
@@ -236,7 +325,7 @@ class _ListTileCardContainer extends StatelessWidget {
                   "amarillo" => 'assets/layouts/contenedor-amarillo.svg',
                   "rojo" => 'assets/layouts/contenedor-rojo.svg',
                   "azul" => 'assets/layouts/contenedor-azul.svg',
-                  "gris" => 'assets/layouts/contenedor-blanco.svg',
+                  "gris" => 'assets/layouts/contenedor-gris.svg',
                   _ => 'assets/layouts/contenedor-blanco.svg', // default case
                 },
                 // 'assets/layouts/contenedor-blanco.svg',
@@ -367,6 +456,7 @@ class _MenuDialog extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    DepartamentoPersonalState departamentoPersonal = ref.watch(departamentoPersonalProvider(turnaround.id));
     return AlertDialog(
       // Border Color
       shape: RoundedRectangleBorder(
@@ -378,10 +468,23 @@ class _MenuDialog extends ConsumerWidget {
       ),
       // title: const Text('Menu'),
       backgroundColor: Colors.grey.shade100,
-      content: Column(
-        mainAxisSize: MainAxisSize.min,
-        mainAxisAlignment: MainAxisAlignment.spaceAround,
-        children: [
+      content: 
+      departamentoPersonal.isLoading
+        ? 
+        SizedBox(
+          height: 100.0,
+          width: 100.0,
+          child: Center(
+            child: CircularProgressIndicator(
+              color: Theme.of(context).colorScheme.primary,
+              strokeWidth: 4.0,
+            )
+          ),
+        )
+        : Column(
+            mainAxisSize: MainAxisSize.min,
+            mainAxisAlignment: MainAxisAlignment.spaceAround,
+            children: [
           // Show list tile conditionally based on turnaround status
           // MenuListTile(
           //   leading: Icon(Icons.airplane_ticket),
@@ -400,12 +503,35 @@ class _MenuDialog extends ConsumerWidget {
             MenuListTile(
               leading: Icon(Icons.person_2),
               title: 'Asignar Personal',
-              onTap: () {
-                print("onItemTap");
-                // push
-                context.push('/asignar-personal');
+              onTap: () async {
+                // set trcIdProvider
+                ref.read(trcIdProvider.notifier).state = turnaround.id;
+                // set selectedTurnaroundProvider
+                ref.read(selectedTurnaroundProvider.notifier).state =
+                    turnaround;
+
+                // Wrong code
+                // final response = await ref
+                //     .read(departamentoPersonalProvider(turnaround.id).notifier)
+                //     .getDepartamentosConPersonal(turnaround.id);
+                // if (response.success) {
+                // print(response);
+                //   context.push('/asignar-personal');
+                //   Navigator.pop(context);
+                // }
+                ref
+                .read(departamentoPersonalProvider(turnaround.id).notifier)
+                .getDepartamentosConPersonal(turnaround.id)
+                .then((response) {
+                  if (response.success) {
+                    // Hacer las asginaciones AQUI y no en el init del widget
+                    context.push('/asignar-personal');
+                    Navigator.pop(context);
+                  }
+                });
+
+                
                 // close bottom sheet
-                Navigator.pop(context);
               },
             ),
 
@@ -472,24 +598,39 @@ class _MenuDialog extends ConsumerWidget {
               title: 'Cerrar Vuelo',
               onTap: () {
                 print("onItemTap");
+                
+                // set trcIdProvider
+                ref.read(trcIdProvider.notifier).state = turnaround.id;
+                // set selectedTurnaroundProvider
+                ref.read(selectedTurnaroundProvider.notifier).state =
+                    turnaround;
+
+                // Api calls
+                // getcerrar_operacionesById
+                // Control de actividades
+                ref.read(controlActividadesProvider(turnaround.id).notifier).getControlDeActividadesByTrcId();
+
+
+                // getCodigosMoraByTrc
+                 ref
+                    .read(demorasProvider.notifier)
+                    .getDemorasByTrc(turnaround.id);
+
+                // Personal
+                ref
+                    .read(departamentoPersonalProvider(turnaround.id).notifier)
+                    .getDepartamentosConPersonal(turnaround.id);
+                
+
+
                 // push
-                context.push('/cerrar-vuelo');
+                context.push('/cerrar-vuelo-screen');
                 // close bottom sheet
                 Navigator.pop(context);
               },
             ),
-          if (turnaround.estatus == 2 || turnaround.estatus == 3)
-            MenuListTile(
-              leading: Icon(Icons.lock),
-              title: 'Cancelar Vuelo',
-              onTap: () {
-                print("Cancelar Vuelo");
-                // push
-                // context.push('/cerrar-vuelo');
-                // close bottom sheet
-                // Navigator.pop(context);
-              },
-            ),
+            
+            // Consultar Control de actividades
 
           // Generar reportes
           if (turnaround.estatus == 3 ||
@@ -497,17 +638,18 @@ class _MenuDialog extends ConsumerWidget {
                   turnaround.estatus != 2 &&
                   turnaround.estatus != 3 &&
                   turnaround.estatus != 7))
-            MenuListTile(
-              leading: Icon(Icons.report),
-              title: 'Generar reportes',
-              onTap: () {
-                print("Generar reportes");
-                // push
-                context.push('/generar-reportes');
-                // close bottom sheet
-                Navigator.pop(context);
-              },
-            ),
+                  SizedBox(height: 0,),
+            // MenuListTile(
+            //   leading: Icon(Icons.report),
+            //   title: 'Generar reportes',
+            //   onTap: () {
+            //     print("Generar reportes");
+            //     // push
+            //     context.push('/generar-reportes');
+            //     // close bottom sheet
+            //     Navigator.pop(context);
+            //   },
+            // ),
         ],
       ),
     );
@@ -635,8 +777,8 @@ class _InboundView extends StatelessWidget {
           padding: const EdgeInsets.only(
             top: 15,
             bottom: 15,
-            left: 15,
-            right: 15,
+            left: 10,
+            right: 10,
           ),
           child: Column(
             children: [

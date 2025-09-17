@@ -6,3 +6,4 @@ export 'categoria_equipos_gse.dart';
 export 'categoria_servicios_adicionales_response.dart';
 export 'supervisor_aerolinea.dart';
 export 'demora.dart';
+export 'departamento_personal_response.dart';

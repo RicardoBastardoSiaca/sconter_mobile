@@ -59,6 +59,7 @@ class ControlActividadesMapper {
       serviciosEspeciales: List<ServiciosAle>.from(
         json["servicios_especiales"].map((x) => ServiciosAle.fromJson(x)),
       ),
+      sla: json["sla"] == null ? [] : List<Sla>.from(json["sla"].map((x) => Sla.fromJson(x))),
       estatusNombre: json["estatus_nombre"],
       estatusId: json["estatus_id"],
     );
@@ -68,6 +69,7 @@ class ControlActividadesMapper {
     return Departamento(
       index: json["index"],
       nombreArea: json["nombre_area"],
+      nombreCorto: json["nombre_corto"],
       actividades: List<Actividades>.from(
         (json["actividades"] as List).map((x) => mapJsonToActividades(x)),
       ),

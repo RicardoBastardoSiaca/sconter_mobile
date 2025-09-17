@@ -26,64 +26,66 @@ class _ServiciosAdicionalesView extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final trcId = ref.watch(selectedTurnaroundProvider)!.id;
-    return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 16),
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.start,
-        children: [
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              Text(
-                'Agregar servicio adicional:',
-                style: Theme.of(
-                  context,
-                ).textTheme.titleSmall?.copyWith(fontWeight: FontWeight.w400),
-              ),
-              ElevatedButton(
-                // disable if isLoading
-                onPressed: () async {
-                  // TODO: passing selected servicios adicionales
-                  // ref.read(selectedMaquinariasTaskProvider.notifier).state =
-                  //     controlActividades?.serviciosAdicionales ?? [];
-                  // tarea.maquinaria ?? [];
-
-                  // await ref
-                  //     .read(categoriasEquiposGseProvider.notifier)
-                  //     .getCategoriasEquiposGse();
-
-                  // Get Servicios Adicionales
-                  await ref
-                      .read(serviciosAdicionalesProvider.notifier)
-                      .getServiciosAdicionales();
-                  // if (response == null) return;
-                  print("asignar equipos gse");
-                  context.push(
-                    '/asignar-equipos-gse-servicios-adicionales-especiales',
-                  );
-
-                  // get control de actividades after close
-                  // await ref
-                  //     .read(controlDeActividadesProvider.notifier)
-                  //     .getControlDeActividadesByTrcId(trcId);
-                },
-                style: ElevatedButton.styleFrom(
-                  shape: CircleBorder(),
-                  padding: EdgeInsets.all(5),
-                  fixedSize: const Size(45, 45),
-                  backgroundColor: Theme.of(
+    return SafeArea(
+      child: Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 16),
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.start,
+          children: [
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Text(
+                  'Agregar servicio adicional:',
+                  style: Theme.of(
                     context,
-                  ).colorScheme.primary, // <-- Button color
-                  // foregroundColor: Colors.red, // <-- Splash color
+                  ).textTheme.titleSmall?.copyWith(fontWeight: FontWeight.w400),
                 ),
-                child: Icon(Icons.add, color: Colors.white, size: 35),
-              ),
-            ],
-          ),
-
-          // ListadoServicioAdicional
-          Expanded(child: _ListadoServiciosAdicionales(trcId: trcId)),
-        ],
+                ElevatedButton(
+                  // disable if isLoading
+                  onPressed: () async {
+                    // TODO: passing selected servicios adicionales
+                    // ref.read(selectedMaquinariasTaskProvider.notifier).state =
+                    //     controlActividades?.serviciosAdicionales ?? [];
+                    // tarea.maquinaria ?? [];
+      
+                    // await ref
+                    //     .read(categoriasEquiposGseProvider.notifier)
+                    //     .getCategoriasEquiposGse();
+      
+                    // Get Servicios Adicionales
+                    await ref
+                        .read(serviciosAdicionalesProvider.notifier)
+                        .getServiciosAdicionales();
+                    // if (response == null) return;
+                    print("asignar equipos gse");
+                    context.push(
+                      '/asignar-equipos-gse-servicios-adicionales-especiales',
+                    );
+      
+                    // get control de actividades after close
+                    // await ref
+                    //     .read(controlDeActividadesProvider.notifier)
+                    //     .getControlDeActividadesByTrcId(trcId);
+                  },
+                  style: ElevatedButton.styleFrom(
+                    shape: CircleBorder(),
+                    padding: EdgeInsets.all(5),
+                    fixedSize: const Size(45, 45),
+                    backgroundColor: Theme.of(
+                      context,
+                    ).colorScheme.primary, // <-- Button color
+                    // foregroundColor: Colors.red, // <-- Splash color
+                  ),
+                  child: Icon(Icons.add, color: Colors.white, size: 35),
+                ),
+              ],
+            ),
+      
+            // ListadoServicioAdicional
+            Expanded(child: _ListadoServiciosAdicionales(trcId: trcId)),
+          ],
+        ),
       ),
     );
   }

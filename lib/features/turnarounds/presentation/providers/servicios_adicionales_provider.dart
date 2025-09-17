@@ -218,6 +218,33 @@ class ServiciosAdicionalesNotifier
     }
   }
 
+  
+  Future<SnackbarResponse> setCantidadServicioEspecial(
+    Map<String, Object?> body,
+  ) async {
+    state = state.copyWith(isSaving: true);
+    
+    try {
+      final response = await turnaroundsRepository
+          .setCantidadServicioAdicional(body);
+      if (response.success) {
+        return SnackbarResponse(message: 'Cantidad registrada.', success: true);
+        // getControlDeActividadesByTrcId(); from control actividades provider
+      } else {
+        // print("Error al actualizar la hora de inicio: ${response.message}");
+        return SnackbarResponse(
+          message: 'Ha ocurrido un error.',
+          success: false,
+        );
+      }
+    } catch (e) {
+      // print("Error setting hora de inicio: $e");
+      return SnackbarResponse(message: 'Ha ocurrido un error.', success: false);
+    } finally {
+      state = state.copyWith(isSaving: false);
+    }
+  }
+
   Future<SnackbarResponse> setComentarioServicioAdicional(
     ComentarioServiciosAdicionalRequest body,
   ) async {
