@@ -139,9 +139,9 @@ class _ListadoServiciosAdicionales extends ConsumerWidget {
                   // disable if isLoading
                   // Aca mismo es
                   onPressed: () async {
-                    // await ref
-                    //     .read(categoriasEquiposGseProvider.notifier)
-                    //     .getCategoriasEquiposGse();
+                    await ref
+                        .read(categoriasEquiposGseProvider.notifier)
+                        .getCategoriasEquiposGse();
 
                     // Maquinarias asignadas a servicios adicionales
                     // El servico adicional seleccionado

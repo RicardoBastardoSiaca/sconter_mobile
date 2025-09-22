@@ -442,9 +442,9 @@ class TurnaroundsDatasourceImpl implements TurnaroundsDatasource {
 
   @override
   Future<List<CategoriaServicioAdicional>> getServiciosAdicionales() {
-    return dio.get('/servicios_adicionales/?token=$accessToken').then((
-      response,
-    ) {
+    return dio.get('/servicios_adicionales/?token=$accessToken')
+    .then((
+      response) {
       print('Response from getServiciosAdicionales: $response');
       if (response.statusCode == 200) {
         // mapping to CategoriasServiciosAdicionalesMapper map
@@ -456,6 +456,9 @@ class TurnaroundsDatasourceImpl implements TurnaroundsDatasource {
       } else {
         return [];
       }
+    },
+    onError: (error) {
+      return [];
     });
   }
 

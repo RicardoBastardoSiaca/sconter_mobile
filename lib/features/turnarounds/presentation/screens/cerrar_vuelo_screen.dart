@@ -245,7 +245,7 @@ final bool? result = await showConfirmationDialog(
         curve: Curves.fastLinearToSlowEaseIn,
         controlsMargin: const EdgeInsets.all(16),
         controlsPadding: kIsWeb
-            ? const EdgeInsets.all(12.0)
+            ? const EdgeInsets.all(8.0)
             : const EdgeInsets.fromLTRB(8.0, 4.0, 8.0, 4.0),
         dotsDecorator: const DotsDecorator(
           size: Size(10.0, 10.0),

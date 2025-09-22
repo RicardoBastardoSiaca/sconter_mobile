@@ -88,19 +88,19 @@ class TipoServicio {
   // For example:
   int id;
   String nombre;
-  bool servicios_adicionales;
+  bool serviciosAdicionales;
 
   TipoServicio({
     required this.id,
     required this.nombre,
-    required this.servicios_adicionales,
+    required this.serviciosAdicionales,
   });
 
   factory TipoServicio.fromJson(Map<String, dynamic> json) {
     return TipoServicio(
       id: json['id'],
       nombre: json['nombre'],
-      servicios_adicionales: json['servicios_adicionales'],
+      serviciosAdicionales: json['servicios_adicionales'],
     );
   }
 }

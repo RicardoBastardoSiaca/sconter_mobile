@@ -1,3 +1,4 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_svg/svg.dart';
@@ -154,33 +155,40 @@ class _TuraroundMainViewState extends ConsumerState {
       return const Center(child: CircularProgressIndicator());
     }
     return SafeArea(
-      child: Stack(
-        children: [
-          BackgroundImg(),
-          SingleChildScrollView(
-            physics: BouncingScrollPhysics(),
-            child: Column(
-              children: [
-                // Date Filter
-                const SizedBox(height: 3),
-                Text(
-                  'Turnarounds',
-                  style: Theme.of(context).textTheme.headlineLarge?.copyWith(
-                    color: Theme.of(context).colorScheme.primary,
-                    fontWeight: FontWeight.w900,
-                    fontFamily: GoogleFonts.openSans(
-                      fontWeight: FontWeight.w900,
-                    ).fontFamily,
-                  ),
-                ),
-                const SizedBox(height: 2),
-                _DateFilter(),
-                // const SizedBox(height: ),
-                _TurnaroundsListView(turnarounds: turnaroundsState.turnarounds),
-              ],
-            ),
+      // BackgroundImg()
+      child: Container(
+        decoration: BoxDecoration(
+          image: DecorationImage(
+            alignment: Alignment.bottomCenter,
+            image: AssetImage("assets/icons/mapa-mundi-bg.jpg"),
+            fit: BoxFit.contain,
           ),
-        ],
+        ),
+        child: ListView(
+          controller: _scrollController,
+          children: [
+            const SizedBox(height: 3),
+            Center(
+              child: Text(
+                'Turnarounds',
+                style: Theme.of(context).textTheme.headlineLarge?.copyWith(
+                  color: Theme.of(context).colorScheme.primary,
+                  fontWeight: FontWeight.w900,
+                  fontFamily: GoogleFonts.openSans(
+                    fontWeight: FontWeight.w900,
+                  ).fontFamily,
+                ),
+              ),
+            ),
+            const SizedBox(height: 2),
+            _DateFilter(),
+             ...turnaroundsState.turnarounds.map((turnaround) => _ListTileCardContainer(turnaround: turnaround)).toList(),
+            const SizedBox(height: 30),
+        // _ListTileCardContainer
+            // _TurnaroundsListView(turnarounds: turnaroundsState.turnarounds),
+            // ...turnarounds.map((turnaround) => _ListTileCardContainer(turnaround: turnaround)).toList(),
+          ],
+        ),
       ),
     );
   }
@@ -275,31 +283,32 @@ class _DateFilter extends ConsumerWidget {
   }
 }
 
-class _TurnaroundsListView extends StatelessWidget {
-  final List<TurnaroundMain> turnarounds;
-  const _TurnaroundsListView({required this.turnarounds});
+// class _TurnaroundsListView extends StatelessWidget {
+//   final List<TurnaroundMain> turnarounds;
+//   const _TurnaroundsListView({required this.turnarounds});
 
-  @override
-  Widget build(BuildContext context) {
-    return Builder(
-      builder: (context) {
-        return ListView.builder(
-          physics:
-              const NeverScrollableScrollPhysics(), // disable scrolling of the ListView
-          shrinkWrap: true,
-          scrollDirection: Axis.vertical,
-          itemCount: turnarounds.length,
-          itemBuilder: (context, index) {
-            final turnaround = turnarounds[index];
-            // return Text("Descomentar para ver la tarjeta");
-            return _ListTileCardContainer(turnaround: turnaround);
-            // return _ListTileCard(turnaround: turnaround);
-          },
-        );
-      },
-    );
-  }
-}
+//   @override
+//   Widget build(BuildContext context) {
+//     return Builder(
+//       builder: (context) {
+//         return 
+//         ListView.builder(
+//           physics:
+//               const NeverScrollableScrollPhysics(), // disable scrolling of the ListView
+//           shrinkWrap: true,
+//           scrollDirection: Axis.vertical,
+//           itemCount: turnarounds.length,
+//           itemBuilder: (context, index) {
+//             final turnaround = turnarounds[index];
+//             // return Text("Descomentar para ver la tarjeta");
+//             return _ListTileCardContainer(turnaround: turnaround);
+//             // return _ListTileCard(turnaround: turnaround);
+//           },
+//         );
+//       },
+//     );
+//   }
+// }
 
 class _ListTileCardContainer extends StatelessWidget {
   final TurnaroundMain turnaround;
@@ -353,6 +362,7 @@ class _ListTileCardContainer extends StatelessWidget {
               // mainAxisAlignment: MainAxisAlignment.center,
               children: [
                 // Cola de aerolinea
+                // Spacer(flex: 1),
                 Flexible(
                   // backkground color
                   flex: 1,
@@ -728,7 +738,17 @@ class _TailView extends StatelessWidget {
           children: [
             SizedBox(
               height: 90,
-              child: Image.network(image, fit: BoxFit.contain),
+              child: 
+              // Image.network(image, fit: BoxFit.contain),
+              CachedNetworkImage(
+                imageUrl: image,
+                fit: BoxFit.contain,
+                placeholder: (context, url) => 
+                Placeholder(
+                  strokeWidth: 2,
+                  color: Colors.transparent) ,
+                errorWidget: (context, url, error) => Icon(Icons.error),
+              )
             ),
             // Uppercase
             Text(
@@ -777,7 +797,7 @@ class _InboundView extends StatelessWidget {
           padding: const EdgeInsets.only(
             top: 15,
             bottom: 15,
-            left: 10,
+            left: 9,
             right: 10,
           ),
           child: Column(
@@ -788,7 +808,7 @@ class _InboundView extends StatelessWidget {
                 children: [
                   Text(
                     lugarSalida,
-                    style: Theme.of(context).textTheme.titleLarge?.copyWith(
+                    style: Theme.of(context).textTheme.titleMedium?.copyWith(
                       fontFamily: GoogleFonts.openSans(
                         fontWeight: FontWeight.w700,
                       ).fontFamily,

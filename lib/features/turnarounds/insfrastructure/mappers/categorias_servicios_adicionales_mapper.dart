@@ -13,7 +13,7 @@ class CategoriasServiciosAdicionalesMapper {
       id: json["id"],
       tipoServicio: mapJsonToTipo(json["tipo_servicio"]),
       titulo: json["titulo"],
-      descripcion: json["descripcion"],
+      descripcion: json["descripcion"] ?? "",
       isAdicional: json["isadicional"],
       estatus: json["estatus"],
     );
@@ -23,7 +23,7 @@ class CategoriasServiciosAdicionalesMapper {
     return TipoServicio(
       id: json["id"],
       nombre: json["nombre"],
-      servicios_adicionales: json["servicios_adicionales"],
+      serviciosAdicionales: json["servicios_adicionales"],
     );
   }
 }
