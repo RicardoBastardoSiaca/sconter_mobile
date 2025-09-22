@@ -1,10 +1,13 @@
+en el status 7 falta consultar control de actividades y ver reporte
+Terminar tipo de tarea it y limpieza
 Expandable panel solo funciona el primero
-no muiestra el estado gris en turnarounds / el rojo tambien
-ocultar firma cuando ya se ha firmado 
+
+
 no trae el supervisor en firma
 
-en el status 7 falta consultar control de actividades y ver reporte
 
+no muiestra el estado gris en turnarounds / el rojo tambien
+ocultar firma cuando ya se ha firmado 
 
 
 modulos y Funcionalidades
@@ -124,3 +127,12 @@ googlefonts pub
 fluuter lanched icon
 
 
+
+
+Estatus
+1. blanco
+2. amarillo - en proceso
+3. Verde - firmado por aerolinea
+4. azul aprobado por gerent de turno
+6. gris - Aceptado por la Aerolinea
+7. rojo - rechazado por aerolinea

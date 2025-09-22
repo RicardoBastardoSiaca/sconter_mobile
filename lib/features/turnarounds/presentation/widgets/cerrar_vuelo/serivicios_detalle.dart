@@ -52,6 +52,16 @@ class _ServiciosEspecialesView extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
    final theme = Theme.of(context);
+   if (controlActividades == null) {
+      return  Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Center(child: Text('Servicios especiales', style: theme.textTheme.titleSmall?.copyWith(fontWeight: FontWeight.bold, color: theme.colorScheme.primary),)),
+        const SizedBox(height: 8,),
+        const Text('No hay servicios especiales')
+      ],
+    );
+    }
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -121,15 +131,25 @@ class _ServiciosAdicionalesView extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
+    if (controlActividades == null) {
+      return  Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Center(child: Text('Servicios especiales', style: theme.textTheme.titleSmall?.copyWith(fontWeight: FontWeight.bold, color: theme.colorScheme.primary),)),
+        const SizedBox(height: 8,),
+        const Text('No hay servicios especiales')
+      ],
+    );
+    }
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Center(child: Text('Servicios adicionales', style: theme.textTheme.titleSmall?.copyWith(fontWeight: FontWeight.bold, color: theme.colorScheme.primary),)),
         const SizedBox(height: 8,),
-        controlActividades!.serviciosAdicionales!.isEmpty
+        (controlActividades == null || controlActividades!.serviciosAdicionales!.isEmpty)
             ? Text('No hay servicios adicionales')
             : const SizedBox(),
-        ...controlActividades!.serviciosAdicionales!.asMap().entries.map((
+         ...controlActividades!.serviciosAdicionales!.asMap().entries.map((
           entry,
         ) {
           final index = entry.key;

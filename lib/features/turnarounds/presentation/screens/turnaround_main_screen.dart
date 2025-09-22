@@ -641,7 +641,47 @@ class _MenuDialog extends ConsumerWidget {
             ),
             
             // Consultar Control de actividades
+          if (turnaround.estatus == 4 ||
+              turnaround.estatus == 5 ||
+              turnaround.estatus == 6 ||
+              turnaround.estatus == 7)
+            MenuListTile(
+              leading: Icon(Icons.list),
+              title: 'Consultar',
+              onTap: () {
+                print("onItemTap");
+                
+                // set trcIdProvider
+                ref.read(trcIdProvider.notifier).state = turnaround.id;
+                // set selectedTurnaroundProvider
+                ref.read(selectedTurnaroundProvider.notifier).state =
+                    turnaround;
 
+                // Api calls
+                // getcerrar_operacionesById
+                // Control de actividades
+                ref.read(controlActividadesProvider(turnaround.id).notifier).getControlDeActividadesByTrcId();
+
+
+                // getCodigosMoraByTrc
+                 ref
+                    .read(demorasProvider.notifier)
+                    .getDemorasByTrc(turnaround.id);
+
+                // Personal
+                // ref
+                //     .read(departamentoPersonalProvider(turnaround.id).notifier)
+                //     .getDepartamentosConPersonal(turnaround.id);
+                
+
+
+                // push
+                context.push('/consultar-control-actividades-screen');
+                // close bottom sheet
+                Navigator.pop(context);
+              },
+            ),
+            
           // Generar reportes
           if (turnaround.estatus == 3 ||
               (turnaround.estatus != 1 &&
