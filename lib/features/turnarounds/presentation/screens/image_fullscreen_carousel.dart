@@ -2,8 +2,12 @@ import 'package:carousel_slider/carousel_slider.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
+import 'package:path_provider/path_provider.dart';
+import 'package:share_plus/share_plus.dart';
 import 'package:turnaround_mobile/config/constants/environment.dart';
 
+import 'package:http/http.dart' as http;
+import 'dart:io';
 import '../../../shared/shared.dart';
 import '../../domain/domain.dart';
 import '../providers/providers.dart';
@@ -121,12 +125,51 @@ class ImageFullscreenCarousel extends ConsumerWidget {
                           //   ),
                           // ),
         
+                          // Share button bottom right
+                          Positioned(
+                            bottom: 15,
+                            right: 55,
+                            child: IconButton(
+                              icon: const Icon(
+                                size: 28,
+                                Icons.share_rounded,
+                                color: Colors.white,
+                              ),
+                              onPressed: () async {
+                                // Handle share button action
+                                try {
+      // 1. Download the image
+      final response = await http.get(Uri.parse('${Environment.apiUrl}/aerolineas/media/${imagen.imagen}'));
+      final bytes = response.bodyBytes;
+
+      // 2. Get a temporary directory
+      final directory = await getTemporaryDirectory();
+      final imagePath = '${directory.path}/shared_image.jpg';
+
+      // 3. Save the image to a temporary file
+      final File imageFile = File(imagePath);
+      await imageFile.writeAsBytes(bytes);
+
+      // 4. Share the file
+      await Share.shareXFiles(
+        [XFile(imagePath)], 
+        // Nombre de la tarea
+        text: imagesList.shareMessage, 
+        subject: 'Image from my app');
+    } catch (e) {
+      print('Error sharing image: $e');
+      // Handle error, e.g., show a SnackBar
+    }
+                              },
+                            ),
+                          ),
                           // Delete button bottom right
                           Positioned(
                             bottom: 15,
                             right: 10,
                             child: IconButton(
                               icon: const Icon(
+                                size: 30,
                                 Icons.delete_outline_rounded,
                                 color: Colors.white,
                               ),

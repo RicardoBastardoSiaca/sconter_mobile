@@ -410,5 +410,7 @@ final imagesListProvider = StateProvider<CustomFullscreenCarouselData>((ref) {
 class CustomFullscreenCarouselData {
   late final List<Imagen> imagenes; // List of Imagen imagen;
   late final int index;
-  CustomFullscreenCarouselData({required this.imagenes, required this.index});
+  // late final String title;
+  late final String shareMessage;
+  CustomFullscreenCarouselData({required this.imagenes, required this.index, this.shareMessage = ''});
 }

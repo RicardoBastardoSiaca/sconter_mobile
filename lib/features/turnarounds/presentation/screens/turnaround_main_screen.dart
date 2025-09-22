@@ -157,13 +157,13 @@ class _TuraroundMainViewState extends ConsumerState {
     return SafeArea(
       // BackgroundImg()
       child: Container(
-        decoration: BoxDecoration(
-          image: DecorationImage(
-            alignment: Alignment.bottomCenter,
-            image: AssetImage("assets/icons/mapa-mundi-bg.jpg"),
-            fit: BoxFit.contain,
-          ),
-        ),
+        // decoration: BoxDecoration(
+        //   image: DecorationImage(
+        //     alignment: Alignment.bottomCenter,
+        //     image: AssetImage("assets/icons/mapa-mundi-bg.jpg"),
+        //     fit: BoxFit.contain,
+        //   ),
+        // ),
         child: ListView(
           controller: _scrollController,
           children: [
@@ -183,7 +183,7 @@ class _TuraroundMainViewState extends ConsumerState {
             const SizedBox(height: 2),
             _DateFilter(),
              ...turnaroundsState.turnarounds.map((turnaround) => _ListTileCardContainer(turnaround: turnaround)).toList(),
-            const SizedBox(height: 30),
+            const SizedBox(height: 30), 
         // _ListTileCardContainer
             // _TurnaroundsListView(turnarounds: turnaroundsState.turnarounds),
             // ...turnarounds.map((turnaround) => _ListTileCardContainer(turnaround: turnaround)).toList(),

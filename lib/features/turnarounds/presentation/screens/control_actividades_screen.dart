@@ -2308,7 +2308,7 @@ class _TareaImagenView extends ConsumerWidget {
           ],
         ),
 
-        _ComplicatedImageDemo(images: tarea.imagen ?? []),
+        _ComplicatedImageDemo(images: tarea.imagen ?? [], tarea: tarea),
 
         // _CarouselWithIndicatorDemo(images: tarea.imagen ?? []),
         // _ImageCarousel(images: tarea.imagen ?? []),
@@ -2675,7 +2675,8 @@ class _CarouselWithIndicatorState extends State<_CarouselWithIndicatorDemo> {
 
 class _ComplicatedImageDemo extends ConsumerWidget {
   final List<Imagen> images;
-  const _ComplicatedImageDemo({required this.images});
+  final Tarea tarea;
+  const _ComplicatedImageDemo({required this.images, required this.tarea});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -2718,6 +2719,8 @@ class _ComplicatedImageDemo extends ConsumerWidget {
                             .state = CustomFullscreenCarouselData(
                           imagenes: images,
                           index: idx,
+                          shareMessage: tarea.titulo,
+                          // shareMessage: '${idx + 1} de ${images.length} - ${tarea.titulo}',
                         );
                         // or use go_router
                         context.push('/image-fullscreen-carousel');
