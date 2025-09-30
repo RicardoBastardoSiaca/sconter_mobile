@@ -182,7 +182,7 @@ class _TuraroundMainViewState extends ConsumerState {
             ),
             const SizedBox(height: 2),
             _DateFilter(),
-             ...turnaroundsState.turnarounds.map((turnaround) => _ListTileCardContainer(turnaround: turnaround)).toList(),
+             ...turnaroundsState.turnarounds.map((turnaround) => _ListTileCardContainer(turnaround: turnaround)),
             const SizedBox(height: 30), 
         // _ListTileCardContainer
             // _TurnaroundsListView(turnarounds: turnaroundsState.turnarounds),
@@ -325,7 +325,7 @@ class _ListTileCardContainer extends StatelessWidget {
               // Shadow
 
               // altura de la tarjeta
-              height: 160,
+              height: 165,
               width: MediaQuery.of(context).size.width,
               alignment: Alignment.center, // <---- The magic
               child: SvgPicture.asset(

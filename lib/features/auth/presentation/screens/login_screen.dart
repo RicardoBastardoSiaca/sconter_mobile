@@ -62,7 +62,7 @@ class CustomBottomNavigationBar extends StatelessWidget {
       'Copyright Siaca© $currentYear',
       style: Theme.of(
         context,
-      ).textTheme.bodySmall?.copyWith(color: Colors.grey),
+      ).textTheme.labelSmall?.copyWith(color: Colors.grey),
     );
   }
 }

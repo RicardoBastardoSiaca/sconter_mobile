@@ -202,9 +202,7 @@ class _ServiciosAdicionalesView extends StatelessWidget {
 class _ServicioAdicionalView extends StatelessWidget {
   final ControlActividades? controlActividades;
   final TurnaroundMain? turnaround;
-  const _ServicioAdicionalView({
-    this.controlActividades, this.turnaround,
-  });
+  const _ServicioAdicionalView(this.controlActividades, this.turnaround);
 
   @override
   Widget build(BuildContext context) {

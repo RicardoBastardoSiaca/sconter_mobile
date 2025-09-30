@@ -8,3 +8,4 @@ export 'servicios_adicionales_provider.dart';
 export 'supervisor_aerolinea_provider.dart';
 export 'demoras_provider.dart';
 export 'departamento_personal_provider.dart';
+export 'categorias_equipos_it_limpieza_provider.dart';

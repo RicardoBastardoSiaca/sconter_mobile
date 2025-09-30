@@ -19,3 +19,5 @@ export 'demoras_screen.dart';
 export 'asignar_demoras_screen.dart';
 
 export 'cerrar_vuelo_screen.dart';
+
+export 'asignar_equipos_it_control_actividades_screen.dart';

@@ -9,6 +9,7 @@ import 'package:go_router/go_router.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:intl/intl.dart';
 import 'package:turnaround_mobile/features/turnarounds/domain/entities/control_actividades.dart';
+import 'package:turnaround_mobile/features/turnarounds/presentation/providers/categorias_equipos_it_limpieza_provider.dart';
 // shared
 import '../../../../config/config.dart';
 import '../../../shared/shared.dart';
@@ -109,152 +110,158 @@ class _ControlActividadesScreenState
           // ),
           children: [
             // SizedBox(height: 0.2),
-            if(turnaround?.estatus == 2) 
-            GestureDetector(
-              onTap: () async {
-                print('Firma del Supervisor pressed');
+            if (turnaround?.estatus == 2)
+              GestureDetector(
+                onTap: () async {
+                  print('Firma del Supervisor pressed');
 
-                await ref
-                    .read(supervisorAerolineaProvider.notifier)
-                    .getSupervisores();
-                context.push('/firma-supervisor-screen');
-              },
-              child: Row(
-                children: [
-                  Text(
-                    'Firma del Supervisor',
-                    style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                      fontWeight: FontWeight.w600,
-                      // Rounded
+                  await ref
+                      .read(supervisorAerolineaProvider.notifier)
+                      .getSupervisores();
+                  context.push('/firma-supervisor-screen');
+                },
+                child: Row(
+                  children: [
+                    Text(
+                      'Firma del Supervisor',
+                      style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                        fontWeight: FontWeight.w600,
+                        // Rounded
 
-                      // color: Colors.white,
+                        // color: Colors.white,
+                      ),
                     ),
-                  ),
-                  SizedBox(width: 20),
-                  FloatingActionButton.small(
-                    heroTag: null,
-                    backgroundColor: primaryColor,
-                    onPressed: () {
-                      print('Firma del Supervisor pressed - BUTTON');
-                      context.push('/firma-supervisor-screen');
-                      // close bottom sheet
-                      // Navigator.pop(context);
-                    },
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(50),
+                    SizedBox(width: 20),
+                    FloatingActionButton.small(
+                      heroTag: null,
+                      backgroundColor: primaryColor,
+                      onPressed: () {
+                        print('Firma del Supervisor pressed - BUTTON');
+                        context.push('/firma-supervisor-screen');
+                        // close bottom sheet
+                        // Navigator.pop(context);
+                      },
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(50),
+                      ),
+                      child: Icon(Icons.edit, color: Colors.white),
                     ),
-                    child: Icon(Icons.edit, color: Colors.white),
-                  ),
-                ],
+                  ],
+                ),
               ),
-            ),
 
-            if(turnaround?.estatus == 2 || turnaround?.estatus == 3 || turnaround?.estatus == 7) 
-            GestureDetector(
-              onTap: () async {
-                print('Demoras pressed');
+            if (turnaround?.estatus == 2 ||
+                turnaround?.estatus == 3 ||
+                turnaround?.estatus == 7)
+              GestureDetector(
+                onTap: () async {
+                  print('Demoras pressed');
 
-                await ref
-                    .read(demorasProvider.notifier)
-                    .getDemorasByTrc(turnaround!.id);
-                context.push('/demoras-screen');
-              },
-              child: Row(
-                children: [
-                  Text(
-                    'Demoras',
-                    style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                      fontWeight: FontWeight.w600,
-                      // color: Colors.white,
+                  await ref
+                      .read(demorasProvider.notifier)
+                      .getDemorasByTrc(turnaround!.id);
+                  context.push('/demoras-screen');
+                },
+                child: Row(
+                  children: [
+                    Text(
+                      'Demoras',
+                      style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                        fontWeight: FontWeight.w600,
+                        // color: Colors.white,
+                      ),
                     ),
-                  ),
-                  SizedBox(width: 20),
-                  FloatingActionButton.small(
-                    heroTag: null,
-                    backgroundColor: primaryColor,
-                    onPressed: null,
+                    SizedBox(width: 20),
+                    FloatingActionButton.small(
+                      heroTag: null,
+                      backgroundColor: primaryColor,
+                      onPressed: null,
 
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(50),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(50),
+                      ),
+                      child: Icon(Icons.schedule, color: Colors.white),
                     ),
-                    child: Icon(Icons.schedule, color: Colors.white),
-                  ),
-                ],
+                  ],
+                ),
               ),
-            ),
-            if(turnaround?.estatus == 2 || turnaround?.estatus == 3 || turnaround?.estatus == 7) 
-            GestureDetector(
-              onTap: () {
-                print('Servicios adicionales pressed - ROW');
-                context.push('/servicios-adicionales-screen');
-              },
-              child: Row(
-                children: [
-                  Text(
-                    'Servicios Adicionales',
-                    style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                      fontWeight: FontWeight.w600,
-                      // color: Colors.white,
+            if (turnaround?.estatus == 2 ||
+                turnaround?.estatus == 3 ||
+                turnaround?.estatus == 7)
+              GestureDetector(
+                onTap: () {
+                  print('Servicios adicionales pressed - ROW');
+                  context.push('/servicios-adicionales-screen');
+                },
+                child: Row(
+                  children: [
+                    Text(
+                      'Servicios Adicionales',
+                      style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                        fontWeight: FontWeight.w600,
+                        // color: Colors.white,
+                      ),
                     ),
-                  ),
-                  SizedBox(width: 20),
-                  FloatingActionButton.small(
-                    heroTag: null,
-                    backgroundColor: primaryColor,
-                    onPressed: () {
-                      print('Servicios adicionales pressed - BUTTON');
-                      context.push('/servicios-adicionales-screen');
-                      // close bottom sheet
-                      // Navigator.pop(context);
-                    },
+                    SizedBox(width: 20),
+                    FloatingActionButton.small(
+                      heroTag: null,
+                      backgroundColor: primaryColor,
+                      onPressed: () {
+                        print('Servicios adicionales pressed - BUTTON');
+                        context.push('/servicios-adicionales-screen');
+                        // close bottom sheet
+                        // Navigator.pop(context);
+                      },
 
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(50),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(50),
+                      ),
+                      child: Icon(Icons.agriculture, color: Colors.white),
                     ),
-                    child: Icon(Icons.agriculture, color: Colors.white),
-                  ),
-                ],
+                  ],
+                ),
               ),
-            ),
-            if(turnaround?.estatus == 2 || turnaround?.estatus == 3 || turnaround?.estatus == 7) 
-            GestureDetector(
-              onTap: () {
-                print('Servicios especiales pressed - ROW');
-                context.push('/servicios-especiales-screen');
-                // print('Servicios especiales pressed');
-                // push servicios-especiales
-                // context.pushNamed('servicios-especiales', extra: widget.trcId);
-                // context.push('/servicios-especiales');
-              },
-              child: Row(
-                children: [
-                  Text(
-                    'Servicios Especiales',
-                    style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                      fontWeight: FontWeight.w600,
-                      // color: Colors.white,
+            if (turnaround?.estatus == 2 ||
+                turnaround?.estatus == 3 ||
+                turnaround?.estatus == 7)
+              GestureDetector(
+                onTap: () {
+                  print('Servicios especiales pressed - ROW');
+                  context.push('/servicios-especiales-screen');
+                  // print('Servicios especiales pressed');
+                  // push servicios-especiales
+                  // context.pushNamed('servicios-especiales', extra: widget.trcId);
+                  // context.push('/servicios-especiales');
+                },
+                child: Row(
+                  children: [
+                    Text(
+                      'Servicios Especiales',
+                      style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                        fontWeight: FontWeight.w600,
+                        // color: Colors.white,
+                      ),
                     ),
-                  ),
-                  SizedBox(width: 20),
-                  FloatingActionButton.small(
-                    heroTag: null,
-                    backgroundColor: primaryColor,
-                    onPressed: () {
-                      print('Servicios especiales pressed - ROW');
-                      context.push('/servicios-especiales-screen');
-                    },
+                    SizedBox(width: 20),
+                    FloatingActionButton.small(
+                      heroTag: null,
+                      backgroundColor: primaryColor,
+                      onPressed: () {
+                        print('Servicios especiales pressed - ROW');
+                        context.push('/servicios-especiales-screen');
+                      },
 
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(50),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(50),
+                      ),
+                      child: Icon(
+                        Icons.add_moderator_outlined,
+                        color: Colors.white,
+                      ),
                     ),
-                    child: Icon(
-                      Icons.add_moderator_outlined,
-                      color: Colors.white,
-                    ),
-                  ),
-                ],
+                  ],
+                ),
               ),
-            ),
             // FloatingActionButton.small(
             //   heroTag: null,
             // backgroundColor: primaryColor,
@@ -343,9 +350,9 @@ class _ControlActividadesScreenState
             // [],
             // children: [
             // children: <Widget>[
-            //   Icon(Icons.flight, size: 350),
-            //   Icon(Icons.directions_transit, size: 350),
-            //   Icon(Icons.flight, size: 350),
+            //   Icon(Icons.flight, size: 320),
+            //   Icon(Icons.directions_transit, size: 320),
+            //   Icon(Icons.flight, size: 320),
             // ],
           ),
         ),
@@ -597,7 +604,12 @@ class _TareaViewState extends State<_TareaView> {
                   6 => _TareaTextoView(tarea: widget.tarea),
                   7 => _TareaPasajerosView(tarea: widget.tarea),
                   8 => _TareaExcesoEquipajeView(tarea: widget.tarea),
-                  9 => _TareaITView(tarea: widget.tarea),
+                  9 => _TareaITView(
+                    tarea: widget.tarea,
+                    indexTar: widget.indexTar,
+                    indexAct: widget.indexAct,
+                    indexDep: widget.indexDep,
+                  ),
                   10 => _TareaLimpiezaView(tarea: widget.tarea),
                   // Default case
                   _ => _TareaHoraView(tarea: widget.tarea),
@@ -763,7 +775,7 @@ class _TareaHoraView extends ConsumerWidget {
                     style: ElevatedButton.styleFrom(
                       shape: CircleBorder(),
                       padding: EdgeInsets.all(5),
-                      // iconSize: 35,
+                      // iconSize: 32,
                       fixedSize: const Size(45, 45),
                       backgroundColor: Theme.of(
                         context,
@@ -773,7 +785,7 @@ class _TareaHoraView extends ConsumerWidget {
                     child: Icon(
                       Icons.access_time,
                       color: Colors.white,
-                      size: 35,
+                      size: 32,
                     ),
                   ),
             // IconButton(
@@ -1031,7 +1043,7 @@ class _TareaHoraInicioFinView extends ConsumerWidget {
                     child: Icon(
                       Icons.access_time,
                       color: Colors.white,
-                      size: 35,
+                      size: 32,
                     ),
                   ),
           ],
@@ -1171,7 +1183,7 @@ class _TareaHoraInicioFinView extends ConsumerWidget {
                     child: Icon(
                       Icons.access_time,
                       color: Colors.white,
-                      size: 35,
+                      size: 32,
                     ),
                   ),
           ],
@@ -1376,7 +1388,7 @@ class _TareaCantidadView extends ConsumerWidget {
               child: Icon(
                 Icons.onetwothree_outlined,
                 color: Colors.white,
-                size: 35,
+                size: 32,
               ),
             ),
           ],
@@ -1458,7 +1470,7 @@ class _TareaMaquinariaConTiempoView extends ConsumerWidget {
                 ).colorScheme.primary, // <-- Button color
                 // foregroundColor: Colors.red, // <-- Splash color
               ),
-              child: Icon(Icons.agriculture, color: Colors.white, size: 35),
+              child: Icon(Icons.agriculture, color: Colors.white, size: 32),
             ),
           ],
         ),
@@ -1673,7 +1685,7 @@ class _ListadoMaquinariasConTiempoView extends ConsumerWidget {
                           child: Icon(
                             Icons.access_time,
                             color: Colors.white,
-                            size: 35,
+                            size: 32,
                           ),
                         ),
                 ],
@@ -1854,7 +1866,7 @@ class _ListadoMaquinariasConTiempoView extends ConsumerWidget {
                           child: Icon(
                             Icons.access_time,
                             color: Colors.white,
-                            size: 35,
+                            size: 32,
                           ),
                         ),
                 ],
@@ -2173,13 +2185,130 @@ class _TareaExcesoEquipajeView extends StatelessWidget {
   }
 }
 
-class _TareaITView extends StatelessWidget {
+class _TareaITView extends ConsumerWidget {
   final Tarea tarea;
-  const _TareaITView({required this.tarea});
+  final int indexTar;
+  final int indexDep;
+  final int indexAct;
+  const _TareaITView({
+    required this.tarea,
+    required this.indexTar,
+    required this.indexDep,
+    required this.indexAct,
+  });
+
+  // Copy from maquinaria con tiempo
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    return Column(
+      children: [
+        _TareaHoraInicioFinView(tarea: tarea),
+        Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            Text(
+              'Equipos IT',
+              style: Theme.of(
+                context,
+              ).textTheme.titleSmall?.copyWith(fontWeight: FontWeight.w400),
+            ),
+            ElevatedButton(
+              // disable if isLoading
+              // Aca mismo es
+              onPressed: () async {
+                ref.read(selectedTaskProvider.notifier).state = {
+                  "indexDep": indexDep,
+                  "indexAct": indexAct,
+                  "indexTarea": indexTar,
+                  "tareaId": tarea.id,
+                };
+
+
+                // list of equiposIt ids
+                final List<int> equiposItIds = [];
+                if (tarea.equipo != null) {
+                  for (var equipo in tarea.equipo!) {
+                    equiposItIds.add(equipo['equipo_id']);
+                  }
+                }
+                ref.read(selectedEquiposIdsProvider.notifier).state =
+                    equiposItIds;
+                
+
+                await ref
+                    .read(categoriasEquiposItLimpiezaProvider.notifier).getCategoriasEquiposItLimpieza();
+
+                // print("asignar equipos gse");
+                context.push('/asignar-equipos-it-limpieza-control-actividades-screen');
+
+                // get control de actividades after close
+                // await ref
+                //     .read(controlDeActividadesProvider.notifier)
+                //     .getControlDeActividadesByTrcId(trcId);
+              },
+              style: ElevatedButton.styleFrom(
+                shape: CircleBorder(),
+                padding: EdgeInsets.all(5),
+                fixedSize: const Size(45, 45),
+                backgroundColor: Theme.of(
+                  context,
+                ).colorScheme.primary, // <-- Button color
+                // foregroundColor: Colors.red, // <-- Splash color
+              ),
+              child: Icon(Icons.devices, color: Colors.white, size: 32),
+            ),
+          ],
+        ),
+        _ListadoEquiposItLimpieza(equipos: tarea.equipo),
+      ],
+    );
+  }
+}
+
+class _ListadoEquiposItLimpieza extends StatelessWidget {
+  final List<dynamic>? equipos;
+  const _ListadoEquiposItLimpieza({required this.equipos});
 
   @override
   Widget build(BuildContext context) {
-    return Container();
+    if (equipos == null || equipos!.isEmpty) {
+      return Container();
+    } else {
+      return Padding(
+        padding: const EdgeInsets.only(left: 8),
+        child: Column(
+          children: [
+            SizedBox(height: 8),
+            ...equipos!.asMap().entries.map((entry) {
+              final index = entry.key;
+              final equipo = entry.value;
+              return Row(
+                mainAxisAlignment: MainAxisAlignment.start,
+                children: [
+                  Text(
+                    '- ${equipo['equipo_identificador']} / ${equipo['equipo_modelo']}',
+                    style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                          // fontWeight: FontWeight.w600,
+                          color: Colors.grey[700],),
+                  ),
+                ],
+              );
+            }),
+            // ((equipo) => Row(
+            //   mainAxisAlignment: MainAxisAlignment.start,
+            //   children: [
+            //     Text(
+            //       '${- equipo['equipo_identificador']} - ${equipo['equipo_modelo']}',
+            //       style: Theme.of(
+            //         context,
+            //       ).textTheme.titleSmall?.copyWith(fontWeight: FontWeight.w600),
+            //     ),
+            //   ],
+            // )).toList(),
+          ],
+        ),
+      );
+    }
   }
 }
 
@@ -2258,7 +2387,7 @@ class _TareaImagenView extends ConsumerWidget {
                   child: Icon(
                     Icons.photo_library_outlined,
                     color: Colors.white,
-                    size: 35,
+                    size: 32,
                   ),
                 ),
                 ElevatedButton(
@@ -2300,7 +2429,7 @@ class _TareaImagenView extends ConsumerWidget {
                   child: Icon(
                     Icons.camera_alt_outlined,
                     color: Colors.white,
-                    size: 35,
+                    size: 32,
                   ),
                 ),
               ],
@@ -2477,7 +2606,7 @@ class _ComentarioView extends ConsumerWidget {
                 ).colorScheme.primary, // <-- Button color
                 foregroundColor: Colors.red, // <-- Splash color
               ),
-              child: Icon(Icons.edit_note, color: Colors.white, size: 35),
+              child: Icon(Icons.edit_note, color: Colors.white, size: 32),
             ),
           ],
         ),

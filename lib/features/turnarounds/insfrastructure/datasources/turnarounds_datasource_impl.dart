@@ -49,10 +49,10 @@ class TurnaroundsDatasourceImpl implements TurnaroundsDatasource {
   ) async {
     final List<TurnaroundMain> turnarounds = [];
     try {
-      final response = await dio.get<List>(
+      final response = await dio.get(
         '/turnarounds/$year-$month-$day/?token=$accessToken',
       );
-
+      print ('Response from getTurnaroundsByDate: ${response.data}');
       for (final item in response.data ?? []) {
         turnarounds.add(TurnaroundMainMapper.mapJsonToTurnaroundMain(item));
       }
@@ -985,6 +985,47 @@ class TurnaroundsDatasourceImpl implements TurnaroundsDatasource {
           } else {
             return SimpleApiResponse(
               message: 'Error al asignar servicio adicional.',
+              success: false,
+            );
+          }
+        });
+  }
+  
+  @override
+  Future getCategoriasEquiposIt() {
+    return dio.get('/equipo/it_categoria/?token=$accessToken')
+    .then((response) {
+      print('Response from getCategoriasEquiposIt: $response');
+      if (response.statusCode == 200) {
+        // mapping to CategoriasEquiposIt map
+        final List<CategoriaEquiposItLimpieza> categoriasIt =
+            CategoriasEquiposItLimpiezaMapper.mapJsonToListCategoriasEquiposItLimpieza(
+              response.data,
+            );
+        return categoriasIt;
+      } else {
+        return [];
+      }
+    });
+  }
+  
+  @override
+  Future<SimpleApiResponse> asignarEquiposItLimpiezaTareas(Map<String, Object> body) {
+    return dio
+        .put(
+          '/control-actividades/asignacion_equipo/?token=$accessToken',
+          data: body,
+        )
+        .then((response) {
+          print('Response from asignarEquiposItLimpiezaTareas: $response');
+          if (response.statusCode == 201) {
+            return SimpleApiResponse(
+              message: 'Equipos asignados.',
+              success: true,
+            );
+          } else {
+            return SimpleApiResponse(
+              message: 'Error al asignar equipos.',
               success: false,
             );
           }

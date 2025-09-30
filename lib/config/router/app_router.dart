@@ -100,6 +100,10 @@ final goRouterProvider = Provider((ref) {
         path: '/consultar-control-actividades-screen',
         builder: (context, state) => ConsultarControlActividadesScreen(),
       ),
+      GoRoute(
+        path: '/asignar-equipos-it-limpieza-control-actividades-screen',
+        builder: (context, state) => AsignarEquiposItControlActividadesScreen(),
+      ),
     ],
 
     // state.params ahora es state.pathParameters

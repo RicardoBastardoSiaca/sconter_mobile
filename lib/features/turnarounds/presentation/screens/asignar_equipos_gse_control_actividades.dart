@@ -423,6 +423,7 @@ class _AsignarEquiposGseViewState
               ],
             ),
           ),
+        
         ],
       ),
     );

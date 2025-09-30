@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:turnaround_mobile/features/shared/shared.dart';
-
+import 'package:package_info_plus/package_info_plus.dart';
 import '../../../config/config.dart';
 import '../../auth/presentation/providers/auth_provider.dart';
 
@@ -74,6 +74,33 @@ class SideMenuState extends ConsumerState<SideMenu> {
       
             // Sign out button at the bottom
             _buildSignOutButton(context, ref),
+            // version
+            // Padding(
+            //   padding: const EdgeInsets.all(8.0),
+            //   child: Text(
+            //     'SiacaTRC v1.0.0',
+            //     style: theme.textTheme.labelMedium?.copyWith(color: Colors.grey),
+            //   ),
+            // ),
+            Padding(
+              padding: const EdgeInsets.only(bottom: 10.0),
+              child: FutureBuilder<PackageInfo>(
+              future: PackageInfo.fromPlatform(),
+              builder: (context, snapshot) {
+                if (snapshot.hasData) {
+                  final packageInfo = snapshot.data!;
+                  return Text(
+                    'SiacaTRC v${packageInfo.version}',
+                    // 'App Version: ${packageInfo.version} (${packageInfo.buildNumber})',
+                    style: theme.textTheme.labelSmall?.copyWith(color: Colors.grey)
+                  );
+                } else if (snapshot.hasError) {
+                  return Text('Error loading app info');
+                }
+                return CircularProgressIndicator(); // Show a loading indicator
+              },
+            ),
+            ),
           ],
         ),
       ),

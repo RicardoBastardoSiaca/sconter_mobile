@@ -20,9 +20,10 @@ class ConsultarControlActividadesScreen extends ConsumerWidget {
 }
 
 class _ConsultarControlActividadesView extends ConsumerStatefulWidget {
-  const _ConsultarControlActividadesView({super.key});
+  const _ConsultarControlActividadesView();
 
   
+  @override
   ConsumerState<ConsumerStatefulWidget> createState() {
     return _ConsultarControlActividadesViewState();
   }

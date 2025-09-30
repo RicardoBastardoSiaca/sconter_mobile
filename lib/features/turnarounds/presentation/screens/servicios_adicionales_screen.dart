@@ -37,6 +37,7 @@ class _ServiciosAdicionalesView extends ConsumerWidget {
               children: [
                 Text(
                   'Agregar servicio adicional:',
+                  overflow: TextOverflow.ellipsis,
                   style: Theme.of(
                     context,
                   ).textTheme.titleSmall?.copyWith(fontWeight: FontWeight.w400),

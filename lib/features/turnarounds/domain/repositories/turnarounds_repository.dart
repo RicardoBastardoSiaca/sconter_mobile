@@ -116,5 +116,11 @@ abstract class TurnaroundsRepository {
 
   Future<SimpleApiResponse> cerrarVuelo(Map<String, Object?> body);
 
-  Future<SimpleApiResponse> setCantidadServicioAdicional(Map<String, Object?> body);
+  Future<SimpleApiResponse> setCantidadServicioAdicional(
+    Map<String, Object?> body,
+  );
+
+  Future getCategoriasEquiposIt();
+
+  Future<SimpleApiResponse> asignarEquiposItLimpiezaTareas(Map<String, Object> body);
 }

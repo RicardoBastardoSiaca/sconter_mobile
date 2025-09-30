@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 
 import '../../../domain/domain.dart';
-import '../../providers/providers.dart';
 
 class PersonalDetalle extends StatelessWidget {
   final DepartamentoPersonalResponse? departamentosPersona;
