@@ -136,6 +136,16 @@ class _TuraroundMainViewState extends ConsumerState {
   final ConnectivityService _connectivityService = ConnectivityService();
   bool _isConnected = true;
 
+   Future<void> _handleRefresh() async {
+    // Get Turnarounds
+    await ref.read(turnaroundProvider.notifier).getTurnarounds();
+    // Simulate a network call or data fetching delay
+    // await Future.delayed(const Duration(seconds: 2));
+    // setState(() {
+    //   _items.add('New Item ${DateTime.now().second}'); // Add a new item for demonstration
+    // });
+  }
+
   @override
   void initState() {
     super.initState();
@@ -174,32 +184,42 @@ class _TuraroundMainViewState extends ConsumerState {
         //     fit: BoxFit.contain,
         //   ),
         // ),
-        child: ListView(
-          controller: _scrollController,
-          children: [
-
-            if (!_isConnected) NoInternetBanner(),
-            const SizedBox(height: 3),
-            Center(
-              child: Text(
-                'Turnarounds',
-                style: Theme.of(context).textTheme.headlineLarge?.copyWith(
-                  color: Theme.of(context).colorScheme.primary,
-                  fontWeight: FontWeight.w900,
-                  fontFamily: GoogleFonts.openSans(
-                    fontWeight: FontWeight.w900,
-                  ).fontFamily,
+        child: RefreshIndicator(
+          onRefresh: _handleRefresh,
+          child: 
+          ListView(
+                controller: _scrollController,
+                physics: const AlwaysScrollableScrollPhysics(), // Key change here
+                children: [
+                  if (!_isConnected) NoInternetBanner(),
+                  const SizedBox(height: 3),
+                  Center(
+                    child: Text(
+                      'Turnarounds',
+                      style: Theme.of(context).textTheme.headlineLarge?.copyWith(
+                        color: Theme.of(context).colorScheme.primary,
+                        fontWeight: FontWeight.w900,
+                        fontFamily: GoogleFonts.openSans(
+                          fontWeight: FontWeight.w900,
+                        ).fontFamily,
+                      ),
+                    ),
+                  ),
+                  const SizedBox(height: 2),
+                  _DateFilter(),
+                  turnaroundsState.turnarounds.isEmpty
+            ? Center(
+                child: Text(
+                  'No hay turnarounds Registrados',
+                  overflow: TextOverflow.ellipsis,
+                  style: Theme.of(context).textTheme.bodyMedium
                 ),
+              )
+            : SizedBox(),
+                  ...turnaroundsState.turnarounds.map((turnaround) => _ListTileCardContainer(turnaround: turnaround)),
+                  const SizedBox(height: 30), 
+                ],
               ),
-            ),
-            const SizedBox(height: 2),
-            _DateFilter(),
-             ...turnaroundsState.turnarounds.map((turnaround) => _ListTileCardContainer(turnaround: turnaround)),
-            const SizedBox(height: 30), 
-        // _ListTileCardContainer
-            // _TurnaroundsListView(turnarounds: turnaroundsState.turnarounds),
-            // ...turnarounds.map((turnaround) => _ListTileCardContainer(turnaround: turnaround)).toList(),
-          ],
         ),
       ),
     );
