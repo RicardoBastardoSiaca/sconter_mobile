@@ -39,6 +39,7 @@ class MainApp extends ConsumerWidget {
       //       data: MediaQuery.of(context).copyWith(alwaysUse24HourFormat: true),
       //       child: child ?? const SizedBox.shrink(),
       //     ),
+      
       routerConfig: appRouter,
       // theme: AppTheme().getTheme(),
       themeMode: ThemeMode.light,

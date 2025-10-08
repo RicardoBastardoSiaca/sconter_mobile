@@ -133,17 +133,27 @@ class _TuraroundMainView extends ConsumerStatefulWidget {
 class _TuraroundMainViewState extends ConsumerState {
   final ScrollController _scrollController = ScrollController();
 
+  final ConnectivityService _connectivityService = ConnectivityService();
+  bool _isConnected = true;
+
   @override
   void initState() {
     super.initState();
 
     // _scrollController.addListener(_scrollListener);
     ref.read(turnaroundProvider.notifier).getTurnarounds();
+
+     _connectivityService.connectionChange.listen((isConnected) {
+      setState(() {
+        _isConnected = isConnected;
+      });
+    });
   }
 
   @override
   void dispose() {
     _scrollController.dispose();
+    _connectivityService.dispose();
     super.dispose();
   }
 
@@ -167,6 +177,8 @@ class _TuraroundMainViewState extends ConsumerState {
         child: ListView(
           controller: _scrollController,
           children: [
+
+            if (!_isConnected) NoInternetBanner(),
             const SizedBox(height: 3),
             Center(
               child: Text(
