@@ -1031,4 +1031,22 @@ class TurnaroundsDatasourceImpl implements TurnaroundsDatasource {
           }
         });
   }
+  
+  @override
+  Future getPlantillaDetalleById(int id) {
+    return dio.get('/plantillas/plantilla_tarea_subtarea_by_id/$id/?token=$accessToken')
+    .then((response) {
+      print('Response from getPlantillaDetalleById: $response');
+      if (response.statusCode == 200) {
+        // mapping to PlantillaDetalle map
+        final Plantilla plantillaDetalle =
+            PlantillaDetalleMapper.mapJsonToPlantillaDetalle(
+              response.data[0],
+            );
+        return plantillaDetalle;
+      } else {
+        throw Exception('Error al obtener la plantilla detalle.');
+      }
+    });
+  }
 }

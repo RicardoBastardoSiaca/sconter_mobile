@@ -122,5 +122,9 @@ abstract class TurnaroundsRepository {
 
   Future getCategoriasEquiposIt();
 
-  Future<SimpleApiResponse> asignarEquiposItLimpiezaTareas(Map<String, Object> body);
+  Future<SimpleApiResponse> asignarEquiposItLimpiezaTareas(
+    Map<String, Object> body,
+  );
+
+  Future getPlantillaDetalleById(int id);
 }

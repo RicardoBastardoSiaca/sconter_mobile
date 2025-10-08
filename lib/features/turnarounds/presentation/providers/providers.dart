@@ -9,3 +9,4 @@ export 'supervisor_aerolinea_provider.dart';
 export 'demoras_provider.dart';
 export 'departamento_personal_provider.dart';
 export 'categorias_equipos_it_limpieza_provider.dart';
+export 'plantilla_detalle_provider.dart';

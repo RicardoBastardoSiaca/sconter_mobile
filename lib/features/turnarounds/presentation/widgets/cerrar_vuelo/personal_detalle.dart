@@ -24,11 +24,11 @@ class _PersonalDetalleView extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             // Gerentes
-            _GerenciasPersonalView(nommbre: 'Gerentes', departamentos: departamentosPersona!.gerenteTurno),
+            _GerenciasPersonalView(nommbre: 'Gerentes', departamentos: departamentosPersona ?.gerenteTurno ?? []),
             // Supervisores
-            _GerenciasPersonalView(nommbre: 'Supervisores', departamentos: departamentosPersona!.supervisor),
+            _GerenciasPersonalView(nommbre: 'Supervisores', departamentos: departamentosPersona?.supervisor ?? []),
             // Personal
-            _GerenciasPersonalView(nommbre: 'Personal', departamentos: departamentosPersona!.departamentosPersonal),
+            _GerenciasPersonalView(nommbre: 'Personal', departamentos: departamentosPersona?.departamentosPersonal ?? []),
             // _PersonalView(departamentosPersona: departamentosPersona)
           ],
         ),
@@ -55,9 +55,14 @@ class _GerenciasPersonalView extends StatelessWidget {
             children: [
         SizedBox(height: 8,),
               Text(e.nombreDepartamento, style: theme.textTheme.bodyMedium?.copyWith(fontWeight: FontWeight.bold)),
-              ...e.personal.map((e) {
-                return e.selected == true ? Text(e.nombre.toString()) : Container();
-              }),
+              e.personal.isEmpty
+                  ? Text('No hay personal asignado', style: theme.textTheme.bodyMedium)
+                  // Lista de personal seleccionado
+                  :  Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: e.personal.where((e) => e.selected).map((e) => Text(e.nombre.toString(), style: theme.textTheme.bodyMedium)).toList(),
+                  ),
+              // ...e.personal.where((e) => e.selected).map((e) => Text(e.nombre.toString())),
             ],
           );
         }),

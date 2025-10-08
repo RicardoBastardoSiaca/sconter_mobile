@@ -282,6 +282,9 @@ class Actividades {
   List<Tarea>? tareas;
   bool todasTareasHechas;
   bool isExpanded;
+  int tareasCompletadas;
+  int tareasPendientes;
+  int tareasTotales;
 
   Actividades({
     required this.index,
@@ -289,6 +292,9 @@ class Actividades {
     required this.tareas,
     required this.todasTareasHechas,
     this.isExpanded = true,
+    required this.tareasCompletadas,
+    required this.tareasPendientes,
+    required this.tareasTotales,
   });
 
   // factory Actividades.fromJson(Map<String, dynamic> json) => Actividades(

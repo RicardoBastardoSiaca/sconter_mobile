@@ -235,4 +235,9 @@ class TurnaroundsRepositoryImpl extends TurnaroundsRepository {
   Future<SimpleApiResponse> asignarEquiposItLimpiezaTareas(Map<String, Object> body) {
     return datasource.asignarEquiposItLimpiezaTareas(body);
   }
+  
+  @override
+  Future getPlantillaDetalleById(int id) {
+    return datasource.getPlantillaDetalleById(id);
+  }
 }

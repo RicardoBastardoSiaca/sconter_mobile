@@ -144,7 +144,25 @@ class _ConsultarControlActividadesViewState extends ConsumerState<_ConsultarCont
           //   decoration: pageDecoration,
           // ),
           PageViewModel(
-            title: "1. Control de Actividades",
+            title: "Datos de Vuelo",
+            bodyWidget: VueloDetalle( 
+              controlActividades: controlActividades,
+              turnaround: turnaround,),
+            decoration: pageDecoration,
+          ),
+          PageViewModel(
+            title: "Plantilla",
+            bodyWidget: PlantillaDetalle( 
+              controlActividades: controlActividades,
+              turnaround: turnaround,),
+            decoration: pageDecoration,
+          ),
+          // if (turnaround.estatus == 4 ||
+          //     turnaround.estatus == 5 ||
+          //     turnaround.estatus == 6 ||
+          //     turnaround.estatus == 7)
+          PageViewModel(
+            title: "Control de Actividades",
              bodyWidget: ControlActividadesDetalle( 
               controlActividades: controlActividades,
               turnaround: turnaround,),
@@ -157,25 +175,37 @@ class _ConsultarControlActividadesViewState extends ConsumerState<_ConsultarCont
           //     turnaround: turnaround,),
           //   decoration: pageDecoration,
           // ),
+          // if (turnaround.estatus == 4 ||
+          //     turnaround.estatus == 5 ||
+          //     turnaround.estatus == 6 ||
+          //     turnaround.estatus == 7)
           PageViewModel(
-            title: "2. Servicios",
+            title: "Servicios",
              bodyWidget: ServiciosDetalle( 
               controlActividades: controlActividades,
               turnaround: turnaround,),
             decoration: pageDecoration,
           ),
+          // if (turnaround.estatus == 4 ||
+          //     turnaround.estatus == 5 ||
+          //     turnaround.estatus == 6 ||
+          //     turnaround.estatus == 7)
           PageViewModel(
-            title: "3. Codigos de Demora",
+            title: "Codigos de Demora",
              bodyWidget: CodigosDemoraDetalle( 
               demoras: demoras,),
             decoration: pageDecoration,
           ),
-          // PageViewModel(
-          //   title: "6. Personal",
-          //    bodyWidget: PersonalDetalle( 
-          //     departamentosPersona: departamentosPersona.departamentoPersonalResponse,),
-          //   decoration: pageDecoration,
-          // ),
+          // if (turnaround.estatus == 4 ||
+          //     turnaround.estatus == 5 ||
+          //     turnaround.estatus == 6 ||
+          //     turnaround.estatus == 7)
+          PageViewModel(
+            title: "Personal",
+             bodyWidget: PersonalDetalle( 
+              departamentosPersona: departamentosPersona.departamentoPersonalResponse,),
+            decoration: pageDecoration,
+          ),
           
         ],
         onDone: () => _onIntroEnd(context),

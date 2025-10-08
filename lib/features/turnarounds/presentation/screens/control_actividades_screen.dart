@@ -9,7 +9,6 @@ import 'package:go_router/go_router.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:intl/intl.dart';
 import 'package:turnaround_mobile/features/turnarounds/domain/entities/control_actividades.dart';
-import 'package:turnaround_mobile/features/turnarounds/presentation/providers/categorias_equipos_it_limpieza_provider.dart';
 // shared
 import '../../../../config/config.dart';
 import '../../../shared/shared.dart';
@@ -473,47 +472,146 @@ class _ActividadViewState extends State<_ActividadView> {
 
   @override
   Widget build(BuildContext context) {
+    ThemeData theme = Theme.of(context);
     return SingleChildScrollView(
       child: Column(
         mainAxisAlignment: MainAxisAlignment.start,
         children: <Widget>[
           // Padding for the expansion panel
-          Padding(
-            padding: const EdgeInsets.only(bottom: 5),
-            child: ExpansionPanelList(
-              // elevation: 0,
-              expandedHeaderPadding: EdgeInsets.zero,
-              // expansionCallback: (int index, bool isExpanded) {
-              //   isExpanded = !isExpanded;
-              // },
-              expansionCallback: (panelIndex, expanded) {
-                widget.departamento.actividades[panelIndex].isExpanded =
-                    !widget.departamento.actividades[panelIndex].isExpanded;
-                setState(() {});
-              },
-              children: [
-                ExpansionPanel(
-                  isExpanded: widget.actividad.isExpanded,
-                  canTapOnHeader: true,
-
-                  // borderRadius: BorderRadius.circular(8),
-                  backgroundColor: Colors.white,
-                  headerBuilder: (BuildContext context, bool isExpanded) {
-                    return ListTile(
-                      title: Text(
-                        '${widget.indexAct + 1}. ${widget.actividad.nombreActividad}',
-                        style: Theme.of(context).textTheme.titleLarge?.copyWith(
-                          fontWeight: FontWeight.w800,
-                          // color: Theme.of(context).colorScheme.primary,
-                        ),
+          ExpansionPanelList(
+            // elevation: 0,
+            expandedHeaderPadding: EdgeInsets.zero,
+            // expansionCallback: (int index, bool isExpanded) {
+            //   isExpanded = !isExpanded;
+            // },
+            expansionCallback: (panelIndex, expanded) {
+              widget.actividad.isExpanded = !widget.actividad.isExpanded;
+              setState(() {});
+            },
+            children: [
+              ExpansionPanel(
+                isExpanded: widget.actividad.isExpanded,
+                canTapOnHeader: true,
+                backgroundColor: Colors.white,
+                headerBuilder: (BuildContext context, bool isExpanded) {
+                  return GestureDetector(
+                    child: ListTile(
+                      title: Column(
+                        mainAxisAlignment: MainAxisAlignment.start,
+                        children: [
+                          Row(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            mainAxisAlignment: MainAxisAlignment.start,
+                            children: [
+                              Padding(
+                                padding: const EdgeInsets.only(top: 4),
+                                child: widget.actividad.todasTareasHechas
+                                    ? Icon(
+                                        Icons.check_circle,
+                                        color: Theme.of(context).colorScheme.primary,
+                                      )
+                                    : Icon(
+                                        Icons.radio_button_unchecked,
+                                      ),
+                               
+                              ),
+                              SizedBox(width: 6),
+                              Expanded(
+                                child: Text(
+                                  '${widget.indexAct + 1}. ${widget.actividad.nombreActividad}',
+                                  style: Theme.of(context)
+                                      .textTheme
+                                      .titleMedium
+                                      ?.copyWith(
+                                        fontWeight: FontWeight.w800,
+                                        // color: Theme.of(context).colorScheme.primary,
+                                      ),
+                                  overflow: TextOverflow.visible,
+                                ),
+                              ),
+                            ],
+                          ),
+                          SizedBox(height: 4),
+                          // Icons indicators
+                          Row(
+                            // mainAxisAlignment: MainAxisAlignment.spaceAround,
+                            mainAxisAlignment: MainAxisAlignment.start,
+                            children: [
+                              SizedBox(width: 28),
+                              // icon
+                              Icon(
+                                Icons.check_circle_outline_outlined,
+                                color: Theme.of(context).colorScheme.primary,
+                                size: 20,
+                              ),
+                              SizedBox(width: 3),
+                              Text(
+                                widget.actividad.tareasCompletadas.toString(),
+                                style: theme.textTheme.labelMedium,
+                              ),
+                              SizedBox(width: 8),
+                              Icon(
+                                Icons.hourglass_bottom_rounded,
+                                color: Colors.orange,
+                                size: 20,
+                              ),
+                              SizedBox(width: 1),
+                              Text(
+                                widget.actividad.tareasPendientes.toString(),
+                                style: theme.textTheme.labelMedium,
+                              ),
+                              
+                        ],
                       ),
-                    );
-                  },
-                  // isExpanded: isExpanded
-                  body: Column(
-                    children: widget.actividad.tareas!.asMap().entries.map((
-                      entry,
-                    ) {
+                        ]
+                      )
+                    ),
+                  );
+                  
+                },
+                body: Column(
+                  children: [
+                    // Iconos expand all y collapse all de Tareas
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        IconButton(
+                          icon: const Icon(Icons.expand_more),
+                          onPressed: () {
+                            // widget.actividad.tareas!.map((tarea) {
+                            //     tarea.isExpanded = true;
+                            //   });
+                            setState(() {
+                              for (
+                                int i = 0;
+                                i < widget.actividad.tareas!.length;
+                                i++
+                              ) {
+                                widget.actividad.tareas![i].isExpanded = true;
+                              }
+                              print("DONE");
+                            });
+                          },
+                        ),
+                        IconButton(
+                          icon: const Icon(Icons.expand_less),
+                          onPressed: () {
+                            
+                            setState(() {
+                              for (
+                              int i = 0;
+                              i < widget.actividad.tareas!.length;
+                              i++
+                            ) {
+                              widget.actividad.tareas![i].isExpanded = false;
+                            }
+                            });
+                          },
+                        ),
+                      ],
+                    ),
+
+                    ...widget.actividad.tareas!.asMap().entries.map((entry) {
                       final indexTar = entry.key;
                       final tarea = entry.value;
                       return _TareaView(
@@ -523,11 +621,13 @@ class _ActividadViewState extends State<_ActividadView> {
                         indexAct: widget.indexAct,
                         indexDep: widget.indexDep,
                       );
-                    }).toList(),
-                  ),
+                    }),
+                  ],
                 ),
-              ],
-            ),
+
+                // isExpanded: widget.actividad.isExpanded,
+              ),
+            ],
           ),
         ],
       ),
@@ -2223,7 +2323,6 @@ class _TareaITView extends ConsumerWidget {
                   "tareaId": tarea.id,
                 };
 
-
                 // list of equiposIt ids
                 final List<int> equiposItIds = [];
                 if (tarea.equipo != null) {
@@ -2233,13 +2332,15 @@ class _TareaITView extends ConsumerWidget {
                 }
                 ref.read(selectedEquiposIdsProvider.notifier).state =
                     equiposItIds;
-                
 
                 await ref
-                    .read(categoriasEquiposItLimpiezaProvider.notifier).getCategoriasEquiposItLimpieza();
+                    .read(categoriasEquiposItLimpiezaProvider.notifier)
+                    .getCategoriasEquiposItLimpieza();
 
                 // print("asignar equipos gse");
-                context.push('/asignar-equipos-it-limpieza-control-actividades-screen');
+                context.push(
+                  '/asignar-equipos-it-limpieza-control-actividades-screen',
+                );
 
                 // get control de actividades after close
                 // await ref
@@ -2288,8 +2389,9 @@ class _ListadoEquiposItLimpieza extends StatelessWidget {
                   Text(
                     '- ${equipo['equipo_identificador']} / ${equipo['equipo_modelo']}',
                     style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                          // fontWeight: FontWeight.w600,
-                          color: Colors.grey[700],),
+                      // fontWeight: FontWeight.w600,
+                      color: Colors.grey[700],
+                    ),
                   ),
                 ],
               );

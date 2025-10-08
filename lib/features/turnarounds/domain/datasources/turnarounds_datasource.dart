@@ -120,4 +120,6 @@ abstract class TurnaroundsDatasource {
   Future getCategoriasEquiposIt();
 
   Future<SimpleApiResponse> asignarEquiposItLimpiezaTareas(Map<String, Object> body);
+
+  Future getPlantillaDetalleById(int id);
 }

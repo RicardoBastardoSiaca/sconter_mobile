@@ -403,7 +403,7 @@ class _ListTileCardContainer extends StatelessWidget {
                                     turnaround.fkVuelo.etaIn?.substring(0, 5) ??
                                     "",
                                 numeroVuelo:
-                                    "${turnaround.fkVuelo.fkAerolinea.codigoIata} - ${turnaround.fkVuelo.numeroVueloIn} ",
+                                    "${turnaround.fkVuelo.fkAerolinea.codigoIata}-${turnaround.fkVuelo.numeroVueloIn} ",
                                 isInbound: true,
                               ),
                       ),
@@ -439,7 +439,7 @@ class _ListTileCardContainer extends StatelessWidget {
                                     ) ??
                                     "",
                                 numeroVuelo:
-                                    "${turnaround.fkVuelo.fkAerolinea.codigoIata} - ${turnaround.fkVuelo.numeroVueloOut} ",
+                                    "${turnaround.fkVuelo.fkAerolinea.codigoIata}-${turnaround.fkVuelo.numeroVueloOut} ",
                                 isInbound: false,
                               ),
                       ),
@@ -641,10 +641,10 @@ class _MenuDialog extends ConsumerWidget {
             ),
             
             // Consultar Control de actividades
-          if (turnaround.estatus == 4 ||
-              turnaround.estatus == 5 ||
-              turnaround.estatus == 6 ||
-              turnaround.estatus == 7)
+          // if (turnaround.estatus == 4 ||
+          //     turnaround.estatus == 5 ||
+          //     turnaround.estatus == 6 ||
+          //     turnaround.estatus == 7)
             MenuListTile(
               leading: Icon(Icons.list),
               title: 'Consultar',
@@ -661,6 +661,9 @@ class _MenuDialog extends ConsumerWidget {
                 // getcerrar_operacionesById
                 // Control de actividades
                 ref.read(controlActividadesProvider(turnaround.id).notifier).getControlDeActividadesByTrcId();
+
+                ref.read(plantillaDetalleProvider.notifier).getPlantillaDetalleById(turnaround.fkVuelo.fkPlantilla.id);
+
 
 
                 // getCodigosMoraByTrc
@@ -768,6 +771,8 @@ class _TailView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    bool isMobile = MediaQuery.of(context).size.width < 500;
+
     return Padding(
       padding: const EdgeInsets.only(left: 20),
       child: Center(
@@ -793,7 +798,14 @@ class _TailView extends StatelessWidget {
             // Uppercase
             Text(
               name.toUpperCase(),
-              style: Theme.of(context).textTheme.labelMedium?.copyWith(
+              style: isMobile
+              ? Theme.of(context).textTheme.labelSmall?.copyWith(
+                fontFamily: GoogleFonts.openSans(
+                  fontWeight: FontWeight.w700,
+                ).fontFamily,
+                color: Colors.black87,
+              )
+              : Theme.of(context).textTheme.labelMedium?.copyWith(
                 fontFamily: GoogleFonts.openSans(
                   fontWeight: FontWeight.w700,
                 ).fontFamily,
@@ -827,6 +839,13 @@ class _InboundView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    // isLandscape() {
+    //   final size = MediaQuery.of(context).size;
+    //   return size.width > size.height;
+    // }
+
+     bool isMobile = MediaQuery.of(context).size.width < 500;
+
     return Center(
       child: Container(
         constraints: BoxConstraints(
@@ -848,7 +867,14 @@ class _InboundView extends StatelessWidget {
                 children: [
                   Text(
                     lugarSalida,
-                    style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                    style: 
+                    isMobile
+                    ? Theme.of(context).textTheme.bodyLarge?.copyWith(
+                      fontFamily: GoogleFonts.openSans(
+                        fontWeight: FontWeight.w700,
+                      ).fontFamily,
+                    )
+                    : Theme.of(context).textTheme.titleMedium?.copyWith(
                       fontFamily: GoogleFonts.openSans(
                         fontWeight: FontWeight.w700,
                       ).fontFamily,
@@ -856,7 +882,13 @@ class _InboundView extends StatelessWidget {
                   ),
                   Text(
                     lugarLlegada,
-                    style: Theme.of(context).textTheme.titleLarge?.copyWith(
+                    style: isMobile
+                    ? Theme.of(context).textTheme.bodyLarge?.copyWith(
+                      fontFamily: GoogleFonts.openSans(
+                        fontWeight: FontWeight.w700,
+                      ).fontFamily,
+                    )
+                    : Theme.of(context).textTheme.titleMedium?.copyWith(
                       fontFamily: GoogleFonts.openSans(
                         fontWeight: FontWeight.w700,
                       ).fontFamily,
@@ -870,11 +902,17 @@ class _InboundView extends StatelessWidget {
               // hora
               Text(
                 hora,
-                style: Theme.of(context).textTheme.titleLarge?.copyWith(
-                  fontFamily: GoogleFonts.openSans(
-                    fontWeight: FontWeight.w700,
-                  ).fontFamily,
-                ),
+                style:isMobile
+                    ? Theme.of(context).textTheme.bodyLarge?.copyWith(
+                      fontFamily: GoogleFonts.openSans(
+                        fontWeight: FontWeight.w700,
+                      ).fontFamily,
+                    )
+                    : Theme.of(context).textTheme.titleMedium?.copyWith(
+                      fontFamily: GoogleFonts.openSans(
+                        fontWeight: FontWeight.w700,
+                      ).fontFamily,
+                    ),
               ),
               // isInbound
               //     ? Text(
@@ -897,11 +935,17 @@ class _InboundView extends StatelessWidget {
               // SizedBox(height: 10),
               Text(
                 numeroVuelo,
-                style: Theme.of(context).textTheme.labelLarge?.copyWith(
-                  fontFamily: GoogleFonts.openSans(
-                    fontWeight: FontWeight.w700,
-                  ).fontFamily,
-                ),
+                style: isMobile
+                    ? Theme.of(context).textTheme.bodyLarge?.copyWith(
+                      fontFamily: GoogleFonts.openSans(
+                        fontWeight: FontWeight.w700,
+                      ).fontFamily,
+                    )
+                    : Theme.of(context).textTheme.titleMedium?.copyWith(
+                      fontFamily: GoogleFonts.openSans(
+                        fontWeight: FontWeight.w700,
+                      ).fontFamily,
+                    ),
               ),
             ],
           ),

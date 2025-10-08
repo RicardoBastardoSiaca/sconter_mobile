@@ -4,3 +4,4 @@ export 'personal_detalle.dart';
 export 'serivicios_detalle.dart';
 export 'sla_detalle.dart';
 export 'vuelo_detalle.dart';
+export 'plantilla_detalle.dart';

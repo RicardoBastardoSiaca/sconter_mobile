@@ -87,6 +87,9 @@ class ControlActividadesMapper {
         (json["tareas"] as List).map((x) => mapJsonToTarea(x)),
       ),
       todasTareasHechas: json["todas_tareas_hechas"],
+      tareasCompletadas: json["tareas_completadas"],
+      tareasPendientes: json["tareas_pendientes"],
+      tareasTotales: json["tareas_totales"],
     );
   }
 

@@ -1,15 +1,32 @@
+Consultar en turnarounds
+Control de actividades (los iconos de cuantas tareas van hechas y tambien el Flitro )
+en doble click en las actividades deberian expandir o retraer las tareas
+
+fligth radar investigar
+
+hay algunas aerolineas que no hay supervisor de aerolinea
+    Cerrar el vuelo 
+    En la aerolinea debe tener el booleano si tiene un supervisor en plataforma
+    Se le delega la responsabildad de la firma o del cambio de estatus al gerente de turno
+
+
 overflow en agregar servicio adicional
-en el status 7 falta consultar control de actividades y ver reporte
+overflow de pantalla trc, se cambia el tama;o para movil y para tablets
+Versionado en la aplicacion
+
 Terminar tipo de tarea it y limpieza
+
+
+
+en el status 7 falta consultar control de actividades y ver reporte
 Expandable panel solo funciona el primero
 Tipo de tarea Exceso de equipaje
 Control de actividades indicadores de actividad, si esta lista, cuantas tareas hay completadas y en proceso
 
 
-Versionado en la aplicacion
+aerolineas ya no llegan 
+
 en modo horizontal, se salen las letras del recuadro.
-
-
 
 
 
