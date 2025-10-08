@@ -566,50 +566,62 @@ class _ActividadViewState extends State<_ActividadView> {
                         ]
                       )
                     ),
+                  // Long press to expand or collapse all, based on the first task
+                    onLongPress: () {
+                      bool allExpanded = widget.actividad.tareas!
+                          .every((tarea) => tarea.isExpanded);
+                      setState(() {
+                        for (var tarea in widget.actividad.tareas!) {
+                          tarea.isExpanded = !allExpanded;
+                        }
+                      });
+                    },
                   );
+                  
+
                   
                 },
                 body: Column(
                   children: [
-                    // Iconos expand all y collapse all de Tareas
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        IconButton(
-                          icon: const Icon(Icons.expand_more),
-                          onPressed: () {
-                            // widget.actividad.tareas!.map((tarea) {
-                            //     tarea.isExpanded = true;
-                            //   });
-                            setState(() {
-                              for (
-                                int i = 0;
-                                i < widget.actividad.tareas!.length;
-                                i++
-                              ) {
-                                widget.actividad.tareas![i].isExpanded = true;
-                              }
-                              print("DONE");
-                            });
-                          },
-                        ),
-                        IconButton(
-                          icon: const Icon(Icons.expand_less),
-                          onPressed: () {
+                    // Iconos expand all y collapse all de Tareas ACA MISMO ES
+                    // Row(
+                    //   mainAxisAlignment: MainAxisAlignment.center,
+                    //   children: [
+                    //     IconButton(
+                    //       icon: const Icon(Icons.expand_more),
+                    //       onPressed: () {
+                    //         // widget.actividad.tareas!.map((tarea) {
+                    //         //     tarea.isExpanded = true;
+                    //         //   });
+                    //         setState(() {
+                    //           for (
+                    //             int i = 0;
+                    //             i < widget.actividad.tareas!.length;
+                    //             i++
+                    //           ) {
+                    //             widget.actividad.tareas![i].isExpanded = true;
+                    //           }
+                    //           print("DONE");
+                    //         });
+                    //       },
+                    //     ),
+                    //     IconButton(
+                    //       icon: const Icon(Icons.expand_less),
+                    //       onPressed: () {
                             
-                            setState(() {
-                              for (
-                              int i = 0;
-                              i < widget.actividad.tareas!.length;
-                              i++
-                            ) {
-                              widget.actividad.tareas![i].isExpanded = false;
-                            }
-                            });
-                          },
-                        ),
-                      ],
-                    ),
+                    //         setState(() {
+                    //           for (
+                    //           int i = 0;
+                    //           i < widget.actividad.tareas!.length;
+                    //           i++
+                    //         ) {
+                    //           widget.actividad.tareas![i].isExpanded = false;
+                    //         }
+                    //         });
+                    //       },
+                    //     ),
+                    //   ],
+                    // ),
 
                     ...widget.actividad.tareas!.asMap().entries.map((entry) {
                       final indexTar = entry.key;
