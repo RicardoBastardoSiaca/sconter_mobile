@@ -1,3 +1,13 @@
+Plantilla en COnsultar turnarounds
+Banner de No Internet Connection
+Refresh on scroll Down
+Solucionado el expand y collapse de las tareas con long press
+
+
+
+User Icon button (Cerrrar sesion y cabiar contrase;a)
+
+
 Consultar en turnarounds
 Control de actividades (los iconos de cuantas tareas van hechas y tambien el Flitro )
 en doble click en las actividades deberian expandir o retraer las tareas

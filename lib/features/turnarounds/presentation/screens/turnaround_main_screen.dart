@@ -208,13 +208,25 @@ class _TuraroundMainViewState extends ConsumerState {
                   const SizedBox(height: 2),
                   _DateFilter(),
                   turnaroundsState.turnarounds.isEmpty
-            ? Center(
-                child: Text(
-                  'No hay turnarounds Registrados',
-                  overflow: TextOverflow.ellipsis,
-                  style: Theme.of(context).textTheme.bodyMedium
-                ),
-              )
+            ? Column(
+              children: [
+                const SizedBox(height: 20),
+                Center(
+                    child: Text(
+                      'No hay turnarounds',
+                      // overflow: TextOverflow.ellipsis,
+                      style: Theme.of(context).textTheme.bodyMedium
+                    ),
+                  ),
+                Center(
+                    child: Text(
+                      'registrados.',
+                      // overflow: TextOverflow.ellipsis,
+                      style: Theme.of(context).textTheme.bodyMedium
+                    ),
+                  ),
+              ],
+            )
             : SizedBox(),
                   ...turnaroundsState.turnarounds.map((turnaround) => _ListTileCardContainer(turnaround: turnaround)),
                   const SizedBox(height: 30), 
