@@ -24,7 +24,7 @@ class ControlActividades {
   String? etdOut;
   String? etaOut;
   DateTime? etdFechaOut;
-  int gate;
+  int? gate;
   int tipoVueloId;
   int tipoServicioId;
   String? lugarSalidaOaci;
@@ -53,7 +53,7 @@ class ControlActividades {
     required this.aerolineaNombre,
     required this.acReg,
     required this.numeroVueloIn,
-    required this.gate,
+    this.gate,
     required this.tipoVueloId,
     required this.tipoServicioId,
     required this.estatusNombre,

@@ -21,7 +21,7 @@ import '../widgets/widgets.dart';
 class ControlActividadesScreen extends ConsumerStatefulWidget {
   final int trcId;
   const ControlActividadesScreen({super.key, required this.trcId});
-
+// aca llego el de octubre
   @override
   ConsumerState<ControlActividadesScreen> createState() =>
       _ControlActividadesScreenState();

@@ -100,7 +100,7 @@ class FkVuelo {
   String? etaOut;
   String? etdFechaOut;
   LugarDestino? lugarDestino;
-  int gate;
+  int? gate;
   FkAerolinea fkAerolinea;
   FkPlantilla fkPlantilla;
   LugarDestino? stn;
@@ -129,7 +129,7 @@ class FkVuelo {
     this.etaOut,
     this.etdFechaOut,
     this.lugarDestino,
-    required this.gate,
+    this.gate,
     required this.fkAerolinea,
     required this.fkPlantilla,
     this.stn,
@@ -236,12 +236,12 @@ class FkAerolinea {
   int id;
   String nombre;
   String aka;
-  String correo;
-  String? correoSecundario;
-  String correoAdmin;
-  String? correoAdminSecundario;
-  String telefono;
-  String? telefonoSecundario;
+  // String correo;
+  // String? correoSecundario;
+  // String correoAdmin;
+  // String? correoAdminSecundario;
+  // String telefono;
+  // String? telefonoSecundario;
   String pais;
   String ciudad;
   String codigoIata;
@@ -256,12 +256,12 @@ class FkAerolinea {
     required this.id,
     required this.nombre,
     required this.aka,
-    required this.correo,
-    this.correoSecundario,
-    required this.correoAdmin,
-    this.correoAdminSecundario,
-    required this.telefono,
-    this.telefonoSecundario,
+    // required this.correo,
+    // this.correoSecundario,
+    // required this.correoAdmin,
+    // this.correoAdminSecundario,
+    // required this.telefono,
+    // this.telefonoSecundario,
     required this.pais,
     required this.ciudad,
     required this.codigoIata,

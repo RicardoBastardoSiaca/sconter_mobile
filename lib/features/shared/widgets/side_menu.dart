@@ -20,10 +20,10 @@ class SideMenuState extends ConsumerState<SideMenu> {
 
   @override
   Widget build(BuildContext context) {
-    final authResponse = ref.watch(authProvider);
+    // final authResponse = ref.watch(authProvider);
     final theme = Theme.of(context);
-    final hasNotch = MediaQuery.of(context).viewPadding.top > 35;
-    final textStyles = Theme.of(context).textTheme;
+    // final hasNotch = MediaQuery.of(context).viewPadding.top > 35;
+    // final textStyles = Theme.of(context).textTheme;
 
     return SafeArea(
       child: Drawer(
@@ -315,10 +315,12 @@ Widget _buildHeader(BuildContext context, WidgetRef ref) {
     // ),
     accountName: Text(
       user?.name ?? "",
+      overflow: TextOverflow.ellipsis,
       style: TextStyle(fontSize: 26, fontWeight: FontWeight.bold),
     ),
     accountEmail: Text(
       user?.username ?? "unknown@example.com",
+      overflow: TextOverflow.ellipsis,
       style: TextStyle(fontSize: 18),
     ),
     currentAccountPicture: CircleAvatar(
