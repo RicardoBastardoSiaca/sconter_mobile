@@ -24,7 +24,7 @@ List<int> idsSelectedEquipos() {
 }
 
 class _AsignarEquiposView extends ConsumerStatefulWidget {
-  const _AsignarEquiposView({super.key});
+  const _AsignarEquiposView();
 
   @override
   ConsumerState<_AsignarEquiposView> createState() =>
@@ -44,8 +44,8 @@ class _AsignarEquiposViewState extends ConsumerState<_AsignarEquiposView> {
     // List<CategoriaEquiposItLimpieza> categorias = equiposResponse.equiposIt;
     // selectedEquiposIdsProvider
     // Set selected equipos from provider
-    equiposResponse.equiposIt.forEach((categoria) {
-      categoria.equipos.forEach((equipo) {
+    for (var categoria in equiposResponse.equiposIt) {
+      for (var equipo in categoria.equipos) {
         final isSelected = ref
             .read(selectedEquiposIdsProvider)
             .contains(equipo.id);
@@ -53,8 +53,8 @@ class _AsignarEquiposViewState extends ConsumerState<_AsignarEquiposView> {
           equipo.isSelected = true;
           idsequiposOld = [...idsequiposOld, equipo.id];
         }
-      });
-    });
+      }
+    }
   }
 
   @override

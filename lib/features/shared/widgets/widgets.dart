@@ -17,3 +17,4 @@ export 'dialogs/dialog_utils.dart';
 export 'dialogs/numer_input_dialog.dart';
 
 export 'no_internet_banner.dart';
+export 'no_internet_icon.dart';

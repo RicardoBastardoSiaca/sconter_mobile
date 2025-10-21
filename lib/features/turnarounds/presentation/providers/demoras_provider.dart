@@ -5,10 +5,6 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'providers.dart';
 // Provider
 
-// final demorasProvider = StateNotifierProvider<DemorasNotifier, DemorasState>((ref) {
-//   return DemorasNotifier();
-// });
-
 final demorasProvider = StateNotifierProvider<DemorasNotifier, DemorasState>((
   ref,
 ) {

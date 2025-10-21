@@ -3,7 +3,33 @@ import 'package:turnaround_mobile/config/config.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:intl/date_symbol_data_local.dart';
 
+
 void main() async {
+
+  WidgetsFlutterBinding.ensureInitialized();
+
+  // await db.into(db.apiCall).insert(
+  //   ApiCallCompanion.insert(
+      
+  //     url: 'https://example.com/api',
+  //     method: 'GET',
+  //     headers: Value('{"Content-Type": "application/json"}'),
+  //     body: Value(null),
+  //     timestamp: DateTime.now().millisecondsSinceEpoch,
+  //     retryCount: Value(0),
+  //     isProcessing: Value(false),
+  //   ),
+  // );
+
+  // final deleteQuery = db.delete(db.apiCall);
+  // await deleteQuery.go();
+
+  // final apiCallList = await db.select(db.apiCall).get();
+  // print(apiCallList);
+  // for (var call in apiCallList) {
+  //   print('API Call - ID: ${call.id}, URL: ${call.url}, Method: ${call.method}, Timestamp: ${call.timestamp}');
+  // }
+
   await Environment.initEnvironment();
   // WidgetsFlutterBinding.ensureInitialized();
   // tz.initializeTimeZones(); // Initialize timezone data

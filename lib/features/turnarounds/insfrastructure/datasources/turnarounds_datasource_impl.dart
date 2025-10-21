@@ -9,6 +9,9 @@ class TurnaroundsDatasourceImpl implements TurnaroundsDatasource {
   late final Dio dio;
   final String accessToken;
 
+  final ConnectivityService _connectivityService = ConnectivityService();
+
+
   TurnaroundsDatasourceImpl({required this.accessToken})
     : dio = Dio(
         BaseOptions(
@@ -24,8 +27,11 @@ class TurnaroundsDatasourceImpl implements TurnaroundsDatasource {
 
   @override
   Future<ControlActividades> getControlDeActividades(int id) async {
+    // Check internet connection
+    if (!await _connectivityService.hasConnection) {
+      throw Exception('No internet connection');
+    }
     // Variable de control de actividades
-    // final List<TurnaroundMain> turnarounds = [];
     try {
       final response = await dio.get<Map<String, dynamic>>(
         '/plantillas/cerrar_operaciones_vista/$id/?token=$accessToken',
@@ -48,6 +54,11 @@ class TurnaroundsDatasourceImpl implements TurnaroundsDatasource {
     int day,
   ) async {
     final List<TurnaroundMain> turnarounds = [];
+    // Check internet connection
+    // if (!await _connectivityService.hasConnection) {
+    //   // throw Exception('No internet connection');
+    //   return turnarounds; // Return an empty list if no connection
+    // }
     try {
       final response = await dio.get(
         '/turnarounds/$year-$month-$day/?token=$accessToken',
@@ -66,6 +77,13 @@ class TurnaroundsDatasourceImpl implements TurnaroundsDatasource {
 
   @override
   Future<SimpleApiResponse> startOperations(int id) async {
+    // Check internet connection and return error message if no connection
+    if (!await _connectivityService.hasConnection) {
+      return SimpleApiResponse(
+        message: 'No hay conexión a internet.',
+        success: false,
+      );
+    }
     try {
       return dio
           .post(

@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:turnaround_mobile/features/shared/domain/domain.dart';
 
 import '../../../auth/domain/domain.dart';
 import '../../../auth/presentation/providers/providers.dart';
+import '../../../users/users.dart';
 // import 'package:http/http.dart' as http;
 // import 'dart:convert';
 
@@ -76,59 +78,46 @@ class _ChangePasswordScreenState extends ConsumerState<ChangePasswordScreen> {
 
     try {
       user = ref.read(authProvider).loginResponse;
+      final usuario = ref.read(userProvider).user;
       // Prepare the request body
-      final Map<String, dynamic> requestBody = {
+      final Map<String, dynamic> body = {
         'id': user?.id,
         'nombr_usuario': user?.name ?? '' ,
         'correo': user?.username  ,
         'cedula': user?.cedula   ,
-        // 'telefono': user?.,
-        // 'usu_personal': user?.  ,
-        // 'rol': user?.  ,
-        // 'contrasena': user?.  ,
-        // 'is_contrasena': user?.  ,
-        // 'cliente': user?.  ,
-        'newPassword': _newPasswordController.text,
-        'confirmPassword': _confirmPasswordController.text,
+        'telefono': usuario?.telefono ?? ''  ,
+        'usu_personal': ''  ,
+        'rol': user?.rol  ,
+        'contrasena': _newPasswordController.text  ,
+        'is_contrasena': true , 
+        'cliente': 'false' , 
+        // 'newPassword': _newPasswordController.text,
+        // 'confirmPassword': _confirmPasswordController.text,
         // Add any other required fields like userId, token, etc.
       };
+      
+      // update user
+      SimpleApiResponse response = await ref.read(userProvider.notifier).updateUser(body);
+      if (response.success) {
+        // If successful, show a success message and navigate back
+        if (mounted) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(content: Text('Contraseña actualizada con éxito')),
+          );
+          Navigator.of(context).pop();
+        }
+      } else {
+        // If failed, show the error message from the response
+        setState(() {
+          _isLoading = false;
+          _validationError = response.message ?? 'Error al actualizar la contraseña';
+        });
+      }
 
-      // Make API call
-      // // final response = await http.post(
-      // //   Uri.parse('https://your-api-endpoint.com/change-password'), // Replace with your API endpoint
-      // //   headers: {
-      // //     'Content-Type': 'application/json',
-      // //     'Authorization': 'Bearer your-auth-token', // Add your auth token if needed
-      // //   },
-      // //   body: jsonEncode(requestBody),
-      // // );
-
-      // // setState(() {
-      // //   _isLoading = false;
-      // // });
-
-      // if (response.statusCode == 200) {
-      //   // Password changed successfully
-      //   if (mounted) {
-      //     ScaffoldMessenger.of(context).showSnackBar(
-      //       const SnackBar(
-      //         content: Text('Password changed successfully!'),
-      //         backgroundColor: Colors.green,
-      //       ),
-      //     );
-      //     Navigator.of(context).pop(); // Go back to previous screen
-      //   }
-      // } else {
-      //   // Handle API error
-      //   final errorData = jsonDecode(response.body);
-      //   setState(() {
-      //     _validationError = errorData['message'] ?? 'Failed to change password';
-      //   });
-      // }
     } catch (e) {
       setState(() {
         _isLoading = false;
-        _validationError = 'Error de conexion: ${e.toString()}';
+        _validationError = 'Error de conexion: ';
       });
     }
   }

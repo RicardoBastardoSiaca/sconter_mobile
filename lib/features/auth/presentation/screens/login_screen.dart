@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:turnaround_mobile/features/auth/presentation/providers/auth_provider.dart';
 
 import '../../../shared/widgets/widgets.dart';
 import '../providers/providers.dart';

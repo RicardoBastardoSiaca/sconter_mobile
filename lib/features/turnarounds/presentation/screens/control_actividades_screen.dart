@@ -321,10 +321,12 @@ class _ControlActividadesScreenState
                   },
                 ),
                 actions: [
-                  IconButton(
-                    icon: const Icon(Icons.manage_accounts),
-                    onPressed: () {},
-                  ),
+                  NoInternetIcon(),
+                  UserConfigMenuIcon(), 
+                  // IconButton(
+                  //   icon: const Icon(Icons.manage_accounts),
+                  //   onPressed: () {},
+                  // ),
                 ],
               ),
             ];

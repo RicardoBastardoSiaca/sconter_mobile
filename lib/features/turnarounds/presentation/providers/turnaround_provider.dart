@@ -31,6 +31,10 @@ class TurnaroundNotifier extends StateNotifier<TurnaroundState> {
       state.selectedDate.month,
       state.selectedDate.day,
     );
+    // if (turnarounds.isEmpty) {
+    //   state = state.copyWith(isLoading: false);
+    //   return;
+    // }
     state = state.copyWith(isLoading: false, turnarounds: turnarounds);
   }
 

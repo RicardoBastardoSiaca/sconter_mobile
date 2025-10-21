@@ -1,7 +1,17 @@
+// ignore_for_file: prefer_final_fields
+
 Plantilla en COnsultar turnarounds
 Banner de No Internet Connection
 Refresh on scroll Down
-Solucionado el expand y collapse de las tareas con long press
+Solucionado el expand y collapse de las tareas con long press ()
+    cerrar sesion y cambiar cotraseña
+
+Cargar 5 dias antes y 5 dias despues 
+
+Olvide mi contrase;a
+ricardo@usuario
+
+
 
 
 

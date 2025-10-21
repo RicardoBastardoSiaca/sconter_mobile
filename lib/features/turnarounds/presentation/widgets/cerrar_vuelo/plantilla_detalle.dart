@@ -52,7 +52,9 @@ class _PlantillaDetalleView extends ConsumerWidget {
                 Text('${indexAct+1}. ${actividad.titulo.toString()}', style: Theme.of(context).textTheme.bodyMedium?.copyWith(
                   fontWeight: FontWeight.w600,
                   // color: Theme.of(context).colorScheme.primary,
-                ),),
+                  ),
+                  overflow: TextOverflow.ellipsis,
+                ),
                 const SizedBox(height: 4),
                 _TareasView(tareas: actividad.tarea, turnaround: turnaround),
               ],
@@ -86,7 +88,9 @@ class _TareasView extends StatelessWidget {
             Text(tarea.titulo, style: Theme.of(context).textTheme.bodyMedium?.copyWith(
               fontWeight: FontWeight.w400,
               // color: Theme.of(context).colorScheme.primary,
-            ),),
+              ),
+              overflow: TextOverflow.ellipsis,
+            ),
           ],
         );
         // ListTile(

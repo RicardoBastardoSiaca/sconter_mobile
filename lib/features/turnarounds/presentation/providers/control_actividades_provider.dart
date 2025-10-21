@@ -1,13 +1,18 @@
 import 'dart:convert';
+import 'dart:ffi';
 import 'dart:io';
 
 import 'package:dio/dio.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:turnaround_mobile/features/shared/domain/domain.dart';
 
+import '../../../shared/shared.dart';
 import '../../domain/domain.dart';
 import 'providers.dart';
 // import shared
+
+// import local storage
+import '../../../local_storage/local_storage.dart';
 // StateNotifierProvider
 
 // Provider
@@ -19,9 +24,14 @@ final controlActividadesProvider =
       int
     >((ref, trcId) {
       final turnaroundsRepository = ref.watch(turnaroundRepositoryProvider);
+      final localStorageRepository = ref.watch(localStorageRepositoryProvider);
+      // final RequestApiRepositoryImpl localStorageRepository = ref.watch(RequestApiRepositoryProvider);
+      final ConnectivityService _connectivityService = ConnectivityService();
       return ControlActividadesNotifier(
         trcId: trcId,
         turnaroundsRepository: turnaroundsRepository,
+        localStorageRepository: localStorageRepository,
+        connectivityService: _connectivityService,
       );
     });
 
@@ -29,12 +39,16 @@ final controlActividadesProvider =
 class ControlActividadesNotifier
     extends StateNotifier<ControlActividadesState> {
   final TurnaroundsRepository turnaroundsRepository;
+  final StoredRequestApiRepository localStorageRepository;
   final int trcId;
+  final ConnectivityService connectivityService;
   ControlActividadesNotifier({
     required this.turnaroundsRepository,
+    required this.localStorageRepository,
     required this.trcId,
+    required this.connectivityService,
   }) : super(ControlActividadesState(id: trcId)) {
-    getControlDeActividadesByTrcId();
+    // getControlDeActividadesByTrcId();
   }
 
   Future<void> getControlDeActividadesByTrcId() async {
@@ -64,6 +78,36 @@ class ControlActividadesNotifier
     switch (tipo) {
       case 'Hora':
         try {
+          // if (horaInicio.isAfter(DateTime.now())) {
+          //   return SnackbarResponse(
+          //     message: 'La hora no puede ser en el futuro.',
+          //     success: false,
+          //   );
+          // }
+
+          // No Internet check
+          // get
+          final bool isConnected = await ConnectivityService().hasConnection;
+          if (!isConnected) {
+            // Save the api call for later
+            localStorageRepository.saveRequestApi(
+              RequestApi(
+                id: DateTime.now().millisecondsSinceEpoch,
+                url: '/turnarounds/setHoraInicio',
+                method: 'POST',
+                body: {
+                  'id': id,
+                  'hora_inicio': horaInicio.toIso8601String(),
+                  'tipo': tipo,
+                },
+                timestamp: DateTime.now().millisecondsSinceEpoch,
+              ),
+            );
+            return SnackbarResponse(
+              message: '.',
+              success: false,
+            );
+          }
           final response = await turnaroundsRepository.setHoraInicio(
             id,
             horaInicio,
@@ -351,10 +395,7 @@ class ControlActividadesNotifier
         getControlDeActividadesByTrcId();
         return SnackbarResponse(message: 'Firma registrada.', success: true);
       } else {
-        return SnackbarResponse(
-          message: response.message,
-          success: false,
-        );
+        return SnackbarResponse(message: response.message, success: false);
       }
     } catch (e) {
       return SnackbarResponse(message: 'Ha ocurrido un error.', success: false);
@@ -412,5 +453,9 @@ class CustomFullscreenCarouselData {
   late final int index;
   // late final String title;
   late final String shareMessage;
-  CustomFullscreenCarouselData({required this.imagenes, required this.index, this.shareMessage = ''});
+  CustomFullscreenCarouselData({
+    required this.imagenes,
+    required this.index,
+    this.shareMessage = '',
+  });
 }

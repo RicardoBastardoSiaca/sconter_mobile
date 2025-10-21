@@ -20,6 +20,8 @@ class ConnectivityService {
     connectionChangeController.add(isConnected);
   }
 
+  Future<bool> get hasConnection => InternetConnection().hasInternetAccess;
+
   void dispose() {
     connectionChangeController.close();
   }

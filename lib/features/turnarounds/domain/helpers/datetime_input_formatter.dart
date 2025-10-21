@@ -20,6 +20,7 @@ class DateTimeInputFormatter {
   static DateFormat inputFormat = DateFormat('dd/MM/yyyy HH:mm');
 
   static DateFormat displayFormat = DateFormat('dd/MM/yyyy');
+  static DateFormat englishDisplayFormat = DateFormat('dd/MM/yyyy');
   static DateFormat displayFormatWithTime = DateFormat('dd/MM/yyyy HH:mm');
   static DateFormat displayFormatWithTimeAndSeconds = DateFormat(
     'dd/MM/yyyy HH:mm:ss',
@@ -50,5 +51,17 @@ class DateTimeInputFormatter {
   //       selectedDate = picked;
   //     });
   //   }
+  // }
+  // date time to string dd/MM/yyyy
+  static formatDateToString(DateTime date) {
+    return displayFormat.format(date);
+  }
+  // string yyyy/MM/dd to date time
+  static DateTime parseStringToDate(String dateString) {
+    return DateFormat('yyyy-MM-dd').parse(dateString);
+  }
+
+  // static DateTime parseStringToDate(String dateString) {
+  //   return displayFormat.parse(dateString);
   // }
 }

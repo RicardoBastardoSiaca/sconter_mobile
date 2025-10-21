@@ -24,6 +24,7 @@ class _TurnaroundMainScreenState extends State<TurnaroundMainScreen> {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
+    final ConnectivityService _connectivityService = ConnectivityService();
     return Scaffold(
       key: scaffoldKey,
       // backgroundColor: Color.fromRGBO(58, 66, 86, 1.0),
@@ -88,7 +89,8 @@ class _TurnaroundMainScreenState extends State<TurnaroundMainScreen> {
           //               // ),
           //               ListTile(
           //                 title: Text(
-          //                   'Cerrar Sesión',
+          //                   '
+          //  ión',
           //                   style: theme.textTheme.bodyMedium,
           //                 ),
           //                 onTap: () {
@@ -114,8 +116,13 @@ class _TurnaroundMainScreenState extends State<TurnaroundMainScreen> {
           //   // , icon: },
           //   icon: const Icon(Icons.manage_accounts),
           // ),
-          // UserConfigMenuIcon(),
-          const SizedBox(width: 60),
+          // no intertnet icon
+          // if not connected show wifi_off icon
+         
+          NoInternetIcon(),
+          // const SizedBox(width: 10),
+          UserConfigMenuIcon(),
+          // const SizedBox(width: 60),
         ],
       ),
       body: _TuraroundMainView(),
@@ -193,7 +200,7 @@ class _TuraroundMainViewState extends ConsumerState {
                 controller: _scrollController,
                 physics: const AlwaysScrollableScrollPhysics(), // Key change here
                 children: [
-                  if (!_isConnected) NoInternetBanner(),
+                  // if (!_isConnected) NoInternetBanner(),
                   const SizedBox(height: 3),
                   Center(
                     child: Text(
@@ -641,6 +648,9 @@ class _MenuDialog extends ConsumerWidget {
                 // set selectedTurnaroundProvider
                 ref.read(selectedTurnaroundProvider.notifier).state =
                     turnaround;
+
+                // get control de actividades by trc id
+                ref.read(controlActividadesProvider(turnaround.id).notifier).getControlDeActividadesByTrcId();
                 // push with turnaround id
                 context.push('/control-actividades/${turnaround.id}');
                 // close bottom sheet
