@@ -23,20 +23,20 @@ class UserConfigMenuIcon extends ConsumerWidget {
             // Lista de opciones de configuración
             ListView(
               children:  [
-                ListTile(
-                  leading: Icon(Icons.password),
-                  title: Text('Cambiar Contraseña', style: theme.textTheme.bodyMedium),
-                  onTap: () {
-                    final userId = ref.read(authProvider).loginResponse?.id;
-                    // Get User by id
-                    ref.read(userProvider.notifier).getUserById(userId!);
-                    // change-password-screen
-                    // Navigator.of(context).pushNamed('/change-password-screen');
-                    context.push('/change-password-screen');
-                    Navigator.of(context).pop(); // Cerrar el menú después de la selección
-                    // Acción al seleccionar esta opción
-                  },
-                ),
+                // ListTile(
+                //   leading: Icon(Icons.password),
+                //   title: Text('Cambiar Contraseña', style: theme.textTheme.bodyMedium),
+                //   onTap: () {
+                //     final userId = ref.read(authProvider).loginResponse?.id;
+                //     // Get User by id
+                //     ref.read(userProvider.notifier).getUserById(userId!);
+                //     // change-password-screen
+                //     // Navigator.of(context).pushNamed('/change-password-screen');
+                //     context.push('/change-password-screen');
+                //     Navigator.of(context).pop(); // Cerrar el menú después de la selección
+                //     // Acción al seleccionar esta opción
+                //   },
+                // ),
                 ListTile(
                   leading: Icon(Icons.logout),
                   title: Text('Cerrar Sesión', style: theme.textTheme.bodyMedium),

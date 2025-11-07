@@ -49,6 +49,27 @@ class RequestApi {
     );
   }
 
+ RequestApi copyWith({
+    int? id,
+    String? url,
+    String? method,
+    Map<String, dynamic>? headers,
+    dynamic body,
+    int? timestamp,
+    int? retryCount,
+    bool? isProcessing,
+  }) {
+    return RequestApi(
+      id: id ?? this.id,
+      url: url ?? this.url,
+      method: method ?? this.method,
+      headers: headers ?? this.headers,
+      body: body ?? this.body,
+      timestamp: timestamp ?? this.timestamp,
+      retryCount: retryCount ?? this.retryCount,
+      isProcessing: isProcessing ?? this.isProcessing,
+    );
+  }
 // RequestApiEntity toEntity() {
 //     return RequestApiEntity(
 //       id: id,

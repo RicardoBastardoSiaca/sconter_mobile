@@ -57,7 +57,10 @@ class DateTimeInputFormatter {
     return displayFormat.format(date);
   }
   // string yyyy/MM/dd to date time
-  static DateTime parseStringToDate(String dateString) {
+  static DateTime? parseStringToDate(String dateString) {
+    if (dateString.isEmpty) {
+      return null;
+    }
     return DateFormat('yyyy-MM-dd').parse(dateString);
   }
 

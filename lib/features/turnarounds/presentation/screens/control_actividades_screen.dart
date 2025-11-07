@@ -21,7 +21,7 @@ import '../widgets/widgets.dart';
 class ControlActividadesScreen extends ConsumerStatefulWidget {
   final int trcId;
   const ControlActividadesScreen({super.key, required this.trcId});
-// aca llego el de octubre
+  // aca llego el de octubre
   @override
   ConsumerState<ControlActividadesScreen> createState() =>
       _ControlActividadesScreenState();
@@ -322,7 +322,7 @@ class _ControlActividadesScreenState
                 ),
                 actions: [
                   NoInternetIcon(),
-                  UserConfigMenuIcon(), 
+                  UserConfigMenuIcon(),
                   // IconButton(
                   //   icon: const Icon(Icons.manage_accounts),
                   //   onPressed: () {},
@@ -510,20 +510,17 @@ class _ActividadViewState extends State<_ActividadView> {
                                 child: widget.actividad.todasTareasHechas
                                     ? Icon(
                                         Icons.check_circle,
-                                        color: Theme.of(context).colorScheme.primary,
+                                        color: Theme.of(
+                                          context,
+                                        ).colorScheme.primary,
                                       )
-                                    : Icon(
-                                        Icons.radio_button_unchecked,
-                                      ),
-                               
+                                    : Icon(Icons.radio_button_unchecked),
                               ),
                               SizedBox(width: 6),
                               Expanded(
                                 child: Text(
                                   '${widget.indexAct + 1}. ${widget.actividad.nombreActividad}',
-                                  style: Theme.of(context)
-                                      .textTheme
-                                      .titleMedium
+                                  style: Theme.of(context).textTheme.titleMedium
                                       ?.copyWith(
                                         fontWeight: FontWeight.w800,
                                         // color: Theme.of(context).colorScheme.primary,
@@ -562,16 +559,16 @@ class _ActividadViewState extends State<_ActividadView> {
                                 widget.actividad.tareasPendientes.toString(),
                                 style: theme.textTheme.labelMedium,
                               ),
-                              
+                            ],
+                          ),
                         ],
                       ),
-                        ]
-                      )
                     ),
-                  // Long press to expand or collapse all, based on the first task
+                    // Long press to expand or collapse all, based on the first task
                     onLongPress: () {
-                      bool allExpanded = widget.actividad.tareas!
-                          .every((tarea) => tarea.isExpanded);
+                      bool allExpanded = widget.actividad.tareas!.every(
+                        (tarea) => tarea.isExpanded,
+                      );
                       setState(() {
                         for (var tarea in widget.actividad.tareas!) {
                           tarea.isExpanded = !allExpanded;
@@ -579,9 +576,6 @@ class _ActividadViewState extends State<_ActividadView> {
                       });
                     },
                   );
-                  
-
-                  
                 },
                 body: Column(
                   children: [
@@ -610,7 +604,7 @@ class _ActividadViewState extends State<_ActividadView> {
                     //     IconButton(
                     //       icon: const Icon(Icons.expand_less),
                     //       onPressed: () {
-                            
+
                     //         setState(() {
                     //           for (
                     //           int i = 0;
@@ -624,7 +618,6 @@ class _ActividadViewState extends State<_ActividadView> {
                     //     ),
                     //   ],
                     // ),
-
                     ...widget.actividad.tareas!.asMap().entries.map((entry) {
                       final indexTar = entry.key;
                       final tarea = entry.value;
@@ -797,6 +790,30 @@ class _TareaHoraView extends ConsumerWidget {
                     'Hora',
                   );
 
+                  // if response.hasConnection is false show snackbar warning
+                  if (!response.hasConnection) {
+                    // set manually the time locally in the riverpo state
+                    // setState(() {
+
+                    tarea.horaInicio = DateTime(
+                      DateTime.now().year,
+                      DateTime.now().month,
+                      DateTime.now().day,
+                      selectedTime.hour,
+                      selectedTime.minute,
+                      0,
+                    );
+                    // });
+                    // Show snackbar warning
+                    CustomSnackbar.showWarningSnackbar(
+                      response.message,
+                      // ignore: use_build_context_synchronously
+                      context,
+                      isFixed: true,
+                    );
+                    return;
+                  }
+
                   // Show snackbar response
                   CustomSnackbar.showResponseSnackbar(
                     response.message,
@@ -875,13 +892,29 @@ class _TareaHoraView extends ConsumerWidget {
                         DateTime.now(),
                         'Hora',
                       );
-                      CustomSnackbar.showResponseSnackbar(
-                        response.message,
-                        response.success,
-                        // ignore: use_build_context_synchronously
-                        context,
-                        isFixed: true,
-                      );
+
+                      // if response.hasConnection is false show snackbar warning
+                      if (!response.hasConnection) {
+                        // set manually the time locally in the riverpo state
+                        tarea.horaInicio = DateTime.now();
+                        // Show snackbar warning
+                        CustomSnackbar.showWarningSnackbar(
+                          response.message,
+                          // ignore: use_build_context_synchronously
+                          context,
+                          isFixed: true,
+                        );
+                        // return;
+                      } else {
+                        CustomSnackbar.showResponseSnackbar(
+                          response.message,
+                          response.success,
+                          // ignore: use_build_context_synchronously
+                          context,
+                          isFixed: true,
+                        );
+                      }
+
                       ref
                           .read(isLoadingControlActividadesProvider.notifier)
                           .update((state) => false);
@@ -1053,6 +1086,28 @@ class _TareaHoraInicioFinView extends ConsumerWidget {
                     'Hora de Inicio',
                   );
 
+                  if (!response.hasConnection) {
+                    // set manually the time locally in the riverpo state
+                    // setState(() {
+
+                    tarea.horaInicio = DateTime(
+                      DateTime.now().year,
+                      DateTime.now().month,
+                      DateTime.now().day,
+                      selectedTime.hour,
+                      selectedTime.minute,
+                      0,
+                    );
+                    // });
+                    // Show snackbar warning
+                    CustomSnackbar.showWarningSnackbar(
+                      response.message,
+                      // ignore: use_build_context_synchronously
+                      context,
+                      isFixed: true,
+                    );
+                    // return;
+                  } else {
                   // Show snackbar response
                   CustomSnackbar.showResponseSnackbar(
                     response.message,
@@ -1061,6 +1116,10 @@ class _TareaHoraInicioFinView extends ConsumerWidget {
                     context,
                     isFixed: true,
                   );
+                  }
+                  ref
+                    .read(isLoadingControlActividadesProvider.notifier)
+                    .update((state) => false);
                 }
               },
               child: SizedBox(
@@ -1131,13 +1190,28 @@ class _TareaHoraInicioFinView extends ConsumerWidget {
                         DateTime.now(),
                         'Hora de Inicio',
                       );
-                      CustomSnackbar.showResponseSnackbar(
-                        response.message,
-                        response.success,
-                        // ignore: use_build_context_synchronously
-                        context,
-                        isFixed: true,
-                      );
+
+                      if (!response.hasConnection) {
+                        // set manually the time locally in the riverpo state
+                        tarea.horaInicio = DateTime.now();
+                        // Show snackbar warning
+                        CustomSnackbar.showWarningSnackbar(
+                          response.message,
+                          // ignore: use_build_context_synchronously
+                          context,
+                          isFixed: true,
+                        );
+                        // return;
+                      } else {
+                        CustomSnackbar.showResponseSnackbar(
+                          response.message,
+                          response.success,
+                          // ignore: use_build_context_synchronously
+                          context,
+                          isFixed: true,
+                        );
+                      }
+
                       ref
                           .read(isLoadingControlActividadesProvider.notifier)
                           .update((state) => false);
@@ -1196,14 +1270,45 @@ class _TareaHoraInicioFinView extends ConsumerWidget {
                     'Hora final',
                   );
 
-                  // Show snackbar response
-                  CustomSnackbar.showResponseSnackbar(
-                    response.message,
-                    response.success,
-                    // ignore: use_build_context_synchronously
-                    context,
-                    isFixed: true,
-                  );
+                  if (!response.hasConnection) {
+                    // set manually the time locally in the riverpo state
+                    // setState(() {
+
+                    tarea.horaFin = DateTime(
+                      DateTime.now().year,
+                      DateTime.now().month,
+                      DateTime.now().day,
+                      selectedTime.hour,
+                      selectedTime.minute,
+                      0,
+                    );
+                    // });
+                    // Show snackbar warning
+                    CustomSnackbar.showWarningSnackbar(
+                      response.message,
+                      // ignore: use_build_context_synchronously
+                      context,
+                      isFixed: true,
+                    );
+                    // return;
+                  } else {
+                    // Show snackbar response
+                    CustomSnackbar.showResponseSnackbar(
+                      response.message,
+                      response.success,
+                      // ignore: use_build_context_synchronously
+                      context,
+                      isFixed: true,
+                    );
+                  }
+                  // controlActividadesState  set isloading to false
+                  // ref
+                  //   .read(controlActividadesProvider(ref.read(trcIdProvider)))
+                  //   .copyWith();
+
+                  ref
+                      .read(isLoadingControlActividadesProvider.notifier)
+                      .update((state) => false);
                 }
               },
               child: SizedBox(
@@ -1274,13 +1379,27 @@ class _TareaHoraInicioFinView extends ConsumerWidget {
                         DateTime.now(),
                         'Hora final',
                       );
-                      CustomSnackbar.showResponseSnackbar(
-                        response.message,
-                        response.success,
-                        // ignore: use_build_context_synchronously
-                        context,
-                        isFixed: true,
-                      );
+
+                      if (!response.hasConnection) {
+                        // set manually the time locally in the riverpo state
+                        tarea.horaFin = DateTime.now();
+                        // Show snackbar warning
+                        CustomSnackbar.showWarningSnackbar(
+                          response.message,
+                          // ignore: use_build_context_synchronously
+                          context,
+                          isFixed: true,
+                        );
+                        // return;
+                      } else {
+                        CustomSnackbar.showResponseSnackbar(
+                          response.message,
+                          response.success,
+                          // ignore: use_build_context_synchronously
+                          context,
+                          isFixed: true,
+                        );
+                      }
                       ref
                           .read(isLoadingControlActividadesProvider.notifier)
                           .update((state) => false);

@@ -5,6 +5,7 @@
 import 'dart:convert';
 
 import 'package:drift/drift.dart' as drift;
+import 'package:drift/drift.dart';
 
 import '../../../../config/config.dart';
 import '../../domain/domain.dart';
@@ -22,7 +23,12 @@ class DriftRequestApiDatasource extends StoredRequestApiDataSource {
   @override
   Future<void> deleteApiRequestApi(int id) {
     // TODO: implement deleteApiRequestApi
-    throw UnimplementedError();
+    // if -1 delete all
+    if (id == -1) {
+      return database.delete(database.apiCall).go();
+    }
+    // delete by id
+    return (database.delete(database.apiCall)..where((tbl) => tbl.id.equals(id))).go();
   }
 
   @override
@@ -55,12 +61,13 @@ class DriftRequestApiDatasource extends StoredRequestApiDataSource {
   @override
   Future<void> saveRequestApi(RequestApi requestApi) async {
 
+try {
     await database.into(database.apiCall).insert(
       ApiCallCompanion.insert(
         id: drift.Value(requestApi.id),
         url: requestApi.url,
         method: requestApi.method,
-        body: requestApi.body,
+        body: mapToValueString( requestApi.body),
         headers: requestApi.headers == null
             ? drift.Value(null)
             : drift.Value(jsonEncode(requestApi.headers?.map((k, v) => MapEntry(k, v.toString())))), 
@@ -69,8 +76,44 @@ class DriftRequestApiDatasource extends StoredRequestApiDataSource {
         isProcessing: drift.Value(requestApi.isProcessing),
       ),
     );
+  
+} catch (e) {
+  print('Error saving RequestApi: $e');
+}
     
 
     // return database.into(database.apiCall).insertOnConflictUpdate(companion);
   }
+
+  
 } 
+
+
+Value<String?> mapToValueString(Map<String, dynamic> map) {
+  try {
+    if (map.isEmpty) {
+      return const Value(null);
+    }
+    
+    // Convert map to JSON string using dart:convert
+    final jsonString = json.encode(map);
+    return Value(jsonString);
+  } catch (e) {
+    // Handle JSON encoding errors
+    return const Value(null);
+  }
+}
+
+Map<String, dynamic>? stringToMap(String? jsonString) {
+  try {
+    if (jsonString == null || jsonString.isEmpty) {
+      return null;
+    }
+    // Decode JSON string to Map using dart:convert
+    final Map<String, dynamic> map = json.decode(jsonString);
+    return map;
+  } catch (e) {
+    // Handle JSON decoding errors
+    return null;
+  }
+}

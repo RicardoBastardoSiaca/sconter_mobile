@@ -113,5 +113,15 @@ class CustomSnackbar {
     ScaffoldMessenger.of(context).showSnackBar(snackBar);
   }
 
+  static void showWarningSnackbar(String message, BuildContext context, {required bool isFixed}) {
+    final snackBar = SnackBar(
+      duration: const Duration(seconds: 5),
+      content: Text(message),
+      backgroundColor: Colors.orange,
+      behavior: isFixed ? SnackBarBehavior.fixed : SnackBarBehavior.floating,
+    );
+    ScaffoldMessenger.of(context).showSnackBar(snackBar); 
+  }
+
   // Success snackbar without context
 }

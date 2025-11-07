@@ -22,9 +22,14 @@ class _TurnaroundMainScreenState extends State<TurnaroundMainScreen> {
   // final scaffoldKey = GlobalKey<ScaffoldState>();
   final GlobalKey<ScaffoldState> scaffoldKey = GlobalKey<ScaffoldState>();
   @override
-  Widget build(BuildContext context) {
-    final theme = Theme.of(context);
-    final ConnectivityService _connectivityService = ConnectivityService();
+  Widget build(BuildContext context,) {
+
+    // final isConnected = ref.watch(isConnectedProvider);
+    // final connectivityState = ref.watch(connectivityProvider);
+
+
+    // final theme = Theme.of(context);
+    // final ConnectivityService _connectivityService = ConnectivityService();
     return Scaffold(
       key: scaffoldKey,
       // backgroundColor: Color.fromRGBO(58, 66, 86, 1.0),
@@ -143,7 +148,7 @@ class _TuraroundMainViewState extends ConsumerState {
   final ScrollController _scrollController = ScrollController();
 
   final ConnectivityService _connectivityService = ConnectivityService();
-  bool _isConnected = true;
+  // bool _isConnected = true;
 
    Future<void> _handleRefresh() async {
     // Get Turnarounds
@@ -162,11 +167,11 @@ class _TuraroundMainViewState extends ConsumerState {
     // _scrollController.addListener(_scrollListener);
     ref.read(turnaroundProvider.notifier).getTurnarounds();
 
-     _connectivityService.connectionChange.listen((isConnected) {
-      setState(() {
-        _isConnected = isConnected;
-      });
-    });
+    //  _connectivityService.connectionChange.listen((isConnected) {
+    //   setState(() {
+    //     // _isConnected = isConnected;
+    //   });
+    // });
   }
 
   @override
@@ -178,6 +183,8 @@ class _TuraroundMainViewState extends ConsumerState {
 
   @override
   Widget build(BuildContext context) {
+    // final isConnected = ref.watch(isConnectedProvider);
+    final connectivityState = ref.watch(connectivityProvider);
     final turnaroundsState = ref.watch(turnaroundProvider);
 
     if (turnaroundsState.isLoading) {

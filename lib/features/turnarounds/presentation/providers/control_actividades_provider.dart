@@ -1,10 +1,10 @@
 import 'dart:convert';
-import 'dart:ffi';
+// import 'dart:ffi';
 import 'dart:io';
 
 import 'package:dio/dio.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:turnaround_mobile/features/shared/domain/domain.dart';
+// import 'package:turnaround_mobile/features/shared/domain/domain.dart';
 
 import '../../../shared/shared.dart';
 import '../../domain/domain.dart';
@@ -78,34 +78,37 @@ class ControlActividadesNotifier
     switch (tipo) {
       case 'Hora':
         try {
-          // if (horaInicio.isAfter(DateTime.now())) {
-          //   return SnackbarResponse(
-          //     message: 'La hora no puede ser en el futuro.',
-          //     success: false,
-          //   );
-          // }
-
           // No Internet check
           // get
           final bool isConnected = await ConnectivityService().hasConnection;
           if (!isConnected) {
             // Save the api call for later
+
+            final body = {
+              'id': id,
+              // current time in iso8601 string
+              'hora_inicio': horaInicio.toUtc().toIso8601String() , // horaInicio.toIso8601String(),
+              'tipo': tipo,
+            };
             localStorageRepository.saveRequestApi(
               RequestApi(
                 id: DateTime.now().millisecondsSinceEpoch,
-                url: '/turnarounds/setHoraInicio',
+                url: '/control-actividades/horainicio',
                 method: 'POST',
-                body: {
-                  'id': id,
-                  'hora_inicio': horaInicio.toIso8601String(),
-                  'tipo': tipo,
-                },
+                body: body,
                 timestamp: DateTime.now().millisecondsSinceEpoch,
               ),
             );
+
+            // set manually the time in the state
+            // final updatedControlActividades =
+            //     state.controlActividades?.;
+
+
             return SnackbarResponse(
-              message: '.',
+              message: 'Hora registrada. Sin conexión.',
               success: false,
+              hasConnection: false,
             );
           }
           final response = await turnaroundsRepository.setHoraInicio(
@@ -139,6 +142,34 @@ class ControlActividadesNotifier
         }
       case 'Hora de Inicio':
         try {
+
+          final bool isConnected = await ConnectivityService().hasConnection;
+          if (!isConnected) {
+            // Save the api call for later
+
+            final body = {
+              'id': id,
+              // current time in iso8601 string
+              'hora_inicio': horaInicio.toUtc().toIso8601String() , // horaInicio.toIso8601String(),
+              'tipo': tipo,
+            };
+            localStorageRepository.saveRequestApi(
+              RequestApi(
+                id: DateTime.now().millisecondsSinceEpoch,
+                url: '/control-actividades/horainiciofin',
+                method: 'POST',
+                body: body,
+                timestamp: DateTime.now().millisecondsSinceEpoch,
+              ),
+            );
+
+            return SnackbarResponse(
+              message: 'Hora registrada. Sin conexión.',
+              success: false,
+              hasConnection: false,
+            );
+          }
+          
           final response = await turnaroundsRepository.setHoraInicioFin(
             id,
             horaInicio,
@@ -170,6 +201,34 @@ class ControlActividadesNotifier
         }
       case 'Hora final':
         try {
+        final bool isConnected = await ConnectivityService().hasConnection;
+          if (!isConnected) {
+            // Save the api call for later
+
+            final body = {
+              'id': id,
+              // current time in iso8601 string
+              'hora_fin': horaInicio.toUtc().toIso8601String() , // horaInicio.toIso8601String(),
+              'tipo': tipo,
+            };
+            localStorageRepository.saveRequestApi(
+              RequestApi(
+                id: DateTime.now().millisecondsSinceEpoch,
+                url: '/control-actividades/horainiciofin',
+                method: 'POST',
+                body: body,
+                timestamp: DateTime.now().millisecondsSinceEpoch,
+              ),
+            );
+
+            return SnackbarResponse(
+              message: 'Hora registrada. Sin conexión.',
+              success: false,
+              hasConnection: false,
+            );
+          }
+
+        
           final response = await turnaroundsRepository.setHoraInicioFin(
             id,
             horaInicio,

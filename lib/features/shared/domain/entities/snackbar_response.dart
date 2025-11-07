@@ -1,8 +1,13 @@
+
+
 class SnackbarResponse {
   final String message;
   final bool success;
+  final bool warning;
+  final bool hasConnection;
 
-  SnackbarResponse({required this.message, this.success = false});
+
+  SnackbarResponse({required this.message, this.success = false, this.warning = false, this.hasConnection = true});
 
   @override
   String toString() {

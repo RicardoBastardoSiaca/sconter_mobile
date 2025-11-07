@@ -1,15 +1,43 @@
 // ignore_for_file: prefer_final_fields
 
-Plantilla en COnsultar turnarounds
-Banner de No Internet Connection
-Refresh on scroll Down
-Solucionado el expand y collapse de las tareas con long press ()
-    cerrar sesion y cambiar cotraseña
+arreglar este vuelo que muestra vuelo de salida en consultar trc cuando es outbound
+Text overlap
+restringir a 4 digitos numero de vuelo
+
+
+PENDIENTES PARA TRABAJAR SIN COXION
+- hora
+- hora inicio (button y datepicker)
+- hora final (button y datepicker)
+- asignar equipo gse (no se puede porque cuando se agregar se genera el id)
+- hora inicio equipo gse (button y datepicker)
+- hora final equipo gse (button y datepicker)
+- imagenes
+- comentarios
+- tareas tipo cantidad
+- tareas tipo texto
+- Tarea de pasajeros
+- Exceso de equipaje
+- it
+- limpieza
+
+Guardar en BD local
+- Control de actividadesde los turnarounds del dia
+- turnarounds del dia
+
+
+
+
 
 Cargar 5 dias antes y 5 dias despues 
 
 Olvide mi contrase;a
 ricardo@usuario
+
+
+PENDIENTES DE FRANK
+- aerolinea tiene una nueva variable llamadas hasSupervisor
+- si no tiene supervisor hay otra llamada para reemplazar la firma y haya cambio de status en el trc
 
 
 

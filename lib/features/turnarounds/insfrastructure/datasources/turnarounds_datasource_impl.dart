@@ -28,7 +28,8 @@ class TurnaroundsDatasourceImpl implements TurnaroundsDatasource {
   @override
   Future<ControlActividades> getControlDeActividades(int id) async {
     // Check internet connection
-    if (!await _connectivityService.hasConnection) {
+    final hasConection = _connectivityService.hasInternet.value;
+    if (!hasConection) {
       throw Exception('No internet connection');
     }
     // Variable de control de actividades

@@ -24,7 +24,13 @@ class VueloDetalle extends StatelessWidget {
             tipoVuelo: turnaround!.fkVuelo.tipoVuelo.nombre,
             tipoServicio: turnaround!.fkVuelo.tipoServicio.nombre,
           ),
+          turnaround?.fkVuelo.lugarSalida == null 
+              ? SizedBox.shrink()
+              :
           SizedBox(height: 24),
+          turnaround?.fkVuelo.lugarSalida == null 
+              ? SizedBox.shrink()
+              :
           FlightInfoCard(
             titulo: 'Vuelo de llegada',
             flightNumber: '${turnaround?.fkVuelo.fkAerolinea.codigoIata}-${controlActividades?.numeroVueloIn}' ?? '',
@@ -32,17 +38,30 @@ class VueloDetalle extends StatelessWidget {
             etd: '${turnaround?.fkVuelo.etdIn?.substring(0, 5)}' ?? '',
             eta: '${turnaround?.fkVuelo.etaIn?.substring(0, 5)}' ?? '',
             // fecha: '${turnaround?.fechaInicio}' ?? '',
-            fecha: DateTimeInputFormatter.displayFormat.format(DateTimeInputFormatter.parseStringToDate(turnaround?.fechaInicio ?? '')),
+            fecha: (turnaround?.fkVuelo.etaFechaIn == null)
+                ? ''
+                : DateTimeInputFormatter.displayFormat.format(
+                    DateTimeInputFormatter.parseStringToDate(turnaround!.fkVuelo.etaFechaIn ?? '') ?? DateTime.now()),
+
             // fecha: DateTimeInputFormatter.displayFormat.format(DateTime(DateTimeInputFormatter.parseStringToDate turnaround?.fechaInicio)),
           ),
+          turnaround?.fkVuelo.lugarDestino == null 
+              ? SizedBox.shrink()
+              :
           SizedBox(height: 16),
+          turnaround?.fkVuelo.lugarDestino == null 
+              ? SizedBox.shrink()
+              :
           FlightInfoCard(
             titulo: 'Vuelo de salida',
             flightNumber: '${turnaround?.fkVuelo.fkAerolinea.codigoIata}-${controlActividades?.numeroVueloOut}' ?? '',
             routing: '${turnaround?.fkVuelo.stn?.codigoIata}-${controlActividades?.lugarDestinoIata}' ?? '',
             etd: '${turnaround?.fkVuelo.etdOut?.substring(0, 5)}' ?? '',
             eta: '${turnaround?.fkVuelo.etaOut?.substring(0, 5)}' ?? '',
-            fecha: DateTimeInputFormatter.displayFormat.format(DateTimeInputFormatter.parseStringToDate(turnaround?.fechaFin ?? '')),
+            fecha: (turnaround?.fkVuelo.etdFechaOut == null)
+                ? ''
+                : DateTimeInputFormatter.displayFormat.format(
+                    DateTimeInputFormatter.parseStringToDate(turnaround!.fkVuelo.etdFechaOut ?? '') ?? DateTime.now()),
           ),
         ],
       ),
@@ -119,7 +138,7 @@ class FlightInfoCard extends StatelessWidget {
   final String routing;
   final String etd;
   final String eta;
-  final String fecha;
+  final String? fecha;
   final String titulo;
 
   const FlightInfoCard({
@@ -159,7 +178,7 @@ class FlightInfoCard extends StatelessWidget {
             InfoRow(icon: Icons.route, label: 'Routing:', value: routing),
             InfoRow(icon: Icons.schedule, label: 'ETD:', value: etd),
             InfoRow(icon: Icons.timelapse, label: 'ETA:', value: eta),
-            InfoRow(icon: Icons.calendar_today, label: 'Fecha:', value: fecha),
+            InfoRow(icon: Icons.calendar_today, label: 'Fecha:', value: fecha ?? ''),
           ],
         ),
       ),
