@@ -124,8 +124,8 @@ class _TurnaroundMainScreenState extends State<TurnaroundMainScreen> {
           // no intertnet icon
           // if not connected show wifi_off icon
          
-          NoInternetIcon(),
-          // const SizedBox(width: 10),
+          // NoInternetIcon(),
+          const SizedBox(width: 10),
           UserConfigMenuIcon(),
           // const SizedBox(width: 60),
         ],

@@ -29,6 +29,10 @@ class RequestApiMapper {
       timestamp: timestampValue.millisecondsSinceEpoch,
       retryCount: json['retryCount'] ?? 0,
       isProcessing: json['isProcessing'] ?? false,
+      files: json['files'] != null 
+          ?(json['files'] as List).map((f) => RequestFile.fromMap(f)).toList()
+          : null,
+      isMultipart: json['isMultipart'] ?? false,
     );
   }
 }

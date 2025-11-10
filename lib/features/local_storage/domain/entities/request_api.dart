@@ -1,15 +1,17 @@
-
-
+import 'dart:io';
+import 'package:path/path.dart';
 
 class RequestApi {
   final int id;
   final String url;
-  final String method; // 'GET', 'POST', 'PUT', 'DELETE', 'PATCH'
+  final String method; // 'GET', 'POST', 'PUT', 'DELETE', 'PATCH', 'MULTIPART'
   final Map<String, dynamic>? headers;
-  final dynamic body; // Can be any serializable data
+  final dynamic body;
   final int timestamp;
   final int retryCount;
   final bool isProcessing;
+  final List<RequestFile>? files; // Added for file support
+  final bool isMultipart; // Flag to indicate multipart request
 
   RequestApi({
     required this.id,
@@ -20,36 +22,12 @@ class RequestApi {
     required this.timestamp,
     this.retryCount = 0,
     this.isProcessing = false,
-    // 
+    this.files,
+    this.isMultipart = false,
   });
 
-  Map<String, dynamic> toJson() {
-    return {
-      'id': id,
-      'url': url,
-      'method': method,
-      'headers': headers,
-      'body': body,
-      'timestamp': timestamp,
-      'retryCount': retryCount,
-      'isProcessing': isProcessing,
-    };
-  }
-
-  factory RequestApi.fromJson(Map<String, dynamic> json) {
-    return RequestApi(
-      id: json['id'],
-      url: json['url'],
-      method: json['method'],
-      headers: Map<String, dynamic>.from(json['headers'] ?? {}),
-      body: json['body'],
-      timestamp: json['timestamp'],
-      retryCount: json['retryCount'] ?? 0,
-      isProcessing: json['isProcessing'] ?? false,
-    );
-  }
-
- RequestApi copyWith({
+  // Copy with method for updating properties
+  RequestApi copyWith({
     int? id,
     String? url,
     String? method,
@@ -58,6 +36,8 @@ class RequestApi {
     int? timestamp,
     int? retryCount,
     bool? isProcessing,
+    List<RequestFile>? files,
+    bool? isMultipart,
   }) {
     return RequestApi(
       id: id ?? this.id,
@@ -68,31 +48,87 @@ class RequestApi {
       timestamp: timestamp ?? this.timestamp,
       retryCount: retryCount ?? this.retryCount,
       isProcessing: isProcessing ?? this.isProcessing,
+      files: files ?? this.files,
+      isMultipart: isMultipart ?? this.isMultipart,
     );
   }
-// RequestApiEntity toEntity() {
-//     return RequestApiEntity(
-//       id: id,
-//       url: url,
-//       method: method,
-//       headers: headers != null ? json.encode(headers) : null,
-//       body: body != null ? json.encode(body) : null,
-//       timestamp: timestamp,
-//       retryCount: retryCount,
-//     );
-//   }
 
-  // static RequestApi fromEntity(RequestApiEntity entity) {
-  //   return RequestApi(
-  //     id: entity.id,
-  //     url: entity.url,
-  //     method: entity.method,
-  //     headers: entity.headers != null ? json.decode(entity.headers!) : null,
-  //     body: entity.body != null ? json.decode(entity.body!) : null,
-  //     timestamp: entity.timestamp,
-  //     retryCount: entity.retryCount,
-  //   );
-  // }
+  // Convert to map for database storage
+  Map<String, dynamic> toMap() {
+    return {
+      'id': id,
+      'url': url,
+      'method': method,
+      'headers': headers,
+      'body': body,
+      'timestamp': timestamp,
+      'retryCount': retryCount,
+      'isProcessing': isProcessing,
+      'files': files?.map((file) => file.toMap()).toList(),
+      'isMultipart': isMultipart,
+    };
+  }
+
+  // Create from map for database retrieval
+  factory RequestApi.fromMap(Map<String, dynamic> map) {
+    return RequestApi(
+      id: map['id'],
+      url: map['url'],
+      method: map['method'],
+      headers: map['headers'],
+      body: map['body'],
+      timestamp: map['timestamp'],
+      retryCount: map['retryCount'],
+      isProcessing: map['isProcessing'],
+      files: map['files'] != null 
+          ? (map['files'] as List).map((f) => RequestFile.fromMap(f)).toList()
+          : null,
+      isMultipart: map['isMultipart'] ?? false,
+    );
+  }
 }
 
+// New class to handle file information
+class RequestFile {
+  final String filePath;
+  final String fieldName; // Field name for multipart form
+  final String fileName;
+  final String mimeType;
 
+  RequestFile({
+    required this.filePath,
+    required this.fieldName,
+    required this.fileName,
+    required this.mimeType,
+  });
+
+  Map<String, dynamic> toMap() {
+    return {
+      'filePath': filePath,
+      'fieldName': fieldName,
+      'fileName': fileName,
+      'mimeType': mimeType,
+    };
+  }
+
+  factory RequestFile.fromMap(Map<String, dynamic> map) {
+    return RequestFile(
+      filePath: map['filePath'],
+      fieldName: map['fieldName'],
+      fileName: map['fileName'],
+      mimeType: map['mimeType'],
+    );
+  }
+
+  // Check if file still exists
+  Future<bool> exists() async {
+    final file = File(filePath);
+    return await file.exists();
+  }
+
+  // Get file size
+  Future<int> getFileSize() async {
+    final file = File(filePath);
+    return await file.length();
+  }
+}

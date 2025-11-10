@@ -59,7 +59,8 @@ class ConnectivityNotifier extends StateNotifier<AsyncValue<bool>> {
     state = AsyncValue.data(newStatus);
 
     // Trigger actions based on connectivity changes
-    if (oldStatus == false && newStatus == true) {
+    // if (oldStatus == false && newStatus == true ) {
+    if (newStatus == true ) {
       _onInternetRestored();
     } else if (oldStatus == true && newStatus == false) {
       _onInternetLost();
@@ -80,7 +81,8 @@ class ConnectivityNotifier extends StateNotifier<AsyncValue<bool>> {
     try {
     localStorageRepository.getAllRequestApis().then((requests) async {
         await _requestManager.processAllRequests(requests, localStorageRepository);
-      print('Found ${requests.length} requests to sync.');
+      print('Found ${requests.
+      length} requests to sync.');
       
       // for (var request in requests) {
       //   // deleting all requests after processing
