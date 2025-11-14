@@ -1,5 +1,11 @@
 // ignore_for_file: prefer_final_fields
 
+
+time picker esta mostrando overflow
+en consultar trc el personal no esta llegando bien
+formatear listado de actividades en consultar
+
+
 arreglar este vuelo que muestra vuelo de salida en consultar trc cuando es outbound
 Text overlap
 restringir a 4 digitos numero de vuelo

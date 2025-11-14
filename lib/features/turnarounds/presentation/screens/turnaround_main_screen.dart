@@ -735,9 +735,9 @@ class _MenuDialog extends ConsumerWidget {
                     .getDemorasByTrc(turnaround.id);
 
                 // Personal
-                // ref
-                //     .read(departamentoPersonalProvider(turnaround.id).notifier)
-                //     .getDepartamentosConPersonal(turnaround.id);
+                ref
+                    .read(departamentoPersonalProvider(turnaround.id).notifier)
+                    .getDepartamentosConPersonal(turnaround.id);
                 
 
 

@@ -24,11 +24,20 @@ class _PersonalDetalleView extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             // Gerentes
-            _GerenciasPersonalView(nommbre: 'Gerentes', departamentos: departamentosPersona ?.gerenteTurno ?? []),
+            _GerenciasPersonalView(
+              nommbre: 'Gerentes',
+              departamentos: departamentosPersona?.gerenteTurno ?? [],
+            ),
             // Supervisores
-            _GerenciasPersonalView(nommbre: 'Supervisores', departamentos: departamentosPersona?.supervisor ?? []),
+            _GerenciasPersonalView(
+              nommbre: 'Supervisores',
+              departamentos: departamentosPersona?.supervisor ?? [],
+            ),
             // Personal
-            _GerenciasPersonalView(nommbre: 'Personal', departamentos: departamentosPersona?.departamentosPersonal ?? []),
+            _GerenciasPersonalView(
+              nommbre: 'Personal',
+              departamentos: departamentosPersona?.departamentosPersonal ?? [],
+            ),
             // _PersonalView(departamentosPersona: departamentosPersona)
           ],
         ),
@@ -40,7 +49,10 @@ class _PersonalDetalleView extends StatelessWidget {
 class _GerenciasPersonalView extends StatelessWidget {
   final String nommbre;
   final List<DepartamentoPersonal> departamentos;
-  const _GerenciasPersonalView({required this.nommbre, required this.departamentos});
+  const _GerenciasPersonalView({
+    required this.nommbre,
+    required this.departamentos,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -48,24 +60,72 @@ class _GerenciasPersonalView extends StatelessWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Center(child: Text(nommbre, style: theme.textTheme.titleMedium?.copyWith(fontWeight: FontWeight.bold))),
-        ...departamentos.map((e) {
-          return Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-        SizedBox(height: 8,),
-              Text(e.nombreDepartamento, style: theme.textTheme.bodyMedium?.copyWith(fontWeight: FontWeight.bold)),
-              e.personal.isEmpty
-                  ? Text('No hay personal asignado', style: theme.textTheme.bodyMedium)
-                  // Lista de personal seleccionado
-                  :  Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: e.personal.where((e) => e.selected).map((e) => Text(e.nombre.toString(), style: theme.textTheme.bodyMedium)).toList(),
+        Center(
+          child: Text(
+            nommbre,
+            style: theme.textTheme.titleMedium?.copyWith(
+              fontWeight: FontWeight.bold,
+            ),
+          ),
+        ),
+        departamentos.isEmpty || noPersonalInDepartamento(departamentos)
+            ? Padding(
+                padding: const EdgeInsets.symmetric(vertical: 8.0),
+                child: Center(
+                  child: Text(
+                    'No hay personal asignado',
+                    style: theme.textTheme.bodyMedium,
                   ),
-              // ...e.personal.where((e) => e.selected).map((e) => Text(e.nombre.toString())),
-            ],
-          );
-        }),
-    ]);
+                ),
+              )
+            : Column(
+                children: [
+                  ...departamentos.map((e) {
+                    return Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        SizedBox(height: 8),
+                        Text(
+                          e.nombreDepartamento,
+                          style: theme.textTheme.bodyMedium?.copyWith(
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                        e.personal.isEmpty
+                            ? Text(
+                                'No hay personal asignado',
+                                style: theme.textTheme.bodyMedium,
+                              )
+                            // Lista de personal seleccionado
+                            : Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: e.personal
+                                    .where((e) => e.selected)
+                                    .map(
+                                      (e) => Text(
+                                        '- ${e.nombre.toString()}',
+                                        style: theme.textTheme.bodyMedium,
+                                      ),
+                                    )
+                                    .toList(),
+                              ),
+                        // ...e.personal.where((e) => e.selected).map((e) => Text(e.nombre.toString())),
+                      ],
+                    );
+                  }),
+                ],
+              ),
+      ],
+    );
   }
+}
+
+// check if
+bool noPersonalInDepartamento(List<DepartamentoPersonal> departamento) {
+  for (var dept in departamento) {
+    if (dept.personal.any((person) => person.selected)) {
+      return false;
+    }
+  }
+  return true;
 }

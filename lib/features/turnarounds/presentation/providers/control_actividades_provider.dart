@@ -315,7 +315,61 @@ class ControlActividadesNotifier
       'encryptedBody': EncryptDecrypt().encryptUsingAES256(json.encode(body)),
     });
 
+
+
     try {
+
+
+      final bool isConnected = await ConnectivityService().hasConnection;
+          if (!isConnected) {
+            // Save the api call for later
+
+            // final body = {
+            //   'id': id,
+            //   // current time in iso8601 string
+            //   'hora_inicio': horaInicio.toUtc().toIso8601String() , // horaInicio.toIso8601String(),
+            //   'tipo': tipo,
+            // };
+            localStorageRepository.saveRequestWithFiles(
+              RequestApi(
+                id: DateTime.now().millisecondsSinceEpoch,
+                url: '/control-actividades/imagen',
+                method: 'POST',
+                body: formData.fields
+                    .map((field) => MapEntry(field.key, field.value))
+                    .toList()
+                    .fold<Map<String, dynamic>>(
+                      {},
+                      (previousValue, element) {
+                        previousValue[element.key] = element.value;
+                        return previousValue;
+                      },
+                    ),
+                timestamp: DateTime.now().millisecondsSinceEpoch,
+                isMultipart: true,
+                files: <RequestFile>[
+                  RequestFile(
+                    filePath: photoPath,
+                    fieldName: 'documento',
+                    fileName: 'avatar',
+                    mimeType: image.path.split('.').last,
+                  ),
+                ],
+              ),
+            );
+ 
+            // set manually the time in the state
+            // final updatedControlActividades =
+            //     state.controlActividades?.;
+
+
+            return SnackbarResponse(
+              message: 'Imagen registrada. Sin conexión.',
+              success: false,
+              hasConnection: false,
+            );
+          }
+
       final response = await turnaroundsRepository.uploadImage(formData);
       if (response.success) {
         getControlDeActividadesByTrcId();

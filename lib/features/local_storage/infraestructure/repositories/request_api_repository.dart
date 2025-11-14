@@ -28,4 +28,9 @@ class RequestApiRepositoryImpl extends StoredRequestApiRepository {
   Future<void> saveRequestApi(RequestApi requestApi) {
     return dataSource.saveRequestApi(requestApi);
   }
+  
+  @override
+  Future<void> saveRequestWithFiles(RequestApi requestApi) {
+    return dataSource.saveRequestWithFiles(requestApi);
+  }
 }

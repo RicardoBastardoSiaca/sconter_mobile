@@ -8,14 +8,15 @@ class CustomTimePickerDialog {
     TimeOfDay? initialTime,
   ) async {
     final selectedTime = await showTimePicker(
-      confirmText: 'Seleccionar',
-      cancelText: 'Cancelar',
+      confirmText: 'OK',
+      cancelText: 'Salir',
       minuteLabelText: 'Minutos',
       hourLabelText: 'Horas',
       useRootNavigator: true,
       initialEntryMode: TimePickerEntryMode.input,
       helpText: 'Seleccionar hora',
       context: context,
+      // orientation: MediaQuery.of(context).orientation,
       builder: (context, childWidget) {
         return MediaQuery(
         data: MediaQuery.of(context).copyWith(

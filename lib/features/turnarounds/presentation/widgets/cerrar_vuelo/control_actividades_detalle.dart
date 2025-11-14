@@ -31,10 +31,7 @@ class ControlActividadesDetalle extends StatelessWidget {
 class _ControlActividadesView extends StatelessWidget {
   final ControlActividades? controlActividades;
   final TurnaroundMain? turnaround;
-  const _ControlActividadesView({
-    this.controlActividades,
-    this.turnaround,
-  });
+  const _ControlActividadesView({this.controlActividades, this.turnaround});
 
   @override
   Widget build(BuildContext context) {
@@ -49,9 +46,19 @@ class _ControlActividadesView extends StatelessWidget {
           return Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Text(departamento.nombreArea.toString()),
+              Center(
+                child: Text(
+                  departamento.nombreArea.toString(),
+                  style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+              ),
               const SizedBox(height: 4),
-              _ActividadesView(actividades: departamento.actividades, turnaround: turnaround,),
+              _ActividadesView(
+                actividades: departamento.actividades,
+                turnaround: turnaround,
+              ),
             ],
           );
         }),
@@ -67,22 +74,25 @@ class _ActividadesView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 18.0),
-      child: Column(
-        children: actividades!.asMap().entries.map((entry) {
-          final indexAct = entry.key;
-          final actividad = entry.value;
-          return Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Text(actividad.nombreActividad.toString()),
-              const SizedBox(height: 4),
-              _TareasView(tareas: actividad.tareas, turnaround: turnaround,),
-            ],
-          );
-        }).toList(),
-      ),
+    return Column(
+      // map actividades with index
+      children: actividades!.asMap().entries.map((entry) {
+        final indexAct = entry.key;
+        final actividad = entry.value;
+        return Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Row(
+              children: [
+                Text('${indexAct + 1}. ', style: TextStyle(fontWeight: FontWeight.bold, color: Theme.of(context).colorScheme.primary )),
+                Text(actividad.nombreActividad.toString()),
+              ],
+            ),
+            const SizedBox(height: 4),
+            _TareasView(tareas: actividad.tareas, turnaround: turnaround),
+          ],
+        );
+      }).toList(),
     );
   }
 }
@@ -98,40 +108,56 @@ class _TareasView extends StatelessWidget {
       padding: const EdgeInsets.symmetric(horizontal: 18.0),
       child: Column(
         children: [
-
           const SizedBox(height: 4),
           ...tareas!.asMap().entries.map((entry) {
-          final indexTar = entry.key;
-          final tarea = entry.value;
-          return 
-            Column(
+            final indexTar = entry.key;
+            final tarea = entry.value;
+            return Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 switch (tarea.tipoId) {
-                  2 => _TareaHoraView(tarea: tarea),
-                  3 => _TareaHoraInicioFinView(tarea: tarea),
-                  1 => _TareaCantidadView(tarea: tarea),
-                  4 => _TareaMaquinariaSinTiempoView(tarea: tarea),
-                  5 => _TareaMaquinariaConTiempoView(tarea: tarea),
-                  6 => _TareaTextoView(tarea: tarea),
-                  7 => _TareaPasajerosView(tarea: tarea, turnaround: turnaround),
-                  8 => _TareaExcesoEquipajeView(tarea: tarea),
-                  9 => _TareaITView(tarea: tarea),
-                  10 => _TareaLimpiezaView(tarea: tarea),
+                  2 => _TareaHoraView(tarea: tarea, indexTar: indexTar),
+                  3 => _TareaHoraInicioFinView(
+                    tarea: tarea,
+                    indexTar: indexTar,
+                  ),
+                  1 => _TareaCantidadView(tarea: tarea, indexTar: indexTar),
+                  4 => _TareaMaquinariaSinTiempoView(
+                    tarea: tarea,
+                    indexTar: indexTar,
+                  ),
+                  5 => _TareaMaquinariaConTiempoView(
+                    tarea: tarea,
+                    indexTar: indexTar,
+                  ),
+                  6 => _TareaTextoView(tarea: tarea, indexTar: indexTar),
+                  7 => _TareaPasajerosView(
+                    tarea: tarea,
+                    turnaround: turnaround,
+                    indexTar: indexTar,
+                  ),
+                  8 => _TareaExcesoEquipajeView(
+                    tarea: tarea,
+                    indexTar: indexTar,
+                  ),
+                  9 => _TareaITView(tarea: tarea, indexTar: indexTar),
+                  10 => _TareaLimpiezaView(tarea: tarea, indexTar: indexTar),
                   // Default case
-                  _ => _TareaHoraView(tarea: tarea),
+                  _ => _TareaHoraView(tarea: tarea, indexTar: indexTar),
                 },
-                // const SizedBox(height: 4),
                 // Image list display
-                _TareaImagenView(tarea: tarea),
+                _TareaImagenView(tarea: tarea, indexTar: indexTar),
 
-                _ComentarioView(tarea: tarea),
+                _ComentarioView(tarea: tarea, indexTar: indexTar),
+
+                // Divider
+                // Divider(thickness: 0.5, color: Colors.grey.shade400),
+                
+                const SizedBox(height: 10),
               ],
             );
-          
-        }),
-        ]
-
+          }),
+        ],
       ),
     );
   }
@@ -139,14 +165,15 @@ class _TareasView extends StatelessWidget {
 
 class _TareaHoraView extends StatelessWidget {
   final Tarea tarea;
-  const _TareaHoraView({required this.tarea});
+  final int indexTar;
+  const _TareaHoraView({required this.tarea, required this.indexTar});
 
   @override
   Widget build(BuildContext context) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Text(tarea.titulo),
+        Text('${indexTar + 1}. ${tarea.titulo}'),
         Padding(
           padding: const EdgeInsets.symmetric(horizontal: 16.0),
           child: _horaRowView(tarea.horaInicio, 'Hora: '),
@@ -171,7 +198,10 @@ Padding _horaRowView(DateTime? hora, String label) {
             color: Colors.grey.shade200,
             borderRadius: BorderRadius.circular(4),
           ),
-          child: Text(hora == null ? '' : timeFormat.format(hora), style: const TextStyle(fontWeight: FontWeight.bold),),
+          child: Text(
+            hora == null ? '' : timeFormat.format(hora),
+            style: const TextStyle(fontWeight: FontWeight.bold),
+          ),
         ),
       ],
     ),
@@ -180,7 +210,8 @@ Padding _horaRowView(DateTime? hora, String label) {
 
 class _TareaHoraInicioFinView extends StatelessWidget {
   final Tarea tarea;
-  const _TareaHoraInicioFinView({required this.tarea});
+  final int indexTar;
+  const _TareaHoraInicioFinView({required this.tarea, required this.indexTar});
 
   @override
   Widget build(BuildContext context) {
@@ -205,7 +236,8 @@ class _TareaHoraInicioFinView extends StatelessWidget {
 
 class _TareaCantidadView extends StatelessWidget {
   final Tarea tarea;
-  const _TareaCantidadView({required this.tarea});
+  final int indexTar;
+  const _TareaCantidadView({required this.tarea, required this.indexTar});
 
   @override
   Widget build(BuildContext context) {
@@ -229,7 +261,11 @@ class _TareaCantidadView extends StatelessWidget {
 
 class _TareaMaquinariaSinTiempoView extends StatelessWidget {
   final Tarea tarea;
-  const _TareaMaquinariaSinTiempoView({required this.tarea});
+  final int indexTar;
+  const _TareaMaquinariaSinTiempoView({
+    required this.tarea,
+    required this.indexTar,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -254,9 +290,21 @@ class _TareaMaquinariaSinTiempoView extends StatelessWidget {
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          Text('${index + 1}. ${maquinaria['maquinaria_modelo']}'),
-                          _horaRowView(maquinaria['hora_inicio'] == null ? null : DateTime.parse(maquinaria['hora_inicio']), 'Hora Inicio: '),
-                          _horaRowView(maquinaria['hora_fin'] == null ? null : DateTime.parse(maquinaria['hora_fin']), 'Hora Fin: '),
+                          Text(
+                            '${index + 1}. ${maquinaria['maquinaria_modelo']}',
+                          ),
+                          _horaRowView(
+                            maquinaria['hora_inicio'] == null
+                                ? null
+                                : DateTime.parse(maquinaria['hora_inicio']),
+                            'Hora Inicio: ',
+                          ),
+                          _horaRowView(
+                            maquinaria['hora_fin'] == null
+                                ? null
+                                : DateTime.parse(maquinaria['hora_fin']),
+                            'Hora Fin: ',
+                          ),
                         ],
                       ),
                     );
@@ -270,10 +318,13 @@ class _TareaMaquinariaSinTiempoView extends StatelessWidget {
   }
 }
 
-
 class _TareaMaquinariaConTiempoView extends StatelessWidget {
   final Tarea tarea;
-  const _TareaMaquinariaConTiempoView({required this.tarea});
+  final int indexTar;
+  const _TareaMaquinariaConTiempoView({
+    required this.tarea,
+    required this.indexTar,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -298,9 +349,21 @@ class _TareaMaquinariaConTiempoView extends StatelessWidget {
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          Text('${index + 1}. ${maquinaria['maquinaria_modelo']}'),
-                          _horaRowView(maquinaria['hora_inicio'] == null ? null : DateTime.parse(maquinaria['hora_inicio']), 'Hora Inicio: '),
-                          _horaRowView(maquinaria['hora_fin'] == null ? null : DateTime.parse(maquinaria['hora_fin']), 'Hora Fin: '),
+                          Text(
+                            '${index + 1}. ${maquinaria['maquinaria_modelo']}',
+                          ),
+                          _horaRowView(
+                            maquinaria['hora_inicio'] == null
+                                ? null
+                                : DateTime.parse(maquinaria['hora_inicio']),
+                            'Hora Inicio: ',
+                          ),
+                          _horaRowView(
+                            maquinaria['hora_fin'] == null
+                                ? null
+                                : DateTime.parse(maquinaria['hora_fin']),
+                            'Hora Fin: ',
+                          ),
                         ],
                       ),
                     );
@@ -316,7 +379,8 @@ class _TareaMaquinariaConTiempoView extends StatelessWidget {
 
 class _TareaTextoView extends StatelessWidget {
   final Tarea tarea;
-  const _TareaTextoView({required this.tarea});
+  final int indexTar;
+  const _TareaTextoView({required this.tarea, required this.indexTar});
 
   @override
   Widget build(BuildContext context) {
@@ -327,47 +391,52 @@ class _TareaTextoView extends StatelessWidget {
 class _TareaPasajerosView extends StatelessWidget {
   final Tarea tarea;
   final TurnaroundMain? turnaround;
-  const _TareaPasajerosView({required this.tarea, this.turnaround});
+  final int indexTar;
+  const _TareaPasajerosView({
+    required this.tarea,
+    this.turnaround,
+    required this.indexTar,
+  });
 
   @override
   Widget build(BuildContext context) {
-    return  Column(
-        children: [
-          if (turnaround?.fkVuelo.tipoServicio.id != 3)
-            // Llegada
-            _LlegadaPasajerosView(tarea: tarea),
+    return Column(
+      children: [
+        if (turnaround?.fkVuelo.tipoServicio.id != 3)
+          // Llegada
+          _LlegadaPasajerosView(tarea: tarea),
 
+        const Divider(thickness: 1),
+
+        if (turnaround?.fkVuelo.tipoServicio.id != 4)
+          // Salida
+          _SalidaPasajeroView(tarea: tarea),
+
+        if (turnaround?.fkVuelo.tipoServicio.id != 4)
+          // Transito
+          _TransitoPasajerosView(tarea: tarea),
+
+        if (turnaround?.fkVuelo.tipoServicio.id != 4)
+          // Inadmitidos
+          _InadmitidosPasajerosView(tarea: tarea),
+
+        if (turnaround?.fkVuelo.tipoServicio.id != 4)
           const Divider(thickness: 1),
 
-          if (turnaround?.fkVuelo.tipoServicio.id != 4)
-            // Salida
-            _SalidaPasajeroView(tarea: tarea),
+        if (turnaround?.fkVuelo.tipoServicio.id != 4)
+          // total
+          _TotalPasajerosView(tarea: tarea),
 
-          if (turnaround?.fkVuelo.tipoServicio.id != 4)
-            // Transito
-            _TransitoPasajerosView(tarea: tarea),
-
-          if (turnaround?.fkVuelo.tipoServicio.id != 4)
-            // Inadmitidos
-            _InadmitidosPasajerosView(tarea: tarea),
-
-          if (turnaround?.fkVuelo.tipoServicio.id != 4)
-            const Divider(thickness: 1),
-
-          if (turnaround?.fkVuelo.tipoServicio.id != 4)
-            // total
-            _TotalPasajerosView(tarea: tarea),
-
-          SizedBox(height: 8),
-        ],
-      );
-    
+        SizedBox(height: 8),
+      ],
+    );
   }
 }
 
 class _TareaExcesoEquipajeView extends StatelessWidget {
   final Tarea tarea;
-  const _TareaExcesoEquipajeView({required this.tarea});
+  final int indexTar;
+  const _TareaExcesoEquipajeView({required this.tarea, required this.indexTar});
 
   @override
   Widget build(BuildContext context) {
@@ -377,7 +446,8 @@ class _TareaExcesoEquipajeView extends StatelessWidget {
 
 class _TareaITView extends StatelessWidget {
   final Tarea tarea;
-  const _TareaITView({required this.tarea});
+  final int indexTar;
+  const _TareaITView({required this.tarea, required this.indexTar});
 
   @override
   Widget build(BuildContext context) {
@@ -387,14 +457,14 @@ class _TareaITView extends StatelessWidget {
 
 class _TareaLimpiezaView extends StatelessWidget {
   final Tarea tarea;
-  const _TareaLimpiezaView({required this.tarea});
+  final int indexTar;
+  const _TareaLimpiezaView({required this.tarea, required this.indexTar});
 
   @override
   Widget build(BuildContext context) {
     return Container();
   }
 }
-
 
 class _LlegadaPasajerosView extends StatelessWidget {
   const _LlegadaPasajerosView({required this.tarea});
@@ -616,152 +686,150 @@ class _TotalPasajerosView extends StatelessWidget {
   }
 }
 
-
-
 class _TareaImagenView extends StatelessWidget {
   final Tarea tarea;
-  const _TareaImagenView({required this.tarea});
+  final int indexTar;
+  const _TareaImagenView({required this.tarea, required this.indexTar});
 
   @override
-  Widget build(BuildContext context,) {
-    return
-    tarea.imagen == null || tarea.imagen!.isEmpty 
-    ? const SizedBox.shrink()
-    : Column(
-      children: [
-        Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: [
-            Text(
-              'Imágenes:',
-              style: Theme.of(
-                context,
-              ).textTheme.titleSmall?.copyWith(fontWeight: FontWeight.w400),
-            ),
-            // Camera icon
-            // Row(
-            //   // mainAxisAlignment: MainAxisAlignment.start,
-            //   children: [
-            //     ElevatedButton(
-            //       // disable if isLoading
-            //       onPressed: () async {
-            //         final photoPath = await CameraGalleryServiceImpl()
-            //             .selectPhoto();
+  Widget build(BuildContext context) {
+    return tarea.imagen == null || tarea.imagen!.isEmpty
+        ? const SizedBox.shrink()
+        : Column(
+            children: [
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Text(
+                    'Imágenes:',
+                    style: Theme.of(context).textTheme.titleSmall?.copyWith(
+                      fontWeight: FontWeight.w400,
+                    ),
+                  ),
 
-            //         if (photoPath == null) {
-            //           return;
-            //         }
+                  // Camera icon
+                  // Row(
+                  //   // mainAxisAlignment: MainAxisAlignment.start,
+                  //   children: [
+                  //     ElevatedButton(
+                  //       // disable if isLoading
+                  //       onPressed: () async {
+                  //         final photoPath = await CameraGalleryServiceImpl()
+                  //             .selectPhoto();
 
-            //         // add image to tarea provider
-            //         // ref.read(controlActividadesProvider(trcId).notifier)
-            //         //     .addImage(photoPath);
+                  //         if (photoPath == null) {
+                  //           return;
+                  //         }
 
-            //         // Upload image
-            //         final response = await ref
-            //             .read(controlActividadesProvider(trcId).notifier)
-            //             .uploadImage(photoPath, tarea.id);
+                  //         // add image to tarea provider
+                  //         // ref.read(controlActividadesProvider(trcId).notifier)
+                  //         //     .addImage(photoPath);
 
-            //         if (response == null) {
-            //           return;
-            //         }
-            //         // Show snackbar response
-            //         CustomSnackbar.showResponseSnackbar(
-            //           response.message,
-            //           response.success,
-            //           // ignore: use_build_context_synchronously
-            //           context,
-            //           isFixed: true,
-            //         );
-            //       },
-            //       style: ElevatedButton.styleFrom(
-            //         shape: CircleBorder(),
-            //         padding: EdgeInsets.all(5),
-            //         fixedSize: const Size(45, 45),
-            //         backgroundColor: Theme.of(
-            //           context,
-            //         ).colorScheme.primary, // <-- Button color
-            //         foregroundColor: Colors.red, // <-- Splash color
-            //       ),
-            //       child: Icon(
-            //         Icons.photo_library_outlined,
-            //         color: Colors.white,
-            //         size: 35,
-            //       ),
-            //     ),
-            //     ElevatedButton(
-            //       // disable if isLoading
-            //       onPressed: () async {
-            //         final photoPath = await CameraGalleryServiceImpl()
-            //             .takePhoto();
+                  //         // Upload image
+                  //         final response = await ref
+                  //             .read(controlActividadesProvider(trcId).notifier)
+                  //             .uploadImage(photoPath, tarea.id);
 
-            //         if (photoPath == null) {
-            //           return;
-            //         }
+                  //         if (response == null) {
+                  //           return;
+                  //         }
+                  //         // Show snackbar response
+                  //         CustomSnackbar.showResponseSnackbar(
+                  //           response.message,
+                  //           response.success,
+                  //           // ignore: use_build_context_synchronously
+                  //           context,
+                  //           isFixed: true,
+                  //         );
+                  //       },
+                  //       style: ElevatedButton.styleFrom(
+                  //         shape: CircleBorder(),
+                  //         padding: EdgeInsets.all(5),
+                  //         fixedSize: const Size(45, 45),
+                  //         backgroundColor: Theme.of(
+                  //           context,
+                  //         ).colorScheme.primary, // <-- Button color
+                  //         foregroundColor: Colors.red, // <-- Splash color
+                  //       ),
+                  //       child: Icon(
+                  //         Icons.photo_library_outlined,
+                  //         color: Colors.white,
+                  //         size: 35,
+                  //       ),
+                  //     ),
+                  //     ElevatedButton(
+                  //       // disable if isLoading
+                  //       onPressed: () async {
+                  //         final photoPath = await CameraGalleryServiceImpl()
+                  //             .takePhoto();
 
-            //         // Upload image
-            //         final response = await ref
-            //             .read(controlActividadesProvider(trcId).notifier)
-            //             .uploadImage(photoPath, tarea.id);
+                  //         if (photoPath == null) {
+                  //           return;
+                  //         }
 
-            //         if (response == null) {
-            //           return;
-            //         }
-            //         // Show snackbar response
-            //         CustomSnackbar.showResponseSnackbar(
-            //           response.message,
-            //           response.success,
-            //           // ignore: use_build_context_synchronously
-            //           context,
-            //           isFixed: true,
-            //         );
-            //       },
-            //       style: ElevatedButton.styleFrom(
-            //         shape: CircleBorder(),
-            //         padding: EdgeInsets.all(5),
-            //         fixedSize: const Size(45, 45),
-            //         backgroundColor: Theme.of(
-            //           context,
-            //         ).colorScheme.primary, // <-- Button color
-            //         foregroundColor: Colors.red, // <-- Splash color
-            //       ),
-            //       child: Icon(
-            //         Icons.camera_alt_outlined,
-            //         color: Colors.white,
-            //         size: 35,
-            //       ),
-            //     ),
-            //   ],
-            // ),
-          
-          ],
-        ),
+                  //         // Upload image
+                  //         final response = await ref
+                  //             .read(controlActividadesProvider(trcId).notifier)
+                  //             .uploadImage(photoPath, tarea.id);
 
-        _ComplicatedImageDemo(images: tarea.imagen ?? []),
+                  //         if (response == null) {
+                  //           return;
+                  //         }
+                  //         // Show snackbar response
+                  //         CustomSnackbar.showResponseSnackbar(
+                  //           response.message,
+                  //           response.success,
+                  //           // ignore: use_build_context_synchronously
+                  //           context,
+                  //           isFixed: true,
+                  //         );
+                  //       },
+                  //       style: ElevatedButton.styleFrom(
+                  //         shape: CircleBorder(),
+                  //         padding: EdgeInsets.all(5),
+                  //         fixedSize: const Size(45, 45),
+                  //         backgroundColor: Theme.of(
+                  //           context,
+                  //         ).colorScheme.primary, // <-- Button color
+                  //         foregroundColor: Colors.red, // <-- Splash color
+                  //       ),
+                  //       child: Icon(
+                  //         Icons.camera_alt_outlined,
+                  //         color: Colors.white,
+                  //         size: 35,
+                  //       ),
+                  //     ),
+                  //   ],
+                  // ),
+                ],
+              ),
 
-        // _CarouselWithIndicatorDemo(images: tarea.imagen ?? []),
-        // _ImageCarousel(images: tarea.imagen ?? []),
-        // SizedBox(
-        //   height: 250,
-        //   width: 600,
-        //   child: _ImageGallery(images: tarea.imagen ?? []),
-        // ),
+              _ComplicatedImageDemo(images: tarea.imagen ?? []),
 
-        // if (tarea.imagenes != null && tarea.imagenes!.isNotEmpty)
-        //   ...tarea.imagenes!.map((image) {
-        //     return Padding(
-        //       padding: const EdgeInsets.symmetric(vertical: 8.0),
-        //       child: Image.network(
-        //         image.url,
-        //         fit: BoxFit.cover,
-        //         height: 150,
-        //         width: double.infinity,
-        //       ),
-        //     );
-        //   }).toList(),
-        // if (tarea.imagenes == null || tarea.imagenes!.isEmpty)
-        //   const Text('No hay imágenes para esta tarea'),
-      ],
-    );
+              // _CarouselWithIndicatorDemo(images: tarea.imagen ?? []),
+              // _ImageCarousel(images: tarea.imagen ?? []),
+              // SizedBox(
+              //   height: 250,
+              //   width: 600,
+              //   child: _ImageGallery(images: tarea.imagen ?? []),
+              // ),
+
+              // if (tarea.imagenes != null && tarea.imagenes!.isNotEmpty)
+              //   ...tarea.imagenes!.map((image) {
+              //     return Padding(
+              //       padding: const EdgeInsets.symmetric(vertical: 8.0),
+              //       child: Image.network(
+              //         image.url,
+              //         fit: BoxFit.cover,
+              //         height: 150,
+              //         width: double.infinity,
+              //       ),
+              //     );
+              //   }).toList(),
+              // if (tarea.imagenes == null || tarea.imagenes!.isEmpty)
+              //   const Text('No hay imágenes para esta tarea'),
+            ],
+          );
   }
 }
 
@@ -868,45 +936,43 @@ class _ComplicatedImageDemo extends ConsumerWidget {
   }
 }
 
-
 class _ComentarioView extends ConsumerWidget {
   final Tarea tarea;
-  const _ComentarioView({required this.tarea});
+  final int indexTar;
+  const _ComentarioView({required this.tarea, required this.indexTar});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     TextEditingController textController = TextEditingController();
 
-    return 
-    tarea.comentario == null || tarea.comentario!.isEmpty ?
-    Container() :
-    Column(
-      children: [
-        Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: [
-            Text(
-              'Comentarios:',
-              style: Theme.of(
-                context,
-              ).textTheme.titleSmall?.copyWith(fontWeight: FontWeight.w400),
-            ),
-          
-          ],
-        ),
-        // Grey container to display the comment
-        Container(
-          width: double.infinity,
-          padding: const EdgeInsets.all(10),
-          margin: const EdgeInsets.symmetric(vertical: 10),
-          decoration: BoxDecoration(
-            color: Colors.grey.shade200,
-            borderRadius: BorderRadius.circular(10),
-          ),
-          child: Text(tarea.comentario ?? ''),
-        ),
-        // Text(tarea.comentario ?? ''),
-      ],
-    );
+    return tarea.comentario == null || tarea.comentario!.isEmpty
+        ? Container()
+        : Column(
+            children: [
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Text(
+                    'Comentarios:',
+                    style: Theme.of(context).textTheme.titleSmall?.copyWith(
+                      fontWeight: FontWeight.w400,
+                    ),
+                  ),
+                ],
+              ),
+              // Grey container to display the comment
+              Container(
+                width: double.infinity,
+                padding: const EdgeInsets.all(10),
+                margin: const EdgeInsets.symmetric(vertical: 10),
+                decoration: BoxDecoration(
+                  color: Colors.grey.shade200,
+                  borderRadius: BorderRadius.circular(10),
+                ),
+                child: Text(tarea.comentario ?? ''),
+              ),
+              // Text(tarea.comentario ?? ''),
+            ],
+          );
   }
 }

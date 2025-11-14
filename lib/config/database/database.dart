@@ -8,7 +8,7 @@ import 'package:path_provider/path_provider.dart';
 part 'database.g.dart';
 
 
-class ApiCall extends Table {
+class RequestApiRow extends Table {
   IntColumn get id => integer().autoIncrement()();
   // IntColumn get id => integer()();
   TextColumn get url => text()();
@@ -18,13 +18,23 @@ class ApiCall extends Table {
   IntColumn get timestamp => integer()();
   IntColumn get retryCount => integer().named('retry_count').withDefault(const Constant(0))();
   BoolColumn get isProcessing => boolean().named('is_procesing').withDefault(const Constant(false))();
+  BoolColumn get isMultipart => boolean().withDefault(const Constant(false))();
 
   // @override
   // Set<Column> get primaryKey => {id};
 }
 
+// @DataClassName('RequestFileRow')
+class RequestFileRow extends Table {
+  IntColumn get id => integer().autoIncrement()();
+  IntColumn get requestId => integer().references(RequestApiRow, #id)();
+  TextColumn get filePath => text()();
+  TextColumn get fieldName => text()();
+  TextColumn get fileName => text()();
+  TextColumn get mimeType => text()();
+}
 
-@DriftDatabase(tables: [ApiCall])
+@DriftDatabase(tables: [RequestApiRow , RequestFileRow])
 class AppDatabase extends _$AppDatabase {
   // After generating code, this class needs to define a `schemaVersion` getter
   // and a constructor telling drift where the database should be stored.

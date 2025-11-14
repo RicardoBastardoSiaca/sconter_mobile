@@ -81,16 +81,15 @@ class ConnectivityNotifier extends StateNotifier<AsyncValue<bool>> {
     try {
     localStorageRepository.getAllRequestApis().then((requests) async {
         await _requestManager.processAllRequests(requests, localStorageRepository);
-      print('Found ${requests.
-      length} requests to sync.');
+      print('Found ${requests.length} requests to sync.');
       
       // for (var request in requests) {
-      //   // deleting all requests after processing
-      //   await localStorageRepository.deleteApiRequestApi(request.id);
+        // deleting all requests after processing
+        // await localStorageRepository.deleteApiRequestApi(request.id);
       // }
-      //   // Perform API call based on stored request
-      //   // After successful call, delete the request from local storage
-      //   print('Syncing request: ${request}');
+        // Perform API call based on stored request
+        // After successful call, delete the request from local storage
+        // print('Syncing request: ${request}');
 
       //   // TODO: Implement actual API call logic here
 
