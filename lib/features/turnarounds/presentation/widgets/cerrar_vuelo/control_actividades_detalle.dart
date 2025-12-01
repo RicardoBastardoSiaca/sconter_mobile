@@ -84,12 +84,14 @@ class _ActividadesView extends StatelessWidget {
           children: [
             Row(
               children: [
-                Text('${indexAct + 1}. ', style: TextStyle(fontWeight: FontWeight.bold, color: Theme.of(context).colorScheme.primary )),
+                Text('${indexAct + 1}. ',
+                overflow: TextOverflow.ellipsis, 
+                style: TextStyle(fontWeight: FontWeight.bold, color: Theme.of(context).colorScheme.primary )),
                 Text(actividad.nombreActividad.toString()),
               ],
             ),
             const SizedBox(height: 4),
-            _TareasView(tareas: actividad.tareas, turnaround: turnaround),
+            _TareasView(tareas: actividad.tareas, turnaround: turnaround, indexAct: indexAct),
           ],
         );
       }).toList(),
@@ -99,8 +101,9 @@ class _ActividadesView extends StatelessWidget {
 
 class _TareasView extends StatelessWidget {
   final List<Tarea>? tareas;
+  final int indexAct;
   final TurnaroundMain? turnaround;
-  const _TareasView({this.tareas, this.turnaround});
+  const _TareasView({this.tareas, this.turnaround, required this.indexAct});
 
   @override
   Widget build(BuildContext context) {
@@ -116,34 +119,34 @@ class _TareasView extends StatelessWidget {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 switch (tarea.tipoId) {
-                  2 => _TareaHoraView(tarea: tarea, indexTar: indexTar),
+                  2 => _TareaHoraView(tarea: tarea, indexTar: indexTar, indexAct: indexAct),
                   3 => _TareaHoraInicioFinView(
                     tarea: tarea,
-                    indexTar: indexTar,
+                    indexTar: indexTar, indexAct: indexAct,
                   ),
-                  1 => _TareaCantidadView(tarea: tarea, indexTar: indexTar),
+                  1 => _TareaCantidadView(tarea: tarea, indexTar: indexTar, indexAct: indexAct),
                   4 => _TareaMaquinariaSinTiempoView(
                     tarea: tarea,
-                    indexTar: indexTar,
+                    indexTar: indexTar, indexAct: indexAct,
                   ),
                   5 => _TareaMaquinariaConTiempoView(
                     tarea: tarea,
-                    indexTar: indexTar,
+                    indexTar: indexTar, indexAct: indexAct,
                   ),
-                  6 => _TareaTextoView(tarea: tarea, indexTar: indexTar),
+                  6 => _TareaTextoView(tarea: tarea, indexTar: indexTar, indexAct: indexAct),
                   7 => _TareaPasajerosView(
                     tarea: tarea,
                     turnaround: turnaround,
-                    indexTar: indexTar,
+                    indexTar: indexTar, indexAct: indexAct,
                   ),
                   8 => _TareaExcesoEquipajeView(
                     tarea: tarea,
-                    indexTar: indexTar,
+                    indexTar: indexTar, indexAct: indexAct,
                   ),
-                  9 => _TareaITView(tarea: tarea, indexTar: indexTar),
-                  10 => _TareaLimpiezaView(tarea: tarea, indexTar: indexTar),
+                  9 => _TareaITView(tarea: tarea, indexTar: indexTar, indexAct: indexAct),
+                  10 => _TareaLimpiezaView(tarea: tarea, indexTar: indexTar, indexAct: indexAct),
                   // Default case
-                  _ => _TareaHoraView(tarea: tarea, indexTar: indexTar),
+                  _ => _TareaHoraView(tarea: tarea, indexTar: indexTar, indexAct: indexAct),
                 },
                 // Image list display
                 _TareaImagenView(tarea: tarea, indexTar: indexTar),
@@ -151,7 +154,7 @@ class _TareasView extends StatelessWidget {
                 _ComentarioView(tarea: tarea, indexTar: indexTar),
 
                 // Divider
-                // Divider(thickness: 0.5, color: Colors.grey.shade400),
+                Divider(thickness: 0.7, color: Colors.grey.shade400),
                 
                 const SizedBox(height: 10),
               ],
@@ -166,14 +169,16 @@ class _TareasView extends StatelessWidget {
 class _TareaHoraView extends StatelessWidget {
   final Tarea tarea;
   final int indexTar;
-  const _TareaHoraView({required this.tarea, required this.indexTar});
+  final int indexAct;
+  const _TareaHoraView({required this.tarea, required this.indexTar, required this.indexAct});
 
   @override
   Widget build(BuildContext context) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Text('${indexTar + 1}. ${tarea.titulo}'),
+        Text('${indexAct + 1}.${indexTar + 1}. ${tarea.titulo}'),
+        // Text('- ${tarea.titulo}'),
         Padding(
           padding: const EdgeInsets.symmetric(horizontal: 16.0),
           child: _horaRowView(tarea.horaInicio, 'Hora: '),
@@ -211,7 +216,8 @@ Padding _horaRowView(DateTime? hora, String label) {
 class _TareaHoraInicioFinView extends StatelessWidget {
   final Tarea tarea;
   final int indexTar;
-  const _TareaHoraInicioFinView({required this.tarea, required this.indexTar});
+  final int indexAct;
+  const _TareaHoraInicioFinView({required this.tarea, required this.indexTar, required this.indexAct});
 
   @override
   Widget build(BuildContext context) {
@@ -219,7 +225,7 @@ class _TareaHoraInicioFinView extends StatelessWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Text(tarea.titulo),
+        Text('${indexAct + 1}.${indexTar + 1}. ${tarea.titulo}'),
         Padding(
           padding: const EdgeInsets.symmetric(horizontal: 16.0),
           child: Column(
@@ -237,22 +243,28 @@ class _TareaHoraInicioFinView extends StatelessWidget {
 class _TareaCantidadView extends StatelessWidget {
   final Tarea tarea;
   final int indexTar;
-  const _TareaCantidadView({required this.tarea, required this.indexTar});
+  final int indexAct;
+  const _TareaCantidadView({required this.tarea, required this.indexTar, required this.indexAct});
 
   @override
   Widget build(BuildContext context) {
-    return Row(
+    return Column(
       children: [
-        Text('Cantidad: '),
-        Container(
-          margin: const EdgeInsets.only(left: 8),
-          padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-          constraints: const BoxConstraints(minWidth: 60),
-          decoration: BoxDecoration(
-            color: Colors.grey.shade200,
-            borderRadius: BorderRadius.circular(4),
-          ),
-          child: Text(tarea.numero?.toString() ?? ''),
+        Text('${indexAct + 1}.${indexTar + 1}. ${tarea.titulo}'),
+        Row(
+          children: [
+            Text('Cantidad: '),
+            Container(
+              margin: const EdgeInsets.only(left: 8),
+              padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+              constraints: const BoxConstraints(minWidth: 60),
+              decoration: BoxDecoration(
+                color: Colors.grey.shade200,
+                borderRadius: BorderRadius.circular(4),
+              ),
+              child: Text(tarea.numero?.toString() ?? ''),
+            ),
+          ],
         ),
       ],
     );
@@ -262,9 +274,11 @@ class _TareaCantidadView extends StatelessWidget {
 class _TareaMaquinariaSinTiempoView extends StatelessWidget {
   final Tarea tarea;
   final int indexTar;
+  final int indexAct;
   const _TareaMaquinariaSinTiempoView({
     required this.tarea,
     required this.indexTar,
+    required this.indexAct,
   });
 
   @override
@@ -273,7 +287,7 @@ class _TareaMaquinariaSinTiempoView extends StatelessWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Text(tarea.titulo),
+        Text('${indexAct + 1}.${indexTar + 1}. ${tarea.titulo}'),
         Padding(
           padding: const EdgeInsets.symmetric(horizontal: 16.0),
           child: Column(
@@ -321,9 +335,11 @@ class _TareaMaquinariaSinTiempoView extends StatelessWidget {
 class _TareaMaquinariaConTiempoView extends StatelessWidget {
   final Tarea tarea;
   final int indexTar;
+  final int indexAct;
   const _TareaMaquinariaConTiempoView({
     required this.tarea,
     required this.indexTar,
+    required this.indexAct,
   });
 
   @override
@@ -332,7 +348,7 @@ class _TareaMaquinariaConTiempoView extends StatelessWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Text(tarea.titulo),
+        Text('${indexAct + 1}.${indexTar + 1}. ${tarea.titulo}'),
         Padding(
           padding: const EdgeInsets.symmetric(horizontal: 16.0),
           child: Column(
@@ -380,11 +396,21 @@ class _TareaMaquinariaConTiempoView extends StatelessWidget {
 class _TareaTextoView extends StatelessWidget {
   final Tarea tarea;
   final int indexTar;
-  const _TareaTextoView({required this.tarea, required this.indexTar});
+  final int indexAct;
+  const _TareaTextoView({required this.tarea, required this.indexTar, required this.indexAct});
 
   @override
   Widget build(BuildContext context) {
-    return Container();
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text('${indexAct + 1}.${indexTar + 1}. ${tarea.titulo}'),
+        Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 16.0),
+          child: Text(tarea.texto ?? ''),
+        ),
+      ],
+    );
   }
 }
 
@@ -392,42 +418,45 @@ class _TareaPasajerosView extends StatelessWidget {
   final Tarea tarea;
   final TurnaroundMain? turnaround;
   final int indexTar;
+  final int indexAct;
   const _TareaPasajerosView({
     required this.tarea,
     this.turnaround,
     required this.indexTar,
+    required this.indexAct,
   });
 
   @override
   Widget build(BuildContext context) {
     return Column(
       children: [
-        if (turnaround?.fkVuelo.tipoServicio.id != 3)
+        Text('${indexAct + 1}.${indexTar + 1}. ${tarea.titulo}'),
+        // if (turnaround?.fkVuelo.tipoServicio.id != 3)
           // Llegada
-          _LlegadaPasajerosView(tarea: tarea),
+        _PasajerosRowView(tarea: tarea),
 
         const Divider(thickness: 1),
 
-        if (turnaround?.fkVuelo.tipoServicio.id != 4)
-          // Salida
-          _SalidaPasajeroView(tarea: tarea),
+        // if (turnaround?.fkVuelo.tipoServicio.id != 4)
+        //   // Salida
+        //   _SalidaPasajeroView(tarea: tarea),
 
-        if (turnaround?.fkVuelo.tipoServicio.id != 4)
-          // Transito
-          _TransitoPasajerosView(tarea: tarea),
+        // if (turnaround?.fkVuelo.tipoServicio.id != 4)
+        //   // Transito
+        //   _TransitoPasajerosView(tarea: tarea),
 
-        if (turnaround?.fkVuelo.tipoServicio.id != 4)
-          // Inadmitidos
-          _InadmitidosPasajerosView(tarea: tarea),
+        // if (turnaround?.fkVuelo.tipoServicio.id != 4)
+        //   // Inadmitidos
+        //   _InadmitidosPasajerosView(tarea: tarea),
 
-        if (turnaround?.fkVuelo.tipoServicio.id != 4)
-          const Divider(thickness: 1),
+        // if (turnaround?.fkVuelo.tipoServicio.id != 4)
+        //   const Divider(thickness: 1),
 
-        if (turnaround?.fkVuelo.tipoServicio.id != 4)
-          // total
-          _TotalPasajerosView(tarea: tarea),
+        // if (turnaround?.fkVuelo.tipoServicio.id != 4)
+        //   // total
+        //   _TotalPasajerosView(tarea: tarea),
 
-        SizedBox(height: 8),
+        // SizedBox(height: 8),
       ],
     );
   }
@@ -436,38 +465,82 @@ class _TareaPasajerosView extends StatelessWidget {
 class _TareaExcesoEquipajeView extends StatelessWidget {
   final Tarea tarea;
   final int indexTar;
-  const _TareaExcesoEquipajeView({required this.tarea, required this.indexTar});
+  final int indexAct;
+  const _TareaExcesoEquipajeView({required this.tarea, required this.indexTar, required this.indexAct});
 
   @override
   Widget build(BuildContext context) {
-    return Container();
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text('${indexAct + 1}.${indexTar + 1}. ${tarea.titulo}'),
+        Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 16.0),
+          child: Row(
+            children: [
+              Text('Exceso de equipaje: '),
+              Container(
+                margin: const EdgeInsets.only(left: 8),
+                padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                constraints: const BoxConstraints(minWidth: 60),
+                decoration: BoxDecoration(
+                  color: Colors.grey.shade200,
+                  borderRadius: BorderRadius.circular(4),
+                ),
+                child: Text(tarea.numero?.toString() ?? ''),
+              ),
+            ],
+          ),
+        ),
+      ],
+    );
   }
 }
 
 class _TareaITView extends StatelessWidget {
   final Tarea tarea;
   final int indexTar;
-  const _TareaITView({required this.tarea, required this.indexTar});
+  final int indexAct;
+  const _TareaITView({required this.tarea, required this.indexTar, required this.indexAct});
 
   @override
   Widget build(BuildContext context) {
-    return Container();
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text('${indexAct + 1}.${indexTar + 1}. ${tarea.titulo}'),
+        Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 16.0),
+          child: Text(tarea.texto ?? ''),
+        ),
+      ],
+    );
   }
 }
 
 class _TareaLimpiezaView extends StatelessWidget {
   final Tarea tarea;
   final int indexTar;
-  const _TareaLimpiezaView({required this.tarea, required this.indexTar});
+  final int indexAct;
+  const _TareaLimpiezaView({required this.tarea, required this.indexTar, required this.indexAct});
 
   @override
   Widget build(BuildContext context) {
-    return Container();
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text('${indexAct + 1}.${indexTar + 1}. ${tarea.titulo}'),
+        Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 16.0),
+          child: Text(tarea.texto ?? ''),
+        ),
+      ],
+    );
   }
 }
 
-class _LlegadaPasajerosView extends StatelessWidget {
-  const _LlegadaPasajerosView({required this.tarea});
+class _PasajerosRowView extends StatelessWidget {
+  const _PasajerosRowView({required this.tarea});
 
   final Tarea tarea;
 
@@ -477,7 +550,7 @@ class _LlegadaPasajerosView extends StatelessWidget {
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
         // half width
-        Flexible(flex: 3, child: Text('Llegada:')),
+        // Flexible(flex: 3, child: Text('Total de pasajeros:')),
         Flexible(
           flex: 6,
           child: Row(
@@ -485,19 +558,19 @@ class _LlegadaPasajerosView extends StatelessWidget {
               Expanded(
                 child: PasajerosBoxContainer(
                   clase: 'C',
-                  cantidad: tarea.pasajeros!['llegada_ejecutivo']!,
+                  cantidad: tarea.pasajeros!.ejecutivo,
                 ),
               ),
               Expanded(
                 child: PasajerosBoxContainer(
                   clase: 'Y',
-                  cantidad: tarea.pasajeros!['llegada_economica']!,
+                  cantidad: tarea.pasajeros!.economica,
                 ),
               ),
               Expanded(
                 child: PasajerosBoxContainer(
                   clase: 'I',
-                  cantidad: tarea.pasajeros!['llegada_infante']!,
+                  cantidad: tarea.pasajeros!.infante,
                 ),
               ),
             ],
@@ -507,184 +580,225 @@ class _LlegadaPasajerosView extends StatelessWidget {
     );
   }
 }
+// class _LlegadaPasajerosView extends StatelessWidget {
+//   const _LlegadaPasajerosView({required this.tarea});
 
-class _InadmitidosPasajerosView extends StatelessWidget {
-  const _InadmitidosPasajerosView({required this.tarea});
+//   final Tarea tarea;
 
-  final Tarea tarea;
+//   @override
+//   Widget build(BuildContext context) {
+//     return Row(
+//       mainAxisAlignment: MainAxisAlignment.spaceBetween,
+//       children: [
+//         // half width
+//         Flexible(flex: 3, child: Text('Llegada:')),
+//         Flexible(
+//           flex: 6,
+//           child: Row(
+//             children: [
+//               Expanded(
+//                 child: PasajerosBoxContainer(
+//                   clase: 'C',
+//                   cantidad: tarea.pasajeros!['llegada_ejecutivo']!,
+//                 ),
+//               ),
+//               Expanded(
+//                 child: PasajerosBoxContainer(
+//                   clase: 'Y',
+//                   cantidad: tarea.pasajeros!['llegada_economica']!,
+//                 ),
+//               ),
+//               Expanded(
+//                 child: PasajerosBoxContainer(
+//                   clase: 'I',
+//                   cantidad: tarea.pasajeros!['llegada_infante']!,
+//                 ),
+//               ),
+//             ],
+//           ),
+//         ),
+//       ],
+//     );
+//   }
+// }
 
-  @override
-  Widget build(BuildContext context) {
-    return Row(
-      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-      children: [
-        // half width
-        Flexible(flex: 3, child: Text('Inadmitidos:')),
-        Flexible(
-          flex: 6,
-          child: Row(
-            children: [
-              Expanded(
-                child: PasajerosBoxContainer(
-                  clase: 'C',
-                  cantidad: tarea.pasajeros!['inadmitidos_ejecutivo']!,
-                ),
-              ),
-              Expanded(
-                child: PasajerosBoxContainer(
-                  clase: 'Y',
-                  cantidad: tarea.pasajeros!['inadmitidos_economica']!,
-                ),
-              ),
-              Expanded(
-                child: PasajerosBoxContainer(
-                  clase: 'I',
-                  cantidad: tarea.pasajeros!['inadmitidos_infante']!,
-                ),
-              ),
-            ],
-          ),
-        ),
-      ],
-    );
-  }
-}
+// class _InadmitidosPasajerosView extends StatelessWidget {
+//   const _InadmitidosPasajerosView({required this.tarea});
 
-class _TransitoPasajerosView extends StatelessWidget {
-  const _TransitoPasajerosView({required this.tarea});
+//   final Tarea tarea;
 
-  final Tarea tarea;
+//   @override
+//   Widget build(BuildContext context) {
+//     return Row(
+//       mainAxisAlignment: MainAxisAlignment.spaceBetween,
+//       children: [
+//         // half width
+//         Flexible(flex: 3, child: Text('Inadmitidos:')),
+//         Flexible(
+//           flex: 6,
+//           child: Row(
+//             children: [
+//               Expanded(
+//                 child: PasajerosBoxContainer(
+//                   clase: 'C',
+//                   cantidad: tarea.pasajeros!['inadmitidos_ejecutivo']!,
+//                 ),
+//               ),
+//               Expanded(
+//                 child: PasajerosBoxContainer(
+//                   clase: 'Y',
+//                   cantidad: tarea.pasajeros!['inadmitidos_economica']!,
+//                 ),
+//               ),
+//               Expanded(
+//                 child: PasajerosBoxContainer(
+//                   clase: 'I',
+//                   cantidad: tarea.pasajeros!['inadmitidos_infante']!,
+//                 ),
+//               ),
+//             ],
+//           ),
+//         ),
+//       ],
+//     );
+//   }
+// }
 
-  @override
-  Widget build(BuildContext context) {
-    return Row(
-      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-      children: [
-        // half width
-        Flexible(flex: 3, child: Text('Transito:')),
-        Flexible(
-          flex: 6,
-          child: Row(
-            children: [
-              Expanded(
-                child: PasajerosBoxContainer(
-                  clase: 'C',
-                  cantidad: tarea.pasajeros!['transito_ejecutivo']!,
-                ),
-              ),
-              Expanded(
-                child: PasajerosBoxContainer(
-                  clase: 'Y',
-                  cantidad: tarea.pasajeros!['transito_economica']!,
-                ),
-              ),
-              Expanded(
-                child: PasajerosBoxContainer(
-                  clase: 'I',
-                  cantidad: tarea.pasajeros!['transito_infante']!,
-                ),
-              ),
-            ],
-          ),
-        ),
-      ],
-    );
-  }
-}
+// class _TransitoPasajerosView extends StatelessWidget {
+//   const _TransitoPasajerosView({required this.tarea});
 
-class _SalidaPasajeroView extends StatelessWidget {
-  const _SalidaPasajeroView({required this.tarea});
+//   final Tarea tarea;
 
-  final Tarea tarea;
+//   @override
+//   Widget build(BuildContext context) {
+//     return Row(
+//       mainAxisAlignment: MainAxisAlignment.spaceBetween,
+//       children: [
+//         // half width
+//         Flexible(flex: 3, child: Text('Transito:')),
+//         Flexible(
+//           flex: 6,
+//           child: Row(
+//             children: [
+//               Expanded(
+//                 child: PasajerosBoxContainer(
+//                   clase: 'C',
+//                   cantidad: tarea.pasajeros!['transito_ejecutivo']!,
+//                 ),
+//               ),
+//               Expanded(
+//                 child: PasajerosBoxContainer(
+//                   clase: 'Y',
+//                   cantidad: tarea.pasajeros!['transito_economica']!,
+//                 ),
+//               ),
+//               Expanded(
+//                 child: PasajerosBoxContainer(
+//                   clase: 'I',
+//                   cantidad: tarea.pasajeros!['transito_infante']!,
+//                 ),
+//               ),
+//             ],
+//           ),
+//         ),
+//       ],
+//     );
+//   }
+// }
 
-  @override
-  Widget build(BuildContext context) {
-    return Row(
-      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-      children: [
-        // half width
-        Flexible(flex: 3, child: Text('Salida:')),
-        Flexible(
-          flex: 6,
-          child: Row(
-            children: [
-              Expanded(
-                child: PasajerosBoxContainer(
-                  clase: 'C',
-                  cantidad: tarea.pasajeros!['salida_ejecutivo']!,
-                ),
-              ),
-              Expanded(
-                child: PasajerosBoxContainer(
-                  clase: 'Y',
-                  cantidad: tarea.pasajeros!['salida_economica']!,
-                ),
-              ),
-              Expanded(
-                child: PasajerosBoxContainer(
-                  clase: 'I',
-                  cantidad: tarea.pasajeros!['salida_infante']!,
-                ),
-              ),
-            ],
-          ),
-        ),
-      ],
-    );
-  }
-}
+// class _SalidaPasajeroView extends StatelessWidget {
+//   const _SalidaPasajeroView({required this.tarea});
 
-class _TotalPasajerosView extends StatelessWidget {
-  const _TotalPasajerosView({required this.tarea});
+//   final Tarea tarea;
 
-  final Tarea tarea;
+//   @override
+//   Widget build(BuildContext context) {
+//     return Row(
+//       mainAxisAlignment: MainAxisAlignment.spaceBetween,
+//       children: [
+//         // half width
+//         Flexible(flex: 3, child: Text('Salida:')),
+//         Flexible(
+//           flex: 6,
+//           child: Row(
+//             children: [
+//               Expanded(
+//                 child: PasajerosBoxContainer(
+//                   clase: 'C',
+//                   cantidad: tarea.pasajeros!['salida_ejecutivo']!,
+//                 ),
+//               ),
+//               Expanded(
+//                 child: PasajerosBoxContainer(
+//                   clase: 'Y',
+//                   cantidad: tarea.pasajeros!['salida_economica']!,
+//                 ),
+//               ),
+//               Expanded(
+//                 child: PasajerosBoxContainer(
+//                   clase: 'I',
+//                   cantidad: tarea.pasajeros!['salida_infante']!,
+//                 ),
+//               ),
+//             ],
+//           ),
+//         ),
+//       ],
+//     );
+//   }
+// }
 
-  @override
-  Widget build(BuildContext context) {
-    return Row(
-      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-      children: [
-        // half width
-        Flexible(flex: 3, child: Text('Total:')),
-        Flexible(
-          flex: 6,
-          child: Row(
-            children: [
-              Expanded(
-                child: PasajerosBoxContainer(
-                  clase: 'C',
-                  // total pasajeros = salida + transito - inadmitidos
-                  cantidad:
-                      tarea.pasajeros!['salida_ejecutivo']! +
-                      tarea.pasajeros!['transito_ejecutivo']! -
-                      tarea.pasajeros!['inadmitidos_ejecutivo']!,
-                ),
-              ),
-              Expanded(
-                child: PasajerosBoxContainer(
-                  clase: 'Y',
-                  cantidad:
-                      tarea.pasajeros!['salida_economica']! +
-                      tarea.pasajeros!['transito_economica']! -
-                      tarea.pasajeros!['inadmitidos_economica']!,
-                ),
-              ),
-              Expanded(
-                child: PasajerosBoxContainer(
-                  clase: 'I',
-                  cantidad:
-                      tarea.pasajeros!['salida_infante']! +
-                      tarea.pasajeros!['transito_infante']! -
-                      tarea.pasajeros!['inadmitidos_infante']!,
-                ),
-              ),
-            ],
-          ),
-        ),
-      ],
-    );
-  }
-}
+// class _TotalPasajerosView extends StatelessWidget {
+//   const _TotalPasajerosView({required this.tarea});
+
+//   final Tarea tarea;
+
+//   @override
+//   Widget build(BuildContext context) {
+//     return Row(
+//       mainAxisAlignment: MainAxisAlignment.spaceBetween,
+//       children: [
+//         // half width
+//         Flexible(flex: 3, child: Text('Total:')),
+//         Flexible(
+//           flex: 6,
+//           child: Row(
+//             children: [
+//               Expanded(
+//                 child: PasajerosBoxContainer(
+//                   clase: 'C',
+//                   // total pasajeros = salida + transito - inadmitidos
+//                   cantidad:
+//                       tarea.pasajeros!['salida_ejecutivo']! +
+//                       tarea.pasajeros!['transito_ejecutivo']! -
+//                       tarea.pasajeros!['inadmitidos_ejecutivo']!,
+//                 ),
+//               ),
+//               Expanded(
+//                 child: PasajerosBoxContainer(
+//                   clase: 'Y',
+//                   cantidad:
+//                       tarea.pasajeros!['salida_economica']! +
+//                       tarea.pasajeros!['transito_economica']! -
+//                       tarea.pasajeros!['inadmitidos_economica']!,
+//                 ),
+//               ),
+//               Expanded(
+//                 child: PasajerosBoxContainer(
+//                   clase: 'I',
+//                   cantidad:
+//                       tarea.pasajeros!['salida_infante']! +
+//                       tarea.pasajeros!['transito_infante']! -
+//                       tarea.pasajeros!['inadmitidos_infante']!,
+//                 ),
+//               ),
+//             ],
+//           ),
+//         ),
+//       ],
+//     );
+//   }
+// }
 
 class _TareaImagenView extends StatelessWidget {
   final Tarea tarea;

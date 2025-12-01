@@ -35,32 +35,31 @@ class PasajerosDialog extends ConsumerWidget {
                 child: Column(
                   mainAxisSize: MainAxisSize.min,
                   children: [
-                    if (turnaround?.fkVuelo.tipoServicio.id != 3)
-                      _LlegadaPasajerosView(tarea: tarea),
+                      _PasajerosRowView(tarea: tarea),
 
                     const Divider(thickness: 1),
 
-                    if (turnaround?.fkVuelo.tipoServicio.id != 4)
-                      _SalidaPasajerosView(tarea: tarea),
+                    // if (turnaround?.fkVuelo.tipoServicio.id != 4)
+                    //   _SalidaPasajerosView(tarea: tarea),
 
-                    if (turnaround?.fkVuelo.tipoServicio.id != 4)
-                      SizedBox(height: 5),
+                    // if (turnaround?.fkVuelo.tipoServicio.id != 4)
+                    //   SizedBox(height: 5),
 
-                    if (turnaround?.fkVuelo.tipoServicio.id != 4)
-                      _TransitoPasajerosView(tarea: tarea),
+                    // if (turnaround?.fkVuelo.tipoServicio.id != 4)
+                    //   _TransitoPasajerosView(tarea: tarea),
 
-                    if (turnaround?.fkVuelo.tipoServicio.id != 4)
-                      SizedBox(height: 5),
+                    // if (turnaround?.fkVuelo.tipoServicio.id != 4)
+                    //   SizedBox(height: 5),
 
-                    if (turnaround?.fkVuelo.tipoServicio.id != 4)
-                      _InadmitidosPasajerosView(tarea: tarea),
+                    // if (turnaround?.fkVuelo.tipoServicio.id != 4)
+                    //   _InadmitidosPasajerosView(tarea: tarea),
 
-                    // SizedBox(height: 5),
-                    if (turnaround?.fkVuelo.tipoServicio.id != 4)
-                      const Divider(thickness: 1),
+                    // // SizedBox(height: 5),
+                    // if (turnaround?.fkVuelo.tipoServicio.id != 4)
+                    //   const Divider(thickness: 1),
 
-                    if (turnaround?.fkVuelo.tipoServicio.id != 4)
-                      _TotalPasajerosView(tarea: tarea),
+                    // if (turnaround?.fkVuelo.tipoServicio.id != 4)
+                    //   _TotalPasajerosView(tarea: tarea),
                     // Pasajeros Input Form Field
                   ],
                 ),
@@ -127,21 +126,11 @@ class PasajerosDialog extends ConsumerWidget {
               }
               // body
               final SavePasajerosRequest body = SavePasajerosRequest(
-                id: tarea.pasajeros!['id']!,
-                llegadaEjecutivo: pasajerosForm.llegadaEjecutivo.value ?? 0,
-                llegadaEconomica: pasajerosForm.llegadaEconomica.value ?? 0,
-                llegadaInfante: pasajerosForm.llegadaInfante.value ?? 0,
-                transitoEjecutivo: pasajerosForm.transitoEjecutivo.value ?? 0,
-                transitoEconomica: pasajerosForm.transitoEconomica.value ?? 0,
-                transitoInfante: pasajerosForm.transitoInfante.value ?? 0,
-                salidaEjecutivo: pasajerosForm.salidaEjecutivo.value ?? 0,
-                salidaEconomica: pasajerosForm.salidaEconomica.value ?? 0,
-                salidaInfante: pasajerosForm.salidaInfante.value ?? 0,
-                inadmitidosEjecutivo:
-                    pasajerosForm.inadmitidosEjecutivo.value ?? 0,
-                inadmitidosEconomica:
-                    pasajerosForm.inadmitidosEconomica.value ?? 0,
-                inadmitidosInfante: pasajerosForm.inadmitidosInfante.value ?? 0,
+                id: tarea.pasajeros!.id,
+                ejecutivo: pasajerosForm.ejecutivo.value ?? 0,
+                economica: pasajerosForm.economica.value ?? 0,
+                infante: pasajerosForm.infante.value ?? 0,
+                
               );
 
               final trcId = ref
@@ -169,65 +158,9 @@ class PasajerosDialog extends ConsumerWidget {
   }
 }
 
-class _TotalPasajerosView extends ConsumerWidget {
+class _PasajerosRowView extends ConsumerWidget {
   final Tarea tarea;
-  const _TotalPasajerosView({required this.tarea});
-
-  @override
-  Widget build(BuildContext context, WidgetRef ref) {
-    final pasajerosForm = ref.watch(pasajerosFormProvider);
-    return Row(
-      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-      children: [
-        // half width
-        Flexible(flex: 3, child: Text('Total:')),
-        Flexible(
-          flex: 6,
-          child: Row(
-            children: [
-              Expanded(
-                child: PasajerosBoxContainer(
-                  clase: 'C',
-                  // total pasajeros = salida + transito - inadmitidos
-                  cantidad:
-                      pasajerosForm.salidaEjecutivo.value! +
-                      pasajerosForm.transitoEjecutivo.value! -
-                      pasajerosForm.inadmitidosEjecutivo.value!,
-                ),
-              ),
-              Expanded(
-                child: PasajerosBoxContainer(
-                  clase: 'Y',
-                  cantidad:
-                      pasajerosForm.salidaEconomica.value! +
-                      pasajerosForm.transitoEconomica.value! -
-                      pasajerosForm.inadmitidosEconomica.value!,
-                ),
-              ),
-              Expanded(
-                child: PasajerosBoxContainer(
-                  clase: 'I',
-                  cantidad:
-                      pasajerosForm.salidaInfante.value! +
-                      pasajerosForm.transitoInfante.value! -
-                      pasajerosForm.inadmitidosInfante.value!,
-                ),
-              ),
-            ],
-          ),
-        ),
-      ],
-    );
-  }
-}
-
-// bool isValidForm(PasajerosFormState pasajerosForm) {
-//   return pasajerosForm.isValid;
-// }
-
-class _LlegadaPasajerosView extends ConsumerWidget {
-  final Tarea tarea;
-  const _LlegadaPasajerosView({required this.tarea});
+  const _PasajerosRowView({required this.tarea});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -255,9 +188,9 @@ class _LlegadaPasajerosView extends ConsumerWidget {
                       print(intValue);
                       return ref
                           .read(pasajerosFormProvider.notifier)
-                          .onLlegadaEjecutivoChanged(intValue);
+                          .onEjecutivoChanged(intValue);
                     },
-                    initialValue: tarea.pasajeros!['llegada_ejecutivo']
+                    initialValue: tarea.pasajeros!.ejecutivo
                         .toString(),
                     // errorMessage: null
                     //                     onFieldSubmitted: (_) =>
@@ -276,9 +209,9 @@ class _LlegadaPasajerosView extends ConsumerWidget {
                       int intValue = value.isEmpty ? 0 : int.parse(value);
                       return ref
                           .read(pasajerosFormProvider.notifier)
-                          .onLlegadaEconomicaChanged(intValue);
+                          .onEconomicaChanged(intValue);
                     },
-                    initialValue: tarea.pasajeros!['llegada_economica']
+                    initialValue: tarea.pasajeros!.economica
                         .toString(),
                     // errorMessage: null
                     //                     onFieldSubmitted: (_) =>
@@ -297,191 +230,9 @@ class _LlegadaPasajerosView extends ConsumerWidget {
                       int intValue = value.isEmpty ? 0 : int.parse(value);
                       return ref
                           .read(pasajerosFormProvider.notifier)
-                          .onLlegadaInfanteChanged(intValue);
+                          .onInfanteChanged(intValue);
                     },
-                    initialValue: tarea.pasajeros!['llegada_infante']
-                        .toString(),
-                    // errorMessage: null
-                    //                     onFieldSubmitted: (_) =>
-                    // ref.read(loginFormProvider.notifier).onFormSubmit(),
-                  ),
-                ),
-              ),
-            ],
-          ),
-        ),
-      ],
-    );
-  }
-}
-
-class _SalidaPasajerosView extends ConsumerWidget {
-  final Tarea tarea;
-  const _SalidaPasajerosView({required this.tarea});
-
-  @override
-  Widget build(BuildContext context, WidgetRef ref) {
-    return Row(
-      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-      children: [
-        Flexible(flex: 3, child: Text('Salida:')),
-
-        // const Spacer(),
-        Flexible(
-          flex: 6,
-          child: Row(
-            children: [
-              // ejecutivo
-              Expanded(
-                child: Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 2),
-                  child: PasajerosInputFormField(
-                    keyboardType: TextInputType.number,
-                    // controller: textController,
-                    onChanged: (value) {
-                      int intValue = value.isEmpty ? 0 : int.parse(value);
-                      return ref
-                          .read(pasajerosFormProvider.notifier)
-                          .onSalidaEjecutivoChanged(intValue);
-                    },
-                    initialValue: tarea.pasajeros!['salida_ejecutivo']
-                        .toString(),
-                    // initialValue: ref
-                    //     .watch(pasajerosFormProvider)
-                    //     .salidaEjecutivo
-                    //     .toString(),
-                    // errorMessage: null
-                    //                     onFieldSubmitted: (_) =>
-                    // ref.read(loginFormProvider.notifier).onFormSubmit(),
-                  ),
-                ),
-              ),
-
-              // economico
-              Expanded(
-                child: Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 2),
-                  child: PasajerosInputFormField(
-                    keyboardType: TextInputType.number,
-                    // controller: textController,
-                    onChanged: (value) {
-                      int intValue = value.isEmpty ? 0 : int.parse(value);
-                      return ref
-                          .read(pasajerosFormProvider.notifier)
-                          .onSalidaEconomicaChanged(intValue);
-                    },
-                    initialValue: tarea.pasajeros!['salida_economica']
-                        .toString(),
-                    // errorMessage: null
-                    //                     onFieldSubmitted: (_) =>
-                    // ref.read(loginFormProvider.notifier).onFormSubmit(),
-                  ),
-                ),
-              ),
-
-              // infante
-              Expanded(
-                child: Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 2),
-                  child: PasajerosInputFormField(
-                    keyboardType: TextInputType.number,
-                    // controller: textController,
-                    onChanged: (value) {
-                      int intValue = value.isEmpty ? 0 : int.parse(value);
-                      return ref
-                          .read(pasajerosFormProvider.notifier)
-                          .onSalidaInfanteChanged(intValue);
-                    },
-                    initialValue: tarea.pasajeros!['salida_infante'].toString(),
-                    // errorMessage: null
-                    //                     onFieldSubmitted: (_) =>
-                    // ref.read(loginFormProvider.notifier).onFormSubmit(),
-                  ),
-                ),
-              ),
-            ],
-          ),
-        ),
-      ],
-    );
-  }
-}
-
-// Transito
-class _TransitoPasajerosView extends ConsumerWidget {
-  final Tarea tarea;
-  const _TransitoPasajerosView({required this.tarea});
-
-  @override
-  Widget build(BuildContext context, WidgetRef ref) {
-    return Row(
-      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-      children: [
-        Flexible(flex: 3, child: Text('Transito:')),
-
-        // const Spacer(),
-        Flexible(
-          flex: 6,
-          child: Row(
-            children: [
-              // ejecutivo
-              Expanded(
-                child: Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 2),
-                  child: PasajerosInputFormField(
-                    keyboardType: TextInputType.number,
-                    // controller: textController,
-                    onChanged: (value) {
-                      int intValue = value.isEmpty ? 0 : int.parse(value);
-                      return ref
-                          .read(pasajerosFormProvider.notifier)
-                          .onTransitoEjecutivoChanged(intValue);
-                    },
-                    initialValue: tarea.pasajeros!['transito_ejecutivo']
-                        .toString(),
-                    // errorMessage: null
-                    //                     onFieldSubmitted: (_) =>
-                    // ref.read(loginFormProvider.notifier).onFormSubmit(),
-                  ),
-                ),
-              ),
-
-              // economico
-              Expanded(
-                child: Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 2),
-                  child: PasajerosInputFormField(
-                    keyboardType: TextInputType.number,
-                    // controller: textController,
-                    onChanged: (value) {
-                      int intValue = value.isEmpty ? 0 : int.parse(value);
-                      return ref
-                          .read(pasajerosFormProvider.notifier)
-                          .onTransitoEconomicaChanged(intValue);
-                    },
-                    initialValue: tarea.pasajeros!['transito_economica']
-                        .toString(),
-                    // errorMessage: null
-                    //                     onFieldSubmitted: (_) =>
-                    // ref.read(loginFormProvider.notifier).onFormSubmit(),
-                  ),
-                ),
-              ),
-
-              // infante
-              Expanded(
-                child: Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 2),
-                  child: PasajerosInputFormField(
-                    keyboardType: TextInputType.number,
-                    // controller: textController,
-                    onChanged: (value) {
-                      int intValue = value.isEmpty ? 0 : int.parse(value);
-                      return ref
-                          .read(pasajerosFormProvider.notifier)
-                          .onTransitoInfanteChanged(intValue);
-                    },
-                    initialValue: tarea.pasajeros!['transito_infante']
+                    initialValue: tarea.pasajeros!.infante
                         .toString(),
                     // errorMessage: null
                     //                     onFieldSubmitted: (_) =>
@@ -497,92 +248,421 @@ class _TransitoPasajerosView extends ConsumerWidget {
   }
 }
 
-// inadmitidos
-class _InadmitidosPasajerosView extends ConsumerWidget {
-  final Tarea tarea;
-  const _InadmitidosPasajerosView({required this.tarea});
 
-  @override
-  Widget build(BuildContext context, WidgetRef ref) {
-    return Row(
-      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-      children: [
-        Flexible(flex: 3, child: Text('Inadmitidos:')),
+// class _TotalPasajerosView extends ConsumerWidget {
+//   final Tarea tarea;
+//   const _TotalPasajerosView({required this.tarea});
 
-        // const Spacer(),
-        Flexible(
-          flex: 6,
-          child: Row(
-            children: [
-              // ejecutivo
-              Expanded(
-                child: Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 2),
-                  child: PasajerosInputFormField(
-                    keyboardType: TextInputType.number,
-                    // controller: textController,
-                    onChanged: (value) {
-                      int intValue = value.isEmpty ? 0 : int.parse(value);
-                      return ref
-                          .read(pasajerosFormProvider.notifier)
-                          .onInadmitidosEjecutivoChanged(intValue);
-                    },
-                    initialValue: tarea.pasajeros!['inadmitidos_ejecutivo']
-                        .toString(),
-                    // errorMessage: null
-                    //                     onFieldSubmitted: (_) =>
-                    // ref.read(loginFormProvider.notifier).onFormSubmit(),
-                  ),
-                ),
-              ),
+//   @override
+//   Widget build(BuildContext context, WidgetRef ref) {
+//     final pasajerosForm = ref.watch(pasajerosFormProvider);
+//     return Row(
+//       mainAxisAlignment: MainAxisAlignment.spaceBetween,
+//       children: [
+//         // half width
+//         Flexible(flex: 3, child: Text('Total:')),
+//         Flexible(
+//           flex: 6,
+//           child: Row(
+//             children: [
+//               Expanded(
+//                 child: PasajerosBoxContainer(
+//                   clase: 'C',
+//                   // total pasajeros = salida + transito - inadmitidos
+//                   cantidad:
+//                       pasajerosForm.salidaEjecutivo.value! +
+//                       pasajerosForm.transitoEjecutivo.value! -
+//                       pasajerosForm.inadmitidosEjecutivo.value!,
+//                 ),
+//               ),
+//               Expanded(
+//                 child: PasajerosBoxContainer(
+//                   clase: 'Y',
+//                   cantidad:
+//                       pasajerosForm.salidaEconomica.value! +
+//                       pasajerosForm.transitoEconomica.value! -
+//                       pasajerosForm.inadmitidosEconomica.value!,
+//                 ),
+//               ),
+//               Expanded(
+//                 child: PasajerosBoxContainer(
+//                   clase: 'I',
+//                   cantidad:
+//                       pasajerosForm.salidaInfante.value! +
+//                       pasajerosForm.transitoInfante.value! -
+//                       pasajerosForm.inadmitidosInfante.value!,
+//                 ),
+//               ),
+//             ],
+//           ),
+//         ),
+//       ],
+//     );
+//   }
+// }
 
-              // economico
-              Expanded(
-                child: Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 2),
-                  child: PasajerosInputFormField(
-                    keyboardType: TextInputType.number,
-                    // controller: textController,
-                    onChanged: (value) {
-                      int intValue = value.isEmpty ? 0 : int.parse(value);
-                      return ref
-                          .read(pasajerosFormProvider.notifier)
-                          .onInadmitidosEconomicaChanged(intValue);
-                    },
-                    initialValue: tarea.pasajeros!['inadmitidos_economica']
-                        .toString(),
-                    // errorMessage: null
-                    //                     onFieldSubmitted: (_) =>
-                    // ref.read(loginFormProvider.notifier).onFormSubmit(),
-                  ),
-                ),
-              ),
+// // bool isValidForm(PasajerosFormState pasajerosForm) {
+// //   return pasajerosForm.isValid;
+// // }
 
-              // infante
-              Expanded(
-                child: Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 2),
-                  child: PasajerosInputFormField(
-                    keyboardType: TextInputType.number,
-                    // controller: textController,
-                    onChanged: (value) {
-                      int intValue = value.isEmpty ? 0 : int.parse(value);
-                      return ref
-                          .read(pasajerosFormProvider.notifier)
-                          .onInadmitidosInfanteChanged(intValue);
-                    },
-                    initialValue: tarea.pasajeros!['inadmitidos_infante']
-                        .toString(),
-                    // errorMessage: null
-                    //                     onFieldSubmitted: (_) =>
-                    // ref.read(loginFormProvider.notifier).onFormSubmit(),
-                  ),
-                ),
-              ),
-            ],
-          ),
-        ),
-      ],
-    );
-  }
-}
+// class _LlegadaPasajerosView extends ConsumerWidget {
+//   final Tarea tarea;
+//   const _LlegadaPasajerosView({required this.tarea});
+
+//   @override
+//   Widget build(BuildContext context, WidgetRef ref) {
+//     return Row(
+//       mainAxisAlignment: MainAxisAlignment.spaceBetween,
+//       children: [
+//         Flexible(flex: 3, child: Text('Llegada:')),
+
+//         // const Spacer(),
+//         Flexible(
+//           flex: 6,
+//           child: Row(
+//             children: [
+//               Expanded(
+//                 child: Padding(
+//                   padding: const EdgeInsets.symmetric(horizontal: 2),
+//                   child: PasajerosInputFormField(
+//                     keyboardType: TextInputType.number,
+
+//                     // controller: textController,
+//                     onChanged: (value) {
+//                       // remove leading zeros
+//                       // value = value.replaceAll(RegExp(r'^0+'), '');
+//                       int intValue = value.isEmpty ? 0 : int.parse(value);
+//                       print(intValue);
+//                       return ref
+//                           .read(pasajerosFormProvider.notifier)
+//                           .onLlegadaEjecutivoChanged(intValue);
+//                     },
+//                     initialValue: tarea.pasajeros!['llegada_ejecutivo']
+//                         .toString(),
+//                     // errorMessage: null
+//                     //                     onFieldSubmitted: (_) =>
+//                     // ref.read(loginFormProvider.notifier).onFormSubmit(),
+//                   ),
+//                 ),
+//               ),
+
+//               Expanded(
+//                 child: Padding(
+//                   padding: const EdgeInsets.symmetric(horizontal: 2),
+//                   child: PasajerosInputFormField(
+//                     keyboardType: TextInputType.number,
+//                     // controller: textController,
+//                     onChanged: (value) {
+//                       int intValue = value.isEmpty ? 0 : int.parse(value);
+//                       return ref
+//                           .read(pasajerosFormProvider.notifier)
+//                           .onLlegadaEconomicaChanged(intValue);
+//                     },
+//                     initialValue: tarea.pasajeros!['llegada_economica']
+//                         .toString(),
+//                     // errorMessage: null
+//                     //                     onFieldSubmitted: (_) =>
+//                     // ref.read(loginFormProvider.notifier).onFormSubmit(),
+//                   ),
+//                 ),
+//               ),
+
+//               Expanded(
+//                 child: Padding(
+//                   padding: const EdgeInsets.symmetric(horizontal: 2),
+//                   child: PasajerosInputFormField(
+//                     keyboardType: TextInputType.number,
+//                     // controller: textController,
+//                     onChanged: (value) {
+//                       int intValue = value.isEmpty ? 0 : int.parse(value);
+//                       return ref
+//                           .read(pasajerosFormProvider.notifier)
+//                           .onLlegadaInfanteChanged(intValue);
+//                     },
+//                     initialValue: tarea.pasajeros!['llegada_infante']
+//                         .toString(),
+//                     // errorMessage: null
+//                     //                     onFieldSubmitted: (_) =>
+//                     // ref.read(loginFormProvider.notifier).onFormSubmit(),
+//                   ),
+//                 ),
+//               ),
+//             ],
+//           ),
+//         ),
+//       ],
+//     );
+//   }
+// }
+
+// class _SalidaPasajerosView extends ConsumerWidget {
+//   final Tarea tarea;
+//   const _SalidaPasajerosView({required this.tarea});
+
+//   @override
+//   Widget build(BuildContext context, WidgetRef ref) {
+//     return Row(
+//       mainAxisAlignment: MainAxisAlignment.spaceBetween,
+//       children: [
+//         Flexible(flex: 3, child: Text('Salida:')),
+
+//         // const Spacer(),
+//         Flexible(
+//           flex: 6,
+//           child: Row(
+//             children: [
+//               // ejecutivo
+//               Expanded(
+//                 child: Padding(
+//                   padding: const EdgeInsets.symmetric(horizontal: 2),
+//                   child: PasajerosInputFormField(
+//                     keyboardType: TextInputType.number,
+//                     // controller: textController,
+//                     onChanged: (value) {
+//                       int intValue = value.isEmpty ? 0 : int.parse(value);
+//                       return ref
+//                           .read(pasajerosFormProvider.notifier)
+//                           .onSalidaEjecutivoChanged(intValue);
+//                     },
+//                     initialValue: tarea.pasajeros!['salida_ejecutivo']
+//                         .toString(),
+//                     // initialValue: ref
+//                     //     .watch(pasajerosFormProvider)
+//                     //     .salidaEjecutivo
+//                     //     .toString(),
+//                     // errorMessage: null
+//                     //                     onFieldSubmitted: (_) =>
+//                     // ref.read(loginFormProvider.notifier).onFormSubmit(),
+//                   ),
+//                 ),
+//               ),
+
+//               // economico
+//               Expanded(
+//                 child: Padding(
+//                   padding: const EdgeInsets.symmetric(horizontal: 2),
+//                   child: PasajerosInputFormField(
+//                     keyboardType: TextInputType.number,
+//                     // controller: textController,
+//                     onChanged: (value) {
+//                       int intValue = value.isEmpty ? 0 : int.parse(value);
+//                       return ref
+//                           .read(pasajerosFormProvider.notifier)
+//                           .onSalidaEconomicaChanged(intValue);
+//                     },
+//                     initialValue: tarea.pasajeros!['salida_economica']
+//                         .toString(),
+//                     // errorMessage: null
+//                     //                     onFieldSubmitted: (_) =>
+//                     // ref.read(loginFormProvider.notifier).onFormSubmit(),
+//                   ),
+//                 ),
+//               ),
+
+//               // infante
+//               Expanded(
+//                 child: Padding(
+//                   padding: const EdgeInsets.symmetric(horizontal: 2),
+//                   child: PasajerosInputFormField(
+//                     keyboardType: TextInputType.number,
+//                     // controller: textController,
+//                     onChanged: (value) {
+//                       int intValue = value.isEmpty ? 0 : int.parse(value);
+//                       return ref
+//                           .read(pasajerosFormProvider.notifier)
+//                           .onSalidaInfanteChanged(intValue);
+//                     },
+//                     initialValue: tarea.pasajeros!['salida_infante'].toString(),
+//                     // errorMessage: null
+//                     //                     onFieldSubmitted: (_) =>
+//                     // ref.read(loginFormProvider.notifier).onFormSubmit(),
+//                   ),
+//                 ),
+//               ),
+//             ],
+//           ),
+//         ),
+//       ],
+//     );
+//   }
+// }
+
+// // Transito
+// class _TransitoPasajerosView extends ConsumerWidget {
+//   final Tarea tarea;
+//   const _TransitoPasajerosView({required this.tarea});
+
+//   @override
+//   Widget build(BuildContext context, WidgetRef ref) {
+//     return Row(
+//       mainAxisAlignment: MainAxisAlignment.spaceBetween,
+//       children: [
+//         Flexible(flex: 3, child: Text('Transito:')),
+
+//         // const Spacer(),
+//         Flexible(
+//           flex: 6,
+//           child: Row(
+//             children: [
+//               // ejecutivo
+//               Expanded(
+//                 child: Padding(
+//                   padding: const EdgeInsets.symmetric(horizontal: 2),
+//                   child: PasajerosInputFormField(
+//                     keyboardType: TextInputType.number,
+//                     // controller: textController,
+//                     onChanged: (value) {
+//                       int intValue = value.isEmpty ? 0 : int.parse(value);
+//                       return ref
+//                           .read(pasajerosFormProvider.notifier)
+//                           .onTransitoEjecutivoChanged(intValue);
+//                     },
+//                     initialValue: tarea.pasajeros!['transito_ejecutivo']
+//                         .toString(),
+//                     // errorMessage: null
+//                     //                     onFieldSubmitted: (_) =>
+//                     // ref.read(loginFormProvider.notifier).onFormSubmit(),
+//                   ),
+//                 ),
+//               ),
+
+//               // economico
+//               Expanded(
+//                 child: Padding(
+//                   padding: const EdgeInsets.symmetric(horizontal: 2),
+//                   child: PasajerosInputFormField(
+//                     keyboardType: TextInputType.number,
+//                     // controller: textController,
+//                     onChanged: (value) {
+//                       int intValue = value.isEmpty ? 0 : int.parse(value);
+//                       return ref
+//                           .read(pasajerosFormProvider.notifier)
+//                           .onTransitoEconomicaChanged(intValue);
+//                     },
+//                     initialValue: tarea.pasajeros!['transito_economica']
+//                         .toString(),
+//                     // errorMessage: null
+//                     //                     onFieldSubmitted: (_) =>
+//                     // ref.read(loginFormProvider.notifier).onFormSubmit(),
+//                   ),
+//                 ),
+//               ),
+
+//               // infante
+//               Expanded(
+//                 child: Padding(
+//                   padding: const EdgeInsets.symmetric(horizontal: 2),
+//                   child: PasajerosInputFormField(
+//                     keyboardType: TextInputType.number,
+//                     // controller: textController,
+//                     onChanged: (value) {
+//                       int intValue = value.isEmpty ? 0 : int.parse(value);
+//                       return ref
+//                           .read(pasajerosFormProvider.notifier)
+//                           .onTransitoInfanteChanged(intValue);
+//                     },
+//                     initialValue: tarea.pasajeros!['transito_infante']
+//                         .toString(),
+//                     // errorMessage: null
+//                     //                     onFieldSubmitted: (_) =>
+//                     // ref.read(loginFormProvider.notifier).onFormSubmit(),
+//                   ),
+//                 ),
+//               ),
+//             ],
+//           ),
+//         ),
+//       ],
+//     );
+//   }
+// }
+
+// // inadmitidos
+// class _InadmitidosPasajerosView extends ConsumerWidget {
+//   final Tarea tarea;
+//   const _InadmitidosPasajerosView({required this.tarea});
+
+//   @override
+//   Widget build(BuildContext context, WidgetRef ref) {
+//     return Row(
+//       mainAxisAlignment: MainAxisAlignment.spaceBetween,
+//       children: [
+//         Flexible(flex: 3, child: Text('Inadmitidos:')),
+
+//         // const Spacer(),
+//         Flexible(
+//           flex: 6,
+//           child: Row(
+//             children: [
+//               // ejecutivo
+//               Expanded(
+//                 child: Padding(
+//                   padding: const EdgeInsets.symmetric(horizontal: 2),
+//                   child: PasajerosInputFormField(
+//                     keyboardType: TextInputType.number,
+//                     // controller: textController,
+//                     onChanged: (value) {
+//                       int intValue = value.isEmpty ? 0 : int.parse(value);
+//                       return ref
+//                           .read(pasajerosFormProvider.notifier)
+//                           .onInadmitidosEjecutivoChanged(intValue);
+//                     },
+//                     initialValue: tarea.pasajeros!['inadmitidos_ejecutivo']
+//                         .toString(),
+//                     // errorMessage: null
+//                     //                     onFieldSubmitted: (_) =>
+//                     // ref.read(loginFormProvider.notifier).onFormSubmit(),
+//                   ),
+//                 ),
+//               ),
+
+//               // economico
+//               Expanded(
+//                 child: Padding(
+//                   padding: const EdgeInsets.symmetric(horizontal: 2),
+//                   child: PasajerosInputFormField(
+//                     keyboardType: TextInputType.number,
+//                     // controller: textController,
+//                     onChanged: (value) {
+//                       int intValue = value.isEmpty ? 0 : int.parse(value);
+//                       return ref
+//                           .read(pasajerosFormProvider.notifier)
+//                           .onInadmitidosEconomicaChanged(intValue);
+//                     },
+//                     initialValue: tarea.pasajeros!['inadmitidos_economica']
+//                         .toString(),
+//                     // errorMessage: null
+//                     //                     onFieldSubmitted: (_) =>
+//                     // ref.read(loginFormProvider.notifier).onFormSubmit(),
+//                   ),
+//                 ),
+//               ),
+
+//               // infante
+//               Expanded(
+//                 child: Padding(
+//                   padding: const EdgeInsets.symmetric(horizontal: 2),
+//                   child: PasajerosInputFormField(
+//                     keyboardType: TextInputType.number,
+//                     // controller: textController,
+//                     onChanged: (value) {
+//                       int intValue = value.isEmpty ? 0 : int.parse(value);
+//                       return ref
+//                           .read(pasajerosFormProvider.notifier)
+//                           .onInadmitidosInfanteChanged(intValue);
+//                     },
+//                     initialValue: tarea.pasajeros!['inadmitidos_infante']
+//                         .toString(),
+//                     // errorMessage: null
+//                     //                     onFieldSubmitted: (_) =>
+//                     // ref.read(loginFormProvider.notifier).onFormSubmit(),
+//                   ),
+//                 ),
+//               ),
+//             ],
+//           ),
+//         ),
+//       ],
+//     );
+//   }
+// }

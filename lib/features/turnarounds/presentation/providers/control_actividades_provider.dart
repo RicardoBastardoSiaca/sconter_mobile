@@ -267,7 +267,40 @@ class ControlActividadesNotifier
   Future<SnackbarResponse> setHoraInicioFinMaquinaria(
     HoraInicioFinMaquinaria body,
   ) async {
+
+    // state = state.copyWith(isSaving: true);\\
+
     try {
+
+
+    final bool isConnected = await ConnectivityService().hasConnection;
+    if (!isConnected) {
+      // Save the api call for later
+
+      final requestBody = {
+        'id': body.id,
+        'tarea_id': body.tareaId,
+        'hora_inicio': body.horaInicio?.toUtc().toIso8601String(),
+        'hora_fin': body.horaFin?.toUtc().toIso8601String(),
+        'tipo': body.tipo,
+      };
+      localStorageRepository.saveRequestApi(
+        RequestApi(
+          id: DateTime.now().millisecondsSinceEpoch,
+          url: '/control-actividades/asignacion_maquinaria_con_hora',
+          method: 'POST',
+          body: requestBody,
+          timestamp: DateTime.now().millisecondsSinceEpoch,
+        ),
+      );
+
+      return SnackbarResponse(
+              message: 'Hora registrada. Sin conexión.',
+              success: false,
+              hasConnection: false,
+            );
+          }
+
       final response = await turnaroundsRepository.setHoraInicioFinMaquinaria(
         body,
       );
@@ -421,6 +454,27 @@ class ControlActividadesNotifier
 
   Future<SnackbarResponse> setComentario(ComentarioRequest body) async {
     try {
+
+      final bool isConnected = await ConnectivityService().hasConnection;
+      if (!isConnected) {
+        // Save the api call for later
+        final requestBody = {'id': body.id, 'comentario': body.comentario};
+        localStorageRepository.saveRequestApi(
+          RequestApi(
+            id: DateTime.now().millisecondsSinceEpoch,
+            url: '/control-actividades/comentario',
+            method: 'POST',
+            body: requestBody,
+            timestamp: DateTime.now().millisecondsSinceEpoch,
+          ),
+        );
+
+        return SnackbarResponse(
+          message: 'Comentario registrado. Sin conexión.',
+          success: false,
+          hasConnection: false,
+        );
+      }
       final response = await turnaroundsRepository.setComentario(body);
       if (response.success) {
         getControlDeActividadesByTrcId();
@@ -441,6 +495,28 @@ class ControlActividadesNotifier
 
   Future<SnackbarResponse> setNumero(SetNumeroTareaRequest body) async {
     try {
+
+      // Internet check
+      final bool isConnected = await ConnectivityService().hasConnection;
+      if (!isConnected) {
+        // Save the api call for later
+        final requestBody = {'id': body.id, 'numero': body.numero};
+        localStorageRepository.saveRequestApi(
+          RequestApi(
+            id: DateTime.now().millisecondsSinceEpoch,
+            url: '/control-actividades/numero',
+            method: 'POST',
+            body: requestBody,
+            timestamp: DateTime.now().millisecondsSinceEpoch,
+          ),
+        );
+
+        return SnackbarResponse(
+          message: 'Cantidad registrada. Sin conexión.',
+          success: false,
+          hasConnection: false,
+        );
+      }
       final response = await turnaroundsRepository.setNumero(body);
       if (response.success) {
         getControlDeActividadesByTrcId();
@@ -462,7 +538,7 @@ class ControlActividadesNotifier
       if (response.success) {
         getControlDeActividadesByTrcId();
         return SnackbarResponse(
-          message: 'Pasajeros registrados.',
+          message: 'Cantidad registrada.',
           success: true,
         );
       } else {

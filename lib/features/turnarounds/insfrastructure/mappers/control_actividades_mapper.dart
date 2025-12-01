@@ -122,12 +122,14 @@ class ControlActividadesMapper {
       imagen: json["imagen"].toList().isEmpty
           ? null
           : List<Imagen>.from(json["imagen"].map((x) => mapJsonToImagen(x))),
-
       pasajeros: json["pasajeros"] == null
           ? null
-          : Map.from(
-              json["pasajeros"]!,
-            ).map((k, v) => MapEntry<String, int>(k, v)),
+          : ConteoPasajeros.fromJson(json["pasajeros"]),
+      // pasajeros: json["pasajeros"] == null
+      //     ? null
+      //     : Map.from(
+      //         json["pasajeros"]!,
+      //       ).map((k, v) => MapEntry<String, int>(k, v)),
       equipo: json["equipo"].toList().isEmpty
           ? null
           : List<dynamic>.from(json["equipo"].map((x) => x)),

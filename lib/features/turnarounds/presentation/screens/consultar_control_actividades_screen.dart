@@ -89,7 +89,7 @@ class _ConsultarControlActividadesViewState extends ConsumerState<_ConsultarCont
     PageDecoration pageDecoration = PageDecoration(
       titleTextStyle: TextStyle(fontSize: 28.0, fontWeight: FontWeight.w700, color: theme.colorScheme.primary),
       bodyTextStyle: bodyStyle,
-      bodyPadding: EdgeInsets.fromLTRB(16.0, 0.0, 16.0, 16.0),
+      bodyPadding: EdgeInsets.fromLTRB(8.0, 0.0, 8.0, 16.0),
       pageColor: Colors.white,
       imagePadding: EdgeInsets.zero,
     );

@@ -52,12 +52,18 @@ class _TurnaroundMainScreenState extends State<TurnaroundMainScreen> {
           //   // scaffoldKey.currentState?.openDrawer();
         ),
         // title: const Text('Turnaround 2'),
-        title: Center(
-          child: SvgPicture.asset(
-            "assets/icons/logo-trc.svg",
-            fit: BoxFit.scaleDown,
-            height: 35,
-          ),
+        title: Row(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            SizedBox(width: 40),
+            Center(
+              child: SvgPicture.asset(
+                "assets/icons/logo-trc.svg",
+                fit: BoxFit.scaleDown,
+                height: 35,
+              ),
+            ),
+          ],
         ),
         // user icon menu
         actions: [
@@ -121,11 +127,20 @@ class _TurnaroundMainScreenState extends State<TurnaroundMainScreen> {
           //   // , icon: },
           //   icon: const Icon(Icons.manage_accounts),
           // ),
+
+
+          
+
           // no intertnet icon
           // if not connected show wifi_off icon
          
           // NoInternetIcon(),
-          const SizedBox(width: 10),
+
+          // leyenda de colores icon dialog
+
+          LeyendaColoresStatusDialog(),
+
+          // const SizedBox(width: 10),
           UserConfigMenuIcon(),
           // const SizedBox(width: 60),
         ],
@@ -203,51 +218,56 @@ class _TuraroundMainViewState extends ConsumerState {
         child: RefreshIndicator(
           onRefresh: _handleRefresh,
           child: 
-          ListView(
-                controller: _scrollController,
-                physics: const AlwaysScrollableScrollPhysics(), // Key change here
-                children: [
-                  // if (!_isConnected) NoInternetBanner(),
-                  const SizedBox(height: 3),
-                  Center(
-                    child: Text(
-                      'Turnarounds',
-                      style: Theme.of(context).textTheme.headlineLarge?.copyWith(
-                        color: Theme.of(context).colorScheme.primary,
-                        fontWeight: FontWeight.w900,
-                        fontFamily: GoogleFonts.openSans(
-                          fontWeight: FontWeight.w900,
-                        ).fontFamily,
+          
+              ListView(
+                    controller: _scrollController,
+                    physics: const AlwaysScrollableScrollPhysics(), // Key change here
+                    children: [
+                      // if (!_isConnected) NoInternetBanner(),
+                      const SizedBox(height: 3),
+                      Center(
+                        child: Text(
+                          'Turnarounds',
+                          style: Theme.of(context).textTheme.headlineLarge?.copyWith(
+                            color: Theme.of(context).colorScheme.primary,
+                            fontWeight: FontWeight.w900,
+                            fontFamily: GoogleFonts.openSans(
+                              fontWeight: FontWeight.w900,
+                            ).fontFamily,
+                          ),
+                        ),
                       ),
-                    ),
+                      const SizedBox(height: 2),
+                      _DateFilter(),
+                      turnaroundsState.turnarounds.isEmpty
+                ? Column(
+                  children: [
+                    const SizedBox(height: 20),
+                    Center(
+                        child: Text(
+                          'No hay turnarounds',
+                          // overflow: TextOverflow.ellipsis,
+                          style: Theme.of(context).textTheme.bodyMedium
+                        ),
+                      ),
+                    Center(
+                        child: Text(
+                          'registrados.',
+                          // overflow: TextOverflow.ellipsis,
+                          style: Theme.of(context).textTheme.bodyMedium
+                        ),
+                      ),
+                  ],
+                )
+                : SizedBox(),
+                      ...turnaroundsState.turnarounds.map((turnaround) => _ListTileCardContainer(turnaround: turnaround)),
+                      
+                      // Leyenda de colores moved inside the scrollable list so it appears after all items
+                      // const SizedBox(height: 20),
+                      // const LeyendaColoresTurnarounds(),
+                      const SizedBox(height: 30),
+                    ],
                   ),
-                  const SizedBox(height: 2),
-                  _DateFilter(),
-                  turnaroundsState.turnarounds.isEmpty
-            ? Column(
-              children: [
-                const SizedBox(height: 20),
-                Center(
-                    child: Text(
-                      'No hay turnarounds',
-                      // overflow: TextOverflow.ellipsis,
-                      style: Theme.of(context).textTheme.bodyMedium
-                    ),
-                  ),
-                Center(
-                    child: Text(
-                      'registrados.',
-                      // overflow: TextOverflow.ellipsis,
-                      style: Theme.of(context).textTheme.bodyMedium
-                    ),
-                  ),
-              ],
-            )
-            : SizedBox(),
-                  ...turnaroundsState.turnarounds.map((turnaround) => _ListTileCardContainer(turnaround: turnaround)),
-                  const SizedBox(height: 30), 
-                ],
-              ),
         ),
       ),
     );
@@ -567,6 +587,11 @@ class _MenuDialog extends ConsumerWidget {
           //     Navigator.pop(context);
           //   },
           // ),
+          
+          
+          
+
+
           if (turnaround.estatus == 1 ||
               turnaround.estatus == 2 ||
               turnaround.estatus == 3)
@@ -766,6 +791,61 @@ class _MenuDialog extends ConsumerWidget {
             //     Navigator.pop(context);
             //   },
             // ),
+
+            SizedBox(height: 10),
+            // Row with status of the turnaround in his respective color 
+            Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+
+                 Container(
+                  width: 13,
+                  height: 13,
+                  decoration: BoxDecoration(
+                    color: 
+                    switch (turnaround.fkVuelo.estatus.color) {
+                      "verde" => Colors.green,
+                      "amarillo" => Colors.yellow,
+                      "rojo" => Colors.red,
+                      "azul" => Colors.blue,
+                      "gris" => Colors.grey,
+                      _ => Colors.white, // default case
+                    },
+                    shape: BoxShape.rectangle,
+                    borderRadius: BorderRadius.circular(4),
+                    border: Border.all(
+                      color: Colors.black26,
+                      width: 1,
+                    ),
+                  ),
+                ),
+                SizedBox(width: 10),
+                
+                Text(
+                  turnaround.fkVuelo.estatus.nombre.toUpperCase(),
+                  // uppercase
+                  style: Theme.of(context).textTheme.labelMedium?.copyWith(
+                    fontWeight: FontWeight.w900,
+                    // italic
+                    color: Colors.black54
+                    // fontStyle: FontStyle.italic,
+                  // color: switch (turnaround.fkVuelo.estatus.color) {
+                  //   "verde" => Colors.green,
+                  //   "amarillo" => Colors.yellow,
+                  //   "rojo" => Colors.red,
+                  //   "azul" => Colors.blue,
+                  //   "gris" => Colors.grey,
+                  //   _ => Colors.black, // default case
+                  // },
+                  ),
+                  // color based on status
+                ),
+                
+               
+              ],
+            )
+
+
         ],
       ),
     );
@@ -932,10 +1012,11 @@ class _InboundView extends StatelessWidget {
                     lugarSalida,
                     style: 
                     isMobile
-                    ? Theme.of(context).textTheme.bodyLarge?.copyWith(
+                    ? Theme.of(context).textTheme.bodySmall?.copyWith(
                       fontFamily: GoogleFonts.openSans(
                         fontWeight: FontWeight.w700,
                       ).fontFamily,
+                      color: Colors.black87
                     )
                     : Theme.of(context).textTheme.titleMedium?.copyWith(
                       fontFamily: GoogleFonts.openSans(
@@ -946,10 +1027,11 @@ class _InboundView extends StatelessWidget {
                   Text(
                     lugarLlegada,
                     style: isMobile
-                    ? Theme.of(context).textTheme.bodyLarge?.copyWith(
+                    ? Theme.of(context).textTheme.bodySmall?.copyWith(
                       fontFamily: GoogleFonts.openSans(
                         fontWeight: FontWeight.w700,
                       ).fontFamily,
+                      color: Colors.black87
                     )
                     : Theme.of(context).textTheme.titleMedium?.copyWith(
                       fontFamily: GoogleFonts.openSans(
@@ -999,10 +1081,11 @@ class _InboundView extends StatelessWidget {
               Text(
                 numeroVuelo,
                 style: isMobile
-                    ? Theme.of(context).textTheme.bodyLarge?.copyWith(
+                    ? Theme.of(context).textTheme.bodySmall?.copyWith(
                       fontFamily: GoogleFonts.openSans(
                         fontWeight: FontWeight.w700,
                       ).fontFamily,
+                      color: Colors.black87
                     )
                     : Theme.of(context).textTheme.titleMedium?.copyWith(
                       fontFamily: GoogleFonts.openSans(

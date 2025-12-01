@@ -1,9 +1,36 @@
 // ignore_for_file: prefer_final_fields
 
+Fixes:
+
+Consultar plantilla overflow
+enumeracion en consultar control de actividades
+bloquear visibilidad, segun si es de operaciones o sap que solo vean lo que deben ver
+
+
+En consultar vuelo
+    Sta (origen):
+    Std (destino):
+
+Leyenda en TRC tanto en el menu cuando se le da click como al final
+en el menu el color debe ser el mismo del status
+
+en consultar trc => datos de vuelo agregar mas espacio (los 2 putnos de van para abajo)
+
+Orden de datos en Datos de vuelo en consultar vuelo la puerta va al final
+Remover los iconos de aca tambien
+
+
+Cambiar ETA y ETD a STA y Std
+
+
+
 
 time picker esta mostrando overflow
 en consultar trc el personal no esta llegando bien
 formatear listado de actividades en consultar
+
+
+
 
 
 arreglar este vuelo que muestra vuelo de salida en consultar trc cuando es outbound

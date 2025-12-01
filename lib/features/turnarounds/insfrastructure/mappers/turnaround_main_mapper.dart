@@ -130,7 +130,7 @@ class TurnaroundMainMapper {
       id: json['id'],
       nombre: json['nombre'],
       descripcion: json['descripcion'],
-      color: json['color'],
+      color: json['color'] ?? 'blanco', //json['color'],
     );
   }
 }

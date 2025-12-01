@@ -1127,7 +1127,7 @@ class _TareaHoraInicioFinView extends ConsumerWidget {
                 child: Row(
                   children: [
                     Text(
-                      'Hora de inicio',
+                      'Hora inicio',
                       style: Theme.of(context).textTheme.titleSmall?.copyWith(
                         fontWeight: FontWeight.w400,
                       ),
@@ -1426,7 +1426,6 @@ class _TareaHoraInicioFinView extends ConsumerWidget {
   }
 }
 
-// TODO: Tarea Cantidad
 class _TareaCantidadView extends ConsumerWidget {
   final Tarea tarea;
   const _TareaCantidadView({required this.tarea});
@@ -1549,6 +1548,23 @@ class _TareaCantidadView extends ConsumerWidget {
                                       ).notifier,
                                     )
                                     .setNumero(body);
+
+                                if (!response.hasConnection) {
+                                  // set manually the time locally in the riverpo state
+                                  // setState(() {
+
+                                  tarea.numero =
+                                      int.parse(numberController.text);
+                                  // });
+                                  // Show snackbar warning
+                                  CustomSnackbar.showWarningSnackbar(
+                                    response.message,
+                                    // ignore: use_build_context_synchronously
+                                    context,
+                                    isFixed: true,
+                                  );
+                                  // return;
+                                }
 
                                 // Show snackbar response
                                 CustomSnackbar.showResponseSnackbar(
@@ -1737,7 +1753,7 @@ class _ListadoMaquinariasConTiempoView extends ConsumerWidget {
     return ListView.builder(
       shrinkWrap: true,
       itemCount: tarea.maquinaria?.length,
-      itemBuilder: (context, index) {
+      itemBuilder: (context , index) {
         final maquinaria = tarea.maquinaria?[index];
         return Column(
           children: [
@@ -1799,6 +1815,26 @@ class _ListadoMaquinariasConTiempoView extends ConsumerWidget {
                             .read(controlActividadesProvider(trcId).notifier)
                             .setHoraInicioFinMaquinaria(body);
 
+                        if (!response.hasConnection) {
+                          // set manually the time locally in the riverpo state
+                          // setState(() {
+
+                          maquinaria['hora_inicio'] =
+                              CustomDateTimeFunctions.getDateTimeFromTimeOfDay(
+                            trcDate,
+                            selectedTime,
+                          );
+                          // });
+                          // Show snackbar warning
+                          CustomSnackbar.showWarningSnackbar(
+                            response.message,
+                            // ignore: use_build_context_synchronously
+                            context,
+                            isFixed: true,
+                          );
+                          // return;
+                        }
+
                         // Show snackbar response
                         CustomSnackbar.showResponseSnackbar(
                           response.message,
@@ -1814,7 +1850,7 @@ class _ListadoMaquinariasConTiempoView extends ConsumerWidget {
                       child: Row(
                         children: [
                           Text(
-                            'Hora de inicio',
+                            'Hora inicio',
                             style: Theme.of(context).textTheme.titleSmall
                                 ?.copyWith(fontWeight: FontWeight.w400),
                           ),
@@ -1891,6 +1927,22 @@ class _ListadoMaquinariasConTiempoView extends ConsumerWidget {
                                   controlActividadesProvider(trcId).notifier,
                                 )
                                 .setHoraInicioFinMaquinaria(body);
+
+                            if (!response.hasConnection) {
+                              // set manually the time locally in the riverpo state
+                              // setState(() {
+
+                              maquinaria['hora_inicio'] = DateTime.now();
+                              // });
+                              // Show snackbar warning
+                              CustomSnackbar.showWarningSnackbar(
+                                response.message,
+                                // ignore: use_build_context_synchronously
+                                context,
+                                isFixed: true,
+                              );
+                              // return;
+                            }
                             // Show snackbar response
                             CustomSnackbar.showResponseSnackbar(
                               response.message,
@@ -1967,6 +2019,26 @@ class _ListadoMaquinariasConTiempoView extends ConsumerWidget {
                         final response = await ref
                             .read(controlActividadesProvider(trcId).notifier)
                             .setHoraInicioFinMaquinaria(body);
+
+                        if (!response.hasConnection) {
+                          // set manually the time locally in the riverpo state
+                          // setState(() {
+
+                          maquinaria['hora_fin'] =
+                              CustomDateTimeFunctions.getDateTimeFromTimeOfDay(
+                            trcDate,
+                            selectedTime,
+                          );
+                          // });
+                          // Show snackbar warning
+                          CustomSnackbar.showWarningSnackbar(
+                            response.message,
+                            // ignore: use_build_context_synchronously
+                            context,
+                            isFixed: true,
+                          );
+                          // return;
+                        }
 
                         // Show snackbar response
                         CustomSnackbar.showResponseSnackbar(
@@ -2060,6 +2132,23 @@ class _ListadoMaquinariasConTiempoView extends ConsumerWidget {
                                   controlActividadesProvider(trcId).notifier,
                                 )
                                 .setHoraInicioFinMaquinaria(body);
+
+                            if (!response.hasConnection) {
+                              // set manually the time locally in the riverpo state
+                              // setState(() {
+
+                              maquinaria['hora_fin'] = DateTime.now();
+                              // });
+                              // Show snackbar warning
+                              CustomSnackbar.showWarningSnackbar(
+                                response.message,
+                                // ignore: use_build_context_synchronously
+                                context,
+                                isFixed: true,
+                              );
+                              // return;
+                            }
+
                             // Show snackbar response
                             CustomSnackbar.showResponseSnackbar(
                               response.message,
@@ -2124,6 +2213,9 @@ class _TareaTextoView extends StatelessWidget {
   }
 }
 
+
+// class _TareaPasajerosView
+
 class _TareaPasajerosView extends ConsumerWidget {
   final Tarea tarea;
   const _TareaPasajerosView({required this.tarea});
@@ -2138,7 +2230,7 @@ class _TareaPasajerosView extends ConsumerWidget {
         // Set the initial values of the form fields in the provider
         // sets state to initial values
 
-        ref.read(pasajerosFormProvider.notifier).setInitialValues(tarea);
+        // ref.read(pasajerosFormProvider.notifier).setInitialValues(tarea);
 
         // print(ref.read(pasajerosFormProvider));
         // get pasajerosFormProvider state
@@ -2156,94 +2248,28 @@ class _TareaPasajerosView extends ConsumerWidget {
 
       child: Column(
         children: [
-          if (turnaround?.fkVuelo.tipoServicio.id != 3)
+          // if (turnaround?.fkVuelo.tipoServicio.id != 3)
             // Llegada
-            _LlegadaPasajerosView(tarea: tarea),
+            _PasajerosRowView(tarea: tarea),
 
           const Divider(thickness: 1),
 
-          if (turnaround?.fkVuelo.tipoServicio.id != 4)
-            // Salida
-            _SalidaPasajeroView(tarea: tarea),
+          // if (turnaround?.fkVuelo.tipoServicio.id != 4)
+          //   // Salida
+          //   _PasajerosRowView(tarea: tarea),
 
-          if (turnaround?.fkVuelo.tipoServicio.id != 4)
-            // Transito
-            _TransitoPasajerosView(tarea: tarea),
-
-          if (turnaround?.fkVuelo.tipoServicio.id != 4)
-            // Inadmitidos
-            _InadmitidosPasajerosView(tarea: tarea),
-
-          if (turnaround?.fkVuelo.tipoServicio.id != 4)
-            const Divider(thickness: 1),
-
-          if (turnaround?.fkVuelo.tipoServicio.id != 4)
-            // total
-            _TotalPasajerosView(tarea: tarea),
-
-          SizedBox(height: 8),
+          // if (turnaround?.fkVuelo.tipoServicio.id != 4)
+          //   // Transito
+          //   _PasajerosRowView(tarea: tarea),
         ],
       ),
     );
   }
 }
 
-class _TotalPasajerosView extends StatelessWidget {
-  const _TotalPasajerosView({required this.tarea});
-
+class _PasajerosRowView extends StatelessWidget {
   final Tarea tarea;
-
-  @override
-  Widget build(BuildContext context) {
-    return Row(
-      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-      children: [
-        // half width
-        Flexible(flex: 3, child: Text('Total:')),
-        Flexible(
-          flex: 6,
-          child: Row(
-            children: [
-              Expanded(
-                child: PasajerosBoxContainer(
-                  clase: 'C',
-                  // total pasajeros = salida + transito - inadmitidos
-                  cantidad:
-                      tarea.pasajeros!['salida_ejecutivo']! +
-                      tarea.pasajeros!['transito_ejecutivo']! -
-                      tarea.pasajeros!['inadmitidos_ejecutivo']!,
-                ),
-              ),
-              Expanded(
-                child: PasajerosBoxContainer(
-                  clase: 'Y',
-                  cantidad:
-                      tarea.pasajeros!['salida_economica']! +
-                      tarea.pasajeros!['transito_economica']! -
-                      tarea.pasajeros!['inadmitidos_economica']!,
-                ),
-              ),
-              Expanded(
-                child: PasajerosBoxContainer(
-                  clase: 'I',
-                  cantidad:
-                      tarea.pasajeros!['salida_infante']! +
-                      tarea.pasajeros!['transito_infante']! -
-                      tarea.pasajeros!['inadmitidos_infante']!,
-                ),
-              ),
-            ],
-          ),
-        ),
-      ],
-    );
-  }
-}
-
-class _LlegadaPasajerosView extends StatelessWidget {
-  const _LlegadaPasajerosView({required this.tarea});
-
-  final Tarea tarea;
+  const _PasajerosRowView({required this.tarea});
 
   @override
   Widget build(BuildContext context) {
@@ -2259,19 +2285,19 @@ class _LlegadaPasajerosView extends StatelessWidget {
               Expanded(
                 child: PasajerosBoxContainer(
                   clase: 'C',
-                  cantidad: tarea.pasajeros!['llegada_ejecutivo']!,
+                  cantidad: tarea.pasajeros!.ejecutivo,
                 ),
               ),
               Expanded(
                 child: PasajerosBoxContainer(
                   clase: 'Y',
-                  cantidad: tarea.pasajeros!['llegada_economica']!,
+                  cantidad: tarea.pasajeros!.economica,
                 ),
               ),
               Expanded(
                 child: PasajerosBoxContainer(
                   clase: 'I',
-                  cantidad: tarea.pasajeros!['llegada_infante']!,
+                  cantidad: tarea.pasajeros!.infante!,
                 ),
               ),
             ],
@@ -2282,131 +2308,289 @@ class _LlegadaPasajerosView extends StatelessWidget {
   }
 }
 
-class _InadmitidosPasajerosView extends StatelessWidget {
-  const _InadmitidosPasajerosView({required this.tarea});
+// class _OldTareaPasajerosView extends ConsumerWidget {
+//   final Tarea tarea;
+//   const _OldTareaPasajerosView({required this.tarea});
 
-  final Tarea tarea;
+//   @override
+//   Widget build(BuildContext context, WidgetRef ref) {
+//     final turnaround = ref.watch(selectedTurnaroundProvider);
 
-  @override
-  Widget build(BuildContext context) {
-    return Row(
-      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-      children: [
-        // half width
-        Flexible(flex: 3, child: Text('Inadmitidos:')),
-        Flexible(
-          flex: 6,
-          child: Row(
-            children: [
-              Expanded(
-                child: PasajerosBoxContainer(
-                  clase: 'C',
-                  cantidad: tarea.pasajeros!['inadmitidos_ejecutivo']!,
-                ),
-              ),
-              Expanded(
-                child: PasajerosBoxContainer(
-                  clase: 'Y',
-                  cantidad: tarea.pasajeros!['inadmitidos_economica']!,
-                ),
-              ),
-              Expanded(
-                child: PasajerosBoxContainer(
-                  clase: 'I',
-                  cantidad: tarea.pasajeros!['inadmitidos_infante']!,
-                ),
-              ),
-            ],
-          ),
-        ),
-      ],
-    );
-  }
-}
+//     return GestureDetector(
+//       onTap: () async {
+//         // Open pasajeros dialog
+//         // Set the initial values of the form fields in the provider
+//         // sets state to initial values
 
-class _TransitoPasajerosView extends StatelessWidget {
-  const _TransitoPasajerosView({required this.tarea});
+//         ref.read(pasajerosFormProvider.notifier).setInitialValues(tarea);
 
-  final Tarea tarea;
+//         // print(ref.read(pasajerosFormProvider));
+//         // get pasajerosFormProvider state
 
-  @override
-  Widget build(BuildContext context) {
-    return Row(
-      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-      children: [
-        // half width
-        Flexible(flex: 3, child: Text('Transito:')),
-        Flexible(
-          flex: 6,
-          child: Row(
-            children: [
-              Expanded(
-                child: PasajerosBoxContainer(
-                  clase: 'C',
-                  cantidad: tarea.pasajeros!['transito_ejecutivo']!,
-                ),
-              ),
-              Expanded(
-                child: PasajerosBoxContainer(
-                  clase: 'Y',
-                  cantidad: tarea.pasajeros!['transito_economica']!,
-                ),
-              ),
-              Expanded(
-                child: PasajerosBoxContainer(
-                  clase: 'I',
-                  cantidad: tarea.pasajeros!['transito_infante']!,
-                ),
-              ),
-            ],
-          ),
-        ),
-      ],
-    );
-  }
-}
+//         showDialog(
+//           // useRootNavigator: false, // to remove the dialog from the stack
+//           context: context,
+//           builder: (BuildContext context) {
+//             // ref.read(pasajerosFormProvider.notifier).setInitialValues(tarea);
 
-class _SalidaPasajeroView extends StatelessWidget {
-  const _SalidaPasajeroView({required this.tarea});
+//             return PasajerosDialog(tarea: tarea);
+//           },
+//         );
+//       },
 
-  final Tarea tarea;
+//       child: Column(
+//         children: [
+//           if (turnaround?.fkVuelo.tipoServicio.id != 3)
+//             // Llegada
+//             _LlegadaPasajerosView(tarea: tarea),
 
-  @override
-  Widget build(BuildContext context) {
-    return Row(
-      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-      children: [
-        // half width
-        Flexible(flex: 3, child: Text('Salida:')),
-        Flexible(
-          flex: 6,
-          child: Row(
-            children: [
-              Expanded(
-                child: PasajerosBoxContainer(
-                  clase: 'C',
-                  cantidad: tarea.pasajeros!['salida_ejecutivo']!,
-                ),
-              ),
-              Expanded(
-                child: PasajerosBoxContainer(
-                  clase: 'Y',
-                  cantidad: tarea.pasajeros!['salida_economica']!,
-                ),
-              ),
-              Expanded(
-                child: PasajerosBoxContainer(
-                  clase: 'I',
-                  cantidad: tarea.pasajeros!['salida_infante']!,
-                ),
-              ),
-            ],
-          ),
-        ),
-      ],
-    );
-  }
-}
+//           const Divider(thickness: 1),
+
+//           if (turnaround?.fkVuelo.tipoServicio.id != 4)
+//             // Salida
+//             _SalidaPasajeroView(tarea: tarea),
+
+//           if (turnaround?.fkVuelo.tipoServicio.id != 4)
+//             // Transito
+//             _TransitoPasajerosView(tarea: tarea),
+
+//           if (turnaround?.fkVuelo.tipoServicio.id != 4)
+//             // Inadmitidos
+//             _InadmitidosPasajerosView(tarea: tarea),
+
+//           if (turnaround?.fkVuelo.tipoServicio.id != 4)
+//             const Divider(thickness: 1),
+
+//           if (turnaround?.fkVuelo.tipoServicio.id != 4)
+//             // total
+//             _TotalPasajerosView(tarea: tarea),
+
+//           SizedBox(height: 8),
+//         ],
+//       ),
+//     );
+//   }
+// }
+
+// class _TotalPasajerosView extends StatelessWidget {
+//   const _TotalPasajerosView({required this.tarea});
+
+//   final Tarea tarea;
+
+//   @override
+//   Widget build(BuildContext context) {
+//     return Row(
+//       mainAxisAlignment: MainAxisAlignment.spaceBetween,
+//       children: [
+//         // half width
+//         Flexible(flex: 3, child: Text('Total:')),
+//         Flexible(
+//           flex: 6,
+//           child: Row(
+//             children: [
+//               Expanded(
+//                 child: PasajerosBoxContainer(
+//                   clase: 'C',
+//                   // total pasajeros = salida + transito - inadmitidos
+//                   cantidad:
+//                       tarea.pasajeros!['salida_ejecutivo']! +
+//                       tarea.pasajeros!['transito_ejecutivo']! -
+//                       tarea.pasajeros!['inadmitidos_ejecutivo']!,
+//                 ),
+//               ),
+//               Expanded(
+//                 child: PasajerosBoxContainer(
+//                   clase: 'Y',
+//                   cantidad:
+//                       tarea.pasajeros!['salida_economica']! +
+//                       tarea.pasajeros!['transito_economica']! -
+//                       tarea.pasajeros!['inadmitidos_economica']!,
+//                 ),
+//               ),
+//               Expanded(
+//                 child: PasajerosBoxContainer(
+//                   clase: 'I',
+//                   cantidad:
+//                       tarea.pasajeros!['salida_infante']! +
+//                       tarea.pasajeros!['transito_infante']! -
+//                       tarea.pasajeros!['inadmitidos_infante']!,
+//                 ),
+//               ),
+//             ],
+//           ),
+//         ),
+//       ],
+//     );
+//   }
+// }
+
+// class _LlegadaPasajerosView extends StatelessWidget {
+//   const _LlegadaPasajerosView({required this.tarea});
+
+//   final Tarea tarea;
+
+//   @override
+//   Widget build(BuildContext context) {
+//     return Row(
+//       mainAxisAlignment: MainAxisAlignment.spaceBetween,
+//       children: [
+//         // half width
+//         Flexible(flex: 3, child: Text('Llegada:')),
+//         Flexible(
+//           flex: 6,
+//           child: Row(
+//             children: [
+//               Expanded(
+//                 child: PasajerosBoxContainer(
+//                   clase: 'C',
+//                   cantidad: tarea.pasajeros!['llegada_ejecutivo']!,
+//                 ),
+//               ),
+//               Expanded(
+//                 child: PasajerosBoxContainer(
+//                   clase: 'Y',
+//                   cantidad: tarea.pasajeros!['llegada_economica']!,
+//                 ),
+//               ),
+//               Expanded(
+//                 child: PasajerosBoxContainer(
+//                   clase: 'I',
+//                   cantidad: tarea.pasajeros!['llegada_infante']!,
+//                 ),
+//               ),
+//             ],
+//           ),
+//         ),
+//       ],
+//     );
+//   }
+// }
+
+// class _InadmitidosPasajerosView extends StatelessWidget {
+//   const _InadmitidosPasajerosView({required this.tarea});
+
+//   final Tarea tarea;
+
+//   @override
+//   Widget build(BuildContext context) {
+//     return Row(
+//       mainAxisAlignment: MainAxisAlignment.spaceBetween,
+//       children: [
+//         // half width
+//         Flexible(flex: 3, child: Text('Inadmitidos:')),
+//         Flexible(
+//           flex: 6,
+//           child: Row(
+//             children: [
+//               Expanded(
+//                 child: PasajerosBoxContainer(
+//                   clase: 'C',
+//                   cantidad: tarea.pasajeros!['inadmitidos_ejecutivo']!,
+//                 ),
+//               ),
+//               Expanded(
+//                 child: PasajerosBoxContainer(
+//                   clase: 'Y',
+//                   cantidad: tarea.pasajeros!['inadmitidos_economica']!,
+//                 ),
+//               ),
+//               Expanded(
+//                 child: PasajerosBoxContainer(
+//                   clase: 'I',
+//                   cantidad: tarea.pasajeros!['inadmitidos_infante']!,
+//                 ),
+//               ),
+//             ],
+//           ),
+//         ),
+//       ],
+//     );
+//   }
+// }
+
+// class _TransitoPasajerosView extends StatelessWidget {
+//   const _TransitoPasajerosView({required this.tarea});
+
+//   final Tarea tarea;
+
+//   @override
+//   Widget build(BuildContext context) {
+//     return Row(
+//       mainAxisAlignment: MainAxisAlignment.spaceBetween,
+//       children: [
+//         // half width
+//         Flexible(flex: 3, child: Text('Transito:')),
+//         Flexible(
+//           flex: 6,
+//           child: Row(
+//             children: [
+//               Expanded(
+//                 child: PasajerosBoxContainer(
+//                   clase: 'C',
+//                   cantidad: tarea.pasajeros!['transito_ejecutivo']!,
+//                 ),
+//               ),
+//               Expanded(
+//                 child: PasajerosBoxContainer(
+//                   clase: 'Y',
+//                   cantidad: tarea.pasajeros!['transito_economica']!,
+//                 ),
+//               ),
+//               Expanded(
+//                 child: PasajerosBoxContainer(
+//                   clase: 'I',
+//                   cantidad: tarea.pasajeros!['transito_infante']!,
+//                 ),
+//               ),
+//             ],
+//           ),
+//         ),
+//       ],
+//     );
+//   }
+// }
+
+// class _SalidaPasajeroView extends StatelessWidget {
+//   const _SalidaPasajeroView({required this.tarea});
+
+//   final Tarea tarea;
+
+//   @override
+//   Widget build(BuildContext context) {
+//     return Row(
+//       mainAxisAlignment: MainAxisAlignment.spaceBetween,
+//       children: [
+//         // half width
+//         Flexible(flex: 3, child: Text('Salida:')),
+//         Flexible(
+//           flex: 6,
+//           child: Row(
+//             children: [
+//               Expanded(
+//                 child: PasajerosBoxContainer(
+//                   clase: 'C',
+//                   cantidad: tarea.pasajeros!['salida_ejecutivo']!,
+//                 ),
+//               ),
+//               Expanded(
+//                 child: PasajerosBoxContainer(
+//                   clase: 'Y',
+//                   cantidad: tarea.pasajeros!['salida_economica']!,
+//                 ),
+//               ),
+//               Expanded(
+//                 child: PasajerosBoxContainer(
+//                   clase: 'I',
+//                   cantidad: tarea.pasajeros!['salida_infante']!,
+//                 ),
+//               ),
+//             ],
+//           ),
+//         ),
+//       ],
+//     );
+//   }
+// }
 
 class _TareaExcesoEquipajeView extends StatelessWidget {
   final Tarea tarea;
@@ -2795,7 +2979,23 @@ class _ComentarioView extends ConsumerWidget {
                                       ).notifier,
                                     )
                                     .setComentario(body);
+                                if (!response.hasConnection) {
+                                  // set manually the comment locally in the riverpo state
+                                  // setState(() {
+                                  tarea.comentario = textController.text;
+                                  // });
+                                  // Show snackbar warning
+                                  CustomSnackbar.showWarningSnackbar(
+                                    response.message,
+                                    // ignore: use_build_context_synchronously
+                                    context,
+                                    isFixed: true,
+                                  );
 
+                                  // return;
+                                  Navigator.pop(context);
+                                textController.clear();
+                                }
                                 // Show snackbar response
                                 CustomSnackbar.showResponseSnackbar(
                                   response.message,

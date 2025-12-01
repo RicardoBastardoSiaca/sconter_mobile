@@ -332,7 +332,8 @@ class Tarea {
   String? faseTarea;
   List<dynamic>? maquinaria;
   List<Imagen>? imagen;
-  Map<String, int>? pasajeros;
+  // Map<String, int>? pasajeros;
+  ConteoPasajeros? pasajeros;
   List<dynamic>? equipo;
   bool isExpanded;
 
@@ -410,6 +411,32 @@ class Tarea {
   // };
 }
 
+class ConteoPasajeros {
+  int id;
+  int ejecutivo;
+  int economica;
+  int infante;
+  ConteoPasajeros({
+    required this.id,
+    required this.ejecutivo,
+    required this.economica,
+    required this.infante,
+  });
+
+  factory ConteoPasajeros.fromJson(Map<String, dynamic> json) =>
+      ConteoPasajeros(
+        id: json["id"],
+        ejecutivo: json["ejecutivo"],
+        economica: json["economica"],
+        infante: json["infante"],
+      );
+
+  Map<String, dynamic> toJson() => {
+        "ejecutivo": ejecutivo,
+        "economica": economica,
+        "infante": infante,
+      };
+}
 class Imagen {
   int id;
   String? imagen;
@@ -610,32 +637,13 @@ class SetNumeroTareaRequest {
 
 class SavePasajerosRequest {
   int id;
-  int llegadaEjecutivo;
-  int llegadaEconomica;
-  int llegadaInfante;
-  int transitoEjecutivo;
-  int transitoEconomica;
-  int transitoInfante;
-  int salidaEjecutivo;
-  int salidaEconomica;
-  int salidaInfante;
-  int inadmitidosEjecutivo;
-  int inadmitidosEconomica;
-  int inadmitidosInfante;
-
+  int ejecutivo;
+  int economica;
+  int infante;
   SavePasajerosRequest({
     required this.id,
-    required this.llegadaEjecutivo,
-    required this.llegadaEconomica,
-    required this.llegadaInfante,
-    required this.transitoEjecutivo,
-    required this.transitoEconomica,
-    required this.transitoInfante,
-    required this.salidaEjecutivo,
-    required this.salidaEconomica,
-    required this.salidaInfante,
-    required this.inadmitidosEjecutivo,
-    required this.inadmitidosEconomica,
-    required this.inadmitidosInfante,
+    required this.ejecutivo,
+    required this.economica,
+    required this.infante,
   });
 }
