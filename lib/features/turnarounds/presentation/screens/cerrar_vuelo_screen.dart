@@ -6,6 +6,7 @@ import 'package:turnaround_mobile/features/turnarounds/presentation/providers/pr
 
 import '../../../shared/shared.dart';
 import '../../domain/entities/entities.dart';
+import '../providers/providers.dart';
 import '../widgets/widgets.dart';
 
 class CerrarVueloScreen extends StatelessWidget {
@@ -22,7 +23,7 @@ class CerrarVueloScreen extends StatelessWidget {
 
 class _CerrarVueloView extends ConsumerStatefulWidget {
   const _CerrarVueloView();
-  
+
   @override
   ConsumerState<ConsumerStatefulWidget> createState() {
     return _CerrarVueloViewState();
@@ -30,66 +31,89 @@ class _CerrarVueloView extends ConsumerStatefulWidget {
 
   // @override
   // State<_CerrarVueloView> createState() => _CerrarVueloViewState();
-  
 }
 
 class _CerrarVueloViewState extends ConsumerState<_CerrarVueloView> {
-
   final introKey = GlobalKey<IntroductionScreenState>();
-  
 
-  Future<void> _onIntroEnd(BuildContext context) async {
+  Future<bool> _onIntroEnd(BuildContext context) async {
     print("onIntroEnd");
 
-final bool? result = await showConfirmationDialog(
+    final bool? result = await showConfirmationDialogNoClose(
       context: context,
       title: 'Cerrar Vuelo',
       message: 'Esta seguro de cerrar el vuelo?',
       // confirmText: 'Confirmar',
       // confirmColor: Theme.of(context).colorScheme.primary,
     );
-    
+
     if (result == true) {
       // Perform delete action
-    final body = <String, Object?>{
-      'id_trc': ref.watch(selectedTurnaroundProvider)!.id,
-      'id_vuelo': ref.watch(selectedTurnaroundProvider)!.fkVuelo.id,
-      'comentario': ''
-    };
-    ref.read(turnaroundProvider.notifier).cerrarVuelo(body);
-    }
-    
+      final body = <String, Object?>{
+        'id_trc': ref.watch(selectedTurnaroundProvider)!.id,
+        'id_vuelo': ref.watch(selectedTurnaroundProvider)!.fkVuelo.id,
+        'comentario': '',
+      };
+      final response = await ref
+          .read(turnaroundProvider.notifier)
+          .cerrarVuelo(body);
+      // introductionscreen does not have context after await, prevent closing introduction screen
+      // await snackbar to show message
+      // if (context.mounted) {
+      //   ScaffoldMessenger.of(
+      //     context,
+      //   ).showSnackBar(SnackBar(content: Center(child: Text(response.message, ))));//asdasd
+      // }
+      print(response);
+      // Custom snackbar to show message
+      if (response.success) {
+        if (context.mounted) {
+          CustomSnackbar.showSuccessSnackbar(response.message, context, );
+          Navigator.of(context).pop(); // Close the screen after successful closure
+          
+        }
+      } else {
+        if (context.mounted) {
+          CustomSnackbar.showErrorSnackbar('Error: ${response.message}', context);
+        }
+      }
 
-    Widget buildImage(String assetName, [double width = 350]) {
-    return Image.asset('assets/$assetName', width: width);
+       return true;
+    }
+      return false;
   }
-  }
+
   @override
   Widget build(BuildContext context) {
-
     // Variables
     final trcId = ref.watch(selectedTurnaroundProvider)!.id;
     final turnaround = ref.watch(selectedTurnaroundProvider)!;
-    final ControlActividades? controlActividades = ref.watch(controlActividadesProvider(trcId)).controlActividades;
-                                                  
+    final ControlActividades? controlActividades = ref
+        .watch(controlActividadesProvider(trcId))
+        .controlActividades;
+
     final List<Demora> demoras = ref.watch(demorasProvider).demoras;
-        
-    final  departamentosPersona = ref.watch(departamentoPersonalProvider(trcId));
+
+    final departamentosPersona = ref.watch(departamentoPersonalProvider(trcId));
 
     const bodyStyle = TextStyle(fontSize: 19.0);
 
     ThemeData theme = Theme.of(context);
 
     PageDecoration pageDecoration = PageDecoration(
-      titleTextStyle: TextStyle(fontSize: 28.0, fontWeight: FontWeight.w700, color: theme.colorScheme.primary),
+      titleTextStyle: TextStyle(
+        fontSize: 28.0,
+        fontWeight: FontWeight.w700,
+        color: theme.colorScheme.primary,
+      ),
       bodyTextStyle: bodyStyle,
       bodyPadding: EdgeInsets.fromLTRB(16.0, 0.0, 16.0, 16.0),
       pageColor: Colors.white,
       imagePadding: EdgeInsets.zero,
     );
 
-   return SafeArea(
-     child: IntroductionScreen(
+    return SafeArea(
+      child: IntroductionScreen(
         key: introKey,
         globalBackgroundColor: Colors.white,
         allowImplicitScrolling: true,
@@ -132,44 +156,51 @@ final bool? result = await showConfirmationDialog(
           // ),
           PageViewModel(
             title: "1. Datos de Vuelo",
-            bodyWidget: VueloDetalle( 
+            bodyWidget: VueloDetalle(
               controlActividades: controlActividades,
-              turnaround: turnaround,),
+              turnaround: turnaround,
+              isTurnarond: true,
+            ),
             decoration: pageDecoration,
           ),
           PageViewModel(
             title: "2. Control de Actividades",
-             bodyWidget: ControlActividadesDetalle( 
+            bodyWidget: ControlActividadesDetalle(
               controlActividades: controlActividades,
-              turnaround: turnaround,),
+              turnaround: turnaround,
+            ),
             decoration: pageDecoration,
           ),
           PageViewModel(
             title: "3. SLA",
-             bodyWidget: SlaDetalle( 
+            bodyWidget: SlaDetalle(
               controlActividades: controlActividades,
-              turnaround: turnaround,),
+              turnaround: turnaround,
+            ),
             decoration: pageDecoration,
           ),
           PageViewModel(
             title: "4. Servicios",
-             bodyWidget: ServiciosDetalle( 
+            bodyWidget: ServiciosDetalle(
               controlActividades: controlActividades,
-              turnaround: turnaround,),
+              turnaround: turnaround,
+            ),
             decoration: pageDecoration,
           ),
           PageViewModel(
             title: "5. Codigos de Demora",
-             bodyWidget: CodigosDemoraDetalle( 
-              demoras: demoras,),
+            bodyWidget: CodigosDemoraDetalle(demoras: demoras),
             decoration: pageDecoration,
           ),
           PageViewModel(
             title: "6. Personal",
-             bodyWidget: PersonalDetalle( 
-              departamentosPersona: departamentosPersona.departamentoPersonalResponse,),
+            bodyWidget: PersonalDetalle(
+              departamentosPersona:
+                  departamentosPersona.departamentoPersonalResponse,
+            ),
             decoration: pageDecoration,
           ),
+
           // PageViewModel(
           //   title: "Learn as you go",
           //   body:
@@ -184,7 +215,7 @@ final bool? result = await showConfirmationDialog(
           //   // image: _buildImage('img3.jpg'),
           //   decoration: pageDecoration,
           // ),
-          
+
           // PageViewModel(
           //   title: "Another title page",
           //   body: "Another beautiful body text for this example onboarding",
@@ -229,19 +260,31 @@ final bool? result = await showConfirmationDialog(
           //   // image: _buildImage('img1.jpg'),
           //   reverse: true,
           // ),
-        
         ],
         onDone: () => _onIntroEnd(context),
         onSkip: () => _onIntroEnd(context), // You can override onSkip callback
+        // onSkip: () async {
+        //   final bool success = await _onIntroEnd(context);
+        //   print('Success on skip: $success');
+        //   if (success) {
+        //     Navigator.of(context).pop();
+        //   }
+        // }, // You can override onSkip callback
         // showSkipButton: true,
         skipOrBackFlex: 0,
         nextFlex: 0,
         showBackButton: true,
         //rtl: true, // Display as right-to-left
         back: const Icon(Icons.arrow_back, size: 24),
-        skip: const Text('Salir', style: TextStyle(fontWeight: FontWeight.w600)),
+        skip: const Text(
+          'Salir',
+          style: TextStyle(fontWeight: FontWeight.w600),
+        ),
         next: const Icon(Icons.arrow_forward, size: 24),
-        done: const Text('Cerrar', style: TextStyle(fontWeight: FontWeight.w600)),
+        done: const Text(
+          'Cerrar',
+          style: TextStyle(fontWeight: FontWeight.w600),
+        ),
         curve: Curves.fastLinearToSlowEaseIn,
         controlsMargin: const EdgeInsets.all(16),
         controlsPadding: kIsWeb
@@ -262,6 +305,6 @@ final bool? result = await showConfirmationDialog(
           ),
         ),
       ),
-   );
+    );
   }
 }

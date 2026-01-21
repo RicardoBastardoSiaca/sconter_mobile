@@ -22,3 +22,9 @@ export 'cerrar_vuelo_screen.dart';
 
 export 'asignar_equipos_it_control_actividades_screen.dart';
 export 'change_password_screen.dart';
+
+export 'servicios_miscelaneos_screen.dart';
+
+export 'consultar_servicios_miscelaneos.dart';
+
+export 'control_actividades_servicios_miscelaneos.dart';

@@ -4,8 +4,9 @@ import 'package:turnaround_mobile/features/turnarounds/domain/domain.dart';
 class VueloDetalle extends StatelessWidget {
   final ControlActividades? controlActividades;
   final TurnaroundMain? turnaround;
+  final bool isTurnarond;
 
-  const VueloDetalle({super.key, this.controlActividades, this.turnaround});
+  const VueloDetalle({super.key, this.controlActividades, this.turnaround, required this.isTurnarond});
 
   @override
   Widget build(BuildContext context) {
@@ -22,47 +23,63 @@ class VueloDetalle extends StatelessWidget {
             acType: turnaround?.fkVuelo.acType ?? '',
             puerta: turnaround?.fkVuelo.gate?.toString() ?? '',
             tipoVuelo: turnaround!.fkVuelo.tipoVuelo.nombre,
-            tipoServicio: turnaround!.fkVuelo.tipoServicio.nombre,
+            tipoServicio: turnaround!.fkVuelo.tipoServicio?.nombre ?? 'N/A',
+            nroVuelo: turnaround?.fkVuelo.numeroVueloOut ?? '',
+            estacion: turnaround?.fkVuelo.stn?.aka ?? '',
+            hora: turnaround?.fkVuelo.etdOut?.substring(0, 5) ?? '',
+            isTurnarond: isTurnarond
           ),
-          turnaround?.fkVuelo.lugarSalida == null 
+          turnaround?.fkVuelo.lugarSalida == null
               ? SizedBox.shrink()
-              :
-          SizedBox(height: 24),
-          turnaround?.fkVuelo.lugarSalida == null 
+              : SizedBox(height: 24),
+          turnaround?.fkVuelo.lugarSalida == null
               ? SizedBox.shrink()
-              :
-          FlightInfoCard(
-            titulo: 'Vuelo de llegada',
-            flightNumber: '${turnaround?.fkVuelo.fkAerolinea.codigoIata}-${controlActividades?.numeroVueloIn}' ?? '',
-            routing: '${controlActividades?.lugarSalidaIata}-${turnaround?.fkVuelo.stn?.codigoIata} ' ?? '',
-            etd: '${turnaround?.fkVuelo.etdIn?.substring(0, 5)}' ?? '',
-            eta: '${turnaround?.fkVuelo.etaIn?.substring(0, 5)}' ?? '',
-            // fecha: '${turnaround?.fechaInicio}' ?? '',
-            fecha: (turnaround?.fkVuelo.etaFechaIn == null)
-                ? ''
-                : DateTimeInputFormatter.displayFormat.format(
-                    DateTimeInputFormatter.parseStringToDate(turnaround!.fkVuelo.etaFechaIn ?? '') ?? DateTime.now()),
+              : FlightInfoCard(
+                  titulo: 'Vuelo de llegada',
+                  flightNumber:
+                      '${turnaround?.fkVuelo.fkAerolinea.codigoIata}-${controlActividades?.numeroVueloIn}' ??
+                      '',
+                  routing:
+                      '${controlActividades?.lugarSalidaIata}-${turnaround?.fkVuelo.stn?.codigoIata} ' ??
+                      '',
+                  etd: '${turnaround?.fkVuelo.etdIn?.substring(0, 5)}' ?? '',
+                  eta: '${turnaround?.fkVuelo.etaIn?.substring(0, 5)}' ?? '',
+                  // fecha: '${turnaround?.fechaInicio}' ?? '',
+                  fecha: (turnaround?.fkVuelo.etaFechaIn == null)
+                      ? ''
+                      : DateTimeInputFormatter.displayFormat.format(
+                          DateTimeInputFormatter.parseStringToDate(
+                                turnaround!.fkVuelo.etaFechaIn ?? '',
+                              ) ??
+                              DateTime.now(),
+                        ),
 
-            // fecha: DateTimeInputFormatter.displayFormat.format(DateTime(DateTimeInputFormatter.parseStringToDate turnaround?.fechaInicio)),
-          ),
-          turnaround?.fkVuelo.lugarDestino == null 
+                  // fecha: DateTimeInputFormatter.displayFormat.format(DateTime(DateTimeInputFormatter.parseStringToDate turnaround?.fechaInicio)),
+                ),
+          turnaround?.fkVuelo.lugarDestino == null
               ? SizedBox.shrink()
-              :
-          SizedBox(height: 16),
-          turnaround?.fkVuelo.lugarDestino == null 
+              : SizedBox(height: 16),
+          turnaround?.fkVuelo.lugarDestino == null
               ? SizedBox.shrink()
-              :
-          FlightInfoCard(
-            titulo: 'Vuelo de salida',
-            flightNumber: '${turnaround?.fkVuelo.fkAerolinea.codigoIata}-${controlActividades?.numeroVueloOut}' ?? '',
-            routing: '${turnaround?.fkVuelo.stn?.codigoIata}-${controlActividades?.lugarDestinoIata}' ?? '',
-            etd: '${turnaround?.fkVuelo.etdOut?.substring(0, 5)}' ?? '',
-            eta: '${turnaround?.fkVuelo.etaOut?.substring(0, 5)}' ?? '',
-            fecha: (turnaround?.fkVuelo.etdFechaOut == null)
-                ? ''
-                : DateTimeInputFormatter.displayFormat.format(
-                    DateTimeInputFormatter.parseStringToDate(turnaround!.fkVuelo.etdFechaOut ?? '') ?? DateTime.now()),
-          ),
+              : FlightInfoCard(
+                  titulo: 'Vuelo de salida',
+                  flightNumber:
+                      '${turnaround?.fkVuelo.fkAerolinea.codigoIata}-${controlActividades?.numeroVueloOut}' ??
+                      '',
+                  routing:
+                      '${turnaround?.fkVuelo.stn?.codigoIata}-${controlActividades?.lugarDestinoIata}' ??
+                      '',
+                  etd: '${turnaround?.fkVuelo.etdOut?.substring(0, 5)}' ?? '',
+                  eta: '${turnaround?.fkVuelo.etaOut?.substring(0, 5)}' ?? '',
+                  fecha: (turnaround?.fkVuelo.etdFechaOut == null)
+                      ? ''
+                      : DateTimeInputFormatter.displayFormat.format(
+                          DateTimeInputFormatter.parseStringToDate(
+                                turnaround!.fkVuelo.etdFechaOut ?? '',
+                              ) ??
+                              DateTime.now(),
+                        ),
+                ),
         ],
       ),
     );
@@ -77,6 +94,10 @@ class MutualInfoSection extends StatelessWidget {
   final String puerta;
   final String tipoVuelo;
   final String tipoServicio;
+  final String nroVuelo;
+  final String estacion;
+  final String hora;
+  final bool isTurnarond;
 
   const MutualInfoSection({
     super.key,
@@ -87,6 +108,10 @@ class MutualInfoSection extends StatelessWidget {
     required this.puerta,
     required this.tipoVuelo,
     required this.tipoServicio,
+    required this.nroVuelo,
+    required this.estacion,
+    required this.hora,
+    required this.isTurnarond,
   });
 
   @override
@@ -105,27 +130,45 @@ class MutualInfoSection extends StatelessWidget {
               label: 'Aerolinea:',
               value: aerolinea,
             ),
-            InfoRow(
-              icon: Icons.confirmation_number,
-              label: 'A/C Reg:',
-              value: acReg,
-            ),
+            InfoRow(icon: Icons.tag, label: 'Nro. de vuelo:', value: nroVuelo),
+
             InfoRow(
               icon: Icons.airplanemode_active,
               label: 'A/C Type:',
               value: acType,
             ),
-            InfoRow(icon: Icons.meeting_room, label: 'Puerta:', value: puerta),
             InfoRow(
-              icon: Icons.airplane_ticket,
-              label: 'Tipo de vuelo:',
-              value: tipoVuelo,
+              icon: Icons.confirmation_number,
+              label: 'Matricula:',
+              value: acReg,
             ),
+            InfoRow(icon: Icons.meeting_room, label: 'Puerta:', value: puerta),
+            isTurnarond 
+            ? InfoRow(
+                icon: Icons.airplane_ticket,
+                label: 'Tipo de vuelo:',
+                value: tipoVuelo,
+              )
+            : SizedBox(),
+            isTurnarond 
+            ? InfoRow(
+                icon: Icons.airline_stops_rounded,
+                label: 'Tipo de servicio:',
+                value: tipoServicio,
+              )
+              : SizedBox(),
             InfoRow(
               icon: Icons.airline_stops_rounded,
-              label: 'Tipo de servicio:',
-              value: tipoServicio,
+              label: 'Estacion:',
+              value: estacion,
             ),
+            !isTurnarond 
+            ? InfoRow(
+              icon: Icons.airline_stops_rounded,
+              label: 'Hora:',
+              value: hora,
+            )
+            : SizedBox(),
           ],
         ),
       ),
@@ -147,7 +190,8 @@ class FlightInfoCard extends StatelessWidget {
     required this.routing,
     required this.etd,
     required this.eta,
-    required this.fecha, required this.titulo,
+    required this.fecha,
+    required this.titulo,
   });
 
   @override
@@ -161,24 +205,23 @@ class FlightInfoCard extends StatelessWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Row(
-              children: [
-                Text(
-                  titulo,
-                  style: const TextStyle(
-                  ),
-                ),
-               
-              ],
-            ),
+            Row(children: [Text(titulo, style: const TextStyle())]),
             const SizedBox(height: 12),
             const Divider(height: 1),
             const SizedBox(height: 12),
-            InfoRow(icon: Icons.numbers, label: 'Nro. de vuelo:', value: flightNumber),
+            InfoRow(
+              icon: Icons.numbers,
+              label: 'Nro. de vuelo:',
+              value: flightNumber,
+            ),
             InfoRow(icon: Icons.route, label: 'Routing:', value: routing),
             InfoRow(icon: Icons.schedule, label: 'ETD:', value: etd),
             InfoRow(icon: Icons.timelapse, label: 'ETA:', value: eta),
-            InfoRow(icon: Icons.calendar_today, label: 'Fecha:', value: fecha ?? ''),
+            InfoRow(
+              icon: Icons.calendar_today,
+              label: 'Fecha:',
+              value: fecha ?? '',
+            ),
           ],
         ),
       ),

@@ -23,7 +23,7 @@ class SlaDetalleView extends StatelessWidget {
   Widget build(BuildContext context) {
     return SingleChildScrollView(
       child: 
-      controlActividades!.sla == null ? const Text('No hay SLA asociados') :
+      controlActividades?.sla == null ? const Text('No hay SLA asociados') :
       Column(
         children: [
           ...controlActividades!.sla!.asMap().entries.map((entry) {

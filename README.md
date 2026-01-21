@@ -24,5 +24,6 @@ flutter pub run flutter_launcher_icons
 Android AAB
 
 ```
+<!-- Generar app de produccion -->
 flutter build appbundle
 ```

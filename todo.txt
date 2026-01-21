@@ -2,6 +2,25 @@
 
 Fixes:
 
+Visualizacion de contraseña
+Zoom imagenes del sistema (investigar)
+Revisar Cerrar Vuelo / no deberia verse una vez este finalizado
+Validar las opciones del menu respetando los permisos. no deberia poder cerrar vuelo si no tiene el permiso
+en el menu principal, cuando se selecciona una opcion, debe cerrarse el menu principal
+
+En Web 
+Status canleado va en fuente color roja
+Seleccionar equipo hora, no tiene para colocar fecha.
+
+Alquiler de equipos GSE (implementar)
+
+cuando haya ico hex deberia mostrar solo el mapa (ADBS)
+
+En la linea de tiempo el color aparece azul cuando es verde, y seve verde cuano deberia estar azu
+
+
+
+
 Consultar plantilla overflow
 enumeracion en consultar control de actividades
 bloquear visibilidad, segun si es de operaciones o sap que solo vean lo que deben ver

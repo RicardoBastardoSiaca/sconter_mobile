@@ -36,6 +36,13 @@ final goRouterProvider = Provider((ref) {
         ),
       ),
       GoRoute(
+        path: '/control-actividades-servicios-miscelaneos/:id',
+        builder: (context, state) => ControlActividadesServiciosMiscelaneosScreen(
+          // trcId: state.pathParameters['trcId']! as int,
+          trcId: int.parse(state.pathParameters['id']!),
+        ),
+      ),
+      GoRoute(
         path: '/image-fullscreen-carousel',
         builder: (context, state) => ImageFullscreenCarousel(),
       ),
@@ -101,12 +108,21 @@ final goRouterProvider = Provider((ref) {
         builder: (context, state) => ConsultarControlActividadesScreen(),
       ),
       GoRoute(
+        path: '/consultar-servicios-miscelaneos-screen',
+        builder: (context, state) => ConsultarServiciosMiscelaneos(),
+      ),
+
+      GoRoute(
         path: '/asignar-equipos-it-limpieza-control-actividades-screen',
         builder: (context, state) => AsignarEquiposItControlActividadesScreen(),
       ),
       GoRoute(
         path: '/change-password-screen',
         builder: (context, state) => ChangePasswordScreen(),
+      ),
+      GoRoute(
+        path: '/servicios-miscelaneos-screen',
+        builder: (context, state) => ServiciosMiscelaneosScreen(),
       ),
     ],
 

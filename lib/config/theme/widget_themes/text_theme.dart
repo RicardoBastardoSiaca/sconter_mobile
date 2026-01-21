@@ -152,7 +152,7 @@ class TTextTheme {
     ),
     labelMedium: const TextStyle().copyWith(
       fontFamily: GoogleFonts.openSans().fontFamily,
-      fontSize: 18.0,
+      fontSize: 16.0,
       fontWeight: FontWeight.normal,
       color: TColors.light.withOpacity(0.5),
     ),

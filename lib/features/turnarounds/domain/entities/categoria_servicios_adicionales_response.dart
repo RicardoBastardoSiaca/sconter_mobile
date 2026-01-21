@@ -122,12 +122,14 @@ class SetHoraServicioAdicionalRequest {
   final DateTime? horaInicio;
   final DateTime? horaFin;
   final String tipo;
+  final bool isServicioMiscelaneo;
 
   SetHoraServicioAdicionalRequest({
     required this.id,
     required this.horaInicio,
     required this.horaFin,
     required this.tipo,
+    this.isServicioMiscelaneo = false
   });
 }
 
@@ -137,6 +139,7 @@ class HoraMaquinariaServicioAdicionalResponse {
   final DateTime? horaInicio;
   final DateTime? horaFin;
   final String? tipo;
+  final bool isServicioMiscelaneo;
 
   HoraMaquinariaServicioAdicionalResponse({
     required this.id,
@@ -144,6 +147,7 @@ class HoraMaquinariaServicioAdicionalResponse {
     this.horaInicio,
     this.horaFin,
     this.tipo,
+    this.isServicioMiscelaneo = false,
   });
 
   factory HoraMaquinariaServicioAdicionalResponse.fromJson(

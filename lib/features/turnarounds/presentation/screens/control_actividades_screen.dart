@@ -269,6 +269,7 @@ class _ControlActividadesScreenState
             // ),
           ],
         ),
+        
         body: NestedScrollView(
           headerSliverBuilder: (BuildContext context, bool innerBoxIsScrolled) {
             return <Widget>[

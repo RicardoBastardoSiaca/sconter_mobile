@@ -228,7 +228,7 @@ class _TuraroundMainViewState extends ConsumerState {
                       Center(
                         child: Text(
                           'Turnarounds',
-                          style: Theme.of(context).textTheme.headlineLarge?.copyWith(
+                          style: Theme.of(context).textTheme.headlineMedium?.copyWith(
                             color: Theme.of(context).colorScheme.primary,
                             fontWeight: FontWeight.w900,
                             fontFamily: GoogleFonts.openSans(
@@ -409,14 +409,28 @@ class _ListTileCardContainer extends StatelessWidget {
               width: MediaQuery.of(context).size.width,
               alignment: Alignment.center, // <---- The magic
               child: SvgPicture.asset(
-                switch (turnaround.fkVuelo.estatus.color) {
-                  "verde" => 'assets/layouts/contenedor-verde.svg',
-                  "amarillo" => 'assets/layouts/contenedor-amarillo.svg',
-                  "rojo" => 'assets/layouts/contenedor-rojo.svg',
-                  "azul" => 'assets/layouts/contenedor-azul.svg',
-                  "gris" => 'assets/layouts/contenedor-gris.svg',
+                // switch case based on turnaround.fkVuelo.estatus.id
+                switch (turnaround.fkVuelo.estatus.id) {
+                  "2" => 'assets/layouts/contenedor-amarillo.svg',
+                  // "2" => 'assets/layouts/contenedor-naranja.svg',
+                  "3" => 'assets/layouts/contenedor-verde.svg',
+                  // "3" => 'assets/layouts/contenedor-rojo.svg',
+                  "4" => 'assets/layouts/contenedor-azul.svg',
+                  "7" => 'assets/layouts/contenedor-rojo.svg',
+                  "6" => 'assets/layouts/contenedor-gris.svg',
+                  "8" => 'assets/layouts/contenedor-naranja.svg',
                   _ => 'assets/layouts/contenedor-blanco.svg', // default case
                 },
+                // switch (turnaround.fkVuelo.estatus.color) {
+                //   "verde" => 'assets/layouts/contenedor-verde.svg',
+                //   "amarillo" => 'assets/layouts/contenedor-amarillo.svg',
+                //   "rojo" => 'assets/layouts/contenedor-rojo.svg',
+                //   "azul" => 'assets/layouts/contenedor-azul.svg',
+                //   "gris" => 'assets/layouts/contenedor-gris.svg',
+                //   _ => 'assets/layouts/contenedor-blanco.svg', // default case
+                // },
+
+
                 // 'assets/layouts/contenedor-blanco.svg',
                 semanticsLabel: 'Image',
                 fit: BoxFit.fill,
@@ -725,6 +739,13 @@ class _MenuDialog extends ConsumerWidget {
                 context.push('/cerrar-vuelo-screen');
                 // close bottom sheet
                 Navigator.pop(context);
+
+                // show snackbar if push return true
+                // if (result == true) {
+                //   ScaffoldMessenger.of(context).showSnackBar(
+                //     SnackBar(content: Text('Vuelo cerrado correctamente')),
+                //   );
+                // }
               },
             ),
             
@@ -750,7 +771,7 @@ class _MenuDialog extends ConsumerWidget {
                 // Control de actividades
                 ref.read(controlActividadesProvider(turnaround.id).notifier).getControlDeActividadesByTrcId();
 
-                ref.read(plantillaDetalleProvider.notifier).getPlantillaDetalleById(turnaround.fkVuelo.fkPlantilla.id);
+                ref.read(plantillaDetalleProvider.notifier).getPlantillaDetalleById(turnaround.fkVuelo.fkPlantilla?.id ?? 0);
 
 
 
@@ -803,14 +824,25 @@ class _MenuDialog extends ConsumerWidget {
                   height: 13,
                   decoration: BoxDecoration(
                     color: 
-                    switch (turnaround.fkVuelo.estatus.color) {
-                      "verde" => Colors.green,
-                      "amarillo" => Colors.yellow,
-                      "rojo" => Colors.red,
-                      "azul" => Colors.blue,
-                      "gris" => Colors.grey,
+                    switch (turnaround.fkVuelo.estatus.id) {
+                      "2" => Colors.yellow,
+                      "3" => Colors.green,
+                      "4" => Colors.blue,
+                      "6" => Colors.grey,
+                      "7" => Colors.red,
+                      "8" => Colors.orange,
                       _ => Colors.white, // default case
                     },
+                    
+
+                    // switch (turnaround.fkVuelo.estatus.color) {
+                    //   "verde" => Colors.green,
+                    //   "amarillo" => Colors.yellow,
+                    //   "rojo" => Colors.red,
+                    //   "azul" => Colors.blue,
+                    //   "gris" => Colors.grey,
+                    //   _ => Colors.white, // default case
+                    // },
                     shape: BoxShape.rectangle,
                     borderRadius: BorderRadius.circular(4),
                     border: Border.all(
@@ -823,6 +855,7 @@ class _MenuDialog extends ConsumerWidget {
                 
                 Text(
                   turnaround.fkVuelo.estatus.nombre.toUpperCase(),
+                  overflow: TextOverflow.ellipsis,
                   // uppercase
                   style: Theme.of(context).textTheme.labelMedium?.copyWith(
                     fontWeight: FontWeight.w900,

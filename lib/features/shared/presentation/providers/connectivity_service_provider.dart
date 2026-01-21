@@ -80,7 +80,8 @@ class ConnectivityNotifier extends StateNotifier<AsyncValue<bool>> {
     // final accessToken = ref.watch( authProvider ).loginResponse?.token ?? '';
     try {
     localStorageRepository.getAllRequestApis().then((requests) async {
-        await _requestManager.processAllRequests(requests, localStorageRepository);
+        await 
+        _requestManager.processAllRequests(requests, localStorageRepository);
       print('Found ${requests.length} requests to sync.');
       
       // for (var request in requests) {

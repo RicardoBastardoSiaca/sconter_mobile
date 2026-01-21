@@ -67,6 +67,22 @@ class ControlActividadesNotifier
       state = state.copyWith(isLoading: false);
     }
   }
+  Future<void> getControlDeActividadesServicioMiscelaneoById() async {
+    print("getControlDeActividadesByTrcId: $trcId");
+    state = state.copyWith(isLoading: true);
+    try {
+      final controlDeActividades = await turnaroundsRepository
+          .getControlDeActividadesServicioMiscelaneoById(trcId);
+      state = state.copyWith(
+        controlActividades: controlDeActividades,
+        isLoading: false,
+      );
+      // print("Control de Actividades: $controlDeActividades");
+    } catch (e) {
+      // print("Error getting control de actividades: $e");
+      state = state.copyWith(isLoading: false);
+    }
+  }
 
   Future<SnackbarResponse> setHoraInicio(
     int id,

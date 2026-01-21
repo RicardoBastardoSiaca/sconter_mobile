@@ -3,121 +3,96 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:intl/intl.dart';
 
-import '../../../shared/shared.dart';
-import '../../domain/domain.dart';
-import '../providers/providers.dart';
-// import 'package:turnaround_mobile/shared/shared.dart';
+import '../../../../shared/shared.dart';
+import '../../../domain/domain.dart';
+import '../../providers/providers.dart';
 
-class ServiciosEspecialesScreen extends ConsumerWidget {
-  const ServiciosEspecialesScreen({super.key});
 
-  @override
-  Widget build(BuildContext context, WidgetRef ref) {
-    return Scaffold(
-      appBar: AppBar(title: const Text('Servicios Especiales')),
-      body: _ServiciosEspecialesView(),
-    );
-  }
-}
-
-class _ServiciosEspecialesView extends ConsumerWidget {
-  const _ServiciosEspecialesView();
+class ServiciosAdicionalesControlActividadesView extends ConsumerWidget {
+  const ServiciosAdicionalesControlActividadesView({super.key});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final trcId = ref.watch(selectedTurnaroundProvider)!.id;
-    return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 16),
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.start,
-        children: [
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              Text(
-                'Agregar servicio especial:',
-                style: Theme.of(
+    return Column(
+      mainAxisAlignment: MainAxisAlignment.start,
+      children: [
+        Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            Text(
+              'Agregar servicio adicional:',
+              overflow: TextOverflow.ellipsis,
+              style: Theme.of(
+                context,
+              ).textTheme.titleSmall?.copyWith(fontWeight: FontWeight.w400),
+            ),
+            ElevatedButton(
+              // disable if isLoading
+              onPressed: () async {
+                // TODO: passing selected servicios adicionales
+                // ref.read(selectedMaquinariasTaskProvider.notifier).state =
+                //     controlActividades?.serviciosAdicionales ?? [];
+                // tarea.maquinaria ?? [];
+        
+                // await ref
+                //     .read(categoriasEquiposGseProvider.notifier)
+                //     .getCategoriasEquiposGse();
+        
+                // Get Servicios Adicionales
+                await ref
+                    .read(serviciosAdicionalesProvider.notifier)
+                    .getServiciosAdicionales();
+                // if (response == null) return;
+                print("asignar equipos gse");
+                context.push(
+                  '/asignar-equipos-gse-servicios-adicionales-especiales',
+                );
+        
+                // get control de actividades after close
+                // await ref
+                //     .read(controlDeActividadesProvider.notifier)
+                //     .getControlDeActividadesByTrcId(trcId);
+              },
+              style: ElevatedButton.styleFrom(
+                shape: CircleBorder(),
+                padding: EdgeInsets.all(5),
+                fixedSize: const Size(45, 45),
+                backgroundColor: Theme.of(
                   context,
-                ).textTheme.titleSmall?.copyWith(fontWeight: FontWeight.w400),
+                ).colorScheme.primary, // <-- Button color
+                // foregroundColor: Colors.red, // <-- Splash color
               ),
-              ElevatedButton(
-                // disable if isLoading
-                onPressed: () async {
-                  // TODO: passing selected servicios Especiales
-                  // ref.read(selectedMaquinariasTaskProvider.notifier).state =
-                  //     controlActividades?.serviciosEspeciales ?? [];
-                  // tarea.maquinaria ?? [];
-
-                  // await ref
-                  //     .read(categoriasEquiposGseProvider.notifier)
-                  //     .getCategoriasEquiposGse();
-
-                  // Get Servicios Especiales
-                  await ref
-                      .read(serviciosAdicionalesProvider.notifier)
-                      .getServiciosEspeciales();
-                  // if (response == null) return;
-                  print("asignar equipos gse");
-                  // context.push('/asignar-servicios-especiales-turnaround');
-                  context.push('/asignar-servicios-especiales-screen')
-                  .then((_) async {
-                        // get control de actividades after close
-                        await ref
-                            .read(
-                              controlActividadesProvider(
-                                ref
-                                    .read(selectedTurnaroundProvider)!.id,
-                              ).notifier,
-                            )
-                            .getControlDeActividadesByTrcId();
-                      });
-
-                  // get control de actividades after close
-                  // await ref
-                  //     .read(controlDeActividadesProvider.notifier)
-                  //     .getControlDeActividadesByTrcId(trcId);
-                },
-                style: ElevatedButton.styleFrom(
-                  shape: CircleBorder(),
-                  padding: EdgeInsets.all(5),
-                  fixedSize: const Size(45, 45),
-                  backgroundColor: Theme.of(
-                    context,
-                  ).colorScheme.primary, // <-- Button color
-                  // foregroundColor: Colors.red, // <-- Splash color
-                ),
-                child: Icon(Icons.add, color: Colors.white, size: 35),
-              ),
-            ],
-          ),
-
-          const SizedBox(height: 16),
-          // ListadoServicioEspecial
-          Expanded(child: _ListadoServiciosEspeciales(trcId: trcId)),
-        ],
-      ),
+              child: Icon(Icons.add, color: Colors.white, size: 35),
+            ),
+          ],
+        ),
+        
+        // ListadoServicioAdicional
+        Expanded(child: _ListadoServiciosAdicionales(trcId: trcId)),
+      ],
     );
   }
 }
 
-class _ListadoServiciosEspeciales extends ConsumerWidget {
+class _ListadoServiciosAdicionales extends ConsumerWidget {
   final int trcId;
-  const _ListadoServiciosEspeciales({required this.trcId});
+  const _ListadoServiciosAdicionales({required this.trcId});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final ControlActividades? controlActividades = ref
         .watch(controlActividadesProvider(trcId))
         .controlActividades;
-    final serviciosEspeciales = controlActividades?.serviciosEspeciales;
+    final serviciosAdicionales = controlActividades?.serviciosAdicionales;
     final timeFormat = DateFormat('HH:mm');
     bool isLoading = ref.watch(isLoadingControlActividadesProvider);
-    print('Servicios Especiales: $serviciosEspeciales');
+    print('Servicios adicionales: $serviciosAdicionales');
     return ListView.builder(
       shrinkWrap: true,
-      itemCount: serviciosEspeciales?.length,
+      itemCount: serviciosAdicionales?.length,
       itemBuilder: (context, index) {
-        final servicioEspecial = serviciosEspeciales![index];
+        final servicioAdicional = serviciosAdicionales![index];
 
         return Column(
           children: [
@@ -125,37 +100,92 @@ class _ListadoServiciosEspeciales extends ConsumerWidget {
               mainAxisAlignment: MainAxisAlignment.start,
               children: [
                 Text(
-                  servicioEspecial.titulo,
+                  servicioAdicional.titulo,
                   style: Theme.of(
                     context,
                   ).textTheme.titleSmall?.copyWith(fontWeight: FontWeight.w600),
                 ),
+              ],
+            ),
+            _HoraInicioServicioAdicionalView(servicio: servicioAdicional),
+            _HoraFinServicioAdicionalView(servicio: servicioAdicional),
+
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
                 Text(
-                  // servicioEspecial.descripcion,
-                  " - Descripcion de servicio especial",
-                  style: Theme.of(context).textTheme.labelMedium?.copyWith(
-                    fontWeight: FontWeight.w400,
+                  'Equipos GSE',
+                  style: Theme.of(
+                    context,
+                  ).textTheme.titleSmall?.copyWith(fontWeight: FontWeight.w400),
+                ),
+                ElevatedButton(
+                  // disable if isLoading
+                  // Aca mismo es
+                  onPressed: () async {
+                    await ref
+                        .read(categoriasEquiposGseProvider.notifier)
+                        .getCategoriasEquiposGse();
+
+                    // Maquinarias asignadas a servicios adicionales
+                    // El servico adicional seleccionado
+                    // turnaround
+                    // tipo de asignacion
+
+                    // No se usa
+                    final data = AsignarEquiposDialogData(
+                      // maquinarias: servicioAdicional.maquinaria,
+                      servicioAdicional: servicioAdicional,
+                      turnaround: ref.read(selectedTurnaroundProvider),
+                      tipoAsignacion: "servicioAdicional",
+                    );
+
+                    ref
+                        .read(asignarEquiposDialogDataProvider.notifier)
+                        .state = AsignarEquiposDialogData(
+                      // maquinarias: servicioAdicional.maquinaria,
+                      servicioAdicional: servicioAdicional,
+                      turnaround: ref.read(selectedTurnaroundProvider),
+                      tipoAsignacion: "servicioAdicional",
+                    );
+
+                    // {
+                    //   // "maquinarias": servicioAdicional.maquinaria,
+                    //   "servicioAdicional": servicioAdicional,
+                    //   "turnaround": ref.read(selectedTurnaroundProvider),
+                    //   "tipoAsignacion": "servicioAdicional",
+                    // };
+
+                    print("asignar equipos gse");
+                    // context.push('/asignar-equipos-gse-control-actividades',
+                    // Push with GoRouter with extra data
+                    context.push(
+                      '/asignar-equipos-gse-servicios-control-actividades',
+                      extra: data,
+                    );
+                  },
+                  style: ElevatedButton.styleFrom(
+                    shape: CircleBorder(),
+                    padding: EdgeInsets.all(5),
+                    fixedSize: const Size(45, 45),
+                    backgroundColor: Theme.of(
+                      context,
+                    ).colorScheme.primary, // <-- Button color
+                    // foregroundColor: Colors.red, // <-- Splash color
                   ),
+                  child: Icon(Icons.agriculture, color: Colors.white, size: 35),
                 ),
               ],
             ),
 
-            servicioEspecial.tipoId != 1
-                ? _HoraInicioServicioEspecialView(servicio: servicioEspecial)
-                : const SizedBox.shrink(),
-            servicioEspecial.tipoId != 1
-                ? _HoraFinServicioEspecialView(servicio: servicioEspecial)
-                : const SizedBox.shrink(),
-
-            const SizedBox(height: 15),
-            // Cantidad
-            servicioEspecial.tipoId == 1
-                ? _CantidadServicioEspecialView(servicio: servicioEspecial)
-                : const SizedBox.shrink(),
+            _ListadoMaquinariasConTiempoViewServiciosAdicionales(
+              servicioAdicional: servicioAdicional,
+              // maquinarias: servicioAdicional.maquinaria,
+            ),
 
             // Comentarios
-            _ComentarioViewServiciosEspeciales(
-              servicioEspecial: servicioEspecial,
+            _ComentarioViewServiciosAdicionales(
+              servicioAdicional: servicioAdicional,
             ),
 
             const SizedBox(height: 20),
@@ -164,7 +194,7 @@ class _ListadoServiciosEspeciales extends ConsumerWidget {
             //   mainAxisAlignment: MainAxisAlignment.start,
             //   children: [
             //     Text(
-            //       servicioEspecial.titulo,
+            //       servicioAdicional.titulo,
             //       style: Theme.of(
             //         context,
             //       ).textTheme.titleSmall?.copyWith(fontWeight: FontWeight.w600),
@@ -178,10 +208,10 @@ class _ListadoServiciosEspeciales extends ConsumerWidget {
   }
 }
 
-class _ComentarioViewServiciosEspeciales extends ConsumerWidget {
-  const _ComentarioViewServiciosEspeciales({required this.servicioEspecial});
+class _ComentarioViewServiciosAdicionales extends ConsumerWidget {
+  const _ComentarioViewServiciosAdicionales({required this.servicioAdicional});
 
-  final ServiciosAle servicioEspecial;
+  final ServiciosAle servicioAdicional;
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -205,7 +235,7 @@ class _ComentarioViewServiciosEspeciales extends ConsumerWidget {
                     // Open a dialog to write and submit the comment
                   ) async {
                     // set value of tarea.comentario to textController
-                    textController.text = servicioEspecial.comentario ?? '';
+                    textController.text = servicioAdicional.comentario ?? '';
 
                     showDialog(
                       context: context,
@@ -257,9 +287,9 @@ class _ComentarioViewServiciosEspeciales extends ConsumerWidget {
                               onPressed: () async {
                                 final ComentarioServiciosAdicionalRequest body =
                                     ComentarioServiciosAdicionalRequest(
-                                      id: servicioEspecial.id,
+                                      id: servicioAdicional.id,
                                       comentario: textController.text,
-                                      esServicioAdicional: false,
+                                      esServicioAdicional: true,
                                     );
 
                                 print("Comentario: ${body.comentario}");
@@ -325,124 +355,466 @@ class _ComentarioViewServiciosEspeciales extends ConsumerWidget {
             color: Colors.grey.shade200,
             borderRadius: BorderRadius.circular(10),
           ),
-          child: Text(servicioEspecial.comentario ?? ''),
+          child: Text(servicioAdicional.comentario ?? ''),
         ),
       ],
     );
   }
 }
 
-class _CantidadServicioEspecialView extends ConsumerWidget {
-  final ServiciosAle servicio;
-  const _CantidadServicioEspecialView({required this.servicio});
+class _ListadoMaquinariasConTiempoViewServiciosAdicionales
+    extends ConsumerWidget {
+  final ServiciosAle servicioAdicional;
+  final List<Maquinaria> maquinarias;
+
+  _ListadoMaquinariasConTiempoViewServiciosAdicionales({
+    // required this.maquinarias,
+    required this.servicioAdicional,
+  }) : maquinarias = servicioAdicional.maquinaria;
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    final timeFormat = DateFormat('HH:mm');
     bool isLoading = ref.watch(isLoadingControlActividadesProvider);
-    return Row(
-      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-      children: [
-        // Text('Cantidad: '),
-        // Text(servicio.cantidad.toString()),
-        GestureDetector(
-          behavior: HitTestBehavior.translucent,
-          onTap: () async {
-            final result = await showNumberInputDialog(
-              context: context,
-              title: '${servicio.titulo} - Cantidad',
-              initialValue: servicio.cantidad?.toString() ?? '',
-            );
+    final selectedTrc = ref.watch(selectedTurnaroundProvider.notifier).state;
 
-            if (result != null) {
-              final cantidad = int.tryParse(result);
-              if (cantidad != null) {
-                // Call the API to update the comment
-
-                final body = {"id": servicio.id, "cantidad": cantidad};
-                print("Cantidad: $cantidad");
-                final response = await ref
-                    .read(serviciosAdicionalesProvider.notifier)
-                    .setCantidadServicioEspecial(body);
-
-                // Show snackbar response
-                CustomSnackbar.showResponseSnackbar(
-                  response.message,
-                  response.success,
-                  // ignore: use_build_context_synchronously
-                  context,
-                  isFixed: true,
-                );
-
-                // getControlDeActividadesByTrcId(); from control actividades provider
-                if (response.success) {
-                  ref
-                      .read(
-                        controlActividadesProvider(
-                          ref
-                              .read(selectedTurnaroundProvider.notifier)
-                              .state!
-                              .id,
-                        ).notifier,
-                      )
-                      .getControlDeActividadesByTrcId();
-                }
-              }
-            }
-          },
-          child: SizedBox(
-            // width: 100,
-            child: Row(
-              children: [
-                Text(
-                  'Cantidad: ',
-                  style: Theme.of(
-                    context,
-                  ).textTheme.titleSmall?.copyWith(fontWeight: FontWeight.w400),
-                ),
-                Container(
-                  margin: const EdgeInsets.only(left: 8),
-                  padding: const EdgeInsets.symmetric(
-                    horizontal: 8,
-                    vertical: 4,
-                  ),
-                  // min width: 100,
-                  constraints: const BoxConstraints(minWidth: 60),
-                  decoration: BoxDecoration(
-                    color: Colors.grey.shade200,
-                    borderRadius: BorderRadius.circular(8),
-                  ),
-                  child: Text(
-                    (servicio.cantidad != null
-                            ? servicio.cantidad.toString()
-                            : '')
-                        .toString(),
+    return ListView.builder(
+      physics: NeverScrollableScrollPhysics(),
+      shrinkWrap: true,
+      itemCount: maquinarias.length,
+      itemBuilder: (context, index) {
+        final maquinaria = maquinarias[index];
+        return Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 16.0),
+          child: Column(
+            children: [
+              Row(
+                mainAxisAlignment: MainAxisAlignment.start,
+                children: [
+                  Text(
+                    '${maquinaria.maquinariaIdentificador} - ${maquinaria.maquinariaModelo}',
                     style: Theme.of(context).textTheme.titleSmall?.copyWith(
                       fontWeight: FontWeight.w600,
                     ),
                   ),
-                ),
-              ],
-            ),
-          ),
+                ],
+              ),
+              // ******************************************
+              // Hora de inicio Maquinaria
+              Padding(
+                padding: const EdgeInsets.only(left: 8),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    // ifLoading
+                    GestureDetector(
+                      behavior: HitTestBehavior.translucent,
+                      onTap: () async {
+                        // print('Hora inicio tapped');
+                        // Show time picker dialog
+                        final selectedTime =
+                            await CustomTimePickerDialog.showTimePickerDialog(
+                              context,
+                              maquinaria.horaInicio ?? DateTime.now(),
+                              maquinaria.horaInicio != null
+                                  ? TimeOfDay.fromDateTime(
+                                      maquinaria.horaInicio!,
+                                    )
+                                  : null,
+                            );
+                        // print('Selected time: $selectedTime');
+                        if (selectedTime != null) {
+                          final trcDate = selectedTrc!.fechaInicio;
 
-          //   Container(
-          //     padding: const EdgeInsets.all(10),
-          //     margin: const EdgeInsets.symmetric(vertical: 10),
-          //     decoration: BoxDecoration(
-          //       color: Colors.grey.shade200,
-          //       borderRadius: BorderRadius.circular(10),
-          //     ),
-          //     child: Text(servicio.cantidad.toString()),
-          // )
-        ),
-      ],
+                          final horaInicio =
+                              CustomDateTimeFunctions.getDateTimeFromTimeOfDay(
+                                trcDate,
+                                selectedTime,
+                              );
+
+                          final body = HoraMaquinariaServicioAdicionalResponse(
+                            id: maquinaria.id,
+                            servicioAdicionalId: servicioAdicional.id,
+                            horaInicio: horaInicio,
+                            tipo: 'Hora de Inicio',
+                          );
+
+                          final response = await ref
+                              .read(serviciosAdicionalesProvider.notifier)
+                              .setHoraMaquinariaServicioAdicional(body);
+
+                          if (response.success) {
+                            CustomSnackbar.showSuccessSnackbar(
+                              response.message,
+                              // ignore: use_build_context_synchronously
+                              context,
+                              isFixed: true,
+                            );
+
+                            // Get control de actividades
+                            ref
+                                .read(
+                                  controlActividadesProvider(
+                                    selectedTrc.id,
+                                  ).notifier,
+                                )
+                                .getControlDeActividadesByTrcId();
+                          } else {
+                            CustomSnackbar.showErrorSnackbar(
+                              response.message,
+                              // ignore: use_build_context_synchronously
+                              context,
+                              isFixed: true,
+                            );
+                          }
+                        }
+                      },
+                      child: SizedBox(
+                        // width: 100,
+                        child: Row(
+                          children: [
+                            Text(
+                              'Hora de inicio',
+                              style: Theme.of(context).textTheme.titleSmall
+                                  ?.copyWith(fontWeight: FontWeight.w400),
+                            ),
+                            Container(
+                              margin: const EdgeInsets.only(left: 8),
+                              padding: const EdgeInsets.symmetric(
+                                horizontal: 8,
+                                vertical: 4,
+                              ),
+                              // min width: 100,
+                              constraints: const BoxConstraints(minWidth: 60),
+                              decoration: BoxDecoration(
+                                color: Colors.grey.shade200,
+                                borderRadius: BorderRadius.circular(8),
+                              ),
+                              child: Text(
+                                (maquinaria.horaInicio != null
+                                        ? timeFormat.format(
+                                            maquinaria.horaInicio!,
+                                          )
+                                        : '')
+                                    .toString(),
+                                style: Theme.of(context).textTheme.titleSmall
+                                    ?.copyWith(fontWeight: FontWeight.w600),
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ),
+
+                    // Rounded button to set current time
+                    isLoading
+                        ? Padding(
+                            padding: const EdgeInsets.only(right: 8),
+                            child: SizedBox(
+                              height: 25.0,
+                              width: 25.0,
+                              child: Center(
+                                child: CircularProgressIndicator(
+                                  color: Theme.of(context).colorScheme.primary,
+                                  strokeWidth: 3.0,
+                                ),
+                              ),
+                            ),
+                          )
+                        : ElevatedButton(
+                            // disable if isLoading
+                            onPressed: () async {
+                              if (isLoading) return;
+                              // Show loading indicator
+                              ref
+                                  .read(
+                                    isLoadingControlActividadesProvider
+                                        .notifier,
+                                  )
+                                  .update((state) => true);
+                              // wait 3 seconds
+                              // await Future.delayed(const Duration(seconds: 3));
+
+                              final body =
+                                  HoraMaquinariaServicioAdicionalResponse(
+                                    id: maquinaria.id,
+                                    servicioAdicionalId: servicioAdicional.id,
+                                    horaInicio: DateTime.now(),
+                                    tipo: 'Hora de Inicio',
+                                  );
+
+                              final response = await ref
+                                  .read(serviciosAdicionalesProvider.notifier)
+                                  .setHoraMaquinariaServicioAdicional(body);
+
+                              if (response.success) {
+                                CustomSnackbar.showSuccessSnackbar(
+                                  response.message,
+                                  // ignore: use_build_context_synchronously
+                                  context,
+                                  isFixed: true,
+                                );
+
+                                // Get control de actividades
+                                ref
+                                    .read(
+                                      controlActividadesProvider(
+                                        selectedTrc!.id,
+                                      ).notifier,
+                                    )
+                                    .getControlDeActividadesByTrcId();
+                              } else {
+                                CustomSnackbar.showErrorSnackbar(
+                                  response.message,
+                                  // ignore: use_build_context_synchronously
+                                  context,
+                                  isFixed: true,
+                                );
+                              }
+                              ref
+                                  .read(
+                                    isLoadingControlActividadesProvider
+                                        .notifier,
+                                  )
+                                  .update((state) => false);
+                            },
+                            style: ElevatedButton.styleFrom(
+                              shape: CircleBorder(),
+                              padding: EdgeInsets.all(5),
+                              fixedSize: const Size(45, 45),
+                              backgroundColor: Theme.of(
+                                context,
+                              ).colorScheme.primary, // <-- Button color
+                              foregroundColor: Colors.red, // <-- Splash color
+                            ),
+                            child: Icon(
+                              Icons.access_time,
+                              color: Colors.white,
+                              size: 35,
+                            ),
+                          ),
+                  ],
+                ),
+              ),
+
+              // Hora final Maquinaria
+              Padding(
+                padding: const EdgeInsets.only(left: 8),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    // ifLoading
+                    GestureDetector(
+                      behavior: HitTestBehavior.translucent,
+                      onTap: () async {
+                        // Show time picker dialog
+                        final selectedTime =
+                            await CustomTimePickerDialog.showTimePickerDialog(
+                              context,
+                              maquinaria.horaFin ?? DateTime.now(),
+                              maquinaria.horaFin != null
+                                  ? TimeOfDay.fromDateTime(maquinaria.horaFin!)
+                                  : null,
+                            );
+                        // print('Selected time: $selectedTime');
+                        if (selectedTime != null) {
+                          // obteniendo fecha del trc
+                          final trcDate =
+                              selectedTrc!.fechaInicio ?? selectedTrc.fechaFin;
+
+                          final horaFin =
+                              CustomDateTimeFunctions.getDateTimeFromTimeOfDay(
+                                trcDate,
+                                selectedTime,
+                              );
+
+                          final body = HoraMaquinariaServicioAdicionalResponse(
+                            id: maquinaria.id,
+                            servicioAdicionalId: servicioAdicional.id,
+                            // horaInicio: horaInicio,
+                            horaFin: horaFin,
+                            tipo: 'Hora final',
+                          );
+
+                          final response = await ref
+                              .read(serviciosAdicionalesProvider.notifier)
+                              .setHoraMaquinariaServicioAdicional(body);
+
+                          if (response.success) {
+                            CustomSnackbar.showSuccessSnackbar(
+                              response.message,
+                              // ignore: use_build_context_synchronously
+                              context,
+                              isFixed: true,
+                            );
+
+                            // Get control de actividades
+                            ref
+                                .read(
+                                  controlActividadesProvider(
+                                    selectedTrc.id,
+                                  ).notifier,
+                                )
+                                .getControlDeActividadesByTrcId();
+                          } else {
+                            CustomSnackbar.showErrorSnackbar(
+                              response.message,
+                              // ignore: use_build_context_synchronously
+                              context,
+                              isFixed: true,
+                            );
+                          }
+                        }
+                      },
+                      child: SizedBox(
+                        // width: 100,
+                        child: Row(
+                          children: [
+                            Text(
+                              'Hora final',
+                              style: Theme.of(context).textTheme.titleSmall
+                                  ?.copyWith(fontWeight: FontWeight.w400),
+                            ),
+                            Container(
+                              margin: const EdgeInsets.only(left: 8),
+                              padding: const EdgeInsets.symmetric(
+                                horizontal: 8,
+                                vertical: 4,
+                              ),
+                              // min width: 100,
+                              constraints: const BoxConstraints(minWidth: 60),
+                              decoration: BoxDecoration(
+                                color: Colors.grey.shade200,
+                                borderRadius: BorderRadius.circular(8),
+                              ),
+                              child: Text(
+                                (maquinaria.horaFin != null
+                                        ? timeFormat.format(maquinaria.horaFin!)
+                                        : '')
+                                    .toString(),
+                                style: Theme.of(context).textTheme.titleSmall
+                                    ?.copyWith(fontWeight: FontWeight.w600),
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ),
+
+                    // Rounded button to set current time
+                    isLoading
+                        ? Padding(
+                            padding: const EdgeInsets.only(right: 8),
+                            child: SizedBox(
+                              height: 25.0,
+                              width: 25.0,
+                              child: Center(
+                                child: CircularProgressIndicator(
+                                  color: Theme.of(context).colorScheme.primary,
+                                  strokeWidth: 3.0,
+                                ),
+                              ),
+                            ),
+                          )
+                        : ElevatedButton(
+                            // disable if isLoading
+                            onPressed: () async {
+                              if (isLoading) return;
+                              // Show loading indicator
+                              ref
+                                  .read(
+                                    isLoadingControlActividadesProvider
+                                        .notifier,
+                                  )
+                                  .update((state) => true);
+                              // wait 3 seconds
+                              // await Future.delayed(const Duration(seconds: 3));
+
+                              final body =
+                                  HoraMaquinariaServicioAdicionalResponse(
+                                    id: maquinaria.id,
+                                    servicioAdicionalId: servicioAdicional.id,
+                                    horaInicio: DateTime.now(),
+                                    horaFin: DateTime.now(),
+                                    tipo: 'Hora final',
+                                  );
+
+                              final response = await ref
+                                  .read(serviciosAdicionalesProvider.notifier)
+                                  .setHoraMaquinariaServicioAdicional(body);
+
+                              if (response.success) {
+                                CustomSnackbar.showSuccessSnackbar(
+                                  response.message,
+                                  // ignore: use_build_context_synchronously
+                                  context,
+                                  isFixed: true,
+                                );
+
+                                // Get control de actividades
+                                ref
+                                    .read(
+                                      controlActividadesProvider(
+                                        selectedTrc!.id,
+                                      ).notifier,
+                                    )
+                                    .getControlDeActividadesByTrcId();
+                              } else {
+                                CustomSnackbar.showErrorSnackbar(
+                                  response.message,
+                                  // ignore: use_build_context_synchronously
+                                  context,
+                                  isFixed: true,
+                                );
+                              }
+                              ref
+                                  .read(
+                                    isLoadingControlActividadesProvider
+                                        .notifier,
+                                  )
+                                  .update((state) => false);
+                            },
+                            style: ElevatedButton.styleFrom(
+                              shape: CircleBorder(),
+                              padding: EdgeInsets.all(5),
+                              fixedSize: const Size(45, 45),
+                              backgroundColor: Theme.of(
+                                context,
+                              ).colorScheme.primary, // <-- Button color
+                              foregroundColor: Colors.red, // <-- Splash color
+                            ),
+                            child: Icon(
+                              Icons.access_time,
+                              color: Colors.white,
+                              size: 35,
+                            ),
+                          ),
+                  ],
+                ),
+              ),
+
+              // ******************************************
+            ],
+          ),
+        );
+
+        // ListTile(
+        //   title: Text(
+        //     '${maquinaria.maquinariaIdentificador} - ${maquinaria.maquinariaModelo}',
+
+        //     style: Theme.of(
+        //       context,
+        //     ).textTheme.titleSmall?.copyWith(fontWeight: FontWeight.w600),
+        //   ),
+        // );
+      },
     );
   }
 }
 
-class _HoraInicioServicioEspecialView extends ConsumerWidget {
+class _HoraInicioServicioAdicionalView extends ConsumerWidget {
   final ServiciosAle servicio;
-  const _HoraInicioServicioEspecialView({required this.servicio});
+  const _HoraInicioServicioAdicionalView({required this.servicio});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -468,7 +840,7 @@ class _HoraInicioServicioEspecialView extends ConsumerWidget {
             // print('Selected time: $selectedTime');
             if (selectedTime != null) {
               // final SnackbarResponse response =
-              await _setHoraInicioFinServicioEspecial(
+              await setHoraInicioFinServicioAdicional(
                 ref,
                 // servicio.id,
                 servicio.id,
@@ -557,7 +929,7 @@ class _HoraInicioServicioEspecialView extends ConsumerWidget {
                       .update((state) => true);
                   // wait 3 seconds
                   // await Future.delayed(const Duration(seconds: 3));
-                  final response = await _setHoraInicioFinServicioEspecial(
+                  final response = await setHoraInicioFinServicioAdicional(
                     ref,
                     servicio.id,
                     DateTime.now(),
@@ -591,9 +963,9 @@ class _HoraInicioServicioEspecialView extends ConsumerWidget {
   }
 }
 
-class _HoraFinServicioEspecialView extends ConsumerWidget {
+class _HoraFinServicioAdicionalView extends ConsumerWidget {
   final ServiciosAle servicio;
-  const _HoraFinServicioEspecialView({required this.servicio});
+  const _HoraFinServicioAdicionalView({required this.servicio});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -619,7 +991,7 @@ class _HoraFinServicioEspecialView extends ConsumerWidget {
             // print('Selected time: $selectedTime');
             if (selectedTime != null) {
               // final SnackbarResponse response =
-              await _setHoraInicioFinServicioEspecial(
+              await setHoraInicioFinServicioAdicional(
                 ref,
                 // servicio.id,
                 servicio.id,
@@ -708,7 +1080,7 @@ class _HoraFinServicioEspecialView extends ConsumerWidget {
                       .update((state) => true);
                   // wait 3 seconds
                   // await Future.delayed(const Duration(seconds: 3));
-                  final response = await _setHoraInicioFinServicioEspecial(
+                  final response = await setHoraInicioFinServicioAdicional(
                     ref,
                     servicio.id,
                     DateTime.now(),
@@ -747,13 +1119,19 @@ class _HoraFinServicioEspecialView extends ConsumerWidget {
 // ******************************************************************************************
 // ******************************************************************************************
 
-Future<SnackbarResponse> _setHoraInicioFinServicioEspecial(
+Future<SnackbarResponse> setHoraInicioFinServicioAdicional(
   WidgetRef ref,
   int id,
   DateTime horaInicio,
   String tipo,
   BuildContext context,
 ) async {
+  // transform horaInicio to the format required by the API '2025-07-16T19:23:18.861Z'
+  // final String formattedDate = DateFormat('yyyy-MM-ddTHH:mm:ss').format(horaInicio);
+  // const formattedDate = new Date( this.myForm.value.fecha.getFullYear() + '-' + (this.myForm.value.fecha.getMonth() + 1) + '-' + this.myForm.value.fecha.getDate() + ' ' + this.myForm.value.hora + ':' +'00' );
+
+  // Call the repository method to set horaInicio
+  // final trcId = ref.read(trcIdProvider);
   final body = SetHoraServicioAdicionalRequest(
     horaInicio: horaInicio,
     horaFin: horaInicio,
@@ -814,9 +1192,9 @@ Future<SnackbarResponse> _setHoraInicioFinServicioEspecial(
 // ******************************************************************************************
 // ******************************************************************************************
 
-// class _ServiciosEspecialesEquiposGseView extends StatelessWidget {
-//   final ServiciosAle servicioEspecial;
-//   const _ServiciosEspecialesEquiposGseView({required this.servicioEspecial});
+// class _ServiciosAdicionalesEquiposGseView extends StatelessWidget {
+//   final ServiciosAle servicioAdicional;
+//   const _ServiciosAdicionalesEquiposGseView({required this.servicioAdicional});
 
 //   @override
 //   Widget build(BuildContext context) {
@@ -869,18 +1247,18 @@ Future<SnackbarResponse> _setHoraInicioFinServicioEspecial(
 //           ],
 //         ),
 
-//         _ListadoMaquinariasConTiempoViewServiciosEspeciales(
-//           maquinarias: servicioEspecial.maquinaria,
+//         _ListadoMaquinariasConTiempoViewServiciosAdicionales(
+//           maquinarias: servicioAdicional.maquinaria,
 //         ),
 //       ],
 //     );
 //   }
 // }
 
-// class _ListadoMaquinariasConTiempoViewServiciosEspeciales
+// class _ListadoMaquinariasConTiempoViewServiciosAdicionales
 //     extends ConsumerWidget {
 //   final List<Maquinaria> maquinarias;
-//   const _ListadoMaquinariasConTiempoViewServiciosEspeciales({
+//   const _ListadoMaquinariasConTiempoViewServiciosAdicionales({
 //     required this.maquinarias,
 //   });
 

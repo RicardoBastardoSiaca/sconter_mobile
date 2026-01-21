@@ -37,7 +37,7 @@ class _AsignarEquiposGseViewState
   void initState() {
     super.initState();
     // getCategoriasEquiposGse
-    ref.read(categoriasEquiposGseProvider.notifier).getCategoriasEquiposGse();
+     ref.read(categoriasEquiposGseProvider.notifier).getCategoriasEquiposGse();
   }
 
   @override

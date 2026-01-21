@@ -27,8 +27,8 @@ class ConnectivityService {
 
   void dispose() {
     // TODO: AQUI se cierra 
-    connectionChangeController.close();
-    _hasInternet.dispose();
+    // connectionChangeController.close();
+    // _hasInternet.dispose();
   }
 
 

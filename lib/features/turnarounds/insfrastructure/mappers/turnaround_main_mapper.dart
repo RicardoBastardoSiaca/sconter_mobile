@@ -26,6 +26,30 @@ class TurnaroundMainMapper {
       // auth Response
     );
   }
+  static ServicioMiscelaneo mapJsonToTServicioMiscelaneo(Map<String, dynamic> json) {
+    return ServicioMiscelaneo(
+      id: json['id'],
+      identificador: json['identificador'],
+      // fkVuelo map
+      fkVuelo: mapJsonToFkVuelo(json['fk_vuelo']),
+      horaInicio: json['hora_inicio'],
+      horaFin: json['hora_fin'],
+      fechaInicio: json['fecha_inicio'],
+      fechaFin: json['fecha_fin'],
+      horaInicioReal: json['hora_inicio_real'],
+      horaFinReal: json['hora_fin_real'],
+      fechaInicioReal: json['fecha_inicio_real'],
+      fechaFinReal: json['fecha_fin_real'],
+      tiempoExtimado: json['tiempo_extimado'],
+      comentario: json['comentario'],
+      estatus: json['estatus'],
+      nombreEstatus: json['nombre_estatus'],
+      charter: json['charter'],
+
+      // auth Response
+    );
+  }
+
 
   // fkVuelo
   static FkVuelo mapJsonToFkVuelo(Map<String, dynamic> json) {
@@ -53,12 +77,15 @@ class TurnaroundMainMapper {
             ), //json['lugar_destino'],
       gate: json['gate'],
       fkAerolinea: mapJsonToFkAerolinea(json['fk_aerolinea']),
-      fkPlantilla: mapJsonToFkPlantilla(json['fk_plantilla']),
+      // fkPlantilla: mapJsonToFkPlantilla(json['fk_plantilla']),
+      fkPlantilla: json['fk_plantilla'] == null 
+          ? null
+          : mapJsonToFkPlantilla(json['fk_plantilla']),
       stn: mapJsonToLugarDestino(json['stn']), //json['stn'],
       tipoVuelo: mapJsonToTipo(json['tipo_vuelo']), //json['tipo_vuelo'],
-      tipoServicio: mapJsonToTipo(
-        json['tipo_servicio'],
-      ), //json['tipo_servicio'],
+      tipoServicio: json['tipo_servicio'] == null
+          ? null
+          : mapJsonToTipo(json['tipo_servicio'],), //json['tipo_servicio'],
       bloquearModificacion: json['bloquear_modificacion'],
       pasajerosTransito: json['pasajerosTransito'],
       claseEjecutiva: json['claseEjecutiva'],

@@ -55,6 +55,27 @@ class SideMenuState extends ConsumerState<SideMenu> {
                       widget.scaffoldKey.currentState?.closeDrawer();
                     },
                   ),
+                  // Servicios miscelaneos
+                  ListTile(
+                    leading: const Icon(
+                      Icons.miscellaneous_services,
+                      color: Colors.black45,
+                      size: 22,
+                    ),
+                    title: Text(
+                      'Servicios Miscelaneos',
+                      style: Theme.of(
+                        context,
+                      ).textTheme.bodySmall?.copyWith(color: Colors.black87),
+                    ),
+                    onTap: () {
+                      // Handle navigation to Home with GoRouter
+                      context.go('/servicios-miscelaneos-screen');
+                      widget.scaffoldKey.currentState?.closeDrawer();
+                    },
+                  ),
+
+
                   // ListTile(
                   //   leading: Icon(Icons.person, color: Colors.black45, size: 22),
                   //   title: Text(

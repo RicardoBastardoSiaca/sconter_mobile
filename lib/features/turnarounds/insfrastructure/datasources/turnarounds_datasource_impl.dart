@@ -48,6 +48,8 @@ class TurnaroundsDatasourceImpl implements TurnaroundsDatasource {
     }
   }
 
+  
+
   @override
   Future<List<TurnaroundMain>> getTurnaroundsByDate(
     int year,
@@ -72,6 +74,41 @@ class TurnaroundsDatasourceImpl implements TurnaroundsDatasource {
       return turnarounds;
     } catch (e) {
       return turnarounds; // Return an empty list on error
+      // throw Exception('Error fetching turnarounds: $e');
+    }
+  }
+
+  @override
+  Future<List<TurnaroundMain>> getServiciosMiscelaneosByDate(
+    int year,
+    int month,
+    int day,
+  ) async {
+    final List<TurnaroundMain> serviciosMiscelaneos = [];
+    // Check internet connection
+    // if (!await _connectivityService.hasConnection) {
+    //   // throw Exception('No internet connection');
+    //   return turnarounds; // Return an empty list if no connection
+    // }
+    try {
+      final response = await dio.get(
+        '/turnarounds/servicios_adicionales/$year-$month-$day/?token=$accessToken',
+      );
+      // if 400 return []
+      if (response.statusCode == 400) {
+        return serviciosMiscelaneos;
+      }
+      // if (!response.data['success']) {
+      //   return serviciosMiscelaneos;
+      // }
+      print ('Response from getServiciosMiscelaneosByDate: ${response.data}');
+      for (final item in response.data ?? []) {
+        serviciosMiscelaneos.add(TurnaroundMainMapper.mapJsonToTurnaroundMain(item));
+      }
+
+      return serviciosMiscelaneos;
+    } catch (e) {
+      return serviciosMiscelaneos; // Return an empty list on error
       // throw Exception('Error fetching turnarounds: $e');
     }
   }
@@ -273,7 +310,8 @@ class TurnaroundsDatasourceImpl implements TurnaroundsDatasource {
   ) {
     return dio
         .post(
-          '/maquinarias/lista_categoria_maquinaria/$idPlantilla/?token=$accessToken',
+          // '/maquinarias/lista_categoria_maquinaria/$idPlantilla/?token=$accessToken',
+          '/maquinarias/lista_categoria_maquinariaServicio/?token=$accessToken',
           data: body,
         )
         .then((response) {
@@ -948,37 +986,55 @@ class TurnaroundsDatasourceImpl implements TurnaroundsDatasource {
   }
 
   @override
-  Future<SimpleApiResponse> cerrarVuelo(Map<String, Object?> body) {
-    return dio
-        .post('/turnarounds/cerrar_vuelo/?token=$accessToken', data: body)
-        .then(
-          (response) {
-            print('Response from cerrarVuelo: $response');
-            if (response.statusCode == 200) {
-              return SimpleApiResponse(
-                message: 'Vuelo cerrado.',
-                success: true,
-              );
-            } else if (response.statusCode == 400) {
-              return SimpleApiResponse(
-                message: 'Error al cerrar vuelo. Asegurese de llenar los datos del vuelo',
-                success: false,
-              );
-            } else {
-              return SimpleApiResponse(
-                message: 'Error al cerrar vuelo.',
-                success: false,
-              );
-            }
-          },
-          onError: (error) {
-            print('Error from cerrarVuelo: $error');
-            return SimpleApiResponse(
-              message: 'Error al cerrar vuelo.',
-              success: false,
-            );
-          },
-        );
+  Future<SimpleApiResponse> cerrarVuelo(Map<String, Object?> body) async {
+    final response = await dio
+        .post('/turnarounds/cerrar_vuelo/?token=$accessToken', data: body);
+        if (response.statusCode == 201) {
+          return SimpleApiResponse(
+            message: 'Vuelo cerrado.',
+            success: true,
+          );
+        } else if (response.statusCode == 400) {
+          return SimpleApiResponse(
+            message: 'Error. Asegurese de llenar los datos del vuelo',
+            success: false,
+          );
+        } else {
+          return SimpleApiResponse(
+            message: 'Error al cerrar vuelo.',
+            success: false,
+          );
+        }
+    // return dio
+    //     .post('/turnarounds/cerrar_vuelo/?token=$accessToken', data: body)
+    //     .then(
+    //       (response) {
+    //         print('Response from cerrarVuelo: $response');
+    //         if (response.statusCode == 201) {
+    //           return SimpleApiResponse(
+    //             message: 'Vuelo cerrado.',
+    //             success: true,
+    //           );
+    //         } else if (response.statusCode == 400) {
+    //           return SimpleApiResponse(
+    //             message: 'Error. Asegurese de llenar los datos del vuelo',
+    //             success: false,
+    //           );
+    //         } else {
+    //           return SimpleApiResponse(
+    //             message: 'Error al cerrar vuelo.',
+    //             success: false,
+    //           );
+    //         }
+    //       },
+    //       onError: (error) {
+    //         print('Error from cerrarVuelo: $error');
+    //         return SimpleApiResponse(
+    //           message: 'Error al cerrar vuelo.',
+    //           success: false,
+    //         );
+    //       },
+    //     );
   }
   
   @override
@@ -1058,5 +1114,89 @@ class TurnaroundsDatasourceImpl implements TurnaroundsDatasource {
         throw Exception('Error al obtener la plantilla detalle.');
       }
     });
+  }
+  
+  @override
+  Future<SimpleApiResponse> iniciarOperacionesServicioMiscelaneo(int id) async {
+    // Check internet connection and return error message if no connection
+    if (!await _connectivityService.hasConnection) {
+      return SimpleApiResponse(
+        message: 'No hay conexión a internet.',
+        success: false,
+      );
+    }
+    try {
+      return dio
+          .post(
+            '/vuelos/comenzar_operaciones/services/?token=$accessToken',
+            data: {'id': id},
+          )
+          .then((response) {
+            if (response.statusCode == 200) {
+              final data = response.data;
+              return SimpleApiResponse(
+                message: 'Se empezaron las Actividades!',
+                success: true,
+              );
+            } else {
+              return SimpleApiResponse(
+                message: 'Algo salió mal, intente nuevamente.',
+                success: false,
+              );
+            }
+          });
+    } catch (e) {
+      return SimpleApiResponse(
+        message: 'Algo salió mal, intente nuevamente.',
+        success: false,
+      );
+      // throw Exception('Error al iniciar operaciones: $e');
+    }
+  }
+  
+  @override
+  Future<ControlActividades> getControlDeActividadesServicioMiscelaneoById(int id) async {
+    // Check internet connection
+    final hasConection = _connectivityService.hasInternet.value;
+    if (!hasConection) {
+      throw Exception('No internet connection');
+    }
+    // Variable de control de actividades
+    try {
+      final response = await dio.get<Map<String, dynamic>>(
+        '/plantillas/control_actividades_by_id_servicios/$id/?token=$accessToken',
+      );
+      print('Response from getControlDeActividades: ${response.data}');
+      final ControlActividades controlActividades =
+          ControlActividadesMapper.mapJsonToControlActividades(
+            response.data ?? {} as Map<String, dynamic>,
+          );
+      return controlActividades;
+    } catch (e) {
+      throw Exception('Error al obtener control de actividades: $e');
+    }
+  }
+  
+  @override
+  Future<SimpleApiResponse> finalizarVueloServicioMiscelaneo(int id) async {
+    final body = {'id': id};
+    final response = await dio
+        .post('/turnarounds/finalizar_vuelo/?token=$accessToken', data: body);
+        if (response.statusCode == 201) {
+          return SimpleApiResponse(
+            message: 'Vuelo finalizado.',
+            success: true,
+          );
+        } else if (response.statusCode == 400) {
+          return SimpleApiResponse(
+            message: 'Error al finalizar vuelo',
+            success: false,
+          );
+        } else {
+          return SimpleApiResponse(
+            message: 'Error al finalizar vuelo.',
+            success: false,
+          );
+        }
   }
 }

@@ -83,6 +83,81 @@ class TurnaroundMain {
   //     "charter": charter,
   // };
 }
+class ServicioMiscelaneo {
+  int id;
+  dynamic identificador;
+  FkVuelo fkVuelo;
+  dynamic horaInicio;
+  dynamic horaFin;
+  dynamic fechaInicio;
+  dynamic fechaFin;
+  dynamic horaInicioReal;
+  dynamic horaFinReal;
+  dynamic fechaInicioReal;
+  dynamic fechaFinReal;
+  dynamic tiempoExtimado;
+  dynamic comentario;
+  int estatus;
+  String nombreEstatus;
+  dynamic charter;
+
+  ServicioMiscelaneo({
+    required this.id,
+    required this.identificador,
+    required this.fkVuelo,
+    required this.horaInicio,
+    required this.horaFin,
+    required this.fechaInicio,
+    required this.fechaFin,
+    required this.horaInicioReal,
+    required this.horaFinReal,
+    required this.fechaInicioReal,
+    required this.fechaFinReal,
+    required this.tiempoExtimado,
+    required this.comentario,
+    required this.estatus,
+    required this.nombreEstatus,
+    required this.charter,
+  });
+
+  // factory TurnaroundMain.fromJson(Map<String, dynamic> json) => TurnaroundMain(
+  //     id: json["id"],
+  //     identificador: json["identificador"],
+  //     fkVuelo: FkVuelo.fromJson(json["fk_vuelo"]),
+  //     horaInicio: json["hora_inicio"],
+  //     horaFin: json["hora_fin"],
+  //     fechaInicio: DateTime.parse(json["fecha_inicio"]),
+  //     fechaFin: DateTime.parse(json["fecha_fin"]),
+  //     horaInicioReal: json["hora_inicio_real"],
+  //     horaFinReal: json["hora_fin_real"],
+  //     fechaInicioReal: json["fecha_inicio_real"],
+  //     fechaFinReal: json["fecha_fin_real"],
+  //     tiempoExtimado: json["tiempo_extimado"],
+  //     comentario: json["comentario"],
+  //     estatus: json["estatus"],
+  //     nombreEstatus: json["nombre_estatus"],
+  //     charter: json["charter"],
+  // );
+
+  // Map<String, dynamic> toJson() => {
+  //     "id": id,
+  //     "identificador": identificador,
+  //     "fk_vuelo": fkVuelo.toJson(),
+  //     "hora_inicio": horaInicio,
+  //     "hora_fin": horaFin,
+  //     "fecha_inicio": "${fechaInicio.year.toString().padLeft(4, '0')}-${fechaInicio.month.toString().padLeft(2, '0')}-${fechaInicio.day.toString().padLeft(2, '0')}",
+  //     "fecha_fin": "${fechaFin.year.toString().padLeft(4, '0')}-${fechaFin.month.toString().padLeft(2, '0')}-${fechaFin.day.toString().padLeft(2, '0')}",
+  //     "hora_inicio_real": horaInicioReal,
+  //     "hora_fin_real": horaFinReal,
+  //     "fecha_inicio_real": fechaInicioReal,
+  //     "fecha_fin_real": fechaFinReal,
+  //     "tiempo_extimado": tiempoExtimado,
+  //     "comentario": comentario,
+  //     "estatus": estatus,
+  //     "nombre_estatus": nombreEstatus,
+  //     "charter": charter,
+  // };
+}
 
 class FkVuelo {
   int id;
@@ -102,10 +177,10 @@ class FkVuelo {
   LugarDestino? lugarDestino;
   int? gate;
   FkAerolinea fkAerolinea;
-  FkPlantilla fkPlantilla;
+  FkPlantilla? fkPlantilla;
   LugarDestino? stn;
   Tipo tipoVuelo;
-  Tipo tipoServicio;
+  Tipo? tipoServicio;
   bool bloquearModificacion;
   bool pasajerosTransito;
   bool claseEjecutiva;

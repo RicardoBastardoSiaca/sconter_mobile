@@ -9,10 +9,19 @@ abstract class TurnaroundsDatasource {
     int day,
   );
 
+  Future<List<TurnaroundMain>> getServiciosMiscelaneosByDate(
+    int year,
+    int month,
+    int day,
+  );
+
   Future<ControlActividades> getControlDeActividades(int id);
+  Future<ControlActividades> getControlDeActividadesServicioMiscelaneoById(int id);
 
   // Iniciar operaciones
   Future<SimpleApiResponse> startOperations(int id);
+
+  Future<SimpleApiResponse> iniciarOperacionesServicioMiscelaneo(int id);
 
   Future<SimpleApiResponse> setHoraInicio(
     int id,
@@ -122,4 +131,6 @@ abstract class TurnaroundsDatasource {
   Future<SimpleApiResponse> asignarEquiposItLimpiezaTareas(Map<String, Object> body);
 
   Future getPlantillaDetalleById(int id);
+
+  Future<SimpleApiResponse> finalizarVueloServicioMiscelaneo(int id);
 }

@@ -13,8 +13,10 @@ export 'timepicker_dropdown.dart';
 export 'custom_dialogs.dart';
 export 'side_menu_drawer.dart';
 export 'dialogs/confirmation_dialog.dart';
+export 'dialogs/confimation_dialog_no_close.dart';
 export 'dialogs/dialog_utils.dart';
 export 'dialogs/numer_input_dialog.dart';
+export 'dialogs/confirmar_dialog.dart';
 
 export 'no_internet_banner.dart';
 export 'no_internet_icon.dart';

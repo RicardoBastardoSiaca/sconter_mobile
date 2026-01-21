@@ -7,8 +7,8 @@ import '../../domain/domain.dart';
 import '../providers/providers.dart';
 import '../widgets/widgets.dart';
 
-class ConsultarControlActividadesScreen extends ConsumerWidget {
-  const ConsultarControlActividadesScreen({super.key});
+class ConsultarServiciosMiscelaneos extends ConsumerWidget {
+  const ConsultarServiciosMiscelaneos({super.key});
 
   @override
   Widget build(BuildContext contextm, WidgetRef ref) {
@@ -148,27 +148,27 @@ class _ConsultarControlActividadesViewState extends ConsumerState<_ConsultarCont
             bodyWidget: VueloDetalle( 
               controlActividades: controlActividades,
               turnaround: turnaround,
-              isTurnarond: true,),
+              isTurnarond: false,),
             decoration: pageDecoration,
           ),
-          PageViewModel(
-            title: "Plantilla",
-            bodyWidget: PlantillaDetalle( 
-              controlActividades: controlActividades,
-              turnaround: turnaround,),
-            decoration: pageDecoration,
-          ),
+          // PageViewModel(
+          //   title: "Plantilla",
+          //   bodyWidget: PlantillaDetalle( 
+          //     controlActividades: controlActividades,
+          //     turnaround: turnaround,),
+          //   decoration: pageDecoration,
+          // ),
           // if (turnaround.estatus == 4 ||
           //     turnaround.estatus == 5 ||
           //     turnaround.estatus == 6 ||
           //     turnaround.estatus == 7)
-          PageViewModel(
-            title: "Control de Actividades",
-             bodyWidget: ControlActividadesDetalle( 
-              controlActividades: controlActividades,
-              turnaround: turnaround,),
-            decoration: pageDecoration,
-          ),
+          // PageViewModel(
+          //   title: "Control de Actividades",
+          //    bodyWidget: ControlActividadesDetalle( 
+          //     controlActividades: controlActividades,
+          //     turnaround: turnaround,),
+          //   decoration: pageDecoration,
+          // ),
           // PageViewModel(
           //   title: "3. SLA",
           //    bodyWidget: SlaDetalle( 
@@ -180,23 +180,23 @@ class _ConsultarControlActividadesViewState extends ConsumerState<_ConsultarCont
           //     turnaround.estatus == 5 ||
           //     turnaround.estatus == 6 ||
           //     turnaround.estatus == 7)
-          PageViewModel(
-            title: "Servicios",
-             bodyWidget: ServiciosDetalle( 
-              controlActividades: controlActividades,
-              turnaround: turnaround,),
-            decoration: pageDecoration,
-          ),
+          // PageViewModel(
+          //   title: "Servicios",
+          //    bodyWidget: ServiciosDetalle( 
+          //     controlActividades: controlActividades,
+          //     turnaround: turnaround,),
+          //   decoration: pageDecoration,
+          // ),
           // if (turnaround.estatus == 4 ||
           //     turnaround.estatus == 5 ||
           //     turnaround.estatus == 6 ||
           //     turnaround.estatus == 7)
-          PageViewModel(
-            title: "Codigos de Demora",
-             bodyWidget: CodigosDemoraDetalle( 
-              demoras: demoras,),
-            decoration: pageDecoration,
-          ),
+          // PageViewModel(
+          //   title: "Codigos de Demora",
+          //    bodyWidget: CodigosDemoraDetalle( 
+          //     demoras: demoras,),
+          //   decoration: pageDecoration,
+          // ),
           // if (turnaround.estatus == 4 ||
           //     turnaround.estatus == 5 ||
           //     turnaround.estatus == 6 ||

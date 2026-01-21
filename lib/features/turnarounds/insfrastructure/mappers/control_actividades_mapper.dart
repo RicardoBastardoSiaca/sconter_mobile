@@ -26,7 +26,11 @@ class ControlActividadesMapper {
           : DateTime.parse(json["ETD_fecha_out"]).toLocal(),
       gate: json["gate"],
       tipoVueloId: json["tipo_vuelo_id"],
-      tipoServicioId: json["tipo_servicio_id"],
+      // Sometime tipo_servicio_id is not present in the json
+      tipoServicioId: json.containsKey("tipo_servicio_id")
+          ? json["tipo_servicio_id"]
+          : 0,
+      // tipoServicioId: json["tipo_servicio_id"] ?? 0,
       lugarSalidaOaci: json["lugar_salida_oaci"],
       lugarDestinoOaci: json["lugar_destino_oaci"],
       lugarSalidaIata: json["lugar_salida_iata"],

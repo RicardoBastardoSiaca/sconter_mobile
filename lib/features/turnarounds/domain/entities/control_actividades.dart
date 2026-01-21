@@ -490,6 +490,7 @@ class ServiciosAle {
   int fkTurnaroundId;
   List<dynamic>? imagen;
   List<Maquinaria> maquinaria;
+  bool isExpanded = false;
 
   ServiciosAle({
     required this.id,

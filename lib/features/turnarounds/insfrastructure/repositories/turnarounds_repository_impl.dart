@@ -23,6 +23,15 @@ class TurnaroundsRepositoryImpl extends TurnaroundsRepository {
   }
 
   @override
+  Future<List<TurnaroundMain>> getServiciosMiscelaneosByDate(
+    int year,
+    int month,
+    int day,
+  ) {
+    return datasource.getServiciosMiscelaneosByDate(year, month, day);
+  }
+
+  @override
   Future<SimpleApiResponse> startOperations(int id) {
     return datasource.startOperations(id);
   }
@@ -210,34 +219,55 @@ class TurnaroundsRepositoryImpl extends TurnaroundsRepository {
   Future getDepartamentosConPersonal(int idTrc) {
     return datasource.getDepartamentosConPersonal(idTrc);
   }
-  
+
   @override
   Future<SimpleApiResponse> asignarPersonal(Map<String, dynamic> body) {
     return datasource.asignarPersonal(body);
   }
-  
+
   @override
   Future<SimpleApiResponse> cerrarVuelo(Map<String, Object?> body) {
     return datasource.cerrarVuelo(body);
   }
-  
+
   @override
-  Future<SimpleApiResponse> setCantidadServicioAdicional(Map<String, Object?> body) {
+  Future<SimpleApiResponse> setCantidadServicioAdicional(
+    Map<String, Object?> body,
+  ) {
     return datasource.setCantidadServicioAdicional(body);
   }
-  
+
   @override
   Future getCategoriasEquiposIt() {
     return datasource.getCategoriasEquiposIt();
   }
-  
+
   @override
-  Future<SimpleApiResponse> asignarEquiposItLimpiezaTareas(Map<String, Object> body) {
+  Future<SimpleApiResponse> asignarEquiposItLimpiezaTareas(
+    Map<String, Object> body,
+  ) {
     return datasource.asignarEquiposItLimpiezaTareas(body);
   }
-  
+
   @override
   Future getPlantillaDetalleById(int id) {
     return datasource.getPlantillaDetalleById(id);
+  }
+
+  @override
+  Future<SimpleApiResponse> iniciarOperacionesServicioMiscelaneo(int id) {
+    return datasource.iniciarOperacionesServicioMiscelaneo(id);
+  }
+
+  @override
+  Future<ControlActividades> getControlDeActividadesServicioMiscelaneoById(
+    int id,
+  ) {
+    return datasource.getControlDeActividadesServicioMiscelaneoById(id);
+  }
+  
+  @override
+  Future<SimpleApiResponse> finalizarVueloServicioMiscelaneo(int id) {
+    return datasource.finalizarVueloServicioMiscelaneo(id);
   }
 }
