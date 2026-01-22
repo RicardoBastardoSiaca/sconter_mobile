@@ -996,7 +996,7 @@ class TurnaroundsDatasourceImpl implements TurnaroundsDatasource {
           );
         } else if (response.statusCode == 400) {
           return SimpleApiResponse(
-            message: 'Error. Asegurese de llenar los datos del vuelo',
+            message: response.data['mensaje'] ?? 'Error. Asegurese de llenar los datos del vuelo',
             success: false,
           );
         } else {
@@ -1195,6 +1195,28 @@ class TurnaroundsDatasourceImpl implements TurnaroundsDatasource {
         } else {
           return SimpleApiResponse(
             message: 'Error al finalizar vuelo.',
+            success: false,
+          );
+        }
+  }
+  
+  @override
+  Future<SimpleApiResponse> cerrarVueloervicioMiscelaneo(Map<String, Object?> body) async{
+     final response = await dio
+        .post('/turnarounds/cerrar_vuelo_servicio/?token=$accessToken', data: body);
+        if (response.statusCode == 201) {
+          return SimpleApiResponse(
+            message: 'Vuelo cerrado.',
+            success: true,
+          );
+        } else if (response.statusCode == 400) {
+          return SimpleApiResponse(
+            message: 'Error. Asegurese de llenar los datos del vuelo',
+            success: false,
+          );
+        } else {
+          return SimpleApiResponse(
+            message: 'Error al cerrar vuelo.',
             success: false,
           );
         }

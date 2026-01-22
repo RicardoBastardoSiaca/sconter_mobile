@@ -270,4 +270,9 @@ class TurnaroundsRepositoryImpl extends TurnaroundsRepository {
   Future<SimpleApiResponse> finalizarVueloServicioMiscelaneo(int id) {
     return datasource.finalizarVueloServicioMiscelaneo(id);
   }
+  
+  @override
+  Future<SimpleApiResponse> cerrarVueloervicioMiscelaneo(Map<String, Object?> body) {
+    return datasource.cerrarVueloervicioMiscelaneo(body);
+  }
 }

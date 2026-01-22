@@ -104,6 +104,10 @@ final goRouterProvider = Provider((ref) {
         builder: (context, state) => CerrarVueloScreen(),
       ),
       GoRoute(
+        path: '/cerrar-vuelo-servicio-miscelaneo-screen',
+        builder: (context, state) => CerrarVueloServicioMiscelaneoScreen(),
+      ),
+      GoRoute(
         path: '/consultar-control-actividades-screen',
         builder: (context, state) => ConsultarControlActividadesScreen(),
       ),

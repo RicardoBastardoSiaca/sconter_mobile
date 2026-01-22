@@ -1,5 +1,13 @@
 // ignore_for_file: prefer_final_fields
 
+
+Hoy:
+Mostrar mensaje de cambio de estado al finalizar vuelo
+Cerrar vuelo como en trc mostrando las pantallas como en el trc
+arreglar estilos de pantalla de confirmar (botones)
+Mostrar equipos gse en consultar
+
+
 Fixes:
 
 Visualizacion de contraseña

@@ -123,6 +123,7 @@ class _LoginForm extends ConsumerWidget {
           onFieldSubmitted: (_) =>
               ref.read(loginFormProvider.notifier).onFormSubmit(),
           obscureText: true,
+          showHidePassword: true,
           hint: 'Contraseña',
           prefixIcon: Icon(Icons.lock_outline, color: colors.primary, size: 20),
           onChanged: (value) =>

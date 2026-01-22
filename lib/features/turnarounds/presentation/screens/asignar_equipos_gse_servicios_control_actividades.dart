@@ -434,6 +434,13 @@ class _AsignarEquiposGseViewState
                             ).notifier,
                           )
                           .getControlDeActividadesByTrcId();
+                      await ref
+                          .read(
+                            controlActividadesProvider(
+                              widget.data.turnaround!.id,
+                            ).notifier,
+                          )
+                          .getControlDeActividadesServicioMiscelaneoById();
                       // ref.watch(
                       //   controlActividadesProvider(
                       //     ref.read(selectedTurnaroundProvider)!.id,

@@ -5,3 +5,5 @@ export 'serivicios_detalle.dart';
 export 'sla_detalle.dart';
 export 'vuelo_detalle.dart';
 export 'plantilla_detalle.dart';
+export 'comentario_input_dialog.dart';
+export 'comentarios_detalle.dart';

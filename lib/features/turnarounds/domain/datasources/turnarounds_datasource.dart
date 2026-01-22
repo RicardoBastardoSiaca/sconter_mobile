@@ -123,6 +123,7 @@ abstract class TurnaroundsDatasource {
   Future<SimpleApiResponse> asignarPersonal(Map<String, dynamic> body);
 
   Future<SimpleApiResponse> cerrarVuelo(Map<String, Object?> body);
+  Future<SimpleApiResponse> cerrarVueloervicioMiscelaneo(Map<String, Object?> body);
 
   Future<SimpleApiResponse> setCantidadServicioAdicional(Map<String, Object?> body);
 

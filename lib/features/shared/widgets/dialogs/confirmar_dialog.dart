@@ -15,21 +15,61 @@ class ConfirmarDialog {
           content: Text(mensaje),
           actions: <Widget>[
             // Botón "No" en rojo
-            TextButton(
+            ElevatedButton(
+              style: ElevatedButton.styleFrom(
+                                // primary
+                backgroundColor: Colors.red,
+                foregroundColor: Colors.white,
+                shape: const RoundedRectangleBorder(
+                  borderRadius: BorderRadius.all(
+                    Radius.circular(20),
+                  ),
+                ),
+              ),
               onPressed: () => Navigator.of(context).pop(false),
               child: const Text(
                 "No",
-                style: TextStyle(color: Colors.red, fontWeight: FontWeight.bold),
+                style: TextStyle(
+                  fontSize: 18,
+                  fontWeight: FontWeight.bold,
+                ),
               ),
             ),
+            // TextButton(
+            //   onPressed: () => Navigator.of(context).pop(false),
+            //   child: const Text(
+            //     "No",
+            //     style: TextStyle(color: Colors.red, fontWeight: FontWeight.bold),
+            //   ),
+            // ),
             // Botón "Si" en verde
-            TextButton(
+            ElevatedButton(
+              style: ElevatedButton.styleFrom(
+                                // primary
+                backgroundColor: Colors.green,
+                foregroundColor: Colors.white,
+                shape: const RoundedRectangleBorder(
+                  borderRadius: BorderRadius.all(
+                    Radius.circular(20),
+                  ),
+                ),
+              ),
               onPressed: () => Navigator.of(context).pop(true),
               child: const Text(
                 "Si",
-                style: TextStyle(color: Colors.green, fontWeight: FontWeight.bold),
+                style: TextStyle(
+                  fontSize: 18,
+                  fontWeight: FontWeight.bold,
+                ),
               ),
             ),
+            // TextButton(
+            //   onPressed: () => Navigator.of(context).pop(true),
+            //   child: const Text(
+            //     "Si",
+            //     style: TextStyle(color: Colors.green, fontWeight: FontWeight.bold),
+            //   ),
+            // ),
           ],
         );
       },

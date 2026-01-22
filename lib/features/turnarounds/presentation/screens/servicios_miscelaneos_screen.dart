@@ -603,6 +603,7 @@ class _MenuDialog extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    String comentario = ref.watch(comentarioProvider);
     DepartamentoPersonalState departamentoPersonal = ref.watch(departamentoPersonalProvider(turnaround.id));
     return AlertDialog(
       // Border Color
@@ -765,7 +766,7 @@ class _MenuDialog extends ConsumerWidget {
                 // Api calls
                 // getcerrar_operacionesById
                 // Control de actividades
-                ref.read(controlActividadesProvider(turnaround.id).notifier).getControlDeActividadesByTrcId();
+                ref.read(controlActividadesProvider(turnaround.id).notifier).getControlDeActividadesServicioMiscelaneoById();
 
 
                 // getCodigosMoraByTrc
@@ -779,9 +780,11 @@ class _MenuDialog extends ConsumerWidget {
                     .getDepartamentosConPersonal(turnaround.id);
                 
 
-
+                // set comentarioProvider to empty string
+                ref.read(comentarioProvider.notifier).state = '';
+                
                 // push
-                context.push('/cerrar-vuelo-screen');
+                context.push('/cerrar-vuelo-servicio-miscelaneo-screen');
                 // close bottom sheet
                 Navigator.pop(context);
 

@@ -197,6 +197,15 @@ class _AsignarEquiposGseViewState
                             ).notifier,
                           )
                           .getControlDeActividadesByTrcId();
+                      ref
+                          .read(
+                            controlActividadesProvider(
+                              ref.read(selectedTurnaroundProvider)!.id,
+                            ).notifier,
+                          )
+                          .getControlDeActividadesServicioMiscelaneoById();
+
+                        
                       // ignore: use_build_context_synchronously
                       Navigator.of(context).pop();
                     } else {

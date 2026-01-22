@@ -106,11 +106,13 @@ class TurnaroundNotifier extends StateNotifier<TurnaroundState> {
       //   SnackBar(content: Text(response.message)),
       // );
     }
-    // 
-
-    
-
-
+    return response;
+  }
+  Future<SimpleApiResponse> cerrarVueloervicioMiscelaneo(Map<String, Object?> body) async {
+    final response = await turnaroundsRepository.cerrarVueloervicioMiscelaneo(body);
+    if (response.success) {
+      getServiciosMiscelaneos();
+    }
     return response;
   }
 
@@ -176,4 +178,9 @@ final selectedDateProvider = StateProvider<DateTime>((ref) {
 // TODO: Selected Turnaround Provider
 final selectedTurnaroundProvider = StateProvider<TurnaroundMain?>((ref) {
   return null;
+});
+
+// provider to write comments a simple string to modify
+final comentarioProvider = StateProvider<String>((ref) {
+  return '';
 });

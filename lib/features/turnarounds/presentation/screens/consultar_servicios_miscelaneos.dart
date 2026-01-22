@@ -151,6 +151,27 @@ class _ConsultarControlActividadesViewState extends ConsumerState<_ConsultarCont
               isTurnarond: false,),
             decoration: pageDecoration,
           ),
+          PageViewModel(
+            title: "2. Servicios",
+            bodyWidget: ServiciosDetalle(
+              controlActividades: controlActividades,
+              turnaround: turnaround,
+            ),
+            decoration: pageDecoration,
+          ),
+          PageViewModel(
+            title: "3. Codigos de Demora",
+            bodyWidget: CodigosDemoraDetalle(demoras: demoras),
+            decoration: pageDecoration,
+          ),
+          PageViewModel(
+            title: "4. Personal",
+            bodyWidget: PersonalDetalle(
+              departamentosPersona:
+                  departamentosPersona.departamentoPersonalResponse,
+            ),
+            decoration: pageDecoration,
+          ),
           // PageViewModel(
           //   title: "Plantilla",
           //   bodyWidget: PlantillaDetalle( 
@@ -201,12 +222,12 @@ class _ConsultarControlActividadesViewState extends ConsumerState<_ConsultarCont
           //     turnaround.estatus == 5 ||
           //     turnaround.estatus == 6 ||
           //     turnaround.estatus == 7)
-          PageViewModel(
-            title: "Personal",
-             bodyWidget: PersonalDetalle( 
-              departamentosPersona: departamentosPersona.departamentoPersonalResponse,),
-            decoration: pageDecoration,
-          ),
+          // PageViewModel(
+          //   title: "Personal",
+          //    bodyWidget: PersonalDetalle( 
+          //     departamentosPersona: departamentosPersona.departamentoPersonalResponse,),
+          //   decoration: pageDecoration,
+          // ),
           
         ],
         onDone: () => _onIntroEnd(context),

@@ -169,9 +169,22 @@ class _ControlActividadesServiciosMiscelaneosState
                 if (respuesta) {
                   print("El usuario dijo: SI");
                   // Ejecuta aquí tu lógica de éxito
-                  await ref
+                  final response = await ref
                       .read(turnaroundProvider.notifier)
                       .finalizarVueloServicioMiscelaneo(turnaround.id);
+
+                  // Custom snackbar to show message
+                  if (response.success) {
+                    if (context.mounted) {
+                      CustomSnackbar.showSuccessSnackbar(response.message, context, );
+                      Navigator.of(context).pop(); // Close the screen after successful closure
+                      
+                    }
+                  } else {
+                    if (context.mounted) {
+                      CustomSnackbar.showErrorSnackbar('Error: ${response.message}', context);
+                    }
+                  }
                 } else {
                   print("El usuario dijo: NO");
                 }
