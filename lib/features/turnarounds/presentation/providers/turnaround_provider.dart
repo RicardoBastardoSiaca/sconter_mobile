@@ -24,44 +24,53 @@ class TurnaroundNotifier extends StateNotifier<TurnaroundState> {
     : super(TurnaroundState());
 
   Future<void> getTurnarounds() async {
-    if (state.isLoading) return;
-    // state = state.copyWith(isLoading: true);
+    // Capture the date we want to fetch to avoid race conditions when
+    // multiple requests are made in quick succession. We don't rely on
+    // `state.selectedDate` inside the async call because it may change
+    // before the request completes.
+    final DateTime requestDate = state.selectedDate;
 
     final turnarounds = await turnaroundsRepository.getTurnaroundsByDate(
-      state.selectedDate.year,
-      state.selectedDate.month,
-      state.selectedDate.day,
+      requestDate.year,
+      requestDate.month,
+      requestDate.day,
     );
-    // if (turnarounds.isEmpty) {
-    //   state = state.copyWith(isLoading: false);
-    //   return;
-    // }
-    state = state.copyWith(isLoading: false, turnarounds: turnarounds);
+
+    // Only apply the results if the selected date hasn't changed since
+    // we made the request. This prevents older responses from overwriting
+    // newer ones when users click back/forward quickly.
+    if (state.selectedDate == requestDate) {
+      state = state.copyWith(isLoading: false, turnarounds: turnarounds);
+    }
   }
 
   Future<void> getServiciosMiscelaneos() async {
-    if (state.isLoading) return;
-    // state = state.copyWith(isLoading: true);
+    // See note in getTurnarounds: capture the request date so that
+    // out-of-order network responses don't clobber newer data.
+    final DateTime requestDate = state.selectedDate;
 
     final serviciosMiscelaneos = await turnaroundsRepository.getServiciosMiscelaneosByDate(
-      state.selectedDate.year,
-      state.selectedDate.month,
-      state.selectedDate.day,
+      requestDate.year,
+      requestDate.month,
+      requestDate.day,
     );
-    // if (turnarounds.isEmpty) {
-    //   state = state.copyWith(isLoading: false);
-    //   return;
-    // }
-    state = state.copyWith(isLoading: false, serviciosMiscelaneos: serviciosMiscelaneos);
+
+    if (state.selectedDate == requestDate) {
+      state = state.copyWith(isLoading: false, serviciosMiscelaneos: serviciosMiscelaneos);
+    }
   } 
 
   // set new date and fetch turnarounds
   void setSelectedDate(DateTime date, [bool isServicioMiscelaneo = false]) {
+    // Update the selected date immediately so UI reflects changes.
+    state = state.copyWith(selectedDate: date);
+
+    // Trigger fetch for the specific date. The fetch functions capture
+    // the date at call time and will ignore any responses that don't
+    // match the then-current selected date, avoiding race conditions.
     if (isServicioMiscelaneo) {
-      state = state.copyWith(selectedDate: date);
       getServiciosMiscelaneos();
     } else {
-      state = state.copyWith(selectedDate: date);
       getTurnarounds();
     }
   }
