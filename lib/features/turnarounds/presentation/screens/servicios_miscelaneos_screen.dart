@@ -817,7 +817,7 @@ class _MenuDialog extends ConsumerWidget {
                 // Api calls
                 // getcerrar_operacionesById
                 // Control de actividades
-                ref.read(controlActividadesProvider(turnaround.id).notifier).getControlDeActividadesByTrcId();
+                ref.read(controlActividadesProvider(turnaround.id).notifier).getControlDeActividadesServicioMiscelaneoById();
 
                 // ref.read(plantillaDetalleProvider.notifier).getPlantillaDetalleById(turnaround.fkVuelo.fkPlantilla?.id ?? 0);
 
