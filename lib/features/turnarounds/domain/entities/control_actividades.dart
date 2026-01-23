@@ -440,11 +440,12 @@ class ConteoPasajeros {
 class Imagen {
   int id;
   String? imagen;
+  String? shareMessage;
 
-  Imagen({required this.id, required this.imagen});
+  Imagen({required this.id, required this.imagen, sharedMessage = ''});
 
   factory Imagen.fromJson(Map<String, dynamic> json) =>
-      Imagen(id: json["id"], imagen: json["imagen"]);
+      Imagen(id: json["id"], imagen: json["imagen"], sharedMessage: json["shareMessage"]);
 
   Map<String, dynamic> toJson() => {"id": id, "imagen": imagen};
 }

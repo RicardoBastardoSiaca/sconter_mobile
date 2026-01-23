@@ -87,9 +87,14 @@ class ControlActividadesMapper {
     return Actividades(
       index: json["index"],
       nombreActividad: json["nombre_actividad"],
-      tareas: List<Tarea>.from(
-        (json["tareas"] as List).map((x) => mapJsonToTarea(x)),
-      ),
+      // tareas: List<Tarea>.from(
+      //   (json["tareas"] as List).map((x) => mapJsonToTarea(x)),
+      // ),
+      tareas: (json["tareas"] as List)
+          .asMap()
+          .entries
+          .map((entry) => mapJsonToTarea(entry.value, entry.key))
+          .toList(),
       todasTareasHechas: json["todas_tareas_hechas"],
       tareasCompletadas: json["tareas_completadas"],
       tareasPendientes: json["tareas_pendientes"],
@@ -97,7 +102,7 @@ class ControlActividadesMapper {
     );
   }
 
-  static Tarea mapJsonToTarea(Map<String, dynamic> json) {
+  static Tarea mapJsonToTarea(Map<String, dynamic> json, int indexTarea) {
     return Tarea(
       id: json["id"],
       auxTiempoPromedio: json["aux_tiempo_promedio"],
@@ -125,7 +130,7 @@ class ControlActividadesMapper {
       // if list is empty, return an empty list
       imagen: json["imagen"].toList().isEmpty
           ? null
-          : List<Imagen>.from(json["imagen"].map((x) => mapJsonToImagen(x))),
+          : List<Imagen>.from(json["imagen"].map((x) => mapJsonToImagen(x, "${json["titulo"]} - ${indexTarea + 1}"))),
       pasajeros: json["pasajeros"] == null
           ? null
           : ConteoPasajeros.fromJson(json["pasajeros"]),
@@ -140,8 +145,8 @@ class ControlActividadesMapper {
     );
   }
 
-  static Imagen mapJsonToImagen(Map<String, dynamic> json) {
-    return Imagen(id: json["id"], imagen: json["imagen"]);
+  static Imagen mapJsonToImagen(Map<String, dynamic> json, String sharedMessage) {
+    return Imagen(id: json["id"], imagen: json["imagen"], sharedMessage: json["shareMessage"]);
   }
 
   static ServiciosAle mapJsonToServiciosAle(Map<String, dynamic> json) {
