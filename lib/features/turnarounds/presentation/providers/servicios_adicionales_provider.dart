@@ -1,4 +1,5 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:turnaround_mobile/features/local_storage/local_storage.dart';
 import 'package:turnaround_mobile/features/shared/shared.dart';
 
 import '../../domain/domain.dart';
@@ -12,11 +13,15 @@ final serviciosAdicionalesProvider =
     >((ref) {
       final turnaroundsRepository = ref.watch(turnaroundRepositoryProvider);
       final selectedTrc = ref.watch(selectedTurnaroundProvider);
-
+      final localStorageRepository = ref.watch(localStorageRepositoryProvider);
+      final ConnectivityService _connectivityService = ConnectivityService();
+      
       return ServiciosAdicionalesNotifier(
         trcId: selectedTrc!.id,
         selectedTrc: selectedTrc,
         turnaroundsRepository: turnaroundsRepository,
+        localStorageRepository: localStorageRepository,
+        connectivityService: _connectivityService,
       );
     });
 
@@ -26,11 +31,15 @@ class ServiciosAdicionalesNotifier
   final int trcId;
   final TurnaroundMain selectedTrc;
   final TurnaroundsRepository turnaroundsRepository;
+  final StoredRequestApiRepository localStorageRepository;
+  final ConnectivityService connectivityService;
 
   ServiciosAdicionalesNotifier({
     required this.trcId,
     required this.selectedTrc,
     required this.turnaroundsRepository,
+    required this.localStorageRepository,
+    required this.connectivityService,
   }) : super(
          ServiciosAdicionalesState(id: trcId, categoriasEquiposGseResponse: []),
        );
@@ -126,6 +135,38 @@ class ServiciosAdicionalesNotifier
       //   }
       case 'Hora de Inicio':
         try {
+
+          // ** No Internet connection check **
+          final bool isConnected = await ConnectivityService().hasConnection;
+          if (!isConnected) {
+            // Save the api call for later
+
+            final requestBody = {
+              'id': body.id,
+              'hora_inicio': body.horaInicio!.toUtc().toIso8601String(),
+              'tipo': body.tipo,
+            };
+
+            localStorageRepository.saveRequestApi(
+              RequestApi(
+                id: DateTime.now().millisecondsSinceEpoch,
+                url: '/servicios_adicionales/horainiciofin',
+                method: 'POST',
+                body: requestBody,
+                timestamp: DateTime.now().millisecondsSinceEpoch,
+              ),
+            );
+
+            return SnackbarResponse(
+              message: 'Hora registrada. Sin conexión.',
+              success: false,
+              hasConnection: false,
+            );
+          }
+          // ** No Internet connection check END **
+
+
+
           final response = await turnaroundsRepository
               .setHoraInicioServicioAdicional(body);
           if (response.success) {
@@ -155,6 +196,35 @@ class ServiciosAdicionalesNotifier
         }
       case 'Hora fin':
         try {
+
+          // ** No Internet connection check **
+          final bool isConnected = await ConnectivityService().hasConnection;
+          if (!isConnected) {
+            // Save the api call for later
+            final requestBody = {
+            'id': body.id,
+            'hora_fin': body.horaFin!.toUtc().toIso8601String(),
+            'tipo': body.tipo,
+          };
+
+            localStorageRepository.saveRequestApi(
+              RequestApi(
+                id: DateTime.now().millisecondsSinceEpoch,
+                url: '/servicios_adicionales/horainiciofin',
+                method: 'POST',
+                body: requestBody,
+                timestamp: DateTime.now().millisecondsSinceEpoch,
+              ),
+            );
+
+            return SnackbarResponse(
+              message: 'Hora registrada. Sin conexión.',
+              success: false,
+              hasConnection: false,
+            );
+          }
+          // ** No Internet connection check END **
+
           final response = await turnaroundsRepository
               .setHoraFinServicioAdicional(body);
           if (response.success) {
@@ -192,6 +262,42 @@ class ServiciosAdicionalesNotifier
   ) async {
     state = state.copyWith(isSaving: true);
     try {
+
+      // TODO: No Internet check
+          // ** No Internet connection check **
+          final bool isConnected = await ConnectivityService().hasConnection;
+          if (!isConnected) {
+            // Save the api call for later
+            final requestBody = {
+              'id': body.id,
+              'servicio_adicional_id': body.servicioAdicionalId,
+              'hora_inicio': body.tipo == "Hora de Inicio"
+                  ? body.horaInicio!.toUtc().toIso8601String()
+                  : null,
+              'hora_fin': body.tipo == "Hora final"
+                  ? body.horaFin!.toUtc().toIso8601String()
+                  : null,
+              'tipo': body.tipo,
+            };
+
+            localStorageRepository.saveRequestApi(
+              RequestApi(
+                id: DateTime.now().millisecondsSinceEpoch,
+                url: '/servicios_adicionales/maquinaria_con_hora',
+                method: 'POST',
+                body: requestBody,
+                timestamp: DateTime.now().millisecondsSinceEpoch,
+              ),
+            );
+
+            return SnackbarResponse(
+              message: 'Hora registrada. Sin conexión.',
+              success: false,
+              hasConnection: false,
+            );
+          }
+          // ** No Internet connection check END **
+
       final response = await turnaroundsRepository
           .setHoraMaquinariaServicioAdicional(body);
       if (response.success) {
@@ -225,6 +331,39 @@ class ServiciosAdicionalesNotifier
     state = state.copyWith(isSaving: true);
     
     try {
+      // ** No Internet connection check **
+          final bool isConnected = await ConnectivityService().hasConnection;
+          if (!isConnected) {
+            // Save the api call for later
+            // final requestBody = {
+            //   'id': body.id,
+            //   'servicio_adicional_id': body.servicioAdicionalId,
+            //   'hora_inicio': body.tipo == "Hora de Inicio"
+            //       ? body.horaInicio!.toUtc().toIso8601String()
+            //       : null,
+            //   'hora_fin': body.tipo == "Hora final"
+            //       ? body.horaFin!.toUtc().toIso8601String()
+            //       : null,
+            //   'tipo': body.tipo,
+            // };
+
+            localStorageRepository.saveRequestApi(
+              RequestApi(
+                id: DateTime.now().millisecondsSinceEpoch,
+                url: '/servicios_adicionales/maquinaria_con_hora',
+                method: 'POST',
+                body: body,
+                timestamp: DateTime.now().millisecondsSinceEpoch,
+              ),
+            );
+
+            return SnackbarResponse(
+              message: 'Hora registrada. Sin conexión.',
+              success: false,
+              hasConnection: false,
+            );
+          }
+          // ** No Internet connection check END **
       final response = await turnaroundsRepository
           .setCantidadServicioAdicional(body);
       if (response.success) {
@@ -250,6 +389,33 @@ class ServiciosAdicionalesNotifier
   ) async {
     state = state.copyWith(isSaving: true);
     try {
+      // ** No Internet connection check **
+          final bool isConnected = await ConnectivityService().hasConnection;
+          if (!isConnected) {
+            // Save the api call for later
+            final requestBody = {
+              'id': body.id,
+              'comentario': body.comentario,
+              'es_servicio_adicional': body.esServicioAdicional,
+            };
+
+            localStorageRepository.saveRequestApi(
+              RequestApi(
+                id: DateTime.now().millisecondsSinceEpoch,
+                url: '/servicios_adicionales/maquinaria_con_hora',
+                method: 'POST',
+                body: requestBody,
+                timestamp: DateTime.now().millisecondsSinceEpoch,
+              ),
+            );
+
+            return SnackbarResponse(
+              message: 'Hora registrada. Sin conexión.',
+              success: false,
+              hasConnection: false,
+            );
+          }
+          // ** No Internet connection check END **
       final response = await turnaroundsRepository
           .setComentarioServicioAdicional(body);
       if (response.success) {

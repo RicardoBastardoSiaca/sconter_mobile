@@ -1113,7 +1113,7 @@ class _DateFilter extends ConsumerWidget {
             ref.read(datetimeProvider.notifier).state = newDate;
 
             // setSelectedDate
-            ref.read(turnaroundProvider.notifier).setSelectedDate(newDate);
+            ref.read(turnaroundProvider.notifier).setSelectedDate(newDate, true);
 
             // ref.read(turnaroundProvider.notifier).state = ref
             //     .read(turnaroundProvider.notifier)

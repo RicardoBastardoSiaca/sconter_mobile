@@ -1,5 +1,9 @@
 // ignore_for_file: prefer_final_fields
 
+Urgente:
+    Permisos 
+    Sin conexion para servivios miscelaneos
+    
 
 Hoy:
 Mostrar mensaje de cambio de estado al finalizar vuelo
