@@ -5,6 +5,8 @@ import 'package:flutter_svg/svg.dart';
 import 'package:go_router/go_router.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:intl/intl.dart';
+import 'package:turnaround_mobile/features/auth/domain/domain.dart';
+import 'package:turnaround_mobile/features/auth/presentation/providers/providers.dart';
 import 'package:turnaround_mobile/features/turnarounds/presentation/widgets/widgets.dart';
 
 import '../../../shared/shared.dart';
@@ -602,8 +604,6 @@ class _MenuDialog extends ConsumerWidget {
           //   },
           // ),
           
-          
-          
 
 
           if (turnaround.estatus == 1 ||
@@ -613,6 +613,18 @@ class _MenuDialog extends ConsumerWidget {
               leading: Icon(Icons.person_2),
               title: 'Asignar Personal',
               onTap: () async {
+
+                print("onItemTap");
+                
+                // If User has no permission show snackbar and return
+                // bool puedeBorrar = user.rolesList.contains(Roles.eliminarUsuario);
+                if (!ref.read(authProvider).loginResponse!.hasPermission( Roles.crearPersonal)) {
+                  showCustomErrorSnackbar(  context, 'No tienes permiso para asignar personal.');
+                  return;
+                }
+                // hasPermission(Roles.crearPersonal);
+
+
                 // set trcIdProvider
                 ref.read(trcIdProvider.notifier).state = turnaround.id;
                 // set selectedTurnaroundProvider
@@ -651,7 +663,12 @@ class _MenuDialog extends ConsumerWidget {
               leading: Icon(Icons.agriculture),
               title: 'Asignar equipos GSE',
               onTap: () {
-                print("onItemTap");
+                // print("onItemTap");
+
+                if (!ref.read(authProvider).loginResponse!.hasPermission( Roles.asignarMaquinaria)) {
+                  showCustomErrorSnackbar(  context, 'No tienes permiso para asignar equipos GSE.');
+                  return;
+                }
 
                 // set selectedTurnaroundProvider
                 ref.read(selectedTurnaroundProvider.notifier).state =
