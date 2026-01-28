@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
+import 'package:turnaround_mobile/features/auth/domain/domain.dart';
+import 'package:turnaround_mobile/features/auth/presentation/providers/providers.dart';
 import 'package:turnaround_mobile/features/turnarounds/domain/domain.dart';
 import 'package:turnaround_mobile/features/turnarounds/presentation/providers/providers.dart';
 
@@ -45,6 +47,12 @@ class _DemorasView extends ConsumerWidget {
               ElevatedButton(
                 // disable if isLoading
                 onPressed: () async {
+
+                  // Rol Ckeck
+                  if (!ref.read(authProvider).loginResponse!.hasPermission( Roles.agregarDemoras)) {
+                    showCustomErrorSnackbar(  context, 'No tienes permiso para realizar esta acción.');
+                    return;
+                  }
                   // TODO: passing selected servicios adicionales
                   // ref.read(selectedMaquinariasTaskProvider.notifier).state =
                   //     controlActividades?.serviciosAdicionales ?? [];
@@ -160,6 +168,13 @@ class _DemoraListTile extends ConsumerWidget {
               child: IconButton(
                 icon: const Icon(Icons.delete, color: Colors.grey),
                 onPressed: () {
+
+                  // Rol Ckeck
+                  if (!ref.read(authProvider).loginResponse!.hasPermission( Roles.modificarVuelo)) {
+                    showCustomErrorSnackbar(  context, 'No tienes permiso para cerrar el vuelo.');
+                    return;
+                  }
+                  
                   // Handle delete action
                   // show dialog to confirm delete
                   // showDialog(

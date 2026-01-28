@@ -206,10 +206,10 @@ class _ControlActividadesScreenState
                   print('Servicios adicionales pressed - ROW');
 
                   // Rol Ckeck
-                  if (!ref.read(authProvider).loginResponse!.hasPermission( Roles.consultarServicioAdicional)) {
-                    showCustomErrorSnackbar(  context, 'No tienes permiso para consultar servicios adicionales.');
-                    return;
-                  }
+                  // if (!ref.read(authProvider).loginResponse!.hasPermission( Roles.consultarServicioAdicional)) {
+                  //   showCustomErrorSnackbar(  context, 'No tienes permiso para consultar servicios adicionales.');
+                  //   return;
+                  // }
 
                   context.push('/servicios-adicionales-screen');
                 },
@@ -249,10 +249,10 @@ class _ControlActividadesScreenState
                   print('Servicios especiales pressed - ROW');
 
                   // Rol Ckeck
-                  if (!ref.read(authProvider).loginResponse!.hasPermission( Roles.consultarServicioEspecial)) {
-                    showCustomErrorSnackbar(  context, 'No tienes permiso para realizar esta accion.');
-                    return;
-                  }
+                  // if (!ref.read(authProvider).loginResponse!.hasPermission( Roles.consultarServicioEspecial)) {
+                  //   showCustomErrorSnackbar(  context, 'No tienes permiso para realizar esta accion.');
+                  //   return;
+                  // }
                   
                   context.push('/servicios-especiales-screen');
                   // print('Servicios especiales pressed');

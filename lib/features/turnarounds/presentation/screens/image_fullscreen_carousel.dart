@@ -9,7 +9,9 @@ import 'package:share_plus/share_plus.dart';
 import 'package:turnaround_mobile/config/constants/environment.dart';
 
 import 'package:http/http.dart' as http;
+import 'package:turnaround_mobile/features/auth/domain/domain.dart';
 import 'dart:io';
+import '../../../auth/presentation/providers/providers.dart';
 import '../../../shared/shared.dart';
 import '../../domain/domain.dart';
 import '../providers/providers.dart';
@@ -334,7 +336,8 @@ class _FullScreenGalleryWithControlsState
                         [XFile(imagePath)],
                         // Nombre de la tarea
                         // text: widget.imagenes[_currentIndex].shareMessage ?? '',
-                        text: "${widget.sharedMessage} - foto ${_currentIndex+1}",
+                        text:
+                            "${widget.sharedMessage} - foto ${_currentIndex + 1}",
                         subject: 'Image from my app',
                       );
                     } catch (e) {
@@ -351,7 +354,14 @@ class _FullScreenGalleryWithControlsState
                     Icons.delete_outline,
                     color: Colors.redAccent,
                   ),
-                  onPressed: () => _confirmDelete(context),
+                  onPressed: () {
+                    // Rol Ckeck
+                    if (!ref.read(authProvider).loginResponse!.hasPermission( Roles.modificarControlDeActividades)) {
+                      showCustomErrorSnackbar(  context, 'No tienes permiso para realizar esta accion.');
+                      return;
+                    }
+                    _confirmDelete(context);
+                  },
                 ),
               ],
             ),

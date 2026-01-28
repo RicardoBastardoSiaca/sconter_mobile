@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:intl/intl.dart';
+import 'package:turnaround_mobile/features/auth/domain/domain.dart';
+import 'package:turnaround_mobile/features/auth/presentation/providers/providers.dart';
 
 import '../../../shared/shared.dart';
 import '../../domain/domain.dart';
@@ -43,6 +45,13 @@ class _ServiciosEspecialesView extends ConsumerWidget {
               ElevatedButton(
                 // disable if isLoading
                 onPressed: () async {
+
+                  if (!ref.read(authProvider).loginResponse!.hasPermission( Roles.agregarServiciosEspeciales ) 
+                  || !ref.read(authProvider).loginResponse!.hasPermission( Roles.agregarServiciosEspecialesMiscelaneos)) {
+                    showCustomErrorSnackbar(  context, 'No tienes permiso para realizar esta accion.');
+                    return;
+                  }
+
                   // TODO: passing selected servicios Especiales
                   // ref.read(selectedMaquinariasTaskProvider.notifier).state =
                   //     controlActividades?.serviciosEspeciales ?? [];
@@ -204,6 +213,12 @@ class _ComentarioViewServiciosEspeciales extends ConsumerWidget {
                   (
                     // Open a dialog to write and submit the comment
                   ) async {
+
+                    if (!ref.read(authProvider).loginResponse!.hasPermission( Roles.modificarControlDeActividades)
+                      || !ref.read(authProvider).loginResponse!.hasPermission( Roles.modificarControlDeActividadesMiscelaneos)) {
+                      showCustomErrorSnackbar(  context, 'No tienes permiso para realizar esta accion.');
+                      return;
+                    }
                     // set value of tarea.comentario to textController
                     textController.text = servicioEspecial.comentario ?? '';
 
@@ -347,6 +362,14 @@ class _CantidadServicioEspecialView extends ConsumerWidget {
         GestureDetector(
           behavior: HitTestBehavior.translucent,
           onTap: () async {
+
+            // Rol Check
+            if (!ref.read(authProvider).loginResponse!.hasPermission( Roles.modificarControlDeActividades)
+                || !ref.read(authProvider).loginResponse!.hasPermission( Roles.modificarControlDeActividadesMiscelaneos)) {
+              showCustomErrorSnackbar(  context, 'No tienes permiso para realizar esta accion.');
+              return;
+            }
+
             final result = await showNumberInputDialog(
               context: context,
               title: '${servicio.titulo} - Cantidad',
@@ -455,6 +478,14 @@ class _HoraInicioServicioEspecialView extends ConsumerWidget {
         GestureDetector(
           behavior: HitTestBehavior.translucent,
           onTap: () async {
+
+            // Rol Check
+            if (!ref.read(authProvider).loginResponse!.hasPermission( Roles.modificarControlDeActividades)
+                || !ref.read(authProvider).loginResponse!.hasPermission( Roles.modificarControlDeActividadesMiscelaneos)) {
+              showCustomErrorSnackbar(  context, 'No tienes permiso para realizar esta accion.');
+              return;
+            }
+
             // Show time picker dialog
             final selectedTime =
                 await CustomTimePickerDialog.showTimePickerDialog(
@@ -552,6 +583,14 @@ class _HoraInicioServicioEspecialView extends ConsumerWidget {
                 onPressed: () async {
                   if (isLoading) return;
                   // Show loading indicator
+
+                  // Rol Check
+                  if (!ref.read(authProvider).loginResponse!.hasPermission( Roles.modificarControlDeActividades)
+                      || !ref.read(authProvider).loginResponse!.hasPermission( Roles.modificarControlDeActividadesMiscelaneos)) {
+                    showCustomErrorSnackbar(  context, 'No tienes permiso para realizar esta accion.');
+                    return;
+                  }
+
                   ref
                       .read(isLoadingControlActividadesProvider.notifier)
                       .update((state) => true);
@@ -606,6 +645,14 @@ class _HoraFinServicioEspecialView extends ConsumerWidget {
         GestureDetector(
           behavior: HitTestBehavior.translucent,
           onTap: () async {
+
+            // Rol Check
+            if (!ref.read(authProvider).loginResponse!.hasPermission( Roles.modificarControlDeActividades)
+                || !ref.read(authProvider).loginResponse!.hasPermission( Roles.modificarControlDeActividadesMiscelaneos)) {
+              showCustomErrorSnackbar(  context, 'No tienes permiso para realizar esta accion.');
+              return;
+            }
+
             // Show time picker dialog
             final selectedTime =
                 await CustomTimePickerDialog.showTimePickerDialog(
@@ -703,6 +750,14 @@ class _HoraFinServicioEspecialView extends ConsumerWidget {
                 onPressed: () async {
                   if (isLoading) return;
                   // Show loading indicator
+
+                  // Rol Check
+                  if (!ref.read(authProvider).loginResponse!.hasPermission( Roles.modificarControlDeActividades)
+                      || !ref.read(authProvider).loginResponse!.hasPermission( Roles.modificarControlDeActividadesMiscelaneos)) {
+                    showCustomErrorSnackbar(  context, 'No tienes permiso para realizar esta accion.');
+                    return;
+                  }
+
                   ref
                       .read(isLoadingControlActividadesProvider.notifier)
                       .update((state) => true);

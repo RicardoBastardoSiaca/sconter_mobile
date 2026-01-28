@@ -665,6 +665,7 @@ class _MenuDialog extends ConsumerWidget {
               onTap: () {
                 // print("onItemTap");
 
+                // Rol Ckeck
                 if (!ref.read(authProvider).loginResponse!.hasPermission( Roles.asignarMaquinaria)) {
                   showCustomErrorSnackbar(  context, 'No tienes permiso para asignar equipos GSE.');
                   return;
@@ -688,6 +689,13 @@ class _MenuDialog extends ConsumerWidget {
               title: 'Iniciar Operaciones',
               onTap: () async {
                 print("onItemTap");
+
+                // Rol Ckeck
+                if (!ref.read(authProvider).loginResponse!.hasPermission( Roles.empezarOperaciones)) {
+                  showCustomErrorSnackbar(  context, 'No tienes permiso para iniciar operaciones.');
+                  return;
+                }
+
                 // push
                 await iniciarOperaciones(context, ref, turnaround.id);
                 // close bottom sheet
@@ -705,6 +713,12 @@ class _MenuDialog extends ConsumerWidget {
                 print("onItemTap");
                 // push
                 // context.push('/control-actividades');
+
+                // Rol Ckeck
+                if (!ref.read(authProvider).loginResponse!.hasPermission( Roles.modificarControlDeActividades)) {
+                  showCustomErrorSnackbar(  context, 'No tienes permiso para modificar control de actividades.');
+                  return;
+                }
 
                 // set trcIdProvider
                 ref.read(trcIdProvider.notifier).state = turnaround.id;
@@ -727,6 +741,12 @@ class _MenuDialog extends ConsumerWidget {
               title: 'Cerrar Vuelo',
               onTap: () {
                 print("onItemTap");
+
+                // Rol Ckeck
+                if (!ref.read(authProvider).loginResponse!.hasPermission( Roles.modificarVuelo)) {
+                  showCustomErrorSnackbar(  context, 'No tienes permiso para cerrar el vuelo.');
+                  return;
+                }
                 
                 // set trcIdProvider
                 ref.read(trcIdProvider.notifier).state = turnaround.id;
@@ -776,6 +796,12 @@ class _MenuDialog extends ConsumerWidget {
               title: 'Consultar',
               onTap: () {
                 print("onItemTap");
+
+                // Rol Ckeck
+                if (!ref.read(authProvider).loginResponse!.hasPermission( Roles.consultarControlDeActividades)) {
+                  showCustomErrorSnackbar(  context, 'No tienes permiso para consultar el control de actividades.');
+                  return;
+                }
                 
                 // set trcIdProvider
                 ref.read(trcIdProvider.notifier).state = turnaround.id;

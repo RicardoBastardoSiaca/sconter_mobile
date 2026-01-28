@@ -5,6 +5,8 @@ import 'package:flutter_svg/svg.dart';
 import 'package:go_router/go_router.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:intl/intl.dart';
+import 'package:turnaround_mobile/features/auth/domain/domain.dart';
+import 'package:turnaround_mobile/features/auth/presentation/providers/providers.dart';
 
 import '../../../shared/shared.dart';
 import '../../domain/entities/entities.dart';
@@ -657,6 +659,12 @@ class _MenuDialog extends ConsumerWidget {
               leading: Icon(Icons.person_2),
               title: 'Asignar Personal',
               onTap: () async {
+
+                // Rol Check
+                if (!ref.read(authProvider).loginResponse!.hasPermission( Roles.asignarPersonalMiscelaneos) ) {
+                  showCustomErrorSnackbar(  context, 'No tienes permiso para realizar esta accion.');
+                  return;
+                }
                 // set trcIdProvider
                 ref.read(trcIdProvider.notifier).state = turnaround.id;
                 // set selectedTurnaroundProvider
@@ -697,6 +705,12 @@ class _MenuDialog extends ConsumerWidget {
               onTap: () {
                 print("onItemTap");
 
+                // Rol Check
+                if (!ref.read(authProvider).loginResponse!.hasPermission( Roles.asignarMaquinariaMiscelaneos) ) {
+                  showCustomErrorSnackbar(  context, 'No tienes permiso para realizar esta accion.');
+                  return;
+                }
+
                 // set selectedTurnaroundProvider
                 ref.read(selectedTurnaroundProvider.notifier).state =
                     turnaround;
@@ -714,6 +728,13 @@ class _MenuDialog extends ConsumerWidget {
               leading: Icon(Icons.start),
               title: 'Iniciar Operaciones',
               onTap: () async {
+
+                // Rol Check
+                if (!ref.read(authProvider).loginResponse!.hasPermission( Roles.empezarOperacionesMiscelaneos) ) {
+                  showCustomErrorSnackbar(  context, 'No tienes permiso para realizar esta accion.');
+                  return;
+                }
+
                 print("onItemTap");
                 // push
                 await iniciarOperaciones(context, ref, turnaround.id);
@@ -730,6 +751,9 @@ class _MenuDialog extends ConsumerWidget {
               leading: Icon(Icons.assignment),
               title: 'Control de actividades',
               onTap: () {
+
+
+
                 print("onItemTap");
                 // push
                 // context.push('/control-actividades');
@@ -755,6 +779,13 @@ class _MenuDialog extends ConsumerWidget {
               leading: Icon(Icons.lock),
               title: 'Cerrar Vuelo',
               onTap: () {
+
+                // Rol Check
+                if (!ref.read(authProvider).loginResponse!.hasPermission( Roles.modificarVueloMiscelaneos) ) {
+                  showCustomErrorSnackbar(  context, 'No tienes permiso para realizar esta accion.');
+                  return;
+                }
+
                 print("onItemTap");
                 
                 // set trcIdProvider
