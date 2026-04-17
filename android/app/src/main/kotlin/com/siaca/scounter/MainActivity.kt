@@ -1,4 +1,4 @@
-package com.example.turnaround_mobile
+package com.siaca.scounter
 
 import io.flutter.embedding.android.FlutterActivity
 

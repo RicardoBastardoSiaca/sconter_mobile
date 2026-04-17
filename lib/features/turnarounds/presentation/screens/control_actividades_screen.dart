@@ -8,9 +8,9 @@ import 'package:flutter_svg/svg.dart';
 import 'package:go_router/go_router.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:intl/intl.dart';
-import 'package:turnaround_mobile/features/auth/domain/domain.dart';
-import 'package:turnaround_mobile/features/auth/presentation/providers/providers.dart';
-import 'package:turnaround_mobile/features/turnarounds/domain/entities/control_actividades.dart';
+import 'package:scounter_mobile/features/auth/domain/domain.dart';
+import 'package:scounter_mobile/features/auth/presentation/providers/providers.dart';
+import 'package:scounter_mobile/features/turnarounds/domain/entities/control_actividades.dart';
 // shared
 import '../../../../config/config.dart';
 import '../../../shared/shared.dart';
@@ -111,26 +111,43 @@ class _ControlActividadesScreenState
           // ),
           children: [
             // SizedBox(height: 0.2),
+
+            // Finalizar Turnaround
             if (turnaround?.estatus == 2)
               GestureDetector(
                 onTap: () async {
-                  print('Firma del Supervisor pressed');
+                  print('Finalizar Turnaround pressed');
 
                   // Rol Ckeck
-                  if (!ref.read(authProvider).loginResponse!.hasPermission( Roles.firmaDeSupervisor)) {
-                    showCustomErrorSnackbar(  context, 'No tienes permiso para realizar esta accion.');
-                    return;
-                  }
+                  // if (!ref.read(authProvider).loginResponse!.hasPermission( Roles.firmaDeSupervisor)) {
+                  //   showCustomErrorSnackbar(  context, 'No tienes permiso para realizar esta accion.');
+                  //   return;
+                  // }
 
-                  await ref
-                      .read(supervisorAerolineaProvider.notifier)
-                      .getSupervisores();
-                  context.push('/firma-supervisor-screen');
+                  final response = await ref
+                      .read(controlActividadesProvider(widget.trcId).notifier)
+                      .finalizarActividadesSinFirma(widget.trcId);
+                  // context.push('/firma-supervisor-screen');
+
+                  CustomSnackbar.showResponseSnackbar(
+                    response.message,
+                    response.success,
+                    // ignore: use_build_context_synchronously
+                    context,
+                    isFixed: true,
+                  );
+
+                  if (response.success) {
+                    // get turnarounds
+                    ref.read(turnaroundProvider.notifier).getTurnarounds();
+                    // Close
+                    Navigator.pop(context);
+                  }
                 },
                 child: Row(
                   children: [
                     Text(
-                      'Firma del Supervisor',
+                      'Finalizar Turnaround',
                       style: Theme.of(context).textTheme.titleMedium?.copyWith(
                         fontWeight: FontWeight.w600,
                         // Rounded
@@ -143,152 +160,196 @@ class _ControlActividadesScreenState
                       heroTag: null,
                       backgroundColor: primaryColor,
                       onPressed: () {
-                        print('Firma del Supervisor pressed - BUTTON');
+                        print('Finalizar Turnaround pressed - BUTTON');
                         context.push('/firma-supervisor-screen');
                         // close bottom sheet
-                        // Navigator.pop(context);
+                        key.currentState?.close();
                       },
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(50),
-                      ),
-                      child: Icon(Icons.edit, color: Colors.white),
+                      child: const Icon(Icons.done, color: Colors.white),
                     ),
                   ],
                 ),
               ),
 
-            if (turnaround?.estatus == 2 ||
-                turnaround?.estatus == 3 ||
-                turnaround?.estatus == 7)
-              GestureDetector(
-                onTap: () async {
-                  print('Demoras pressed');
+            // if (turnaround?.estatus == 2)
+            //   GestureDetector(
+            //     onTap: () async {
+            //       print('Firma del Supervisor pressed');
 
-                  // Rol Ckeck
-                  if (!ref.read(authProvider).loginResponse!.hasPermission( Roles.consultarCodigoDeDemora)) {
-                    showCustomErrorSnackbar(  context, 'No tienes permiso para realizar esta accion.');
-                    return;
-                  }
+            //       // Rol Ckeck
+            //       if (!ref.read(authProvider).loginResponse!.hasPermission( Roles.firmaDeSupervisor)) {
+            //         showCustomErrorSnackbar(  context, 'No tienes permiso para realizar esta accion.');
+            //         return;
+            //       }
 
-                  await ref
-                      .read(demorasProvider.notifier)
-                      .getDemorasByTrc(turnaround!.id);
-                  context.push('/demoras-screen');
-                },
-                child: Row(
-                  children: [
-                    Text(
-                      'Demoras',
-                      style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                        fontWeight: FontWeight.w600,
-                        // color: Colors.white,
-                      ),
-                    ),
-                    SizedBox(width: 20),
-                    FloatingActionButton.small(
-                      heroTag: null,
-                      backgroundColor: primaryColor,
-                      onPressed: null,
+            //       await ref
+            //           .read(supervisorAerolineaProvider.notifier)
+            //           .getSupervisores();
+            //       context.push('/firma-supervisor-screen');
+            //     },
+            //     child: Row(
+            //       children: [
+            //         Text(
+            //           'Firma del Supervisor',
+            //           style: Theme.of(context).textTheme.titleMedium?.copyWith(
+            //             fontWeight: FontWeight.w600,
+            //             // Rounded
 
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(50),
-                      ),
-                      child: Icon(Icons.schedule, color: Colors.white),
-                    ),
-                  ],
-                ),
-              ),
-            if (turnaround?.estatus == 2 ||
-                turnaround?.estatus == 3 ||
-                turnaround?.estatus == 7)
-              GestureDetector(
-                onTap: () {
-                  print('Servicios adicionales pressed - ROW');
+            //             // color: Colors.white,
+            //           ),
+            //         ),
+            //         SizedBox(width: 20),
+            //         FloatingActionButton.small(
+            //           heroTag: null,
+            //           backgroundColor: primaryColor,
+            //           onPressed: () {
+            //             print('Firma del Supervisor pressed - BUTTON');
+            //             context.push('/firma-supervisor-screen');
+            //             // close bottom sheet
+            //             // Navigator.pop(context);
+            //           },
+            //           shape: RoundedRectangleBorder(
+            //             borderRadius: BorderRadius.circular(50),
+            //           ),
+            //           child: Icon(Icons.edit, color: Colors.white),
+            //         ),
+            //       ],
+            //     ),
+            //   ),
 
-                  // Rol Ckeck
-                  // if (!ref.read(authProvider).loginResponse!.hasPermission( Roles.consultarServicioAdicional)) {
-                  //   showCustomErrorSnackbar(  context, 'No tienes permiso para consultar servicios adicionales.');
-                  //   return;
-                  // }
+            // if (turnaround?.estatus == 2 ||
+            //     turnaround?.estatus == 3 ||
+            //     turnaround?.estatus == 7)
+            //   GestureDetector(
+            //     onTap: () async {
+            //       print('Demoras pressed');
 
-                  context.push('/servicios-adicionales-screen');
-                },
-                child: Row(
-                  children: [
-                    Text(
-                      'Servicios Adicionales',
-                      style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                        fontWeight: FontWeight.w600,
-                        // color: Colors.white,
-                      ),
-                    ),
-                    SizedBox(width: 20),
-                    FloatingActionButton.small(
-                      heroTag: null,
-                      backgroundColor: primaryColor,
-                      onPressed: () {
-                        print('Servicios adicionales pressed - BUTTON');
-                        context.push('/servicios-adicionales-screen');
-                        // close bottom sheet
-                        // Navigator.pop(context);
-                      },
+            //       // Rol Ckeck
+            //       if (!ref.read(authProvider).loginResponse!.hasPermission( Roles.consultarCodigoDeDemora)) {
+            //         showCustomErrorSnackbar(  context, 'No tienes permiso para realizar esta accion.');
+            //         return;
+            //       }
 
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(50),
-                      ),
-                      child: Icon(Icons.agriculture, color: Colors.white),
-                    ),
-                  ],
-                ),
-              ),
-            if (turnaround?.estatus == 2 ||
-                turnaround?.estatus == 3 ||
-                turnaround?.estatus == 7)
-              GestureDetector(
-                onTap: () {
-                  print('Servicios especiales pressed - ROW');
+            //       await ref
+            //           .read(demorasProvider.notifier)
+            //           .getDemorasByTrc(turnaround!.id);
+            //       context.push('/demoras-screen');
+            //     },
+            //     child: Row(
+            //       children: [
+            //         Text(
+            //           'Demoras',
+            //           style: Theme.of(context).textTheme.titleMedium?.copyWith(
+            //             fontWeight: FontWeight.w600,
+            //             // color: Colors.white,
+            //           ),
+            //         ),
+            //         SizedBox(width: 20),
+            //         FloatingActionButton.small(
+            //           heroTag: null,
+            //           backgroundColor: primaryColor,
+            //           onPressed: null,
 
-                  // Rol Ckeck
-                  // if (!ref.read(authProvider).loginResponse!.hasPermission( Roles.consultarServicioEspecial)) {
-                  //   showCustomErrorSnackbar(  context, 'No tienes permiso para realizar esta accion.');
-                  //   return;
-                  // }
-                  
-                  context.push('/servicios-especiales-screen');
-                  // print('Servicios especiales pressed');
-                  // push servicios-especiales
-                  // context.pushNamed('servicios-especiales', extra: widget.trcId);
-                  // context.push('/servicios-especiales');
-                },
-                child: Row(
-                  children: [
-                    Text(
-                      'Servicios Especiales',
-                      style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                        fontWeight: FontWeight.w600,
-                        // color: Colors.white,
-                      ),
-                    ),
-                    SizedBox(width: 20),
-                    FloatingActionButton.small(
-                      heroTag: null,
-                      backgroundColor: primaryColor,
-                      onPressed: () {
-                        print('Servicios especiales pressed - ROW');
-                        context.push('/servicios-especiales-screen');
-                      },
+            //           shape: RoundedRectangleBorder(
+            //             borderRadius: BorderRadius.circular(50),
+            //           ),
+            //           child: Icon(Icons.schedule, color: Colors.white),
+            //         ),
+            //       ],
+            //     ),
+            //   ),
+            // if (turnaround?.estatus == 2 ||
+            //     turnaround?.estatus == 3 ||
+            //     turnaround?.estatus == 7)
+            //   GestureDetector(
+            //     onTap: () {
+            //       print('Servicios adicionales pressed - ROW');
 
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(50),
-                      ),
-                      child: Icon(
-                        Icons.add_moderator_outlined,
-                        color: Colors.white,
-                      ),
-                    ),
-                  ],
-                ),
-              ),
+            //       // Rol Ckeck
+            //       // if (!ref.read(authProvider).loginResponse!.hasPermission( Roles.consultarServicioAdicional)) {
+            //       //   showCustomErrorSnackbar(  context, 'No tienes permiso para consultar servicios adicionales.');
+            //       //   return;
+            //       // }
+
+            //       context.push('/servicios-adicionales-screen');
+            //     },
+            //     child: Row(
+            //       children: [
+            //         Text(
+            //           'Servicios Adicionales',
+            //           style: Theme.of(context).textTheme.titleMedium?.copyWith(
+            //             fontWeight: FontWeight.w600,
+            //             // color: Colors.white,
+            //           ),
+            //         ),
+            //         SizedBox(width: 20),
+            //         FloatingActionButton.small(
+            //           heroTag: null,
+            //           backgroundColor: primaryColor,
+            //           onPressed: () {
+            //             print('Servicios adicionales pressed - BUTTON');
+            //             context.push('/servicios-adicionales-screen');
+            //             // close bottom sheet
+            //             // Navigator.pop(context);
+            //           },
+
+            //           shape: RoundedRectangleBorder(
+            //             borderRadius: BorderRadius.circular(50),
+            //           ),
+            //           child: Icon(Icons.agriculture, color: Colors.white),
+            //         ),
+            //       ],
+            //     ),
+            //   ),
+            // if (turnaround?.estatus == 2 ||
+            //     turnaround?.estatus == 3 ||
+            //     turnaround?.estatus == 7)
+            //   GestureDetector(
+            //     onTap: () {
+            //       print('Servicios especiales pressed - ROW');
+
+            //       // Rol Ckeck
+            //       // if (!ref.read(authProvider).loginResponse!.hasPermission( Roles.consultarServicioEspecial)) {
+            //       //   showCustomErrorSnackbar(  context, 'No tienes permiso para realizar esta accion.');
+            //       //   return;
+            //       // }
+
+            //       context.push('/servicios-especiales-screen');
+            //       // print('Servicios especiales pressed');
+            //       // push servicios-especiales
+            //       // context.pushNamed('servicios-especiales', extra: widget.trcId);
+            //       // context.push('/servicios-especiales');
+            //     },
+            //     child: Row(
+            //       children: [
+            //         Text(
+            //           'Servicios Especiales',
+            //           style: Theme.of(context).textTheme.titleMedium?.copyWith(
+            //             fontWeight: FontWeight.w600,
+            //             // color: Colors.white,
+            //           ),
+            //         ),
+            //         SizedBox(width: 20),
+            //         FloatingActionButton.small(
+            //           heroTag: null,
+            //           backgroundColor: primaryColor,
+            //           onPressed: () {
+            //             print('Servicios especiales pressed - ROW');
+            //             context.push('/servicios-especiales-screen');
+            //           },
+
+            //           shape: RoundedRectangleBorder(
+            //             borderRadius: BorderRadius.circular(50),
+            //           ),
+            //           child: Icon(
+            //             Icons.add_moderator_outlined,
+            //             color: Colors.white,
+            //           ),
+            //         ),
+            //       ],
+            //     ),
+            //   ),
+
             // FloatingActionButton.small(
             //   heroTag: null,
             // backgroundColor: primaryColor,
@@ -297,7 +358,7 @@ class _ControlActividadesScreenState
             // ),
           ],
         ),
-        
+
         body: NestedScrollView(
           headerSliverBuilder: (BuildContext context, bool innerBoxIsScrolled) {
             return <Widget>[
@@ -307,7 +368,7 @@ class _ControlActividadesScreenState
                 // elevation: 0,
                 title: Center(
                   child: SvgPicture.asset(
-                    "assets/icons/logo-trc.svg",
+                    "assets/icons/logotype-scounter.svg",
                     fit: BoxFit.scaleDown,
                     height: 35,
                   ),
@@ -409,17 +470,18 @@ class _DepartamentosViewState extends State<_DepartamentosView> {
   @override
   Widget build(BuildContext context) {
     // scroll
-    return Column(
-      mainAxisAlignment: MainAxisAlignment.start,
-      children: [
-        // SizedBox(height: 8),
-        Expanded(
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.start,
-            children: [
-              Padding(
-                padding: EdgeInsets.symmetric(horizontal: 12),
-                child: Row(
+    return Padding(
+      padding: EdgeInsets.symmetric(horizontal: 12),
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.start,
+        children: [
+          // SizedBox(height: 8),
+          Expanded(
+
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.start,
+              children: [
+                Row(
                   children: [
                     // icon button
                     IconButton(
@@ -454,28 +516,30 @@ class _DepartamentosViewState extends State<_DepartamentosView> {
                     ),
                   ],
                 ),
-              ),
-              // Servicios Adicionales
-              // Expanded(child: _ServiciosAdicionalesView(controlActividades: controlActividades)),
-              Expanded(
-                child: ListView.builder(
-                  physics: const BouncingScrollPhysics(),
-                  itemCount: widget.departamento.actividades.length,
-                  itemBuilder: (context, index) {
-                    final actividad = widget.departamento.actividades[index];
-                    return _ActividadView(
-                      departamento: widget.departamento,
-                      actividad: actividad,
-                      indexAct: index,
-                      indexDep: widget.indexDep,
-                    );
-                  },
+                // Servicios Adicionales
+                // Expanded(child: _ServiciosAdicionalesView(controlActividades: controlActividades)),
+                Expanded(
+                  // flex: 2,
+                  child: ListView.builder(
+                    padding: EdgeInsets.zero,
+                    physics: const BouncingScrollPhysics(),
+                    itemCount: widget.departamento.actividades.length,
+                    itemBuilder: (context, index) {
+                      final actividad = widget.departamento.actividades[index];
+                      return _ActividadView(
+                        departamento: widget.departamento,
+                        actividad: actividad,
+                        indexAct: index,
+                        indexDep: widget.indexDep,
+                      );
+                    },
+                  ),
                 ),
-              ),
-            ],
+              ],
+            ),
           ),
-        ),
-      ],
+        ],
+      ),
     );
   }
 }
@@ -796,20 +860,33 @@ class _TareaHoraView extends ConsumerWidget {
                 // print('Hora tapped');
 
                 // Rol Ckeck
-                if (!ref.read(authProvider).loginResponse!.hasPermission( Roles.modificarControlDeActividades)) {
-                  showCustomErrorSnackbar(  context, 'No tienes permiso para realizar esta accion.');
+                if (!ref
+                    .read(authProvider)
+                    .loginResponse!
+                    .hasPermission(Roles.modificarControlDeActividades)) {
+                  showCustomErrorSnackbar(
+                    context,
+                    'No tienes permiso para realizar esta accion.',
+                  );
                   return;
                 }
 
                 // Show time picker dialog
-                final selectedTime =
-                    await CustomTimePickerDialog.showTimePickerDialog(
-                      context,
-                      tarea.horaInicio ?? DateTime.now(),
-                      tarea.horaInicio != null
-                          ? TimeOfDay.fromDateTime(tarea.horaInicio!)
-                          : null,
-                    );
+                // final selectedTime =
+                //     await CustomTimePickerDialog.showTimePickerDialog(
+                //       context,
+                //       tarea.horaInicio ?? DateTime.now(),
+                //       tarea.horaInicio != null
+                //           ? TimeOfDay.fromDateTime(tarea.horaInicio!)
+                //           : null,
+                //     );
+                final DateTime? selectedTime = await showDialog<DateTime>(
+                  context: context,
+                  builder: (context) => CustomDateTimePickerDialog(
+                    initialDate: tarea.horaInicio ?? DateTime.now(),
+                    title: tarea.titulo,
+                  ),
+                );
                 // print('Selected time: $selectedTime');
                 if (selectedTime != null) {
                   final response = await setHoraInicio(
@@ -919,11 +996,17 @@ class _TareaHoraView extends ConsumerWidget {
                       // Show loading indicator
 
                       // Rol Ckeck
-                      if (!ref.read(authProvider).loginResponse!.hasPermission( Roles.modificarControlDeActividades)) {
-                        showCustomErrorSnackbar(  context, 'No tienes permiso para realizar esta accion.');
+                      if (!ref
+                          .read(authProvider)
+                          .loginResponse!
+                          .hasPermission(Roles.modificarControlDeActividades)) {
+                        showCustomErrorSnackbar(
+                          context,
+                          'No tienes permiso para realizar esta accion.',
+                        );
                         return;
                       }
-                      
+
                       ref
                           .read(isLoadingControlActividadesProvider.notifier)
                           .update((state) => true);
@@ -1104,21 +1187,35 @@ class _TareaHoraInicioFinView extends ConsumerWidget {
                 print('Hora inicio tapped');
 
                 // Rol Ckeck
-                if (!ref.read(authProvider).loginResponse!.hasPermission( Roles.modificarControlDeActividades)) {
-                  showCustomErrorSnackbar(  context, 'No tienes permiso para realizar esta accion.');
+                if (!ref
+                    .read(authProvider)
+                    .loginResponse!
+                    .hasPermission(Roles.modificarControlDeActividades)) {
+                  showCustomErrorSnackbar(
+                    context,
+                    'No tienes permiso para realizar esta accion.',
+                  );
                   return;
                 }
 
                 // Show time picker dialog
-                final selectedTime =
-                    await CustomTimePickerDialog.showTimePickerDialog(
-                      context,
-                      // ref,
-                      tarea.horaInicio ?? DateTime.now(),
-                      tarea.horaInicio != null
-                          ? TimeOfDay.fromDateTime(tarea.horaInicio!)
-                          : null,
-                    );
+                // final selectedTime =
+                //     await CustomTimePickerDialog.showTimePickerDialog(
+                //       context,
+                //       // ref,
+                //       tarea.horaInicio ?? DateTime.now(),
+                //       tarea.horaInicio != null
+                //           ? TimeOfDay.fromDateTime(tarea.horaInicio!)
+                //           : null,
+                //     );
+                final DateTime? selectedTime = await showDialog<DateTime>(
+                  context: context,
+                  builder: (context) => CustomDateTimePickerDialog(
+                    initialDate: tarea.horaInicio ?? DateTime.now(),
+                    title: tarea.titulo,
+                  ),
+                );
+                
                 print('Selected time: $selectedTime');
                 if (selectedTime != null) {
                   // TODO: Api call to update tarea with selected time
@@ -1158,18 +1255,18 @@ class _TareaHoraInicioFinView extends ConsumerWidget {
                     );
                     // return;
                   } else {
-                  // Show snackbar response
-                  CustomSnackbar.showResponseSnackbar(
-                    response.message,
-                    response.success,
-                    // ignore: use_build_context_synchronously
-                    context,
-                    isFixed: true,
-                  );
+                    // Show snackbar response
+                    CustomSnackbar.showResponseSnackbar(
+                      response.message,
+                      response.success,
+                      // ignore: use_build_context_synchronously
+                      context,
+                      isFixed: true,
+                    );
                   }
                   ref
-                    .read(isLoadingControlActividadesProvider.notifier)
-                    .update((state) => false);
+                      .read(isLoadingControlActividadesProvider.notifier)
+                      .update((state) => false);
                 }
               },
               child: SizedBox(
@@ -1231,8 +1328,14 @@ class _TareaHoraInicioFinView extends ConsumerWidget {
                       // Show loading indicator
 
                       // Rol Ckeck
-                      if (!ref.read(authProvider).loginResponse!.hasPermission( Roles.modificarControlDeActividades)) {
-                        showCustomErrorSnackbar(  context, 'No tienes permiso para realizar esta accion.');
+                      if (!ref
+                          .read(authProvider)
+                          .loginResponse!
+                          .hasPermission(Roles.modificarControlDeActividades)) {
+                        showCustomErrorSnackbar(
+                          context,
+                          'No tienes permiso para realizar esta accion.',
+                        );
                         return;
                       }
 
@@ -1305,19 +1408,33 @@ class _TareaHoraInicioFinView extends ConsumerWidget {
                 // Show time picker dialog
 
                 // Rol Ckeck
-                if (!ref.read(authProvider).loginResponse!.hasPermission( Roles.modificarControlDeActividades)) {
-                  showCustomErrorSnackbar(  context, 'No tienes permiso para realizar esta accion.');
+                if (!ref
+                    .read(authProvider)
+                    .loginResponse!
+                    .hasPermission(Roles.modificarControlDeActividades)) {
+                  showCustomErrorSnackbar(
+                    context,
+                    'No tienes permiso para realizar esta accion.',
+                  );
                   return;
                 }
 
-                final selectedTime =
-                    await CustomTimePickerDialog.showTimePickerDialog(
-                      context,
-                      tarea.horaFin ?? DateTime.now(),
-                      tarea.horaFin != null
-                          ? TimeOfDay.fromDateTime(tarea.horaFin!)
-                          : null,
-                    );
+                // final selectedTime =
+                //     await CustomTimePickerDialog.showTimePickerDialog(
+                //       context,
+                //       tarea.horaFin ?? DateTime.now(),
+                //       tarea.horaFin != null
+                //           ? TimeOfDay.fromDateTime(tarea.horaFin!)
+                //           : null,
+                //     );
+
+                final DateTime? selectedTime = await showDialog<DateTime>(
+                  context: context,
+                  builder: (context) => CustomDateTimePickerDialog(
+                    initialDate: tarea.horaFin ?? DateTime.now(),
+                    title: tarea.titulo,
+                  ),
+                );
                 if (selectedTime != null) {
                   // TODO: Api call to update tarea with selected time
                   final response = await setHoraInicio(
@@ -1434,11 +1551,17 @@ class _TareaHoraInicioFinView extends ConsumerWidget {
                       // Show loading indicator
 
                       // Rol Ckeck
-                      if (!ref.read(authProvider).loginResponse!.hasPermission( Roles.modificarControlDeActividades)) {
-                        showCustomErrorSnackbar(  context, 'No tienes permiso para realizar esta accion.');
+                      if (!ref
+                          .read(authProvider)
+                          .loginResponse!
+                          .hasPermission(Roles.modificarControlDeActividades)) {
+                        showCustomErrorSnackbar(
+                          context,
+                          'No tienes permiso para realizar esta accion.',
+                        );
                         return;
                       }
-                      
+
                       ref
                           .read(isLoadingControlActividadesProvider.notifier)
                           .update((state) => true);
@@ -1517,23 +1640,26 @@ class _TareaCantidadView extends ConsumerWidget {
                     context,
                   ).textTheme.titleSmall?.copyWith(fontWeight: FontWeight.w400),
                 ),
-                Container(
-                  margin: const EdgeInsets.only(left: 8),
-                  padding: const EdgeInsets.symmetric(
-                    horizontal: 8,
-                    vertical: 4,
-                  ),
-                  // min width: 100,
-                  constraints: const BoxConstraints(minWidth: 60),
-                  decoration: BoxDecoration(
-                    color: Colors.grey.shade200,
-                    borderRadius: BorderRadius.circular(8),
-                  ),
-                  child: Center(
-                    child: Text(
-                      tarea.numero?.toString() ?? '',
-                      style: Theme.of(context).textTheme.titleSmall?.copyWith(
-                        fontWeight: FontWeight.w600,
+                GestureDetector(
+                  onTap: () => _showCantidadDialogAndSubmit(context, ref, tarea),
+                  child: Container(
+                    margin: const EdgeInsets.only(left: 8),
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 8,
+                      vertical: 4,
+                    ),
+                    // min width: 100,
+                    constraints: const BoxConstraints(minWidth: 60),
+                    decoration: BoxDecoration(
+                      color: Colors.grey.shade200,
+                      borderRadius: BorderRadius.circular(8),
+                    ),
+                    child: Center(
+                      child: Text(
+                        tarea.numero?.toString() ?? '',
+                        style: Theme.of(context).textTheme.titleSmall?.copyWith(
+                          fontWeight: FontWeight.w600,
+                        ),
                       ),
                     ),
                   ),
@@ -1544,165 +1670,7 @@ class _TareaCantidadView extends ConsumerWidget {
             // Button to open dialog to set and submit cantidad
             ElevatedButton(
               // disable if isLoading
-              onPressed:
-                  (
-                    // Open a dialog to write and submit the comment
-                  ) async {
-
-                    // Rol Ckeck
-                      if (!ref.read(authProvider).loginResponse!.hasPermission( Roles.modificarControlDeActividades)) {
-                        showCustomErrorSnackbar(  context, 'No tienes permiso para realizar esta accion.');
-                        return;
-                      }
-
-                    // set initial value in the text field controller
-                    numberController.text = tarea.numero?.toString() ?? '';
-                    showDialog(
-                      context: context,
-                      builder: (BuildContext context) {
-                        return AlertDialog(
-                          backgroundColor: Colors.white,
-                          title: Text('Cantidad'),
-                          content: TextField(
-                            controller: numberController,
-                            keyboardType:
-                                TextInputType.number, // Show numeric keyboard
-                            inputFormatters: <TextInputFormatter>[
-                              FilteringTextInputFormatter
-                                  .digitsOnly, // Allow only digits
-                            ],
-
-                            decoration: InputDecoration(
-                              hintText: '123...',
-                              border: null,
-                              filled: true,
-                              fillColor: Colors.grey[200],
-                            ),
-                          ),
-                          actions: <Widget>[
-                            FilledButton(
-                              style: FilledButton.styleFrom(
-                                // primary
-                                backgroundColor: Colors.grey,
-                                shape: const RoundedRectangleBorder(
-                                  borderRadius: BorderRadius.all(
-                                    Radius.circular(30),
-                                  ),
-                                ),
-                              ),
-                              onPressed: () {
-                                Navigator.pop(context);
-                                numberController.clear();
-                              },
-                              child: Text(
-                                'Salir',
-                                style: const TextStyle(
-                                  fontSize: 18,
-                                  fontWeight: FontWeight.bold,
-                                ),
-                              ),
-                            ),
-
-                            CustomFilledButton(
-                              text: 'Guardar',
-                              // buttonColor: Colors.green,
-                              onPressed: () async {
-                                final SetNumeroTareaRequest body =
-                                    SetNumeroTareaRequest(
-                                      id: tarea.id,
-                                      numero: int.parse(numberController.text),
-                                    );
-
-                                print("Numero: ${body.numero}");
-
-                                final trcId = ref
-                                    .read(selectedTurnaroundProvider.notifier)
-                                    .state!
-                                    .id;
-                                final response = await ref
-                                    .read(
-                                      controlActividadesProvider(
-                                        trcId,
-                                      ).notifier,
-                                    )
-                                    .setNumero(body);
-
-                                if (!response.hasConnection) {
-                                  // set manually the time locally in the riverpo state
-                                  // setState(() {
-
-                                  tarea.numero =
-                                      int.parse(numberController.text);
-                                  // });
-                                  // Show snackbar warning
-                                  CustomSnackbar.showWarningSnackbar(
-                                    response.message,
-                                    // ignore: use_build_context_synchronously
-                                    context,
-                                    isFixed: true,
-                                  );
-                                  // return;
-                                }
-
-                                // Show snackbar response
-                                CustomSnackbar.showResponseSnackbar(
-                                  response.message,
-                                  response.success,
-                                  // ignore: use_build_context_synchronously
-                                  context,
-                                  isFixed: true,
-                                );
-
-                                Navigator.pop(context);
-                                numberController.clear();
-                              },
-
-                              // final trcId = ref
-                              //     .read(selectedTurnaroundProvider.notifier)
-                              //     .state!
-                              //     .id;
-                              // final response = await ref
-                              //     .read(
-                              //       controlActividadesProvider(
-                              //         trcId,
-                              //       ).notifier,
-                              //     )
-                              //     .setComentario(body);
-
-                              // // Show snackbar response
-                              // CustomSnackbar.showResponseSnackbar(
-                              //   response.message,
-                              //   response.success,
-                              //   // ignore: use_build_context_synchronously
-                              //   context,
-                              // );
-
-                              // Navigator.pop(context);
-                              // textController.clear();
-                            ),
-
-                            // TextButton(
-                            //   child: Text('Cancel'),
-                            //   onPressed: () {
-                            //     Navigator.of(context).pop(); // Close the dialog
-                            //   },
-                            // ),
-                            // ElevatedButton(
-                            //   child: Text('Submit'),
-                            //   onPressed: () {
-                            //     String submittedText = textController.text;
-                            //     // Process the submitted text (e.g., save it, display it)
-                            //     print('Submitted text: $submittedText');
-                            //     Navigator.of(context).pop(); // Close the dialog
-                            //     textController
-                            //         .clear(); // Clear the text field after submission
-                            //   },
-                            // ),
-                          ],
-                        );
-                      },
-                    );
-                  },
+              onPressed:() => _showCantidadDialogAndSubmit(context, ref, tarea),
               style: ElevatedButton.styleFrom(
                 shape: CircleBorder(),
                 padding: EdgeInsets.all(5),
@@ -1723,6 +1691,63 @@ class _TareaCantidadView extends ConsumerWidget {
       ],
     );
   }
+}
+
+Future<void> _showCantidadDialogAndSubmit(
+  BuildContext context,
+  WidgetRef ref,
+  Tarea tarea,
+) async {
+  if (!ref
+      .read(authProvider)
+      .loginResponse!
+      .hasPermission(Roles.modificarControlDeActividades)) {
+    showCustomErrorSnackbar(
+      context,
+      'No tienes permiso para realizar esta accion.',
+    );
+    return;
+  }
+
+  final int? cantidadRecibida = await showDialog<int>(
+    context: context,
+    builder: (BuildContext context) {
+      return CantidadDialog(
+        initialValue: tarea.numero ?? 0,
+        title: tarea.titulo,
+      );
+    },
+  );
+
+  if (cantidadRecibida == null) return;
+
+  final SetNumeroTareaRequest body = SetNumeroTareaRequest(
+    id: tarea.id,
+    numero: cantidadRecibida,
+  );
+
+  print('Numero: $cantidadRecibida');
+
+  final trcId = ref.read(selectedTurnaroundProvider.notifier).state!.id;
+  final response = await ref
+      .read(controlActividadesProvider(trcId).notifier)
+      .setNumero(body);
+
+  if (!response.hasConnection) {
+    tarea.numero = cantidadRecibida;
+    CustomSnackbar.showWarningSnackbar(
+      response.message,
+      context,
+      isFixed: true,
+    );
+  }
+
+  CustomSnackbar.showResponseSnackbar(
+    response.message,
+    response.success,
+    context,
+    isFixed: true,
+  );
 }
 
 class _TareaMaquinariaSinTiempoView extends StatelessWidget {
@@ -1767,13 +1792,18 @@ class _TareaMaquinariaConTiempoView extends ConsumerWidget {
               // disable if isLoading
               // Aca mismo es
               onPressed: () async {
-
                 // Rol Ckeck
-                if (!ref.read(authProvider).loginResponse!.hasPermission( Roles.modificarControlDeActividades)) {
-                  showCustomErrorSnackbar(  context, 'No tienes permiso para realizar esta accion.');
+                if (!ref
+                    .read(authProvider)
+                    .loginResponse!
+                    .hasPermission(Roles.modificarControlDeActividades)) {
+                  showCustomErrorSnackbar(
+                    context,
+                    'No tienes permiso para realizar esta accion.',
+                  );
                   return;
                 }
-                
+
                 ref.read(selectedTaskProvider.notifier).state = {
                   "indexDep": indexDep,
                   "indexAct": indexAct,
@@ -1838,7 +1868,7 @@ class _ListadoMaquinariasConTiempoView extends ConsumerWidget {
     return ListView.builder(
       shrinkWrap: true,
       itemCount: tarea.maquinaria?.length,
-      itemBuilder: (context , index) {
+      itemBuilder: (context, index) {
         final maquinaria = tarea.maquinaria?[index];
         return Column(
           children: [
@@ -1870,20 +1900,33 @@ class _ListadoMaquinariasConTiempoView extends ConsumerWidget {
                       print('Hora inicio tapped');
 
                       // Rol Ckeck
-                      if (!ref.read(authProvider).loginResponse!.hasPermission( Roles.modificarControlDeActividades)) {
-                        showCustomErrorSnackbar(  context, 'No tienes permiso para realizar esta accion.');
+                      if (!ref
+                          .read(authProvider)
+                          .loginResponse!
+                          .hasPermission(Roles.modificarControlDeActividades)) {
+                        showCustomErrorSnackbar(
+                          context,
+                          'No tienes permiso para realizar esta accion.',
+                        );
                         return;
                       }
-                      
+
                       // Show time picker dialog
-                      final selectedTime =
-                          await CustomTimePickerDialog.showTimePickerDialog(
-                            context,
-                            maquinaria["hora_inicio"] ?? DateTime.now(),
-                            maquinaria["hora_inicio"] != null
-                                ? TimeOfDay.fromDateTime(maquinaria.horaInicio)
-                                : null,
-                          );
+                      // final selectedTime =
+                      //     await CustomTimePickerDialog.showTimePickerDialog(
+                      //       context,
+                      //       maquinaria["hora_inicio"] ?? DateTime.now(),
+                      //       maquinaria["hora_inicio"] != null
+                      //           ? TimeOfDay.fromDateTime(maquinaria.horaInicio)
+                      //           : null,
+                      //     );
+                      final DateTime? selectedTime = await showDialog<DateTime>(
+                        context: context,
+                        builder: (context) => CustomDateTimePickerDialog(
+                          initialDate: tarea.horaInicio ?? DateTime.now(),
+                          title: tarea.titulo,
+                        ),
+                      );
                       print('Selected time: $selectedTime');
                       if (selectedTime != null) {
                         var trcDate = ref
@@ -1895,7 +1938,7 @@ class _ListadoMaquinariasConTiempoView extends ConsumerWidget {
                           horaInicio:
                               CustomDateTimeFunctions.getDateTimeFromTimeOfDay(
                                 trcDate,
-                                selectedTime,
+                                selectedTime as TimeOfDay,
                               ),
                           horaFin: null,
                           id: maquinaria['id'],
@@ -1913,9 +1956,9 @@ class _ListadoMaquinariasConTiempoView extends ConsumerWidget {
 
                           maquinaria['hora_inicio'] =
                               CustomDateTimeFunctions.getDateTimeFromTimeOfDay(
-                            trcDate,
-                            selectedTime,
-                          );
+                                trcDate,
+                                selectedTime as TimeOfDay,
+                              );
                           // });
                           // Show snackbar warning
                           CustomSnackbar.showWarningSnackbar(
@@ -1998,8 +2041,16 @@ class _ListadoMaquinariasConTiempoView extends ConsumerWidget {
                             // Show loading indicator
 
                             // Rol Ckeck
-                            if (!ref.read(authProvider).loginResponse!.hasPermission( Roles.modificarControlDeActividades)) {
-                              showCustomErrorSnackbar(  context, 'No tienes permiso para realizar esta accion.');
+                            if (!ref
+                                .read(authProvider)
+                                .loginResponse!
+                                .hasPermission(
+                                  Roles.modificarControlDeActividades,
+                                )) {
+                              showCustomErrorSnackbar(
+                                context,
+                                'No tienes permiso para realizar esta accion.',
+                              );
                               return;
                             }
 
@@ -2086,22 +2137,34 @@ class _ListadoMaquinariasConTiempoView extends ConsumerWidget {
                   GestureDetector(
                     behavior: HitTestBehavior.translucent,
                     onTap: () async {
-
                       // Rol Ckeck
-                      if (!ref.read(authProvider).loginResponse!.hasPermission( Roles.modificarControlDeActividades)) {
-                        showCustomErrorSnackbar(  context, 'No tienes permiso para realizar esta accion.');
+                      if (!ref
+                          .read(authProvider)
+                          .loginResponse!
+                          .hasPermission(Roles.modificarControlDeActividades)) {
+                        showCustomErrorSnackbar(
+                          context,
+                          'No tienes permiso para realizar esta accion.',
+                        );
                         return;
                       }
-                      
+
                       // Show time picker dialog
-                      final selectedTime =
-                          await CustomTimePickerDialog.showTimePickerDialog(
-                            context,
-                            maquinaria['hora_inicio'] ?? DateTime.now(),
-                            maquinaria['hora_inicio'] != null
-                                ? TimeOfDay.fromDateTime(maquinaria['hora_fin'])
-                                : null,
-                          );
+                      // final selectedTime =
+                      //     await CustomTimePickerDialog.showTimePickerDialog(
+                      //       context,
+                      //       maquinaria['hora_inicio'] ?? DateTime.now(),
+                      //       maquinaria['hora_inicio'] != null
+                      //           ? TimeOfDay.fromDateTime(maquinaria['hora_fin'])
+                      //           : null,
+                      //     );
+                      final DateTime? selectedTime = await showDialog<DateTime>(
+                        context: context,
+                        builder: (context) => CustomDateTimePickerDialog(
+                          initialDate: tarea.horaInicio ?? DateTime.now(),
+                          title: tarea.titulo,
+                        ),
+                      );
                       print('Selected time: $selectedTime');
                       if (selectedTime != null) {
                         var trcDate = ref
@@ -2116,7 +2179,7 @@ class _ListadoMaquinariasConTiempoView extends ConsumerWidget {
                           horaFin:
                               CustomDateTimeFunctions.getDateTimeFromTimeOfDay(
                                 trcDate,
-                                selectedTime,
+                                selectedTime as TimeOfDay,
                               ),
                           tareaId: tarea.id,
                           tipo: 'Hora final',
@@ -2132,9 +2195,9 @@ class _ListadoMaquinariasConTiempoView extends ConsumerWidget {
 
                           maquinaria['hora_fin'] =
                               CustomDateTimeFunctions.getDateTimeFromTimeOfDay(
-                            trcDate,
-                            selectedTime,
-                          );
+                                trcDate,
+                                selectedTime as TimeOfDay,
+                              );
                           // });
                           // Show snackbar warning
                           CustomSnackbar.showWarningSnackbar(
@@ -2217,8 +2280,16 @@ class _ListadoMaquinariasConTiempoView extends ConsumerWidget {
                             // Show loading indicator
 
                             // Rol Ckeck
-                            if (!ref.read(authProvider).loginResponse!.hasPermission( Roles.modificarControlDeActividades)) {
-                              showCustomErrorSnackbar(  context, 'No tienes permiso para realizar esta accion.');
+                            if (!ref
+                                .read(authProvider)
+                                .loginResponse!
+                                .hasPermission(
+                                  Roles.modificarControlDeActividades,
+                                )) {
+                              showCustomErrorSnackbar(
+                                context,
+                                'No tienes permiso para realizar esta accion.',
+                              );
                               return;
                             }
 
@@ -2326,7 +2397,6 @@ class _TareaTextoView extends StatelessWidget {
   }
 }
 
-
 // class _TareaPasajerosView
 
 class _TareaPasajerosView extends ConsumerWidget {
@@ -2362,8 +2432,8 @@ class _TareaPasajerosView extends ConsumerWidget {
       child: Column(
         children: [
           // if (turnaround?.fkVuelo.tipoServicio.id != 3)
-            // Llegada
-            _PasajerosRowView(tarea: tarea),
+          // Llegada
+          _PasajerosRowView(tarea: tarea),
 
           const Divider(thickness: 1),
 
@@ -2410,7 +2480,7 @@ class _PasajerosRowView extends StatelessWidget {
               Expanded(
                 child: PasajerosBoxContainer(
                   clase: 'I',
-                  cantidad: tarea.pasajeros!.infante!,
+                  cantidad: tarea.pasajeros!.infante,
                 ),
               ),
             ],
@@ -2746,13 +2816,18 @@ class _TareaITView extends ConsumerWidget {
               // disable if isLoading
               // Aca mismo es
               onPressed: () async {
-
                 // Rol Ckeck
-                if (!ref.read(authProvider).loginResponse!.hasPermission( Roles.modificarControlDeActividades)) {
-                  showCustomErrorSnackbar(  context, 'No tienes permiso para realizar esta accion.');
+                if (!ref
+                    .read(authProvider)
+                    .loginResponse!
+                    .hasPermission(Roles.modificarControlDeActividades)) {
+                  showCustomErrorSnackbar(
+                    context,
+                    'No tienes permiso para realizar esta accion.',
+                  );
                   return;
                 }
-                
+
                 ref.read(selectedTaskProvider.notifier).state = {
                   "indexDep": indexDep,
                   "indexAct": indexAct,
@@ -2887,10 +2962,16 @@ class _TareaImagenView extends ConsumerWidget {
                   // disable if isLoading
                   onPressed: () async {
                     // Rol Ckeck
-                      if (!ref.read(authProvider).loginResponse!.hasPermission( Roles.modificarControlDeActividades)) {
-                        showCustomErrorSnackbar(  context, 'No tienes permiso para realizar esta accion.');
-                        return;
-                      }
+                    if (!ref
+                        .read(authProvider)
+                        .loginResponse!
+                        .hasPermission(Roles.modificarControlDeActividades)) {
+                      showCustomErrorSnackbar(
+                        context,
+                        'No tienes permiso para realizar esta accion.',
+                      );
+                      return;
+                    }
                     final photoPath = await CameraGalleryServiceImpl()
                         .selectPhoto();
 
@@ -2937,13 +3018,18 @@ class _TareaImagenView extends ConsumerWidget {
                 ElevatedButton(
                   // disable if isLoading
                   onPressed: () async {
-
                     // Rol Ckeck
-                    if (!ref.read(authProvider).loginResponse!.hasPermission( Roles.modificarControlDeActividades)) {
-                      showCustomErrorSnackbar(  context, 'No tienes permiso para realizar esta accion.');
+                    if (!ref
+                        .read(authProvider)
+                        .loginResponse!
+                        .hasPermission(Roles.modificarControlDeActividades)) {
+                      showCustomErrorSnackbar(
+                        context,
+                        'No tienes permiso para realizar esta accion.',
+                      );
                       return;
                     }
-                    
+
                     final photoPath = await CameraGalleryServiceImpl()
                         .takePhoto();
 
@@ -3126,7 +3212,7 @@ class _ComentarioView extends ConsumerWidget {
 
                                   // return;
                                   Navigator.pop(context);
-                                textController.clear();
+                                  textController.clear();
                                 }
                                 // Show snackbar response
                                 CustomSnackbar.showResponseSnackbar(

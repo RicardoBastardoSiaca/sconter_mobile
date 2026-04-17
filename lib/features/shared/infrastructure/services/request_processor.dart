@@ -3,10 +3,8 @@ import 'dart:math';
 import 'package:dio/dio.dart';
 import 'dart:convert';
 
-import 'package:http_parser/http_parser.dart';
 
 
-import 'dart:io';
 
 import '../../../../config/constants/environment.dart';
 import '../../../local_storage/local_storage.dart';

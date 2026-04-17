@@ -1,7 +1,7 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:turnaround_mobile/features/auth/domain/domain.dart';
-import 'package:turnaround_mobile/features/shared/infrastructure/services/key_value_storage_service.dart';
-import 'package:turnaround_mobile/features/shared/infrastructure/services/key_value_storage_service_impl.dart';
+import 'package:scounter_mobile/features/auth/domain/domain.dart';
+import 'package:scounter_mobile/features/shared/infrastructure/services/key_value_storage_service.dart';
+import 'package:scounter_mobile/features/shared/infrastructure/services/key_value_storage_service_impl.dart';
 
 import '../../infrastructure/infrastructure.dart';
 

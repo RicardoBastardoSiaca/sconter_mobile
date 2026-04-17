@@ -1,6 +1,6 @@
 import 'package:dio/dio.dart';
-import 'package:turnaround_mobile/features/shared/shared.dart';
-import 'package:turnaround_mobile/features/turnarounds/domain/domain.dart';
+import 'package:scounter_mobile/features/shared/shared.dart';
+import 'package:scounter_mobile/features/turnarounds/domain/domain.dart';
 
 abstract class TurnaroundsDatasource {
   Future<List<TurnaroundMain>> getTurnaroundsByDate(
@@ -134,4 +134,6 @@ abstract class TurnaroundsDatasource {
   Future getPlantillaDetalleById(int id);
 
   Future<SimpleApiResponse> finalizarVueloServicioMiscelaneo(int id);
+  
+  Future<SimpleApiResponse> finalizarActividadesSinFirma(int id);
 }

@@ -5,7 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:intl/intl.dart';
 import 'package:signature/signature.dart';
-import 'package:turnaround_mobile/features/auth/presentation/providers/auth_provider.dart';
+import 'package:scounter_mobile/features/auth/presentation/providers/auth_provider.dart';
 
 import '../../../shared/shared.dart';
 import '../../domain/domain.dart';

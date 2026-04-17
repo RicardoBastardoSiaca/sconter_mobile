@@ -3,10 +3,10 @@ import 'package:flutter/material.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:introduction_screen/introduction_screen.dart';
-import 'package:turnaround_mobile/features/shared/shared.dart';
-import 'package:turnaround_mobile/features/turnarounds/domain/domain.dart';
-import 'package:turnaround_mobile/features/turnarounds/presentation/providers/providers.dart';
-import 'package:turnaround_mobile/features/turnarounds/presentation/widgets/widgets.dart';
+import 'package:scounter_mobile/features/shared/shared.dart';
+import 'package:scounter_mobile/features/turnarounds/domain/domain.dart';
+import 'package:scounter_mobile/features/turnarounds/presentation/providers/providers.dart';
+import 'package:scounter_mobile/features/turnarounds/presentation/widgets/widgets.dart';
 
 
 class CerrarVueloServicioMiscelaneoScreen extends StatelessWidget {

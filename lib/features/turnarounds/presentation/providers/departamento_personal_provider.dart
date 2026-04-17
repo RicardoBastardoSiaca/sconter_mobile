@@ -1,5 +1,5 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:turnaround_mobile/features/turnarounds/presentation/providers/turnaround_repository_provider.dart';
+import 'package:scounter_mobile/features/turnarounds/presentation/providers/turnaround_repository_provider.dart';
 
 import '../../../shared/shared.dart';
 import '../../domain/domain.dart';

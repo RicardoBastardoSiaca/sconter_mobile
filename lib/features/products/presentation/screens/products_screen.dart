@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:turnaround_mobile/features/shared/shared.dart';
+import 'package:scounter_mobile/features/shared/shared.dart';
 
 class ProductsScreen extends StatelessWidget {
   const ProductsScreen({super.key});

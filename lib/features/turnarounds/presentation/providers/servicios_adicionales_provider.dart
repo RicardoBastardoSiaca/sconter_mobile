@@ -1,6 +1,6 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:turnaround_mobile/features/local_storage/local_storage.dart';
-import 'package:turnaround_mobile/features/shared/shared.dart';
+import 'package:scounter_mobile/features/local_storage/local_storage.dart';
+import 'package:scounter_mobile/features/shared/shared.dart';
 
 import '../../domain/domain.dart';
 import 'providers.dart';

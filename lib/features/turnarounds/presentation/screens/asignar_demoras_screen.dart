@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:intl/intl.dart';
-import 'package:turnaround_mobile/features/turnarounds/domain/domain.dart';
+import 'package:scounter_mobile/features/turnarounds/domain/domain.dart';
 
 import '../../../shared/shared.dart';
 import '../providers/providers.dart';

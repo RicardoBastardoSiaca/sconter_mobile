@@ -35,9 +35,10 @@ class Plantilla {
       categoriaMaquinaria: (json['categoria_maquinaria'] as List)
           .map((e) => CategoriaMaquinaria.fromJson(e as Map<String, dynamic>))
           .toList(),
-      reportes: (json['reportes'] as List)
-          .map((e) => ReportePlantilla.fromJson(e as Map<String, dynamic>))
-          .toList(),
+          reportes: [],
+      // reportes: (json['reportes'] as List)
+      //     .map((e) => ReportePlantilla.fromJson(e as Map<String, dynamic>))
+      //     .toList(),
     );
   }
 

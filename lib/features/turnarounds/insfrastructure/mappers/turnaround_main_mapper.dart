@@ -1,4 +1,4 @@
-import 'package:turnaround_mobile/config/config.dart';
+import 'package:scounter_mobile/config/config.dart';
 
 import '../../domain/domain.dart';
 

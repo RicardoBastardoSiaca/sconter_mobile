@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
-import 'package:turnaround_mobile/features/shared/shared.dart';
+import 'package:scounter_mobile/features/shared/shared.dart';
 import 'package:package_info_plus/package_info_plus.dart';
 import '../../../config/config.dart';
 import '../../auth/presentation/providers/auth_provider.dart';
@@ -44,7 +44,7 @@ class SideMenuState extends ConsumerState<SideMenu> {
                       size: 22,
                     ),
                     title: Text(
-                      'Turnarounds',
+                      'Check-In',
                       style: Theme.of(
                         context,
                       ).textTheme.bodySmall?.copyWith(color: Colors.black87),
@@ -56,24 +56,24 @@ class SideMenuState extends ConsumerState<SideMenu> {
                     },
                   ),
                   // Servicios miscelaneos
-                  ListTile(
-                    leading: const Icon(
-                      Icons.miscellaneous_services,
-                      color: Colors.black45,
-                      size: 22,
-                    ),
-                    title: Text(
-                      'Servicios Miscelaneos',
-                      style: Theme.of(
-                        context,
-                      ).textTheme.bodySmall?.copyWith(color: Colors.black87),
-                    ),
-                    onTap: () {
-                      // Handle navigation to Home with GoRouter
-                      context.go('/servicios-miscelaneos-screen');
-                      widget.scaffoldKey.currentState?.closeDrawer();
-                    },
-                  ),
+                  // ListTile(
+                  //   leading: const Icon(
+                  //     Icons.miscellaneous_services,
+                  //     color: Colors.black45,
+                  //     size: 22,
+                  //   ),
+                  //   title: Text(
+                  //     'Servicios Miscelaneos',
+                  //     style: Theme.of(
+                  //       context,
+                  //     ).textTheme.bodySmall?.copyWith(color: Colors.black87),
+                  //   ),
+                  //   onTap: () {
+                  //     // Handle navigation to Home with GoRouter
+                  //     context.go('/servicios-miscelaneos-screen');
+                  //     widget.scaffoldKey.currentState?.closeDrawer();
+                  //   },
+                  // ),
 
 
                   // ListTile(
@@ -111,7 +111,7 @@ class SideMenuState extends ConsumerState<SideMenu> {
                 if (snapshot.hasData) {
                   final packageInfo = snapshot.data!;
                   return Text(
-                    'SiacaTRC v${packageInfo.version}',
+                    'Scounter v${packageInfo.version}',
                     // 'App Version: ${packageInfo.version} (${packageInfo.buildNumber})',
                     style: theme.textTheme.labelSmall?.copyWith(color: Colors.grey)
                   );

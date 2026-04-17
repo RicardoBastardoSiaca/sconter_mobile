@@ -1,5 +1,5 @@
 import 'package:dio/src/form_data.dart';
-import 'package:turnaround_mobile/features/shared/shared.dart';
+import 'package:scounter_mobile/features/shared/shared.dart';
 
 import '../domain.dart';
 
@@ -142,4 +142,6 @@ abstract class TurnaroundsRepository {
   Future getPlantillaDetalleById(int id);
 
   Future<SimpleApiResponse> finalizarVueloServicioMiscelaneo(int id);
+
+  Future<SimpleApiResponse> finalizarActividadesSinFirma(int id);
 }

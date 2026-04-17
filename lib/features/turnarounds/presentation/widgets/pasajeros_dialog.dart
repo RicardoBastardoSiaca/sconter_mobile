@@ -1,10 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:turnaround_mobile/features/turnarounds/domain/entities/control_actividades.dart';
+import 'package:scounter_mobile/features/turnarounds/domain/entities/control_actividades.dart';
 
 import '../../../shared/shared.dart';
 import '../providers/providers.dart';
-import 'widgets.dart';
 
 class PasajerosDialog extends ConsumerWidget {
   final Tarea tarea;

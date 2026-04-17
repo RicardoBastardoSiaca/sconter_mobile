@@ -1,7 +1,7 @@
 // import 'package:flutter/material.dart';
-// import 'package:turnaround_mobile/config/constants/color_constant.dart';
-// import 'package:turnaround_mobile/config/constants/size_constants.dart';
-// import 'package:turnaround_mobile/config/helpers/responsive_helper.dart';
+// import 'package:scounter_mobile/config/constants/color_constant.dart';
+// import 'package:scounter_mobile/config/constants/size_constants.dart';
+// import 'package:scounter_mobile/config/helpers/responsive_helper.dart';
 
 // /// Defines text themes for the appclass AppTextTheme {
 // double _getResponsiveFontSize(BuildContext context, double baseSize) {

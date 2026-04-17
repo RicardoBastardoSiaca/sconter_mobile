@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:turnaround_mobile/features/turnarounds/presentation/providers/providers.dart';
+import 'package:scounter_mobile/features/turnarounds/presentation/providers/providers.dart';
 
 import '../../../shared/shared.dart';
 import '../../domain/domain.dart';
+
+import 'package:change_case/change_case.dart';
 
 class AsignarPersonalScreen extends StatelessWidget {
   const AsignarPersonalScreen({super.key});
@@ -227,27 +229,27 @@ class _AsignarPersonalViewState extends ConsumerState<_AsignarPersonalView> {
                         : Column(
                             children: [
                               // Gerentes de turno
-                              _DepartamentoView(
-                                // gerentes,
-                                departamentos:
-                                    departamentosPersona
-                                        ?.departamentoPersonalResponse
-                                        ?.gerenteTurno ??
-                                    [],
-                                setStateCallback: _setStateCallback,
-                                titulo: 'Gerentes de Turno',
-                              ),
+                              // _DepartamentoView(
+                              //   // gerentes,
+                              //   departamentos:
+                              //       departamentosPersona
+                              //           ?.departamentoPersonalResponse
+                              //           ?.gerenteTurno ??
+                              //       [],
+                              //   setStateCallback: _setStateCallback,
+                              //   titulo: 'Gerentes de Turno',
+                              // ),
 
                               // Supervisor
-                              _DepartamentoView(
-                                departamentos:
-                                    departamentosPersona
-                                        ?.departamentoPersonalResponse
-                                        ?.supervisor ??
-                                    [],
-                                setStateCallback: _setStateCallback,
-                                titulo: "Supervisores,",
-                              ),
+                              // _DepartamentoView(
+                              //   departamentos:
+                              //       departamentosPersona
+                              //           ?.departamentoPersonalResponse
+                              //           ?.supervisor ??
+                              //       [],
+                              //   setStateCallback: _setStateCallback,
+                              //   titulo: "Supervisores,",
+                              // ),
 
                               // Personal (Firman el TRC)
                               // _DepartamentoView(
@@ -513,7 +515,7 @@ class _DepartamentoView extends ConsumerWidget {
     final theme = Theme.of(context);
     return Column(
       children: [
-        Text(titulo, style: theme.textTheme.titleMedium),
+        // Text(titulo, style: theme.textTheme.titleMedium),
         // List of Gerente de Turno
         ...departamentos.map((departamento) {
           return Column(
@@ -603,66 +605,111 @@ Future<List<bool>> _showSelectPersonalDialog(
           // StatefulBuilder to update the dialog
 
           return AlertDialog(
+            backgroundColor: Colors.white,
             insetPadding: EdgeInsets.zero, // This makes the dialog full width
             title: Column(
               children: [
                 Text('Asignar $categoria '),
-                Text(gerencia, style: Theme.of(context).textTheme.bodyLarge),
+                // SizedBox(height: 20),
               ],
             ),
             content: SizedBox(
               width: double.maxFinite,
-              child: ListView.builder(
-                shrinkWrap: true, // Important for ListView in AlertDialog
-                physics:
-                    const ClampingScrollPhysics(), // Prevents unwanted bouncing
-                itemCount: personalList.length,
-                itemBuilder: (context, index) {
-                  final personal = personalList[index];
-                  return CheckboxListTile(
-                    title: Text(
-                      personal.nombre,
-                      style: Theme.of(context).textTheme.bodyMedium,
-                    ),
-                    value: personal.selected,
-                    onChanged: (value) {
-                      // Handle personal selection
-                      personal.selected = value!;
-                      setState(() {}); // Refresh the dialog
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                Center(child: Text(gerencia, style: Theme.of(context).textTheme.bodyLarge)),
+                  
+                  ListView.builder(
+                    shrinkWrap: true, // Important for ListView in AlertDialog
+                    physics:
+                        const ClampingScrollPhysics(), // Prevents unwanted bouncing
+                    itemCount: personalList.length,
+                    itemBuilder: (context, index) {
+                      final personal = personalList[index];
+                      return CheckboxListTile(
+                        title: Text(
+                          personal.nombre.toCapitalCase(),
+                          style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                                fontWeight: FontWeight.normal,
+                                
+                              ),
+                        ),
+                        value: personal.selected,
+                        onChanged: (value) {
+                          // Handle personal selection
+                          personal.selected = value!;
+                          setState(() {}); // Refresh the dialog
+                        },
+                      );
                     },
-                  );
-                },
+                  ),
+                ],
               ),
             ),
             actions: [
-              TextButton(
-                child: const Text('Cancelar'),
-                onPressed: () {
-                  Navigator.of(context).pop();
-                },
+              Row(
+                children: [
+                  Expanded(
+                child: SizedBox(
+                  height: 40,
+                  child: TextButton(
+                    style: TextButton.styleFrom(
+                    backgroundColor: Colors.grey[200],
+                    foregroundColor: Colors.black87,
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(8),
+                    ),
+                  ),
+                    child: const Text('Cancelar'),
+                    
+                    onPressed: () {
+                      Navigator.of(context).pop();
+                    },
+                    
+                  ),
+                ),
               ),
-              TextButton(
-                child: const Text('Asignar'),
-                onPressed: () {
-                  // getting previous selected personal values, true and false
-                  final List<bool> selectedPersonal = personalList
-                      // .where((personal) => personal.selected)
-                      .map((personal) => personal.selected)
-                      .toList();
-                  // final List<bool> selectedPersonal = personalList
-                  //     .where((personal) => personal.selected)
-                  //     .map((personal) => personal.selected)
-                  //     .toList();
 
-                  print("selected personal: $selectedPersonal");
-                  ref.read(selectedPersonalDialogProvider.notifier).state =
-                      selectedPersonal;
+              const SizedBox(width: 12), // Espaciado entre botones
 
-                  // return selected personal
-                  Navigator.of(context).pop(selectedPersonal);
-                  // return selectedPersonal;
-                },
+              Expanded(
+                child: SizedBox(
+                  height: 40,
+                  child: TextButton(
+                    style: TextButton.styleFrom(
+                    backgroundColor: Theme.of(context).colorScheme.primary,
+                    foregroundColor: Colors.white,
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(8),
+                    ),
+                  ),
+                    child: const Text('Asignar'),
+                    onPressed: () {
+                      // getting previous selected personal values, true and false
+                      final List<bool> selectedPersonal = personalList
+                          // .where((personal) => personal.selected)
+                          .map((personal) => personal.selected)
+                          .toList();
+                      // final List<bool> selectedPersonal = personalList
+                      //     .where((personal) => personal.selected)
+                      //     .map((personal) => personal.selected)
+                      //     .toList();
+                  
+                      print("selected personal: $selectedPersonal");
+                      ref.read(selectedPersonalDialogProvider.notifier).state =
+                          selectedPersonal;
+                  
+                      // return selected personal
+                      Navigator.of(context).pop(selectedPersonal);
+                      // return selectedPersonal;
+                    },
+                  ),
+                ),
               ),
+            
+              ])
+              
             ],
           );
         },

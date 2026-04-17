@@ -2,8 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:intl/intl.dart';
-import 'package:turnaround_mobile/features/auth/domain/domain.dart';
-import 'package:turnaround_mobile/features/auth/presentation/providers/providers.dart';
+import 'package:scounter_mobile/features/auth/domain/domain.dart';
+import 'package:scounter_mobile/features/auth/presentation/providers/providers.dart';
 
 import '../../../../shared/shared.dart';
 import '../../../domain/domain.dart';

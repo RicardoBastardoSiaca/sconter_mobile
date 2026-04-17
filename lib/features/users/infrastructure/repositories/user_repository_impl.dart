@@ -2,9 +2,9 @@
 
 
 import 'package:dio/src/form_data.dart';
-import 'package:turnaround_mobile/features/shared/domain/entities/simple_api_response.dart';
-import 'package:turnaround_mobile/features/users/domain/datasources/user_datasource.dart';
-import 'package:turnaround_mobile/features/users/domain/entities/user.dart';
+import 'package:scounter_mobile/features/shared/domain/entities/simple_api_response.dart';
+import 'package:scounter_mobile/features/users/domain/datasources/user_datasource.dart';
+import 'package:scounter_mobile/features/users/domain/entities/user.dart';
 
 import '../../domain/repositories/user_repository.dart';
 

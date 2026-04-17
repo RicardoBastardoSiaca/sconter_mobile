@@ -24,15 +24,15 @@ class _PersonalDetalleView extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             // Gerentes
-            _GerenciasPersonalView(
-              nommbre: 'Gerentes',
-              departamentos: departamentosPersona?.gerenteTurno ?? [],
-            ),
+            // _GerenciasPersonalView(
+            //   nommbre: 'Gerentes',
+            //   departamentos: departamentosPersona?.gerenteTurno ?? [],
+            // ),
             // Supervisores
-            _GerenciasPersonalView(
-              nommbre: 'Supervisores',
-              departamentos: departamentosPersona?.supervisor ?? [],
-            ),
+            // _GerenciasPersonalView(
+            //   nommbre: 'Supervisores',
+            //   departamentos: departamentosPersona?.supervisor ?? [],
+            // ),
             // Personal
             _GerenciasPersonalView(
               nommbre: 'Personal',
@@ -60,14 +60,14 @@ class _GerenciasPersonalView extends StatelessWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Center(
-          child: Text(
-            nommbre,
-            style: theme.textTheme.titleMedium?.copyWith(
-              fontWeight: FontWeight.bold,
-            ),
-          ),
-        ),
+        // Center(
+        //   child: Text(
+        //     nommbre,
+        //     style: theme.textTheme.titleMedium?.copyWith(
+        //       fontWeight: FontWeight.bold,
+        //     ),
+        //   ),
+        // ),
         departamentos.isEmpty || noPersonalInDepartamento(departamentos)
             ? Padding(
                 padding: const EdgeInsets.symmetric(vertical: 8.0),

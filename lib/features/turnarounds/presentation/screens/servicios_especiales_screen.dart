@@ -2,13 +2,13 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:intl/intl.dart';
-import 'package:turnaround_mobile/features/auth/domain/domain.dart';
-import 'package:turnaround_mobile/features/auth/presentation/providers/providers.dart';
+import 'package:scounter_mobile/features/auth/domain/domain.dart';
+import 'package:scounter_mobile/features/auth/presentation/providers/providers.dart';
 
 import '../../../shared/shared.dart';
 import '../../domain/domain.dart';
 import '../providers/providers.dart';
-// import 'package:turnaround_mobile/shared/shared.dart';
+// import 'package:scounter_mobile/shared/shared.dart';
 
 class ServiciosEspecialesScreen extends ConsumerWidget {
   const ServiciosEspecialesScreen({super.key});

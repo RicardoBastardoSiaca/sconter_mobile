@@ -1,6 +1,6 @@
 import 'package:dio/dio.dart';
-import 'package:turnaround_mobile/config/constants/environment.dart';
-import 'package:turnaround_mobile/features/shared/shared.dart';
+import 'package:scounter_mobile/config/constants/environment.dart';
+import 'package:scounter_mobile/features/shared/shared.dart';
 
 import '../../domain/domain.dart';
 import '../mappers/mappers.dart';
@@ -1217,6 +1217,28 @@ class TurnaroundsDatasourceImpl implements TurnaroundsDatasource {
         } else {
           return SimpleApiResponse(
             message: 'Error al cerrar vuelo.',
+            success: false,
+          );
+        }
+  }
+  
+  @override
+  Future<SimpleApiResponse> finalizarActividadesSinFirma(int id) async {
+    final response = await dio
+        .post('/turnarounds/finalizar_vuelo/?token=$accessToken', data: {'id': id});
+        if (response.statusCode == 201) {
+          return SimpleApiResponse(
+            message: 'Turnaround finalizado.',
+            success: true,
+          );
+        } else if (response.statusCode == 400) {
+          return SimpleApiResponse(
+            message: 'Error al finalizar turnaround',
+            success: false,
+          );
+        } else {
+          return SimpleApiResponse(
+            message: 'Error al finalizar turnaround.',
             success: false,
           );
         }

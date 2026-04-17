@@ -18,12 +18,24 @@ samples, guidance on mobile development, and a full API reference.
 Para cambiar el icono de la aplicacion
 
 ```
+# Icons
 flutter pub run flutter_launcher_icons
 ```
 
 Android AAB
 
 ```
+# Prod
+para cambiar el nombre de la aplicacion
+dart run change_app_package_name:main com.siaca.scounter --android
+```
+
+# APK
+
 <!-- Generar app de produccion -->
+
 flutter build appbundle
+
+```
+
 ```

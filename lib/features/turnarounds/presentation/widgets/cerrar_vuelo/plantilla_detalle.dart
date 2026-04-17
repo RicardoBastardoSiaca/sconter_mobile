@@ -11,7 +11,7 @@ class PlantillaDetalle extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return SingleChildScrollView(child: _PlantillaDetalleView());
+    return SingleChildScrollView(child: _PlantillaDetalleView(controlActividades, turnaround));
   }
 }
 
@@ -19,7 +19,7 @@ class _PlantillaDetalleView extends ConsumerWidget {
   final ControlActividades? controlActividades;
   final TurnaroundMain? turnaround;
 
-  const _PlantillaDetalleView({this.controlActividades, this.turnaround});
+  const _PlantillaDetalleView(this.controlActividades, this.turnaround);
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {

@@ -5,7 +5,7 @@
 
 
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:turnaround_mobile/features/auth/presentation/providers/auth_provider.dart';
+import 'package:scounter_mobile/features/auth/presentation/providers/auth_provider.dart';
 
 import '../../domain/domain.dart';
 import '../../insfrastructure/infrastructure.dart';

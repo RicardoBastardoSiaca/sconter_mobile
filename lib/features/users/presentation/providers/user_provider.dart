@@ -3,8 +3,8 @@ import 'dart:convert';
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:turnaround_mobile/features/users/domain/entities/user.dart';
-import 'package:turnaround_mobile/features/users/domain/repositories/user_repository.dart';
+import 'package:scounter_mobile/features/users/domain/entities/user.dart';
+import 'package:scounter_mobile/features/users/domain/repositories/user_repository.dart';
 
 import '../../../shared/shared.dart';
 import 'user_repository_provider.dart';

@@ -144,7 +144,7 @@ class TAppTheme {
 
 // import 'package:flutter/material.dart';
 // import 'package:google_fonts/google_fonts.dart';
-// import 'package:turnaround_mobile/config/constants/color_constant.dart';
+// import 'package:scounter_mobile/config/constants/color_constant.dart';
 // import 'text_theme.dart';
 
 // const colorSeed = Color.fromARGB(255, 0, 166, 91);

@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:turnaround_mobile/features/turnarounds/domain/domain.dart';
+import 'package:scounter_mobile/features/turnarounds/domain/domain.dart';
 
 class VueloDetalle extends StatelessWidget {
   final ControlActividades? controlActividades;

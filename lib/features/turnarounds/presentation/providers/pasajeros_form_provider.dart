@@ -1,7 +1,6 @@
 import 'package:flutter/widgets.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:formz/formz.dart';
-import 'package:turnaround_mobile/features/turnarounds/domain/entities/control_actividades.dart';
 
 import '../../../shared/shared.dart';
 import 'providers.dart';

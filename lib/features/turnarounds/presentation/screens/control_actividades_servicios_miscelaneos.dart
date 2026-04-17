@@ -4,11 +4,11 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:go_router/go_router.dart';
 import 'package:intl/intl.dart';
-import 'package:turnaround_mobile/features/auth/domain/domain.dart';
-import 'package:turnaround_mobile/features/auth/presentation/providers/providers.dart';
-import 'package:turnaround_mobile/features/shared/shared.dart';
-import 'package:turnaround_mobile/features/turnarounds/domain/domain.dart';
-import 'package:turnaround_mobile/features/turnarounds/presentation/providers/providers.dart';
+import 'package:scounter_mobile/features/auth/domain/domain.dart';
+import 'package:scounter_mobile/features/auth/presentation/providers/providers.dart';
+import 'package:scounter_mobile/features/shared/shared.dart';
+import 'package:scounter_mobile/features/turnarounds/domain/domain.dart';
+import 'package:scounter_mobile/features/turnarounds/presentation/providers/providers.dart';
 
 // import '../../../shared/shared.dart';
 // import '../../domain/domain.dart';
@@ -353,7 +353,7 @@ class _ControlActividadesServiciosMiscelaneosState
 }
 
 class _mainView extends ConsumerWidget {
-  const _mainView({super.key});
+  const _mainView();
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {

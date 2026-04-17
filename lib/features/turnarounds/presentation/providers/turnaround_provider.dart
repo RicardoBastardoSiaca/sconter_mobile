@@ -1,6 +1,5 @@
-import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:turnaround_mobile/features/shared/domain/entities/entities.dart';
+import 'package:scounter_mobile/features/shared/domain/entities/entities.dart';
 
 import '../../domain/domain.dart';
 import 'turnaround_repository_provider.dart';

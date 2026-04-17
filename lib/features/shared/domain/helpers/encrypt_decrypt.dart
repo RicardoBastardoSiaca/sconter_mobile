@@ -1,5 +1,5 @@
 import 'package:encrypt/encrypt.dart' as encrypt;
-import 'package:turnaround_mobile/config/constants/environment.dart';
+import 'package:scounter_mobile/config/constants/environment.dart';
 
 class EncryptDecrypt {
   final encrypt.Key key; // 32 chars for AES-256

@@ -180,23 +180,23 @@ class _ConsultarControlActividadesViewState extends ConsumerState<_ConsultarCont
           //     turnaround.estatus == 5 ||
           //     turnaround.estatus == 6 ||
           //     turnaround.estatus == 7)
-          PageViewModel(
-            title: "Servicios",
-             bodyWidget: ServiciosDetalle( 
-              controlActividades: controlActividades,
-              turnaround: turnaround,),
-            decoration: pageDecoration,
-          ),
+          // PageViewModel(
+          //   title: "Servicios",
+          //    bodyWidget: ServiciosDetalle( 
+          //     controlActividades: controlActividades,
+          //     turnaround: turnaround,),
+          //   decoration: pageDecoration,
+          // ),
           // if (turnaround.estatus == 4 ||
           //     turnaround.estatus == 5 ||
           //     turnaround.estatus == 6 ||
           //     turnaround.estatus == 7)
-          PageViewModel(
-            title: "Codigos de Demora",
-             bodyWidget: CodigosDemoraDetalle( 
-              demoras: demoras,),
-            decoration: pageDecoration,
-          ),
+          // PageViewModel(
+          //   title: "Codigos de Demora",
+          //    bodyWidget: CodigosDemoraDetalle( 
+          //     demoras: demoras,),
+          //   decoration: pageDecoration,
+          // ),
           // if (turnaround.estatus == 4 ||
           //     turnaround.estatus == 5 ||
           //     turnaround.estatus == 6 ||

@@ -1,5 +1,5 @@
 import 'package:dio/src/form_data.dart';
-import 'package:turnaround_mobile/features/shared/shared.dart';
+import 'package:scounter_mobile/features/shared/shared.dart';
 
 import '../../domain/domain.dart';
 
@@ -265,14 +265,21 @@ class TurnaroundsRepositoryImpl extends TurnaroundsRepository {
   ) {
     return datasource.getControlDeActividadesServicioMiscelaneoById(id);
   }
-  
+
   @override
   Future<SimpleApiResponse> finalizarVueloServicioMiscelaneo(int id) {
     return datasource.finalizarVueloServicioMiscelaneo(id);
   }
-  
+
   @override
-  Future<SimpleApiResponse> cerrarVueloervicioMiscelaneo(Map<String, Object?> body) {
+  Future<SimpleApiResponse> cerrarVueloervicioMiscelaneo(
+    Map<String, Object?> body,
+  ) {
     return datasource.cerrarVueloervicioMiscelaneo(body);
+  }
+
+  @override
+  Future<SimpleApiResponse> finalizarActividadesSinFirma(int id) {
+    return datasource.finalizarActividadesSinFirma(id);
   }
 }

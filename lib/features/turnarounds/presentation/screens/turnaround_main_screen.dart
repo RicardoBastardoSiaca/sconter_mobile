@@ -5,9 +5,9 @@ import 'package:flutter_svg/svg.dart';
 import 'package:go_router/go_router.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:intl/intl.dart';
-import 'package:turnaround_mobile/features/auth/domain/domain.dart';
-import 'package:turnaround_mobile/features/auth/presentation/providers/providers.dart';
-import 'package:turnaround_mobile/features/turnarounds/presentation/widgets/widgets.dart';
+import 'package:scounter_mobile/features/auth/domain/domain.dart';
+import 'package:scounter_mobile/features/auth/presentation/providers/providers.dart';
+import 'package:scounter_mobile/features/turnarounds/presentation/widgets/widgets.dart';
 
 import '../../../shared/shared.dart';
 import '../../domain/domain.dart';
@@ -60,7 +60,7 @@ class _TurnaroundMainScreenState extends State<TurnaroundMainScreen> {
             SizedBox(width: 40),
             Center(
               child: SvgPicture.asset(
-                "assets/icons/logo-trc.svg",
+                "assets/icons/logotype-scounter.svg",
                 fit: BoxFit.scaleDown,
                 height: 35,
               ),
@@ -229,7 +229,7 @@ class _TuraroundMainViewState extends ConsumerState {
                       const SizedBox(height: 3),
                       Center(
                         child: Text(
-                          'Turnarounds',
+                          'Check-In',
                           style: Theme.of(context).textTheme.headlineMedium?.copyWith(
                             color: Theme.of(context).colorScheme.primary,
                             fontWeight: FontWeight.w900,
@@ -656,32 +656,73 @@ class _MenuDialog extends ConsumerWidget {
               },
             ),
 
-          if (turnaround.estatus == 1 ||
-              turnaround.estatus == 2 ||
-              turnaround.estatus == 3)
-            MenuListTile(
-              leading: Icon(Icons.agriculture),
-              title: 'Asignar equipos GSE',
-              onTap: () {
-                // print("onItemTap");
+          // if (turnaround.estatus == 1 ||
+          //     turnaround.estatus == 2 ||
+          //     turnaround.estatus == 3)
+          //   MenuListTile(
+          //     leading: Icon(Icons.agriculture),
+          //     title: 'Asignar equipos GSE',
+          //     onTap: () {
+          //       // print("onItemTap");
 
+          //       // Rol Ckeck
+          //       if (!ref.read(authProvider).loginResponse!.hasPermission( Roles.asignarMaquinaria)) {
+          //         showCustomErrorSnackbar(  context, 'No tienes permiso para asignar equipos GSE.');
+          //         return;
+          //       }
+
+          //       // set selectedTurnaroundProvider
+          //       ref.read(selectedTurnaroundProvider.notifier).state =
+          //           turnaround;
+
+          //       print("selectedTurnaroundProvider: $turnaround");
+          //       // push
+          //       context.push('/asignar-equipos-gse');
+          //       // close bottom sheet
+          //       Navigator.pop(context);
+          //     },
+          //   ),
+
+          // scanner test
+          MenuListTile(
+              leading: Icon(Icons.start),
+              title: 'QR Scanner',
+              onTap: () async {
+                print("onItemTap");
+
+                // void _onScanPressed() async {
+                  // 1. Llamar al servicio y esperar el resultado
+                  final String? result = await ScannerService.scanCode(
+                    context, 
+                    title: "Escanear Producto"
+                  );
+
+                  // 2. Si el resultado no es nulo, procesar el código
+                  if (result != null) {
+                    debugPrint("Código QR/Barras detectado: $result");
+                    
+                    // Aquí puedes mostrar un mensaje, navegar a otra pantalla o 
+                    // usar el resultado para buscar en una base de datos.
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      SnackBar(content: Text("Código detectado: $result")),
+                    );
+                  } else {
+                    debugPrint("El usuario canceló el escaneo.");
+                  }
+                // }
                 // Rol Ckeck
-                if (!ref.read(authProvider).loginResponse!.hasPermission( Roles.asignarMaquinaria)) {
-                  showCustomErrorSnackbar(  context, 'No tienes permiso para asignar equipos GSE.');
-                  return;
-                }
+                // if (!ref.read(authProvider).loginResponse!.hasPermission( Roles.empezarOperaciones)) {
+                //   showCustomErrorSnackbar(  context, 'No tienes permiso para iniciar operaciones.');
+                //   return;
+                // }
 
-                // set selectedTurnaroundProvider
-                ref.read(selectedTurnaroundProvider.notifier).state =
-                    turnaround;
-
-                print("selectedTurnaroundProvider: $turnaround");
                 // push
-                context.push('/asignar-equipos-gse');
+                // await iniciarOperaciones(context, ref, turnaround.id);
                 // close bottom sheet
-                Navigator.pop(context);
+                // Navigator.pop(context);
               },
             ),
+
 
           if (turnaround.estatus == 1)
             MenuListTile(
@@ -738,13 +779,13 @@ class _MenuDialog extends ConsumerWidget {
           if (turnaround.estatus == 3)
             MenuListTile(
               leading: Icon(Icons.lock),
-              title: 'Cerrar Vuelo',
+              title: 'Cerrar Chech-In',
               onTap: () {
                 print("onItemTap");
 
                 // Rol Ckeck
                 if (!ref.read(authProvider).loginResponse!.hasPermission( Roles.modificarVuelo)) {
-                  showCustomErrorSnackbar(  context, 'No tienes permiso para cerrar el vuelo.');
+                  showCustomErrorSnackbar(  context, 'No tienes permiso para cerrar el check-in.');
                   return;
                 }
                 
@@ -1000,6 +1041,7 @@ class _TailView extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.center,
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
+            SizedBox(height: 10,),
             SizedBox(
               height: 90,
               child: 
@@ -1014,11 +1056,15 @@ class _TailView extends StatelessWidget {
                 errorWidget: (context, url, error) => Icon(Icons.error),
               )
             ),
+            SizedBox(height: 5,),
             // Uppercase
             Text(
               name.toUpperCase(),
               style: isMobile
               ? Theme.of(context).textTheme.labelSmall?.copyWith(
+                letterSpacing: 0,
+                  wordSpacing: 0.3,
+                  fontSize: 14,
                 fontFamily: GoogleFonts.openSans(
                   fontWeight: FontWeight.w700,
                 ).fontFamily,

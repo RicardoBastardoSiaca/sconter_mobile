@@ -10,6 +10,11 @@
 	<string>En caso de subir video, necesitamos acceso al microfono.</string>
 
 
+	<key>NSCameraUsageDescription</key>
+	<string>This app needs camera access to scan barcodes.</string>
+	<key>NSPhotoLibraryUsageDescription</key>
+	<string>This app needs photo library access to scan barcodes from images.</string>
+
 
 	<key>CFBundleDevelopmentRegion</key>
 	<string>$(DEVELOPMENT_LANGUAGE)</string>

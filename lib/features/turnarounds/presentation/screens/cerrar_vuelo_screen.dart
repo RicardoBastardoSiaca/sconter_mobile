@@ -2,11 +2,10 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:introduction_screen/introduction_screen.dart';
-import 'package:turnaround_mobile/features/turnarounds/presentation/providers/providers.dart';
+import 'package:scounter_mobile/features/turnarounds/presentation/providers/providers.dart';
 
 import '../../../shared/shared.dart';
 import '../../domain/entities/entities.dart';
-import '../providers/providers.dart';
 import '../widgets/widgets.dart';
 
 class CerrarVueloScreen extends StatelessWidget {
@@ -171,35 +170,35 @@ class _CerrarVueloViewState extends ConsumerState<_CerrarVueloView> {
             ),
             decoration: pageDecoration,
           ),
-          PageViewModel(
-            title: "3. SLA",
-            bodyWidget: SlaDetalle(
-              controlActividades: controlActividades,
-              turnaround: turnaround,
-            ),
-            decoration: pageDecoration,
-          ),
-          PageViewModel(
-            title: "4. Servicios",
-            bodyWidget: ServiciosDetalle(
-              controlActividades: controlActividades,
-              turnaround: turnaround,
-            ),
-            decoration: pageDecoration,
-          ),
-          PageViewModel(
-            title: "5. Codigos de Demora",
-            bodyWidget: CodigosDemoraDetalle(demoras: demoras),
-            decoration: pageDecoration,
-          ),
-          PageViewModel(
-            title: "6. Personal",
-            bodyWidget: PersonalDetalle(
-              departamentosPersona:
-                  departamentosPersona.departamentoPersonalResponse,
-            ),
-            decoration: pageDecoration,
-          ),
+          // PageViewModel(
+          //   title: "3. SLA",
+          //   bodyWidget: SlaDetalle(
+          //     controlActividades: controlActividades,
+          //     turnaround: turnaround,
+          //   ),
+          //   decoration: pageDecoration,
+          // ),
+          // PageViewModel(
+          //   title: "4. Servicios",
+          //   bodyWidget: ServiciosDetalle(
+          //     controlActividades: controlActividades,
+          //     turnaround: turnaround,
+          //   ),
+          //   decoration: pageDecoration,
+          // ),
+          // PageViewModel(
+          //   title: "5. Codigos de Demora",
+          //   bodyWidget: CodigosDemoraDetalle(demoras: demoras),
+          //   decoration: pageDecoration,
+          // ),
+          // PageViewModel(
+          //   title: "6. Personal",
+          //   bodyWidget: PersonalDetalle(
+          //     departamentosPersona:
+          //         departamentosPersona.departamentoPersonalResponse,
+          //   ),
+          //   decoration: pageDecoration,
+          // ),
 
           // PageViewModel(
           //   title: "Learn as you go",

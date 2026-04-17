@@ -1,6 +1,6 @@
 
 
-import 'package:turnaround_mobile/features/auth/domain/domain.dart';
+import 'package:scounter_mobile/features/auth/domain/domain.dart';
 
 import '../infrastructure.dart';
 

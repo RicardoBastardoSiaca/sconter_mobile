@@ -4,7 +4,7 @@ import 'dart:io';
 
 import 'package:dio/dio.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-// import 'package:turnaround_mobile/features/shared/domain/domain.dart';
+// import 'package:scounter_mobile/features/shared/domain/domain.dart';
 
 import '../../../shared/shared.dart';
 import '../../domain/domain.dart';
@@ -599,6 +599,21 @@ class ControlActividadesNotifier
       if (response.success) {
         getControlDeActividadesByTrcId();
         return SnackbarResponse(message: 'Firma registrada.', success: true);
+      } else {
+        return SnackbarResponse(message: response.message, success: false);
+      }
+    } catch (e) {
+      return SnackbarResponse(message: 'Ha ocurrido un error.', success: false);
+    }
+  }
+
+  Future<SnackbarResponse>  finalizarActividadesSinFirma(int trcId) async {
+
+    try {
+      final response = await turnaroundsRepository.finalizarActividadesSinFirma(trcId);
+      if (response.success) {
+        getControlDeActividadesByTrcId();
+        return SnackbarResponse(message: 'Turnaround finalizado.', success: true);
       } else {
         return SnackbarResponse(message: response.message, success: false);
       }

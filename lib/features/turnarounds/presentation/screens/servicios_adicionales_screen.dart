@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../widgets/widgets.dart';
-// import 'package:turnaround_mobile/shared/shared.dart';
+// import 'package:scounter_mobile/shared/shared.dart';
 
 class ServiciosAdicionalesScreen extends ConsumerWidget {
   const ServiciosAdicionalesScreen({super.key});

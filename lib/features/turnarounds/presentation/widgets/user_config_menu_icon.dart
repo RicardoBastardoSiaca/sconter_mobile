@@ -1,10 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:go_router/go_router.dart';
 
 import '../../../auth/presentation/providers/providers.dart';
 import '../../../shared/widgets/widgets.dart';
-import '../../../users/users.dart';
 
 class UserConfigMenuIcon extends ConsumerWidget {
   const UserConfigMenuIcon({super.key});

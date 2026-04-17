@@ -1,7 +1,7 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
-import 'package:turnaround_mobile/features/auth/auth.dart';
-import 'package:turnaround_mobile/features/turnarounds/turnarounds.dart';
+import 'package:scounter_mobile/features/auth/auth.dart';
+import 'package:scounter_mobile/features/turnarounds/turnarounds.dart';
 
 import '../../features/auth/presentation/providers/auth_provider.dart';
 import '../../features/turnarounds/domain/domain.dart';

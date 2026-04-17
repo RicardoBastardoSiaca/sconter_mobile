@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:turnaround_mobile/config/config.dart';
+import 'package:scounter_mobile/config/config.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:intl/date_symbol_data_local.dart';
 

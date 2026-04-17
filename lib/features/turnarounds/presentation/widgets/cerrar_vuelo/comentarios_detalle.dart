@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:turnaround_mobile/features/turnarounds/presentation/providers/providers.dart';
-import 'package:turnaround_mobile/features/turnarounds/presentation/widgets/widgets.dart';
+import 'package:scounter_mobile/features/turnarounds/presentation/providers/providers.dart';
+import 'package:scounter_mobile/features/turnarounds/presentation/widgets/widgets.dart';
 
 class ComentariosDetalle extends ConsumerWidget {
   const ComentariosDetalle({super.key});

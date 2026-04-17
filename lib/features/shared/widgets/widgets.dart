@@ -22,3 +22,5 @@ export 'no_internet_banner.dart';
 export 'no_internet_icon.dart';
 
 export 'show_snackbar.dart';
+
+export 'scanner/scanner.dart';

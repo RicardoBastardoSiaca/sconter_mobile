@@ -20,7 +20,12 @@ class LeyendaColoresTurnarounds extends StatelessWidget {
     ];
 
     return Container(
-      padding: const EdgeInsets.all(4.0),
+      padding: const EdgeInsets.only(
+        left: 4.0,
+        right: 4.0,
+        top: 2.0,
+        bottom: 4.0,
+      ),
       // decoration: BoxDecoration(
       //   border: Border.lerp(
       //     Border.all(color: Colors.black12),

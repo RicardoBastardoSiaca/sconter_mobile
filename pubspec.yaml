@@ -1,4 +1,4 @@
-name: turnaround_mobile
+name: scounter_mobile
 description: "A new Flutter project."
 # The following line prevents the package from being accidentally published to
 # pub.dev using `flutter pub publish`. This is preferred for private packages.
@@ -16,7 +16,7 @@ publish_to: "none" # Remove this line if you wish to publish to pub.dev
 # https://developer.apple.com/library/archive/documentation/General/Reference/InfoPlistKeyReference/Articles/CoreFoundationKeys.html
 # In Windows, build-name is used as the major, minor, and patch parts
 # of the product and file versions while build-number is used as the build suffix.
-version: 1.3.14+21
+version: 1.0.2+3
 
 environment:
   sdk: ^3.8.0
@@ -30,6 +30,7 @@ environment:
 dependencies:
   cached_network_image: ^3.4.1
   carousel_slider: ^5.1.1
+  change_case: ^2.2.0
   connectivity_plus: ^7.0.0
   cupertino_icons: ^1.0.8
   custom_lint: 0.7.6
@@ -42,6 +43,7 @@ dependencies:
   flutter_dotenv: ^5.2.1
   flutter_expandable_fab: ^2.5.2
   flutter_launcher_icons: ^0.14.4
+  flutter_native_splash: ^2.4.7
   flutter_riverpod: ^2.6.1
   flutter_staggered_grid_view: ^0.7.0
   flutter_svg: ^2.1.0
@@ -53,9 +55,11 @@ dependencies:
   internet_connection_checker_plus: ^2.9.0
   intl: ^0.20.2
   introduction_screen: ^4.0.0
+  mobile_scanner: ^7.2.0
   package_info_plus: ^9.0.0
   path_provider: ^2.1.5
   photo_view: ^0.15.0
+  rename: ^3.1.0
   riverpod_annotation: ^2.6.1
   riverpod_lint: 2.6.5
   share_plus: ^12.0.0
