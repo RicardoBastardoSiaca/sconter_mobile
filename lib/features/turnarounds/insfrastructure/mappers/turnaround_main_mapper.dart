@@ -132,6 +132,7 @@ class TurnaroundMainMapper {
           '${Environment.apiUrl}/aerolineas${json['imagen']}', //json['imagen']',
       imagenLogo: json['imagen_logo'],
       estatus: json['estatus'],
+      hasSupervisor: json['has_supervisor']
     );
   }
 

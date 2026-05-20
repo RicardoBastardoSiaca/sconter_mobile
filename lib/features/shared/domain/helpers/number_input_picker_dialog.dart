@@ -22,7 +22,7 @@ class CantidadDialog extends StatefulWidget {
 }
 
 class _CantidadDialogState extends State<CantidadDialog> {
-  late TextEditingController _controller = TextEditingController(text: "1");
+  late TextEditingController _controller;
   Timer? _timer;
   String? _errorText; // Variable para manejar el error
 
@@ -153,6 +153,12 @@ class _CantidadDialogState extends State<CantidadDialog> {
                               color: Colors.black,
                               height: 1.0,
                             ),
+                            onTap: () {
+                              _controller.selection = TextSelection(
+                                baseOffset: 0,
+                                extentOffset: _controller.text.length,
+                              );
+                            },
                             onChanged: (value) {
                               setState(
                                 () => _errorText = null,

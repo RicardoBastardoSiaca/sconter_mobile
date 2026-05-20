@@ -83,6 +83,7 @@ class TurnaroundMain {
   //     "charter": charter,
   // };
 }
+
 class ServicioMiscelaneo {
   int id;
   dynamic identificador;
@@ -326,6 +327,7 @@ class FkAerolinea {
   String? imagen;
   String? imagenLogo;
   bool estatus;
+  bool hasSupervisor;
 
   FkAerolinea({
     required this.id,
@@ -346,6 +348,7 @@ class FkAerolinea {
     this.imagen = '',
     this.imagenLogo = '',
     required this.estatus,
+    required this.hasSupervisor,
   });
 
   // factory FkAerolinea.fromJson(Map<String, dynamic> json) => FkAerolinea(

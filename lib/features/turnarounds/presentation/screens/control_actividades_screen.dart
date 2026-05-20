@@ -113,16 +113,23 @@ class _ControlActividadesScreenState
             // SizedBox(height: 0.2),
 
             // Finalizar Turnaround
-            if (turnaround?.estatus == 2)
+            if (turnaround?.estatus == 2 &&
+                !turnaround!.fkVuelo.fkAerolinea.hasSupervisor)
               GestureDetector(
                 onTap: () async {
                   print('Finalizar Turnaround pressed');
 
                   // Rol Ckeck
-                  // if (!ref.read(authProvider).loginResponse!.hasPermission( Roles.firmaDeSupervisor)) {
-                  //   showCustomErrorSnackbar(  context, 'No tienes permiso para realizar esta accion.');
-                  //   return;
-                  // }
+                  if (!ref
+                      .read(authProvider)
+                      .loginResponse!
+                      .hasPermission(Roles.firmaDeSupervisor)) {
+                    showCustomErrorSnackbar(
+                      context,
+                      'No tienes permiso para realizar esta accion.',
+                    );
+                    return;
+                  }
 
                   final response = await ref
                       .read(controlActividadesProvider(widget.trcId).notifier)
@@ -147,7 +154,7 @@ class _ControlActividadesScreenState
                 child: Row(
                   children: [
                     Text(
-                      'Finalizar Turnaround',
+                      'Finalizar vuelo',
                       style: Theme.of(context).textTheme.titleMedium?.copyWith(
                         fontWeight: FontWeight.w600,
                         // Rounded
@@ -171,51 +178,59 @@ class _ControlActividadesScreenState
                 ),
               ),
 
-            // if (turnaround?.estatus == 2)
-            //   GestureDetector(
-            //     onTap: () async {
-            //       print('Firma del Supervisor pressed');
+            // Firma del Supervisor
+            if (turnaround?.estatus == 2 &&
+                turnaround!.fkVuelo.fkAerolinea.hasSupervisor)
+              GestureDetector(
+                onTap: () async {
+                  print('Firma del Supervisor pressed');
 
-            //       // Rol Ckeck
-            //       if (!ref.read(authProvider).loginResponse!.hasPermission( Roles.firmaDeSupervisor)) {
-            //         showCustomErrorSnackbar(  context, 'No tienes permiso para realizar esta accion.');
-            //         return;
-            //       }
+                  // Rol Ckeck
+                  if (!ref
+                      .read(authProvider)
+                      .loginResponse!
+                      .hasPermission(Roles.firmaDeSupervisor)) {
+                    showCustomErrorSnackbar(
+                      context,
+                      'No tienes permiso para realizar esta accion.',
+                    );
+                    return;
+                  }
 
-            //       await ref
-            //           .read(supervisorAerolineaProvider.notifier)
-            //           .getSupervisores();
-            //       context.push('/firma-supervisor-screen');
-            //     },
-            //     child: Row(
-            //       children: [
-            //         Text(
-            //           'Firma del Supervisor',
-            //           style: Theme.of(context).textTheme.titleMedium?.copyWith(
-            //             fontWeight: FontWeight.w600,
-            //             // Rounded
+                  await ref
+                      .read(supervisorAerolineaProvider.notifier)
+                      .getSupervisores();
+                  context.push('/firma-supervisor-screen');
+                },
+                child: Row(
+                  children: [
+                    Text(
+                      'Firma del Supervisor',
+                      style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                        fontWeight: FontWeight.w600,
+                        // Rounded
 
-            //             // color: Colors.white,
-            //           ),
-            //         ),
-            //         SizedBox(width: 20),
-            //         FloatingActionButton.small(
-            //           heroTag: null,
-            //           backgroundColor: primaryColor,
-            //           onPressed: () {
-            //             print('Firma del Supervisor pressed - BUTTON');
-            //             context.push('/firma-supervisor-screen');
-            //             // close bottom sheet
-            //             // Navigator.pop(context);
-            //           },
-            //           shape: RoundedRectangleBorder(
-            //             borderRadius: BorderRadius.circular(50),
-            //           ),
-            //           child: Icon(Icons.edit, color: Colors.white),
-            //         ),
-            //       ],
-            //     ),
-            //   ),
+                        // color: Colors.white,
+                      ),
+                    ),
+                    SizedBox(width: 20),
+                    FloatingActionButton.small(
+                      heroTag: null,
+                      backgroundColor: primaryColor,
+                      onPressed: () {
+                        print('Firma del Supervisor pressed - BUTTON');
+                        context.push('/firma-supervisor-screen');
+                        // close bottom sheet
+                        // Navigator.pop(context);
+                      },
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(50),
+                      ),
+                      child: Icon(Icons.edit, color: Colors.white),
+                    ),
+                  ],
+                ),
+              ),
 
             // if (turnaround?.estatus == 2 ||
             //     turnaround?.estatus == 3 ||
@@ -477,7 +492,6 @@ class _DepartamentosViewState extends State<_DepartamentosView> {
         children: [
           // SizedBox(height: 8),
           Expanded(
-
             child: Column(
               mainAxisAlignment: MainAxisAlignment.start,
               children: [
@@ -810,6 +824,9 @@ class _TareaViewState extends State<_TareaView> {
                     indexAct: widget.indexAct,
                     indexDep: widget.indexDep,
                   ),
+                  12 => _TareaInternetView(tarea: widget.tarea),
+                  // TODO tipo 11 texto
+                  11 => _TareaTextoView(tarea: widget.tarea),
                   10 => _TareaLimpiezaView(tarea: widget.tarea),
                   // Default case
                   _ => _TareaHoraView(tarea: widget.tarea),
@@ -1215,7 +1232,7 @@ class _TareaHoraInicioFinView extends ConsumerWidget {
                     title: tarea.titulo,
                   ),
                 );
-                
+
                 print('Selected time: $selectedTime');
                 if (selectedTime != null) {
                   // TODO: Api call to update tarea with selected time
@@ -1620,6 +1637,706 @@ class _TareaHoraInicioFinView extends ConsumerWidget {
   }
 }
 
+class _TareaInternetView extends ConsumerWidget {
+  final Tarea tarea;
+  const _TareaInternetView({required this.tarea});
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final TextEditingController numberController = TextEditingController();
+    return Column(
+      children: [
+        // Download
+        Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            Row(
+              children: [
+                // Upload icon
+                // Icon(
+                //   Icons.download,
+                //   color: Theme.of(context).colorScheme.primary,
+                // ),
+                Text(
+                  'Descarga:',
+                  style: Theme.of(
+                    context,
+                  ).textTheme.titleSmall?.copyWith(fontWeight: FontWeight.w400),
+                ),
+                GestureDetector(
+                  onTap: () => _showInternetCantidadDialogAndSubmit(
+                    context,
+                    ref,
+                    tarea,
+                    'download',
+                  ),
+                  child: Container(
+                    margin: const EdgeInsets.only(left: 8),
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 8,
+                      vertical: 4,
+                    ),
+                    // min width: 100,
+                    constraints: const BoxConstraints(minWidth: 60),
+                    decoration: BoxDecoration(
+                      color: Colors.grey.shade200,
+                      borderRadius: BorderRadius.circular(8),
+                    ),
+                    child: Center(
+                      child: Text(
+                        tarea.cantidadDown?.toString() ?? '',
+                        style: Theme.of(context).textTheme.titleSmall?.copyWith(
+                          fontWeight: FontWeight.w600,
+                        ),
+                      ),
+                    ),
+                  ),
+                ),
+                SizedBox(width: 4),
+                const Text(
+                  "Mbps",
+                  style: TextStyle(fontSize: 14, color: Colors.black54),
+                ),
+              ],
+            ),
+
+            // Button to open dialog to set and submit cantidad
+            ElevatedButton(
+              // disable if isLoading
+              onPressed: () => _showInternetCantidadDialogAndSubmit(
+                context,
+                ref,
+                tarea,
+                'download',
+              ),
+              style: ElevatedButton.styleFrom(
+                shape: CircleBorder(),
+                padding: EdgeInsets.all(5),
+                fixedSize: const Size(45, 45),
+                backgroundColor: Theme.of(
+                  context,
+                ).colorScheme.primary, // <-- Button color
+                foregroundColor: Colors.red, // <-- Splash color
+              ),
+              child: Icon(
+                Icons.arrow_downward,
+                // Icons.upload,
+                color: Colors.white,
+                size: 32,
+              ),
+            ),
+          ],
+        ),
+
+        // Upload
+        Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            Row(
+              children: [
+                // Upload icon
+                // Icon(
+                //   Icons.upload,
+                //   color: Theme.of(context).colorScheme.primary,
+                // ),
+                Text(
+                  'Subida:',
+                  style: Theme.of(
+                    context,
+                  ).textTheme.titleSmall?.copyWith(fontWeight: FontWeight.w400),
+                ),
+
+                GestureDetector(
+                  onTap: () => _showInternetCantidadDialogAndSubmit(
+                    context,
+                    ref,
+                    tarea,
+                    'upload',
+                  ),
+                  child: Container(
+                    margin: const EdgeInsets.only(left: 8),
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 8,
+                      vertical: 4,
+                    ),
+                    // min width: 100,
+                    constraints: const BoxConstraints(minWidth: 60),
+                    decoration: BoxDecoration(
+                      color: Colors.grey.shade200,
+                      borderRadius: BorderRadius.circular(8),
+                    ),
+                    child: Center(
+                      child: Text(
+                        tarea.cantidadUp?.toString() ?? '',
+                        style: Theme.of(context).textTheme.titleSmall?.copyWith(
+                          fontWeight: FontWeight.w600,
+                        ),
+                      ),
+                    ),
+                  ),
+                ),
+                SizedBox(width: 4),
+                const Text(
+                  "Mbps",
+                  style: TextStyle(fontSize: 14, color: Colors.black54),
+                ),
+              ],
+            ),
+
+            // Button to open dialog to set and submit cantidad
+            ElevatedButton(
+              // disable if isLoading
+              onPressed: () => _showInternetCantidadDialogAndSubmit(
+                context,
+                ref,
+                tarea,
+                'upload',
+              ),
+              style: ElevatedButton.styleFrom(
+                shape: CircleBorder(),
+                padding: EdgeInsets.all(5),
+                fixedSize: const Size(45, 45),
+                backgroundColor: Theme.of(
+                  context,
+                ).colorScheme.primary, // <-- Button color
+                foregroundColor: Colors.red, // <-- Splash color
+              ),
+              child: Icon(
+                Icons.arrow_upward,
+                // Icons.upload,
+                color: Colors.white,
+                size: 32,
+              ),
+            ),
+          ],
+        ),
+      ],
+    );
+  }
+}
+
+Future<void> _showInternetCantidadDialogAndSubmit(
+  BuildContext context,
+  WidgetRef ref,
+  Tarea tarea,
+  String tipo,
+) async {
+  if (!ref
+      .read(authProvider)
+      .loginResponse!
+      .hasPermission(Roles.modificarControlDeActividades)) {
+    showCustomErrorSnackbar(
+      context,
+      'No tienes permiso para realizar esta accion.',
+    );
+    return;
+  }
+
+  final int? cantidadRecibida = await showDialog<int>(
+    context: context,
+    builder: (BuildContext context) {
+      return CantidadDialog(
+        // initialValue: tarea.numero ?? 0,
+        initialValue: tipo == 'download'
+            ? tarea.cantidadDown ?? 0
+            : tarea.cantidadUp ?? 0,
+        title: tarea.titulo,
+        maxQuantity: 99999,
+      );
+    },
+  );
+
+  if (cantidadRecibida == null) return;
+
+  final SetInternetTareaRequest body = SetInternetTareaRequest(
+    id: tarea.id,
+    numero: cantidadRecibida,
+    tipo: tipo,
+  );
+
+  print('Numero: $cantidadRecibida');
+
+  final trcId = ref.read(selectedTurnaroundProvider.notifier).state!.id;
+  final response = await ref
+      .read(controlActividadesProvider(trcId).notifier)
+      .setInternetSpeed(body);
+
+  if (!response.hasConnection) {
+    tarea.numero = cantidadRecibida;
+    CustomSnackbar.showWarningSnackbar(
+      response.message,
+      context,
+      isFixed: true,
+    );
+  }
+
+  CustomSnackbar.showResponseSnackbar(
+    response.message,
+    response.success,
+    context,
+    isFixed: true,
+  );
+}
+
+// class _TareaInternetView extends ConsumerWidget {
+//   final Tarea tarea;
+//   const _TareaInternetView({required this.tarea});
+
+//   @override
+//   Widget build(BuildContext context, WidgetRef ref) {
+//     // Loading indicator
+//     // Format time
+//     final timeFormat = DateFormat('HH:mm');
+
+//     // State to manage loading
+//     bool isLoading = ref.watch(isLoadingControlActividadesProvider);
+
+//     return Column(
+//       children: [
+//         // Hora de inicio
+//         Row(
+//           mainAxisAlignment: MainAxisAlignment.spaceBetween,
+//           children: [
+//             // ifLoading
+//             GestureDetector(
+//               behavior: HitTestBehavior.translucent,
+//               onTap: () async {
+//                 print('Hora inicio tapped');
+
+//                 // Rol Ckeck
+//                 if (!ref
+//                     .read(authProvider)
+//                     .loginResponse!
+//                     .hasPermission(Roles.modificarControlDeActividades)) {
+//                   showCustomErrorSnackbar(
+//                     context,
+//                     'No tienes permiso para realizar esta accion.',
+//                   );
+//                   return;
+//                 }
+
+//                 // Show time picker dialog
+//                 // final selectedTime =
+//                 //     await CustomTimePickerDialog.showTimePickerDialog(
+//                 //       context,
+//                 //       // ref,
+//                 //       tarea.horaInicio ?? DateTime.now(),
+//                 //       tarea.horaInicio != null
+//                 //           ? TimeOfDay.fromDateTime(tarea.horaInicio!)
+//                 //           : null,
+//                 //     );
+//                 final DateTime? selectedTime = await showDialog<DateTime>(
+//                   context: context,
+//                   builder: (context) => CustomDateTimePickerDialog(
+//                     initialDate: tarea.horaInicio ?? DateTime.now(),
+//                     title: tarea.titulo,
+//                   ),
+//                 );
+
+//                 print('Selected time: $selectedTime');
+//                 if (selectedTime != null) {
+//                   // TODO: Api call to update tarea with selected time
+//                   final response = await setHoraInicio(
+//                     ref,
+//                     tarea.id,
+//                     DateTime(
+//                       DateTime.now().year,
+//                       DateTime.now().month,
+//                       DateTime.now().day,
+//                       selectedTime.hour,
+//                       selectedTime.minute,
+//                       0,
+//                     ),
+//                     'Hora de Inicio',
+//                   );
+
+//                   if (!response.hasConnection) {
+//                     // set manually the time locally in the riverpo state
+//                     // setState(() {
+
+//                     tarea.horaInicio = DateTime(
+//                       DateTime.now().year,
+//                       DateTime.now().month,
+//                       DateTime.now().day,
+//                       selectedTime.hour,
+//                       selectedTime.minute,
+//                       0,
+//                     );
+//                     // });
+//                     // Show snackbar warning
+//                     CustomSnackbar.showWarningSnackbar(
+//                       response.message,
+//                       // ignore: use_build_context_synchronously
+//                       context,
+//                       isFixed: true,
+//                     );
+//                     // return;
+//                   } else {
+//                     // Show snackbar response
+//                     CustomSnackbar.showResponseSnackbar(
+//                       response.message,
+//                       response.success,
+//                       // ignore: use_build_context_synchronously
+//                       context,
+//                       isFixed: true,
+//                     );
+//                   }
+//                   ref
+//                       .read(isLoadingControlActividadesProvider.notifier)
+//                       .update((state) => false);
+//                 }
+//               },
+//               child: SizedBox(
+//                 // width: 100,
+//                 child: Row(
+//                   children: [
+//                     Text(
+//                       'Hora inicio',
+//                       style: Theme.of(context).textTheme.titleSmall?.copyWith(
+//                         fontWeight: FontWeight.w400,
+//                       ),
+//                     ),
+//                     Container(
+//                       margin: const EdgeInsets.only(left: 8),
+//                       padding: const EdgeInsets.symmetric(
+//                         horizontal: 8,
+//                         vertical: 4,
+//                       ),
+//                       // min width: 100,
+//                       constraints: const BoxConstraints(minWidth: 60),
+//                       decoration: BoxDecoration(
+//                         color: Colors.grey.shade200,
+//                         borderRadius: BorderRadius.circular(8),
+//                       ),
+//                       child: Text(
+//                         (tarea.horaInicio != null
+//                                 ? timeFormat.format(tarea.horaInicio!)
+//                                 : '')
+//                             .toString(),
+//                         style: Theme.of(context).textTheme.titleSmall?.copyWith(
+//                           fontWeight: FontWeight.w600,
+//                         ),
+//                       ),
+//                     ),
+//                   ],
+//                 ),
+//               ),
+//             ),
+
+//             // Rounded button to set current time
+//             isLoading
+//                 ? Padding(
+//                     padding: const EdgeInsets.only(right: 8),
+//                     child: SizedBox(
+//                       height: 25.0,
+//                       width: 25.0,
+//                       child: Center(
+//                         child: CircularProgressIndicator(
+//                           color: Theme.of(context).colorScheme.primary,
+//                           strokeWidth: 3.0,
+//                         ),
+//                       ),
+//                     ),
+//                   )
+//                 : ElevatedButton(
+//                     // disable if isLoading
+//                     onPressed: () async {
+//                       if (isLoading) return;
+//                       // Show loading indicator
+
+//                       // Rol Ckeck
+//                       if (!ref
+//                           .read(authProvider)
+//                           .loginResponse!
+//                           .hasPermission(Roles.modificarControlDeActividades)) {
+//                         showCustomErrorSnackbar(
+//                           context,
+//                           'No tienes permiso para realizar esta accion.',
+//                         );
+//                         return;
+//                       }
+
+//                       ref
+//                           .read(isLoadingControlActividadesProvider.notifier)
+//                           .update((state) => true);
+//                       // wait 3 seconds
+//                       // await Future.delayed(const Duration(seconds: 3));
+//                       final response = await setHoraInicio(
+//                         ref,
+//                         tarea.id,
+//                         DateTime.now(),
+//                         'Hora de Inicio',
+//                       );
+
+//                       if (!response.hasConnection) {
+//                         // set manually the time locally in the riverpo state
+//                         tarea.horaInicio = DateTime.now();
+//                         // Show snackbar warning
+//                         CustomSnackbar.showWarningSnackbar(
+//                           response.message,
+//                           // ignore: use_build_context_synchronously
+//                           context,
+//                           isFixed: true,
+//                         );
+//                         // return;
+//                       } else {
+//                         CustomSnackbar.showResponseSnackbar(
+//                           response.message,
+//                           response.success,
+//                           // ignore: use_build_context_synchronously
+//                           context,
+//                           isFixed: true,
+//                         );
+//                       }
+
+//                       ref
+//                           .read(isLoadingControlActividadesProvider.notifier)
+//                           .update((state) => false);
+//                     },
+//                     style: ElevatedButton.styleFrom(
+//                       // shape: RoundedRectangleBorder(
+//                       //   borderRadius: BorderRadius.circular(8),
+//                       // ),
+//                       shape: const CircleBorder(),
+//                       padding: EdgeInsets.all(5),
+//                       fixedSize: const Size(45, 45),
+//                       backgroundColor: Theme.of(
+//                         context,
+//                       ).colorScheme.primary, // <-- Button color
+//                       foregroundColor: Colors.red, // <-- Splash color
+//                     ),
+//                     child: Icon(
+//                       Icons.access_time,
+//                       color: Colors.white,
+//                       size: 32,
+//                     ),
+//                   ),
+//           ],
+//         ),
+
+//         // Hora Final
+//         Row(
+//           mainAxisAlignment: MainAxisAlignment.spaceBetween,
+//           children: [
+//             // ifLoading
+//             GestureDetector(
+//               behavior: HitTestBehavior.translucent,
+//               onTap: () async {
+//                 // Show time picker dialog
+
+//                 // Rol Ckeck
+//                 if (!ref
+//                     .read(authProvider)
+//                     .loginResponse!
+//                     .hasPermission(Roles.modificarControlDeActividades)) {
+//                   showCustomErrorSnackbar(
+//                     context,
+//                     'No tienes permiso para realizar esta accion.',
+//                   );
+//                   return;
+//                 }
+
+//                 // final selectedTime =
+//                 //     await CustomTimePickerDialog.showTimePickerDialog(
+//                 //       context,
+//                 //       tarea.horaFin ?? DateTime.now(),
+//                 //       tarea.horaFin != null
+//                 //           ? TimeOfDay.fromDateTime(tarea.horaFin!)
+//                 //           : null,
+//                 //     );
+
+//                 final DateTime? selectedTime = await showDialog<DateTime>(
+//                   context: context,
+//                   builder: (context) => CustomDateTimePickerDialog(
+//                     initialDate: tarea.horaFin ?? DateTime.now(),
+//                     title: tarea.titulo,
+//                   ),
+//                 );
+//                 if (selectedTime != null) {
+//                   // TODO: Api call to update tarea with selected time
+//                   final response = await setHoraInicio(
+//                     ref,
+//                     tarea.id,
+//                     DateTime(
+//                       DateTime.now().year,
+//                       DateTime.now().month,
+//                       DateTime.now().day,
+//                       selectedTime.hour,
+//                       selectedTime.minute,
+//                       0,
+//                     ),
+//                     'Hora final',
+//                   );
+
+//                   if (!response.hasConnection) {
+//                     // set manually the time locally in the riverpo state
+//                     // setState(() {
+
+//                     tarea.horaFin = DateTime(
+//                       DateTime.now().year,
+//                       DateTime.now().month,
+//                       DateTime.now().day,
+//                       selectedTime.hour,
+//                       selectedTime.minute,
+//                       0,
+//                     );
+//                     // });
+//                     // Show snackbar warning
+//                     CustomSnackbar.showWarningSnackbar(
+//                       response.message,
+//                       // ignore: use_build_context_synchronously
+//                       context,
+//                       isFixed: true,
+//                     );
+//                     // return;
+//                   } else {
+//                     // Show snackbar response
+//                     CustomSnackbar.showResponseSnackbar(
+//                       response.message,
+//                       response.success,
+//                       // ignore: use_build_context_synchronously
+//                       context,
+//                       isFixed: true,
+//                     );
+//                   }
+//                   // controlActividadesState  set isloading to false
+//                   // ref
+//                   //   .read(controlActividadesProvider(ref.read(trcIdProvider)))
+//                   //   .copyWith();
+
+//                   ref
+//                       .read(isLoadingControlActividadesProvider.notifier)
+//                       .update((state) => false);
+//                 }
+//               },
+//               child: SizedBox(
+//                 // width: 100,
+//                 child: Row(
+//                   children: [
+//                     Text(
+//                       'Hora final:',
+//                       style: Theme.of(context).textTheme.titleSmall?.copyWith(
+//                         fontWeight: FontWeight.w400,
+//                       ),
+//                     ),
+//                     Container(
+//                       margin: const EdgeInsets.only(left: 8),
+//                       padding: const EdgeInsets.symmetric(
+//                         horizontal: 8,
+//                         vertical: 4,
+//                       ),
+//                       // min width: 100,
+//                       constraints: const BoxConstraints(minWidth: 60),
+//                       decoration: BoxDecoration(
+//                         color: Colors.grey.shade200,
+//                         borderRadius: BorderRadius.circular(8),
+//                       ),
+//                       child: Text(
+//                         (tarea.horaFin != null
+//                                 ? timeFormat.format(tarea.horaFin!)
+//                                 : '')
+//                             .toString(),
+//                         style: Theme.of(context).textTheme.titleSmall?.copyWith(
+//                           fontWeight: FontWeight.w600,
+//                         ),
+//                       ),
+//                     ),
+//                   ],
+//                 ),
+//               ),
+//             ),
+
+//             // Rounded button to set current time
+//             isLoading
+//                 ? Padding(
+//                     padding: const EdgeInsets.only(right: 8),
+//                     child: SizedBox(
+//                       height: 25.0,
+//                       width: 25.0,
+//                       child: Center(
+//                         child: CircularProgressIndicator(
+//                           color: Theme.of(context).colorScheme.primary,
+//                           strokeWidth: 3.0,
+//                         ),
+//                       ),
+//                     ),
+//                   )
+//                 : ElevatedButton(
+//                     // disable if isLoading
+//                     onPressed: () async {
+//                       if (isLoading) return;
+//                       // Show loading indicator
+
+//                       // Rol Ckeck
+//                       if (!ref
+//                           .read(authProvider)
+//                           .loginResponse!
+//                           .hasPermission(Roles.modificarControlDeActividades)) {
+//                         showCustomErrorSnackbar(
+//                           context,
+//                           'No tienes permiso para realizar esta accion.',
+//                         );
+//                         return;
+//                       }
+
+//                       ref
+//                           .read(isLoadingControlActividadesProvider.notifier)
+//                           .update((state) => true);
+//                       // wait 3 seconds
+//                       // await Future.delayed(const Duration(seconds: 3));
+//                       final response = await setHoraInicio(
+//                         ref,
+//                         tarea.id,
+//                         DateTime.now(),
+//                         'Hora final',
+//                       );
+
+//                       if (!response.hasConnection) {
+//                         // set manually the time locally in the riverpo state
+//                         tarea.horaFin = DateTime.now();
+//                         // Show snackbar warning
+//                         CustomSnackbar.showWarningSnackbar(
+//                           response.message,
+//                           // ignore: use_build_context_synchronously
+//                           context,
+//                           isFixed: true,
+//                         );
+//                         // return;
+//                       } else {
+//                         CustomSnackbar.showResponseSnackbar(
+//                           response.message,
+//                           response.success,
+//                           // ignore: use_build_context_synchronously
+//                           context,
+//                           isFixed: true,
+//                         );
+//                       }
+//                       ref
+//                           .read(isLoadingControlActividadesProvider.notifier)
+//                           .update((state) => false);
+//                     },
+//                     style: ElevatedButton.styleFrom(
+//                       shape: CircleBorder(),
+//                       padding: EdgeInsets.all(5),
+//                       fixedSize: const Size(45, 45),
+//                       backgroundColor: Theme.of(
+//                         context,
+//                       ).colorScheme.primary, // <-- Button color
+//                       foregroundColor: Colors.red, // <-- Splash color
+//                     ),
+//                     child: Icon(
+//                       Icons.access_time,
+//                       color: Colors.white,
+//                       size: 32,
+//                     ),
+//                   ),
+//           ],
+//         ),
+//       ],
+//     );
+//   }
+// }
+
 class _TareaCantidadView extends ConsumerWidget {
   final Tarea tarea;
   const _TareaCantidadView({required this.tarea});
@@ -1641,7 +2358,8 @@ class _TareaCantidadView extends ConsumerWidget {
                   ).textTheme.titleSmall?.copyWith(fontWeight: FontWeight.w400),
                 ),
                 GestureDetector(
-                  onTap: () => _showCantidadDialogAndSubmit(context, ref, tarea),
+                  onTap: () =>
+                      _showCantidadDialogAndSubmit(context, ref, tarea),
                   child: Container(
                     margin: const EdgeInsets.only(left: 8),
                     padding: const EdgeInsets.symmetric(
@@ -1670,7 +2388,8 @@ class _TareaCantidadView extends ConsumerWidget {
             // Button to open dialog to set and submit cantidad
             ElevatedButton(
               // disable if isLoading
-              onPressed:() => _showCantidadDialogAndSubmit(context, ref, tarea),
+              onPressed: () =>
+                  _showCantidadDialogAndSubmit(context, ref, tarea),
               style: ElevatedButton.styleFrom(
                 shape: CircleBorder(),
                 padding: EdgeInsets.all(5),
@@ -2387,13 +3106,191 @@ class _ListadoMaquinariasConTiempoView extends ConsumerWidget {
   }
 }
 
-class _TareaTextoView extends StatelessWidget {
+Future<void> _showComentarioTextoDialog({
+  required BuildContext context,
+  required WidgetRef ref,
+  required String title,
+  required String initialText,
+  required Future<void> Function(String text) onSave,
+}) async {
+  final TextEditingController textController = TextEditingController(
+    text: initialText,
+  );
+
+  await showDialog<void>(
+    context: context,
+    builder: (BuildContext context) {
+      return AlertDialog(
+        backgroundColor: Colors.white,
+        title: Text(title),
+        content: TextField(
+          controller: textController,
+          maxLines: null,
+          minLines: 3,
+          keyboardType: TextInputType.multiline,
+          decoration: InputDecoration(
+            hintText: 'Escriba su comentario...',
+            border: null,
+            filled: true,
+            fillColor: Colors.grey[200],
+          ),
+        ),
+        actions: <Widget>[
+          FilledButton(
+            style: FilledButton.styleFrom(
+              backgroundColor: Colors.grey,
+              shape: const RoundedRectangleBorder(
+                borderRadius: BorderRadius.all(Radius.circular(30)),
+              ),
+            ),
+            onPressed: () {
+              Navigator.pop(context);
+              textController.clear();
+            },
+            child: const Text(
+              'Salir',
+              style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+            ),
+          ),
+          CustomFilledButton(
+            text: 'Guardar',
+            onPressed: () async {
+              await onSave(textController.text);
+              Navigator.pop(context);
+              textController.clear();
+            },
+          ),
+        ],
+      );
+    },
+  );
+}
+
+class _TareaTextoView extends ConsumerWidget {
   final Tarea tarea;
   const _TareaTextoView({required this.tarea});
 
   @override
-  Widget build(BuildContext context) {
-    return Container();
+  Widget build(BuildContext context, WidgetRef ref) {
+    return Column(
+      children: [
+        Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            Text(
+              "Texto",
+              style: Theme.of(
+                context,
+              ).textTheme.titleSmall?.copyWith(fontWeight: FontWeight.w400),
+            ),
+            ElevatedButton(
+              // disable if isLoading
+              onPressed: () async {
+            await _showComentarioTextoDialog(
+              context: context,
+              ref: ref,
+              title: tarea.titulo,
+              initialText: tarea.texto ?? '',
+              onSave: (texto) async {
+                final SetTextoRequest body = SetTextoRequest(
+                  id: tarea.id,
+                  texto: texto,
+                );
+
+                print("Texto: ${body.texto}");
+                final trcId = ref
+                    .read(selectedTurnaroundProvider.notifier)
+                    .state!
+                    .id;
+                final response = await ref
+                    .read(controlActividadesProvider(trcId).notifier)
+                    .setTexto(body);
+                if (!response.hasConnection) {
+                  tarea.texto = texto;
+                  CustomSnackbar.showWarningSnackbar(
+                    response.message,
+                    context,
+                    isFixed: true,
+                  );
+                }
+
+                CustomSnackbar.showResponseSnackbar(
+                  response.message,
+                  response.success,
+                  context,
+                  isFixed: true,
+                );
+              },
+            );
+          },
+              style: ElevatedButton.styleFrom(
+                shape: CircleBorder(),
+                padding: EdgeInsets.all(5),
+                fixedSize: const Size(45, 45),
+                backgroundColor: Theme.of(
+                  context,
+                ).colorScheme.primary, // <-- Button color
+                foregroundColor: Colors.red, // <-- Splash color
+              ),
+              child: Icon(Icons.edit_note, color: Colors.white, size: 32),
+            ),
+          ],
+        ),
+
+        // Grey container to display the comment
+        GestureDetector(
+          child: Container(
+            width: double.infinity,
+            padding: const EdgeInsets.all(10),
+            margin: const EdgeInsets.symmetric(vertical: 10),
+            decoration: BoxDecoration(
+              color: Colors.grey.shade200,
+              borderRadius: BorderRadius.circular(10),
+            ),
+            child: Text(tarea.texto ?? ''),
+          ),
+          onTap: () async {
+            await _showComentarioTextoDialog(
+              context: context,
+              ref: ref,
+              title: tarea.titulo,
+              initialText: tarea.texto ?? '',
+              onSave: (texto) async {
+                final SetTextoRequest body = SetTextoRequest(
+                  id: tarea.id,
+                  texto: texto,
+                );
+
+                print("Texto: ${body.texto}");
+                final trcId = ref
+                    .read(selectedTurnaroundProvider.notifier)
+                    .state!
+                    .id;
+                final response = await ref
+                    .read(controlActividadesProvider(trcId).notifier)
+                    .setTexto(body);
+                if (!response.hasConnection) {
+                  tarea.texto = texto;
+                  CustomSnackbar.showWarningSnackbar(
+                    response.message,
+                    context,
+                    isFixed: true,
+                  );
+                }
+
+                CustomSnackbar.showResponseSnackbar(
+                  response.message,
+                  response.success,
+                  context,
+                  isFixed: true,
+                );
+              },
+            );
+          },
+        ),
+        // Text(tarea.comentario ?? ''),
+      ],
+    );
   }
 }
 

@@ -30,3 +30,5 @@ export 'consultar_servicios_miscelaneos.dart';
 export 'control_actividades_servicios_miscelaneos.dart';
 
 export 'cerrar_vuelo_servicio_miscelaneo_screen.dart';
+
+export 'asignar_equipos_it_screen.dart';

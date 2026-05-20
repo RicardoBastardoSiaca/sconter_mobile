@@ -52,6 +52,7 @@ abstract class TurnaroundsDatasource {
   );
 
   Future<SimpleApiResponse> asignarEquiposGSE(Map<String, dynamic> body);
+  Future<SimpleApiResponse> asignarEquipoIt(Map<String, dynamic> body);
 
   Future<SimpleApiResponse> asignarMaquinariasTareas(Map<String, dynamic> body);
 
@@ -62,6 +63,10 @@ abstract class TurnaroundsDatasource {
   Future<SimpleApiResponse> setComentario(ComentarioRequest body);
 
   Future<SimpleApiResponse> setNumero(SetNumeroTareaRequest body);
+
+  Future<SimpleApiResponse> setTexto(SetTextoRequest body);
+  
+  Future<SimpleApiResponse> setInternetSpeed(SetInternetTareaRequest body);
 
   Future<SimpleApiResponse> savePasajeros(SavePasajerosRequest body);
 

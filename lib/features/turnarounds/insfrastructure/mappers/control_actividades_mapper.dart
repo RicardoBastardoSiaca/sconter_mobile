@@ -142,6 +142,9 @@ class ControlActividadesMapper {
       equipo: json["equipo"].toList().isEmpty
           ? null
           : List<dynamic>.from(json["equipo"].map((x) => x)),
+          // float to int
+      cantidadDown:  json["cantidad_down"]?.toInt(),
+      cantidadUp: json["cantidad_up"]?.toInt(),
     );
   }
 

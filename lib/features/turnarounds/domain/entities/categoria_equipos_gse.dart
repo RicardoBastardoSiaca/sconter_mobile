@@ -4,8 +4,8 @@ class CategoriasEquiposGseResponse {
   List<CategoriaEquiposGse> categoriasEquiposGse = [];
   bool crear;
   String fecha;
-  String horaF;
-  String horaI;
+  String? horaF;
+  String? horaI;
   int idTurnaround;
   bool modificar;
 
@@ -13,8 +13,8 @@ class CategoriasEquiposGseResponse {
     required this.categoriasEquiposGse,
     required this.crear,
     required this.fecha,
-    required this.horaF,
-    required this.horaI,
+    this.horaF,
+    this.horaI,
     required this.idTurnaround,
     required this.modificar,
   });
@@ -82,5 +82,24 @@ class AsignarEquiposDialogData {
     required this.servicioAdicional,
     required this.turnaround,
     required this.tipoAsignacion,
+  });
+}
+
+// Entidad para validar objeto leido por lector qr
+class QrResponseEquiposIt {
+  final int id;
+  final String identificador;
+  final String modelo;
+  final String categoria;
+  final String marca;
+  final String serial;
+
+  QrResponseEquiposIt({
+    required this.id,
+    required this.identificador,
+    required this.modelo,
+    required this.categoria,
+    required this.marca,
+    required this.serial,
   });
 }

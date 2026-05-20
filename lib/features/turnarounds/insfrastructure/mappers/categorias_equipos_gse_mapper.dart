@@ -8,8 +8,8 @@ class CategoriasEquiposGseMapper {
       // categoriasEquiposGse:
       crear: json['crear'],
       fecha: json['fecha'] ?? '',
-      horaF: json['horaF'],
-      horaI: json['horaI'],
+      horaF: json['horaF'] ?? '',
+      horaI: json['horaI'] ?? '',
       idTurnaround: json['id_turnaround'],
       modificar: json['modificar'],
       categoriasEquiposGse: List<CategoriaEquiposGse>.from(
@@ -27,7 +27,7 @@ class CategoriasEquiposGseMapper {
   ) {
     return CategoriaEquiposGse(
       idCategoria: json['id_categoria'],
-      cantidadMaquinaria: json['cantidad_maquinaria'],
+      cantidadMaquinaria: json['cantidad_maquinaria'] ?? 0,
       categoriaNombre: json['categoria_nombre'],
       maquinarias: List<MaquinariaCategoriaEquipos>.from(
         json['maquinarias'].map((x) => mapJsonToMaquinariaCategoriaEquipos(x)),
@@ -41,12 +41,26 @@ class CategoriasEquiposGseMapper {
   ) {
     return MaquinariaCategoriaEquipos(
       id: json['id'],
-      combustible: json['combustible'],
+      combustible: json['combustible'] ?? '',
       identificador: json['identificador'],
       modelo: json['modelo'],
       ocupado: json['ocupado'],
       selected: json['selected'],
       selectedTask: false,
+    );
+  }
+
+  // Mapper para clase QrResponseEquiposIt 
+  static QrResponseEquiposIt mapJsonToQrResponseEquiposIt(
+    Map<String, dynamic> json,
+  ) {
+    return QrResponseEquiposIt(
+      id: json['id'],
+      identificador: json['identificador'] ?? '',
+      modelo: json['modelo'] ?? '',
+      categoria: json['categoria'] ?? '',
+      marca: json['marca'] ?? '',
+      serial: json['serial'] ?? '',
     );
   }
 }
