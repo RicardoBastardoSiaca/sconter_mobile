@@ -335,6 +335,8 @@ class Tarea {
   // Map<String, int>? pasajeros;
   ConteoPasajeros? pasajeros;
   List<dynamic>? equipo;
+  int? cantidadUp;
+  int? cantidadDown;
   bool isExpanded;
 
   Tarea({
@@ -359,6 +361,8 @@ class Tarea {
     this.imagen,
     this.pasajeros,
     this.equipo,
+    this.cantidadUp,
+    this.cantidadDown,
     this.isExpanded = true,
   });
 
@@ -432,11 +436,12 @@ class ConteoPasajeros {
       );
 
   Map<String, dynamic> toJson() => {
-        "ejecutivo": ejecutivo,
-        "economica": economica,
-        "infante": infante,
-      };
+    "ejecutivo": ejecutivo,
+    "economica": economica,
+    "infante": infante,
+  };
 }
+
 class Imagen {
   int id;
   String? imagen;
@@ -444,8 +449,11 @@ class Imagen {
 
   Imagen({required this.id, required this.imagen, sharedMessage = ''});
 
-  factory Imagen.fromJson(Map<String, dynamic> json) =>
-      Imagen(id: json["id"], imagen: json["imagen"], sharedMessage: json["shareMessage"]);
+  factory Imagen.fromJson(Map<String, dynamic> json) => Imagen(
+    id: json["id"],
+    imagen: json["imagen"],
+    sharedMessage: json["shareMessage"],
+  );
 
   Map<String, dynamic> toJson() => {"id": id, "imagen": imagen};
 }
@@ -461,6 +469,7 @@ enum TipoNombre {
   EQUIPAJE,
   EQUIPOS_IT,
   EQUIPO_DE_LIMPIEZA,
+  INTERNET,
 }
 
 final tipoNombreValues = EnumValues({
@@ -476,6 +485,7 @@ final tipoNombreValues = EnumValues({
   "Equipaje": TipoNombre.EQUIPAJE,
   "Equipos IT": TipoNombre.EQUIPOS_IT,
   "Equipo De Limpieza": TipoNombre.EQUIPO_DE_LIMPIEZA,
+  "Internet": TipoNombre.INTERNET,
 });
 
 class ServiciosAle {
@@ -629,12 +639,25 @@ class ComentarioRequest {
 
   ComentarioRequest({required this.id, required this.comentario});
 }
+class SetTextoRequest {
+  int id;
+  String texto;
+
+  SetTextoRequest({required this.id, required this.texto});
+}
 
 class SetNumeroTareaRequest {
   int id;
   int numero;
 
   SetNumeroTareaRequest({required this.id, required this.numero});
+}
+class SetInternetTareaRequest {
+  int id;
+  int numero;
+  String tipo;
+
+  SetInternetTareaRequest({required this.id, required this.numero, required this.tipo});
 }
 
 class SavePasajerosRequest {

@@ -52,6 +52,10 @@ final goRouterProvider = Provider((ref) {
         builder: (context, state) => AsignarEquiposGseScreen(),
       ),
       GoRoute(
+        path: '/asignar-equipos-it',
+        builder: (context, state) => AsignarEquiposItScreen(),
+      ),
+      GoRoute(
         path: '/asignar-personal',
         builder: (context, state) => AsignarPersonalScreen(),
       ),

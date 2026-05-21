@@ -61,10 +61,10 @@ class CategoriasEquiposGseNotifier
     // state = state.copyWith(isLoading: true);
     final body = {
       "id_turnaround": trcId,
-      "horaI": horaI,
-      "horaF": horaF,
-      "fecha": fecha,
-      "tipoAsignacion": 'tarea',
+      // "horaI": horaI,
+      // "horaF": horaF,
+      // "fecha": fecha,
+      // "tipoAsignacion": 'tarea',
     };
     try {
       final categoriasEquiposGseResponse = await turnaroundsRepository
@@ -77,7 +77,8 @@ class CategoriasEquiposGseNotifier
       // print("Control de Actividades: $controlDeActividades");
     } catch (e) {
       // print("Error getting control de actividades: $e");
-      print('Error $e');
+      print('Error $e'
+      );
       // state = state.copyWith(isLoading: false);
     } finally {
       state = state.copyWith(isLoading: false);
@@ -132,6 +133,30 @@ class CategoriasEquiposGseNotifier
       // print("Error deleting image: $e");
       return SnackbarResponse(
         message: 'Ha ocurrido un error al asignar los equipos GSE.',
+        success: false,
+      );
+    }
+  }
+  Future<SnackbarResponse> asignarEquipoIt(Map<String, dynamic> body) async {
+    try {
+      final response = await turnaroundsRepository.asignarEquipoIt(body);
+      if (response.success) {
+        // snackbar response
+        getCategoriasEquiposGse();
+        return SnackbarResponse(
+          message: 'Equipos IT asignados.',
+          success: true,
+        );
+      } else {
+        return SnackbarResponse(
+          message: 'Error al asignar los equipos IT.',
+          success: false,
+        );
+      }
+    } catch (e) {
+      // print("Error deleting image: $e");
+      return SnackbarResponse(
+        message: 'Ha ocurrido un error al asignar los equipos IT.',
         success: false,
       );
     }

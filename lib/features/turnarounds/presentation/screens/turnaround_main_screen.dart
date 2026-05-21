@@ -670,6 +670,20 @@ class _MenuDialog extends ConsumerWidget {
           //         showCustomErrorSnackbar(  context, 'No tienes permiso para asignar equipos GSE.');
           //         return;
           //       }
+          // if (turnaround.estatus == 1 ||
+          //     turnaround.estatus == 2 ||
+          //     turnaround.estatus == 3)
+          //   MenuListTile(
+          //     leading: Icon(Icons.agriculture),
+          //     title: 'Asignar equipos GSE',
+          //     onTap: () {
+          //       // print("onItemTap");
+
+          //       // Rol Ckeck
+          //       if (!ref.read(authProvider).loginResponse!.hasPermission( Roles.asignarMaquinaria)) {
+          //         showCustomErrorSnackbar(  context, 'No tienes permiso para asignar equipos GSE.');
+          //         return;
+          //       }
 
           //       // set selectedTurnaroundProvider
           //       ref.read(selectedTurnaroundProvider.notifier).state =
@@ -682,46 +696,73 @@ class _MenuDialog extends ConsumerWidget {
           //       Navigator.pop(context);
           //     },
           //   ),
+          
+          if (turnaround.estatus == 1 ||
+              turnaround.estatus == 2 ||
+              turnaround.estatus == 3)
+            MenuListTile(
+              leading: Icon(Icons.computer),
+              title: 'Asignar equipos IT',
+              onTap: () {
+                // print("onItemTap");
 
-          // scanner test
-          MenuListTile(
-              leading: Icon(Icons.start),
-              title: 'QR Scanner',
-              onTap: () async {
-                print("onItemTap");
-
-                // void _onScanPressed() async {
-                  // 1. Llamar al servicio y esperar el resultado
-                  final String? result = await ScannerService.scanCode(
-                    context, 
-                    title: "Escanear Producto"
-                  );
-
-                  // 2. Si el resultado no es nulo, procesar el código
-                  if (result != null) {
-                    debugPrint("Código QR/Barras detectado: $result");
-                    
-                    // Aquí puedes mostrar un mensaje, navegar a otra pantalla o 
-                    // usar el resultado para buscar en una base de datos.
-                    ScaffoldMessenger.of(context).showSnackBar(
-                      SnackBar(content: Text("Código detectado: $result")),
-                    );
-                  } else {
-                    debugPrint("El usuario canceló el escaneo.");
-                  }
-                // }
                 // Rol Ckeck
-                // if (!ref.read(authProvider).loginResponse!.hasPermission( Roles.empezarOperaciones)) {
-                //   showCustomErrorSnackbar(  context, 'No tienes permiso para iniciar operaciones.');
-                //   return;
-                // }
+                if (!ref.read(authProvider).loginResponse!.hasPermission( Roles.asignarMaquinaria)) {
+                  showCustomErrorSnackbar(  context, 'No tienes permiso para asignar equipos IT.');
+                  return;
+                }
 
+                // set selectedTurnaroundProvider
+                ref.read(selectedTurnaroundProvider.notifier).state =
+                    turnaround;
+
+                print("selectedTurnaroundProvider: $turnaround");
                 // push
-                // await iniciarOperaciones(context, ref, turnaround.id);
+                context.push('/asignar-equipos-it');
                 // close bottom sheet
-                // Navigator.pop(context);
+                Navigator.pop(context);
               },
             ),
+
+          // scanner test
+          // MenuListTile(
+          //     leading: Icon(Icons.start),
+          //     title: 'QR Scanner',
+          //     onTap: () async {
+          //       print("onItemTap");
+
+          //       // void _onScanPressed() async {
+          //         // 1. Llamar al servicio y esperar el resultado
+          //         final String? result = await ScannerService.scanCode(
+          //           context, 
+          //           title: "Escanear Producto"
+          //         );
+
+          //         // 2. Si el resultado no es nulo, procesar el código
+          //         if (result != null) {
+          //           debugPrint("Código QR/Barras detectado: $result");
+                    
+          //           // Aquí puedes mostrar un mensaje, navegar a otra pantalla o 
+          //           // usar el resultado para buscar en una base de datos.
+          //           ScaffoldMessenger.of(context).showSnackBar(
+          //             SnackBar(content: Text("Código detectado: $result")),
+          //           );
+          //         } else {
+          //           debugPrint("El usuario canceló el escaneo.");
+          //         }
+          //       // }
+          //       // Rol Ckeck
+          //       // if (!ref.read(authProvider).loginResponse!.hasPermission( Roles.empezarOperaciones)) {
+          //       //   showCustomErrorSnackbar(  context, 'No tienes permiso para iniciar operaciones.');
+          //       //   return;
+          //       // }
+
+          //       // push
+          //       // await iniciarOperaciones(context, ref, turnaround.id);
+          //       // close bottom sheet
+          //       // Navigator.pop(context);
+          //     },
+          //   ),
 
 
           if (turnaround.estatus == 1)

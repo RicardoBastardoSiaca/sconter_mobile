@@ -108,6 +108,10 @@ class TurnaroundsRepositoryImpl extends TurnaroundsRepository {
   Future<SimpleApiResponse> setNumero(SetNumeroTareaRequest body) {
     return datasource.setNumero(body);
   }
+  @override
+  Future<SimpleApiResponse> setTexto(SetTextoRequest body) {
+    return datasource.setTexto(body);
+  }
 
   @override
   Future<SimpleApiResponse> savePasajeros(SavePasajerosRequest body) {
@@ -281,5 +285,15 @@ class TurnaroundsRepositoryImpl extends TurnaroundsRepository {
   @override
   Future<SimpleApiResponse> finalizarActividadesSinFirma(int id) {
     return datasource.finalizarActividadesSinFirma(id);
+  }
+  
+  @override
+  Future<SimpleApiResponse> setInternetSpeed(SetInternetTareaRequest body) {
+    return datasource.setInternetSpeed(body);
+  }
+  
+  @override
+  Future<SimpleApiResponse> asignarEquipoIt(Map<String, dynamic> body) {
+    return datasource.asignarEquipoIt(body);
   }
 }

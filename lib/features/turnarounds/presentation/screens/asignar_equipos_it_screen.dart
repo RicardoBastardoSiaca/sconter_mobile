@@ -1,43 +1,195 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:scounter_mobile/features/turnarounds/insfrastructure/infrastructure.dart';
 
 import '../../../shared/shared.dart';
 import '../../domain/domain.dart';
 import '../providers/providers.dart';
 // import '../widgets/widgets.dart';
 
-class AsignarEquiposGseScreen extends ConsumerWidget {
-  const AsignarEquiposGseScreen({super.key});
+class AsignarEquiposItScreen extends ConsumerWidget {
+  const AsignarEquiposItScreen({super.key});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     // final turnaround = ref.watch(selectedTurnaroundProvider);
 
     return Scaffold(
-      appBar: AppBar(title: Text('Asignar Equipos GSE')),
-      body: _AsignarEquiposGseView(),
+      appBar: AppBar(
+        title: Text('Asignar Equipos IT'),
+        actions: [
+          IconButton(
+            onPressed: () async {
+              // ref.read(categoriasEquiposGseProvider.notifier).getCategoriasEquiposGse();
+              // ref.read(newCategoriasEquiposGseProvider.notifier).state = [];
+              // ref.read(categoriasEquiposGseProvider.notifier).getCategoriasEquiposGse();
+
+              final String? result = await ScannerService.scanCode(
+                context,
+                title: "Escanear Producto",
+              );
+
+              // 2. Si el resultado no es nulo, procesar el código
+              if (result != null) {
+                debugPrint("Código QR/Barras detectado: $result");
+
+                try {
+                  // validar json result con la clase QrResponseEquiposIt - mapJsonToQrResponseEquiposIt
+                  final jsonResult = json.decode(result);
+                  final qrResponse =
+                      CategoriasEquiposGseMapper.mapJsonToQrResponseEquiposIt(
+                        jsonResult,
+                      );
+
+                  final bool? confirmation = await showConfirmationDialogNoClose(
+                    context: context,
+                    title: 'Asignar Equipo IT',
+                    message: 'Esta seguro de asignar este equipo?',
+                    // confirmText: 'Confirmar',
+                    // confirmColor: Theme.of(context).colorScheme.primary,
+                  );
+
+                  if (confirmation == true) {
+                    // Perform delete action
+                    // ref.read(newCategoriasEquiposGseProvider.notifier).state.add(qrResponse);
+                  final body = {
+                    "id_trc": ref.read(selectedTurnaroundProvider)?.id,
+                    "id": qrResponse.id,
+                    // "hora_inicio": ref
+                    //     .read(selectedTurnaroundProvider)
+                    //     ?.fkVuelo
+                    //     .etaIn,
+                    // "hora_fin": ref
+                    //     .read(selectedTurnaroundProvider)
+                    //     ?.fkVuelo
+                    //     .etdOut,
+                    // "fecha":
+                    //     ref
+                    //         .read(selectedTurnaroundProvider)
+                    //         ?.fkVuelo
+                    //         .etaFechaIn ??
+                    //     ref
+                    //         .read(selectedTurnaroundProvider)
+                    //         ?.fkVuelo
+                    //         .etdFechaOut,
+                    // "modificar": true,
+                    // "maquinariasNuevas": maquinariasNuevas,
+                    // "maquinariasEliminadas": maquinariasEliminadas,
+                  };
+
+                  print('body: $body');
+                  // Call the repository method to Asignar Equipos GSE
+                  final response = await ref
+                      .read(categoriasEquiposGseProvider.notifier)
+                      .asignarEquipoIt(body);
+
+                  if (response.success) {
+                    // Show success snackbar
+                    // Show snackbar response
+                    CustomSnackbar.showSuccessSnackbar(
+                      response.message,
+                      // ignore: use_build_context_synchronously
+                      context,
+                      isFixed: true,
+                    );
+                    // ignore: use_build_context_synchronously
+                    // Navigator.of(context).pop();
+                  } else {
+                    // Show error snackbarresponse
+                    CustomSnackbar.showErrorSnackbar(
+                      response.message,
+                      // ignore: use_build_context_synchronously
+                      context,
+                      isFixed: true,
+                    );
+                  }
+                    
+                }
+                  
+
+                  // Aquí puedes mostrar un mensaje, navegar a otra pantalla o
+                  // usar el resultado para buscar en una base de datos.
+                  // ScaffoldMessenger.of(context).showSnackBar(
+                  //   SnackBar(content: Text("Código detectado: ${qrResponse.identificador} - ${qrResponse.modelo} - ${qrResponse.categoria}")),
+                  // );
+                } catch (e) {
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    SnackBar(content: Text("Error al procesar el código QR")),
+                    // SnackBar(content: Text("Error al procesar el código QR: $e")),
+                  );
+                }
+              } else {
+                debugPrint("El usuario canceló el escaneo.");
+              }
+            },
+            icon: const Icon(Icons.qr_code_scanner, size: 35),
+            style: IconButton.styleFrom(
+              // backgroundColor: Theme.of(
+              //   context,
+              // ).colorScheme.primary, // <-- Button color
+              // foregroundColor: Colors.white, // <-- Splash color
+              foregroundColor: Theme.of(
+                context,
+              ).colorScheme.primary, // <-- Splash color
+            ),
+          ),
+
+          // ElevatedButton(
+          //   // child: Icon(Icons.qr_code_scanner, color: Colors.white),
+          //   style: ElevatedButton.styleFrom(
+          //     shape: BeveledRectangleBorder(
+          //       borderRadius: BorderRadius.all(Radius.circular(5)),
+          //     ),
+          //     padding: EdgeInsets.all(5),
+          //     fixedSize: const Size(45, 45),
+          //     backgroundColor: Theme.of(
+          //       context,
+          //     ).colorScheme.primary, // <-- Button color
+          //     foregroundColor: Colors.red, // <-- Splash color
+          //   ),
+          //   child: Icon(
+          //     Icons.qr_code_scanner,
+          //     // Icons.upload,
+          //     color: Colors.white,
+          //     size: 35,
+          //   ),
+          //   onPressed: () {
+          //     // ref.read(categoriasEquiposGseProvider.notifier).getCategoriasEquiposGse();
+          //     // ref.read(newCategoriasEquiposGseProvider.notifier).state = [];
+          //     // ref.read(categoriasEquiposGseProvider.notifier).getCategoriasEquiposGse();
+          //   },
+
+          //   // icon: const Icon(Icons.qr_code_scanner),
+          // ),
+        ],
+      ),
+      body: _AsignarEquiposItView(),
     );
   }
 }
 
-class _AsignarEquiposGseView extends ConsumerStatefulWidget {
-  const _AsignarEquiposGseView();
+class _AsignarEquiposItView extends ConsumerStatefulWidget {
+  const _AsignarEquiposItView();
 
   @override
-  ConsumerState<_AsignarEquiposGseView> createState() =>
+  ConsumerState<_AsignarEquiposItView> createState() =>
       _AsignarEquiposGseViewState();
 }
 
-class _AsignarEquiposGseViewState
-    extends ConsumerState<_AsignarEquiposGseView> {
+class _AsignarEquiposGseViewState extends ConsumerState<_AsignarEquiposItView> {
   // Local categorias valiable list
   var categorias = [];
+  List<int> idsMaquinariasOldState = [];
+  bool hasAssignedOldState = false;
   // initstate
   @override
   void initState() {
     super.initState();
     // getCategoriasEquiposGse
-     ref.read(categoriasEquiposGseProvider.notifier).getCategoriasEquiposGse();
+    ref.read(categoriasEquiposGseProvider.notifier).getCategoriasEquiposGse();
+    
   }
 
   @override
@@ -53,7 +205,11 @@ class _AsignarEquiposGseViewState
     List<CategoriaEquiposGse> categorias = ref.watch(
       newCategoriasEquiposGseProvider,
     );
-    List<int> idsMaquinariasOldState = _getMaquinariasIds(categorias);
+
+    if (!hasAssignedOldState && categoriasAux.isNotEmpty) {
+      idsMaquinariasOldState = _getMaquinariasIds(categoriasAux);
+      hasAssignedOldState = true;
+    }
 
     categorias = [...categoriasAux];
     // var categorias =
@@ -94,7 +250,7 @@ class _AsignarEquiposGseViewState
                           ) {
                             maquinaria.selected = values[index];
                           });
-                          // 
+                          //
                           // set state of parent widget
                           // setStateCallback();
                           setState(() {});
@@ -311,78 +467,78 @@ class _AsignarEquiposGseViewState
     final result = await showDialog(
       context: context,
       builder: (BuildContext context) {
-         return StatefulBuilder(
-        builder: (context, setState) {
-          // StatefulBuilder to update the dialog
-        return AlertDialog(
-          title: Text(categoria.categoriaNombre),
-          content: SizedBox(
-            // Or specify a fixed height
-            width: MediaQuery.of(
-              context,
-            ).size.width, // Allow the ListView to take max width
+        return StatefulBuilder(
+          builder: (context, setState) {
+            // StatefulBuilder to update the dialog
+            return AlertDialog(
+              title: Text(categoria.categoriaNombre),
+              content: SizedBox(
+                // Or specify a fixed height
+                width: MediaQuery.of(
+                  context,
+                ).size.width, // Allow the ListView to take max width
 
-            child: ListView.builder(
-              shrinkWrap: true, // Important for ListView in AlertDialog
-              physics:
-                  const ClampingScrollPhysics(), // Prevents unwanted bouncing
-              itemCount: categoria
-                  .maquinarias
-                  .length, // Replace with your actual item count
-              itemBuilder: (BuildContext context, int indexMaquinaria) {
-                final maquinaria = categoria.maquinarias[indexMaquinaria];
-                // Return ListTile with checkbox
-                return CheckboxListTile(
-                  title: Text(
-                    '${maquinaria.identificador} - ${maquinaria.modelo}',
-                    style: const TextStyle(
-                      fontSize: 16,
-                      fontWeight: FontWeight.normal,
-                    ),
-                  ),
-                  value: maquinaria.selected,
-                  onChanged: (value) {
-                    // Change selected value
-                    maquinaria.selected = value!;
-                    setState(() {});
+                child: ListView.builder(
+                  shrinkWrap: true, // Important for ListView in AlertDialog
+                  physics:
+                      const ClampingScrollPhysics(), // Prevents unwanted bouncing
+                  itemCount: categoria
+                      .maquinarias
+                      .length, // Replace with your actual item count
+                  itemBuilder: (BuildContext context, int indexMaquinaria) {
+                    final maquinaria = categoria.maquinarias[indexMaquinaria];
+                    // Return ListTile with checkbox
+                    return CheckboxListTile(
+                      title: Text(
+                        '${maquinaria.identificador} - ${maquinaria.modelo}',
+                        style: const TextStyle(
+                          fontSize: 16,
+                          fontWeight: FontWeight.normal,
+                        ),
+                      ),
+                      value: maquinaria.selected,
+                      onChanged: (value) {
+                        // Change selected value
+                        maquinaria.selected = value!;
+                        setState(() {});
+                      },
+                    );
                   },
-                );
-              },
-            ),
-          ),
-          actions: [
-            TextButton(
-              child: const Text('Cancelar'),
-              onPressed: () {
-                Navigator.of(context).pop();
-              },
-            ),
-            TextButton(
-              child: const Text('Asignar'),
-              onPressed: () {
-                // getting previous selected personal values, true and false
-                final List<bool> selectedEquipos = categoria.maquinarias
-                    // .where((personal) => personal.selected)
-                    .map((maquinaria) => maquinaria.selected)
-                    .toList();
-                // final List<bool> selectedPersonal = personalList
-                //     .where((personal) => personal.selected)
-                //     .map((personal) => personal.selected)
-                //     .toList();
+                ),
+              ),
+              actions: [
+                TextButton(
+                  child: const Text('Cancelar'),
+                  onPressed: () {
+                    Navigator.of(context).pop();
+                  },
+                ),
+                TextButton(
+                  child: const Text('Asignar'),
+                  onPressed: () {
+                    // getting previous selected personal values, true and false
+                    final List<bool> selectedEquipos = categoria.maquinarias
+                        // .where((personal) => personal.selected)
+                        .map((maquinaria) => maquinaria.selected)
+                        .toList();
+                    // final List<bool> selectedPersonal = personalList
+                    //     .where((personal) => personal.selected)
+                    //     .map((personal) => personal.selected)
+                    //     .toList();
 
-                print("selected personal: $selectedEquipos");
-                ref.read(selectedEquiposGseDialogProvider.notifier).state =
-                    selectedEquipos;
+                    print("selected personal: $selectedEquipos");
+                    ref.read(selectedEquiposGseDialogProvider.notifier).state =
+                        selectedEquipos;
 
-                // return selected personal
-                Navigator.of(context).pop(selectedEquipos);
-                // return selectedPersonal;
-              },
-            ),
-          ],
+                    // return selected personal
+                    Navigator.of(context).pop(selectedEquipos);
+                    // return selectedPersonal;
+                  },
+                ),
+              ],
+            );
+          },
         );
-        },
-      );
       },
     );
 

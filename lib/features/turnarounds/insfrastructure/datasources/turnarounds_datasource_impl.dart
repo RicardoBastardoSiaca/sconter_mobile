@@ -137,7 +137,7 @@ class TurnaroundsDatasourceImpl implements TurnaroundsDatasource {
               );
             } else {
               return SimpleApiResponse(
-                message: 'Algo salió mal, intente nuevamente.',
+                message: response.data['mensaje'] ?? 'Algo salió mal, intente nuevamente.',
                 success: false,
               );
             }
@@ -145,6 +145,7 @@ class TurnaroundsDatasourceImpl implements TurnaroundsDatasource {
     } catch (e) {
       return SimpleApiResponse(
         message: 'Algo salió mal, intente nuevamente.',
+        // message: 'Algo salió mal, intente nuevamente.',
         success: false,
       );
       // throw Exception('Error al iniciar operaciones: $e');
@@ -311,7 +312,8 @@ class TurnaroundsDatasourceImpl implements TurnaroundsDatasource {
     return dio
         .post(
           // '/maquinarias/lista_categoria_maquinaria/$idPlantilla/?token=$accessToken',
-          '/maquinarias/lista_categoria_maquinariaServicio/?token=$accessToken',
+          // '/maquinarias/lista_categoria_maquinariaServicio/?token=$accessToken',
+          '/equipo/lista_categoria_it/?token=$accessToken',
           data: body,
         )
         .then((response) {
@@ -332,19 +334,19 @@ class TurnaroundsDatasourceImpl implements TurnaroundsDatasource {
   Future<SimpleApiResponse> asignarEquiposGSE(Map<String, dynamic> body) {
     return dio
         .post(
-          '/turnarounds/asignar_maquinarias/?token=$accessToken',
+          '/turnarounds/asignar_maquinarias_it/?token=$accessToken',
           data: body,
         )
         .then((response) {
-          print('Response from asignarEquiposGSE: $response');
+          print('Response from asignar equipos it: $response');
           if (response.statusCode == 200) {
             return SimpleApiResponse(
-              message: 'Equipos GSE asignados correctamente.',
+              message: 'Equipos It asignados correctamente.',
               success: true,
             );
           } else {
             return SimpleApiResponse(
-              message: 'Error al asignar equipos GSE.',
+              message: 'Error al asignar equipos It.',
               success: false,
             );
           }
@@ -452,6 +454,29 @@ class TurnaroundsDatasourceImpl implements TurnaroundsDatasource {
           } else {
             return SimpleApiResponse(
               message: 'Error al actualizar numero.',
+              success: false,
+            );
+          }
+        });
+  }
+  @override
+  Future<SimpleApiResponse> setTexto(SetTextoRequest body) {
+    final requestBody = {'id': body.id, 'texto': body.texto};
+    return dio
+        .post(
+          '/control-actividades/texto/?token=$accessToken',
+          data: requestBody,
+        )
+        .then((response) {
+          print('Response from setTexto: $response');
+          if (response.statusCode == 201) {
+            return SimpleApiResponse(
+              message: 'Texto actualizado.',
+              success: true,
+            );
+          } else {
+            return SimpleApiResponse(
+              message: 'Error al actualizar texto.',
               success: false,
             );
           }
@@ -1233,14 +1258,61 @@ class TurnaroundsDatasourceImpl implements TurnaroundsDatasource {
           );
         } else if (response.statusCode == 400) {
           return SimpleApiResponse(
-            message: 'Error al finalizar turnaround',
+            message: response.data['mensaje'] ?? 'Error al finalizar vuelo',
             success: false,
           );
         } else {
           return SimpleApiResponse(
-            message: 'Error al finalizar turnaround.',
+            message: 'Error al finalizar vuelo.',
             success: false,
           );
         }
+  }
+  
+  @override
+  Future<SimpleApiResponse> setInternetSpeed(SetInternetTareaRequest body) {
+    final requestBody = {'id': body.id, 'numero': body.numero, 'tipo': body.tipo};
+    return dio
+        .post(
+          '/control-actividades/updown/?token=$accessToken',
+          data: requestBody,
+        )
+        .then((response) {
+          print('Response from setInternetSpeed: $response');
+          if (response.statusCode == 201) {
+            return SimpleApiResponse(
+              message: 'Velocidad de internet actualizada.',
+              success: true,
+            );
+          } else {
+            return SimpleApiResponse(
+              message: 'Error al actualizar velocidad de internet.',
+              success: false,
+            );
+          }
+        });
+  }
+  
+  @override
+  Future<SimpleApiResponse> asignarEquipoIt(Map<String, dynamic> body) {
+    return dio
+        .post(
+          '/turnarounds/asignar_maquinarias_it_mobile/?token=$accessToken',
+          data: body,
+        )
+        .then((response) {
+          print('Response from asignarEquipoIt: $response');
+          if (response.statusCode == 200) {
+            return SimpleApiResponse(
+              message: 'Equipos IT asignados correctamente.',
+              success: true,
+            );
+          } else {
+            return SimpleApiResponse(
+              message: 'Error al asignar equipos IT.',
+              success: false,
+            );
+          }
+        });
   }
 }

@@ -468,6 +468,48 @@ class ControlActividadesNotifier
     }
   }
 
+  Future<SnackbarResponse> setTexto(SetTextoRequest body) async {
+    try {
+
+      final bool isConnected = await ConnectivityService().hasConnection;
+      if (!isConnected) {
+        // Save the api call for later
+        final requestBody = {'id': body.id, 'texto': body.texto};
+        localStorageRepository.saveRequestApi(
+          RequestApi(
+            id: DateTime.now().millisecondsSinceEpoch,
+            url: '/control-actividades/texto',
+            method: 'POST',
+            body: requestBody,
+            timestamp: DateTime.now().millisecondsSinceEpoch,
+          ),
+        );
+
+        return SnackbarResponse(
+          message: 'Texto registrado. Sin conexión.',
+          success: false,
+          hasConnection: false,
+        );
+      }
+      final response = await turnaroundsRepository.setTexto(body);
+      if (response.success) {
+        getControlDeActividadesByTrcId();
+        return SnackbarResponse(
+          message: 'Texto registrado.',
+          success: true,
+        );
+      } else {
+        return SnackbarResponse(
+          message: 'Ha ocurrido un error.',
+          success: false,
+        );
+      }
+    } catch (e) {
+      return SnackbarResponse(message: 'Ha ocurrido un error.', success: false);
+    }
+  }
+
+
   Future<SnackbarResponse> setComentario(ComentarioRequest body) async {
     try {
 
@@ -537,6 +579,45 @@ class ControlActividadesNotifier
       if (response.success) {
         getControlDeActividadesByTrcId();
         return SnackbarResponse(message: 'Número registrado.', success: true);
+      } else {
+        return SnackbarResponse(
+          message: 'Ha ocurrido un error.',
+          success: false,
+        );
+      }
+    } catch (e) {
+      return SnackbarResponse(message: 'Ha ocurrido un error.', success: false);
+    }
+  }
+
+  Future<SnackbarResponse> setInternetSpeed(SetInternetTareaRequest body) async {
+    try {
+
+      // Internet check
+      final bool isConnected = await ConnectivityService().hasConnection;
+      if (!isConnected) {
+        // Save the api call for later
+        final requestBody = {'id': body.id, 'numero': body.numero, 'tipo': body.tipo};
+        localStorageRepository.saveRequestApi(
+          RequestApi(
+            id: DateTime.now().millisecondsSinceEpoch,
+            url: '/control-actividades/updown',
+            method: 'POST',
+            body: requestBody,
+            timestamp: DateTime.now().millisecondsSinceEpoch,
+          ),
+        );
+
+        return SnackbarResponse(
+          message: 'Velocidad de internet registrada. Sin conexión.',
+          success: false,
+          hasConnection: false,
+        );
+      }
+      final response = await turnaroundsRepository.setInternetSpeed(body);
+      if (response.success) {
+        getControlDeActividadesByTrcId();
+        return SnackbarResponse(message: 'Velocidad de internet registrada.', success: true);
       } else {
         return SnackbarResponse(
           message: 'Ha ocurrido un error.',
