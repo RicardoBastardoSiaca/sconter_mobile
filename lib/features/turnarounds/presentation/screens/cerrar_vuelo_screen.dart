@@ -72,8 +72,104 @@ class _CerrarVueloViewState extends ConsumerState<_CerrarVueloView> {
           
         }
       } else {
-        if (context.mounted) {
-          CustomSnackbar.showErrorSnackbar('Error: ${response.message}', context);
+        // if statusCode == 400 show error list from response in a dialog
+        if (response.statusCode == 400 && response.errorList != null) {
+          showDialog(
+            context: context,
+            builder: (context) {
+              return AlertDialog(
+                // 1. Un título más limpio y con tipografía estándar de AlertDialog
+                // title: const Text(
+                //   'Acción requerida',
+                //   style: TextStyle(fontSize: 24, fontWeight: FontWeight.w600),
+                // ),
+                content: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    // 2. Mensaje principal del error (Sutil pero claro)
+                    Text(
+                      response.message,
+                      style: TextStyle(
+                        fontSize: 22,
+                        fontWeight: FontWeight.w600,
+                        color: Colors.grey[800],
+                        height: 1.4,
+                      ),
+                    ),
+                    
+                    // 3. Espaciado y condicional por si 'errorList' viene nulo o vacío
+                    if (response.errorList != null && response.errorList!.isNotEmpty) ...[
+                      const SizedBox(height: 16),
+                      
+                      // 4. Contenedor con scroll limitado para evitar que el diálogo rompa la pantalla
+                      ConstrainedBox(
+                        constraints: BoxConstraints(
+                          maxHeight: MediaQuery.of(context).size.height * 0.3, // Máximo 30% de la pantalla
+                        ),
+                        child: SingleChildScrollView(
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            // 5. Mapeo optimizado sin ListTile tosco
+                            children: response.errorList!.map((error) {
+                              return Padding(
+                                padding: const EdgeInsets.symmetric(vertical: 6.0),
+                                child: Row(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    // Un indicador minimalista en lugar del icono gigante rojo
+                                    Padding(
+                                      padding: const EdgeInsets.only(top: 5.0, right: 10.0),
+                                      child: Container(
+                                        width: 6,
+                                        height: 6,
+                                        decoration: BoxDecoration(
+                                          color: Colors.red[400],
+                                          shape: BoxShape.circle,
+                                        ),
+                                      ),
+                                    ),
+                                    // Texto del error con tipografía ligera
+                                    Expanded(
+                                      child: Text(
+                                        error,
+                                        style: TextStyle(
+                                          fontSize: 20,
+                                          color: Colors.black87,
+                                          height: 1.3,
+                                        ),
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              );
+                            }).toList(),
+                          ),
+                        ),
+                      ),
+                    ],
+                  ],
+                ),
+                actions: [
+                  // 6. Botón alineado al estilo moderno (opcional cambiar a TextButton más estilizado)
+                  TextButton(
+                    onPressed: () => Navigator.of(context).pop(),
+                    child: const Text(
+                      'Cerrar',
+                      style: TextStyle(fontWeight: FontWeight.w600),
+                    ),
+                  ),
+                ],
+              );
+            },
+          );
+        } else {
+          if (context.mounted) {
+            CustomSnackbar.showErrorSnackbar(
+              'Error: ${response.message}',
+              context,
+            );
+          }
         }
       }
 
@@ -191,14 +287,14 @@ class _CerrarVueloViewState extends ConsumerState<_CerrarVueloView> {
           //   bodyWidget: CodigosDemoraDetalle(demoras: demoras),
           //   decoration: pageDecoration,
           // ),
-          // PageViewModel(
-          //   title: "6. Personal",
-          //   bodyWidget: PersonalDetalle(
-          //     departamentosPersona:
-          //         departamentosPersona.departamentoPersonalResponse,
-          //   ),
-          //   decoration: pageDecoration,
-          // ),
+          PageViewModel(
+            title: "3. Personal",
+            bodyWidget: PersonalDetalle(
+              departamentosPersona:
+                  departamentosPersona.departamentoPersonalResponse,
+            ),
+            decoration: pageDecoration,
+          ),
 
           // PageViewModel(
           //   title: "Learn as you go",

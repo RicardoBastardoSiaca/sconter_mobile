@@ -9,3 +9,4 @@ export 'demora_mapper.dart';
 export 'departamento_personal_response_mapper.dart';
 export 'categorias_equipos_it_limpieza_mapper.dart';
 export 'plantilla_detalle_mapper.dart';
+export 'vuelo_calendario_mapper.dart';

@@ -104,6 +104,20 @@ class TurnaroundNotifier extends StateNotifier<TurnaroundState> {
     return response;
   }
 
+  Future<SimpleApiResponse> finalizarVuelo(Map<String, Object?> body) async {
+    final response = await turnaroundsRepository.finalizarVuelo(body);
+
+    if (response.success) {
+      getTurnarounds();
+    // snackbar to show message
+    
+      // ScaffoldMessenger.of(context).showSnackBar(
+      //   SnackBar(content: Text(response.message)),
+      // );
+    }
+    return response;
+  }
+
   Future<SimpleApiResponse> cerrarVuelo(Map<String, Object?> body) async {
     final response = await turnaroundsRepository.cerrarVuelo(body);
     if (response.success) {

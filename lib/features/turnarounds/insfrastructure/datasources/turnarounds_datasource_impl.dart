@@ -1,4 +1,5 @@
 import 'package:dio/dio.dart';
+import 'package:intl/intl.dart';
 import 'package:scounter_mobile/config/constants/environment.dart';
 import 'package:scounter_mobile/features/shared/shared.dart';
 
@@ -1010,57 +1011,28 @@ class TurnaroundsDatasourceImpl implements TurnaroundsDatasource {
         });
   }
 
-  @override
-  Future<SimpleApiResponse> cerrarVuelo(Map<String, Object?> body) async {
-    final response = await dio
-        .post('/turnarounds/cerrar_vuelo/?token=$accessToken', data: body);
-        if (response.statusCode == 201) {
-          return SimpleApiResponse(
-            message: 'Vuelo cerrado.',
-            success: true,
-          );
-        } else if (response.statusCode == 400) {
-          return SimpleApiResponse(
-            message: response.data['mensaje'] ?? 'Error. Asegurese de llenar los datos del vuelo',
-            success: false,
-          );
-        } else {
-          return SimpleApiResponse(
-            message: 'Error al cerrar vuelo.',
-            success: false,
-          );
-        }
-    // return dio
-    //     .post('/turnarounds/cerrar_vuelo/?token=$accessToken', data: body)
-    //     .then(
-    //       (response) {
-    //         print('Response from cerrarVuelo: $response');
-    //         if (response.statusCode == 201) {
-    //           return SimpleApiResponse(
-    //             message: 'Vuelo cerrado.',
-    //             success: true,
-    //           );
-    //         } else if (response.statusCode == 400) {
-    //           return SimpleApiResponse(
-    //             message: 'Error. Asegurese de llenar los datos del vuelo',
-    //             success: false,
-    //           );
-    //         } else {
-    //           return SimpleApiResponse(
-    //             message: 'Error al cerrar vuelo.',
-    //             success: false,
-    //           );
-    //         }
-    //       },
-    //       onError: (error) {
-    //         print('Error from cerrarVuelo: $error');
-    //         return SimpleApiResponse(
-    //           message: 'Error al cerrar vuelo.',
-    //           success: false,
-    //         );
-    //       },
-    //     );
-  }
+  // @override
+  // Future<SimpleApiResponse> cerrarVuelo(Map<String, Object?> body) async {
+  //   final response = await dio
+  //       .post('/turnarounds/cerrar_vuelo/?token=$accessToken', data: body);
+  //       if (response.statusCode == 201) {
+  //         return SimpleApiResponse(
+  //           message: 'Vuelo cerrado.',
+  //           success: true,
+  //         );
+  //       } else if (response.statusCode == 400) {
+  //         return SimpleApiResponse(
+  //           message: response.data['mensaje'] ?? 'Error. Asegurese de llenar los datos del vuelo',
+  //           success: false,
+  //         );
+  //       } else {
+  //         return SimpleApiResponse(
+  //           message: 'Error al cerrar vuelo.',
+  //           success: false,
+  //         );
+  //       }
+    
+  // }
   
   @override
   Future<SimpleApiResponse> setCantidadServicioAdicional(Map<String, Object?> body) {
@@ -1315,4 +1287,127 @@ class TurnaroundsDatasourceImpl implements TurnaroundsDatasource {
           }
         });
   }
+
+
+  @override
+  Future<List<VueloCalendario>> getVuelosCalendario(
+    VueloCalendarioRequest body,
+  ) async {
+    final requestBody = {
+      // start date to 'YYYY-MM-DD' string without the T00:00:00.000 part
+      'start': DateFormat('yyyy-MM-dd').format(body.start).substring(0, 10),
+      'end': DateFormat('yyyy-MM-dd').format(body.end).substring(0, 10),
+    };
+    try {
+      final response = await dio.post(
+        // '/maquinarias/lista_categoria_maquinaria/$idPlantilla/?token=$accessToken',
+        '/turnarounds/trc_rango_calendario/?token=$accessToken',
+        data: requestBody,
+      );
+      print('Response from getVuelosCalendario: $response');
+      if (response.statusCode == 200) {
+        final data = response.data;
+
+        // final CategoriasEquiposGseResponse vuelos =
+        //     CategoriasEquiposGseMapper(data);
+        final List<VueloCalendario> vuelos =
+            VuelosCalendarioListMapper.fromJsonList(data);
+
+        return vuelos;
+      } else {
+        throw Exception('Error al obtener las categorias de equipos GSE.');
+      }
+    } catch (e) {
+      throw Exception('Error al obtener control de actividades: $e');
+    }
+    // return dio
+    //     .post(
+    //       // '/maquinarias/lista_categoria_maquinaria/$idPlantilla/?token=$accessToken',
+    //       '/turnarounds/trc_rango_calendario/?token=$accessToken',
+    //       data: requestBody,
+    //     )
+    //     .then((response) {
+    //       print('Response from getVuelosCalendario: $response');
+    //       if (response.statusCode == 200) {
+    //         final data = response.data;
+
+    //         // final CategoriasEquiposGseResponse vuelos =
+    //         //     CategoriasEquiposGseMapper(data);
+    //         final List<VueloCalendario> vuelos =
+    //             VuelosCalendarioListMapper.fromJsonList(data);
+    //         return vuelos;
+    //       } else {
+    //         throw Exception('Error al obtener las categorias de equipos GSE.');
+    //       }
+    //     });
+  }
+  
+  @override
+  Future<SimpleApiResponse> cerrarVuelo(Map<String, Object?> body) async {
+    final response = await dio.post(
+      // '/turnarounds/finalizar_vuelo_gerente/?token=$accessToken',
+      '/turnarounds/cerrar_vuelo_gerente/?token=$accessToken',
+      data: body,
+    );
+    print('Response from cerrarVueloGerente: $response');
+    if (response.statusCode == 201) {
+      return SimpleApiResponse(
+        message: response.data['mensaje'] ?? 'Vuelo finalizado.',
+        success: true,
+      );
+    } else if (response.statusCode == 400) {
+      return SimpleApiResponse(
+        message:
+            response.data['mensaje'] ??
+            'Error. Asegurese de llenar los datos del vuelo',
+        success: false,
+        statusCode: response.statusCode,
+        errorList: response.data['errores'] != null 
+          ? List<String>.from(response.data['errores']) 
+          : null,
+      );
+    } else {
+      return SimpleApiResponse(
+        message: 'Error al finalizar vuelo.',
+        success: false,
+        statusCode: response.statusCode,
+      );
+    }
+    
+  }
+  
+  @override
+  Future<SimpleApiResponse> finalizarVuelo(Map<String, Object?> body) async {
+    final response = await dio.post(
+      // '/turnarounds/finalizar_vuelo_gerente/?token=$accessToken',
+      '/turnarounds/finalizar_vuelo_supervisor/?token=$accessToken',
+      data: body,
+    );
+    print('Response from finalizarVuelo: $response');
+    if (response.statusCode == 201) {
+      return SimpleApiResponse(
+        message: response.data['mensaje'] ?? 'Vuelo finalizado.',
+        success: true,
+      );
+    } else if (response.statusCode == 400) {
+      return SimpleApiResponse(
+        message:
+            response.data['mensaje'] ??
+            'Error. Asegurese de llenar los datos del vuelo',
+        success: false,
+        statusCode: response.statusCode,
+        errorList: response.data['errores'] != null 
+          ? List<String>.from(response.data['errores']) 
+          : null,
+      );
+    } else {
+      return SimpleApiResponse(
+        message: 'Error al finalizar vuelo.',
+        success: false,
+        statusCode: response.statusCode,
+      );
+    }
+  }
+
+  
 }

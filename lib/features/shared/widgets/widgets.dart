@@ -17,6 +17,8 @@ export 'dialogs/confimation_dialog_no_close.dart';
 export 'dialogs/dialog_utils.dart';
 export 'dialogs/numer_input_dialog.dart';
 export 'dialogs/confirmar_dialog.dart';
+export 'dialogs/comentario_dialog_content.dart';
+export 'dialogs/comentario_dialog_content_con_reinicio.dart';
 
 export 'no_internet_banner.dart';
 export 'no_internet_icon.dart';
@@ -24,3 +26,8 @@ export 'no_internet_icon.dart';
 export 'show_snackbar.dart';
 
 export 'scanner/scanner.dart';
+
+export 'calendario_vuelos_widget.dart';
+
+export 'visor_pdf_screen.dart';
+export 'visor_pdf_bytes_screen.dart';

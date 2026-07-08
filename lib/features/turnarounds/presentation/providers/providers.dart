@@ -10,3 +10,5 @@ export 'demoras_provider.dart';
 export 'departamento_personal_provider.dart';
 export 'categorias_equipos_it_limpieza_provider.dart';
 export 'plantilla_detalle_provider.dart';
+export 'vuelos_calendario_provider.dart';
+export 'vuelo_timeline_provider.dart';

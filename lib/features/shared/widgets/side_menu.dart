@@ -55,6 +55,45 @@ class SideMenuState extends ConsumerState<SideMenu> {
                       widget.scaffoldKey.currentState?.closeDrawer();
                     },
                   ),
+
+                  // vuelos-calendario-screen
+                  ListTile(
+                    leading: const Icon(
+                      Icons.calendar_month,
+                      color: Colors.black45,
+                      size: 22,
+                    ),
+                    title: Text(
+                      'Calendario de Vuelos',
+                      style: Theme.of(
+                        context,
+                      ).textTheme.bodySmall?.copyWith(color: Colors.black87),
+                    ),
+                    onTap: () {
+                      // Handle navigation to Home with GoRouter
+                      context.go('/vuelos-calendario-screen');
+                      widget.scaffoldKey.currentState?.closeDrawer();
+                    },
+                  ),
+                  ListTile(
+                    leading: const Icon(
+                      Icons.calendar_month,
+                      color: Colors.black45,
+                      size: 22,
+                    ),
+                    title: Text(
+                      'Workload',
+                      style: Theme.of(
+                        context,
+                      ).textTheme.bodySmall?.copyWith(color: Colors.black87),
+                    ),
+                    onTap: () {
+                      // Handle navigation to Home with GoRouter
+                      context.go('/vuelos-workload-screen');
+                      widget.scaffoldKey.currentState?.closeDrawer();
+                    },
+                  ),
+
                   // Servicios miscelaneos
                   // ListTile(
                   //   leading: const Icon(

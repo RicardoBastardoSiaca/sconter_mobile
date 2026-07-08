@@ -229,6 +229,8 @@ class TurnaroundsRepositoryImpl extends TurnaroundsRepository {
     return datasource.asignarPersonal(body);
   }
 
+  
+
   @override
   Future<SimpleApiResponse> cerrarVuelo(Map<String, Object?> body) {
     return datasource.cerrarVuelo(body);
@@ -295,5 +297,20 @@ class TurnaroundsRepositoryImpl extends TurnaroundsRepository {
   @override
   Future<SimpleApiResponse> asignarEquipoIt(Map<String, dynamic> body) {
     return datasource.asignarEquipoIt(body);
+  }
+  
+  @override
+  Future<List<VueloCalendario>> getVuelosCalendario(VueloCalendarioRequest body) {
+    return datasource.getVuelosCalendario(body);
+  }
+  
+  @override
+  // Future<SimpleApiResponse> cerrarVueloGerente(Map<String, Object?> body) {
+  //   return datasource.cerrarVueloGerente(body);
+  // }
+  
+  @override
+  Future<SimpleApiResponse> finalizarVuelo(Map<String, Object?> body) {
+    return datasource.finalizarVuelo(body);
   }
 }

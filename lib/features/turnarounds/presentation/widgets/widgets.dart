@@ -8,3 +8,13 @@ export 'leyeda_status_colores.dart';
 export 'leyenda_colores_status_dialog.dart';
 
 export 'control_actividades/servicios_adicionales_control_actividades.dart';
+
+export 'vuelo_card.dart';
+export 'vuelo_detalle_dialog.dart';
+
+
+export 'dialogs/confirmation_dialog.dart';
+// export 'dialogs/confimation_dialog_no_close.dart';
+export 'dialogs/dialog_utils.dart';
+// export 'dialogs/numer_input_dialog.dart';
+// export 'dialogs/confirmar_dialog.dart';

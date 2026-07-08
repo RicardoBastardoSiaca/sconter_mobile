@@ -4,6 +4,7 @@ class CustomFilledButton extends StatelessWidget {
   final void Function()? onPressed;
   final String text;
   final Color? buttonColor;
+  final double? radio;
   // text Color
 
   const CustomFilledButton({
@@ -11,17 +12,18 @@ class CustomFilledButton extends StatelessWidget {
     this.onPressed,
     required this.text,
     this.buttonColor,
+    this.radio = 30,
   });
 
   @override
   Widget build(BuildContext context) {
-    const radius = Radius.circular(30);
+    final radius = Radius.circular(radio ?? 30);
 
     return FilledButton(
       style: FilledButton.styleFrom(
         // primary
         backgroundColor: buttonColor ?? Theme.of(context).primaryColor,
-        shape: const RoundedRectangleBorder(
+        shape:  RoundedRectangleBorder(
           borderRadius: BorderRadius.all(radius),
         ),
       ),
@@ -34,3 +36,4 @@ class CustomFilledButton extends StatelessWidget {
     );
   }
 }
+

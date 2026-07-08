@@ -1,9 +1,12 @@
+import 'dart:typed_data';
+
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:scounter_mobile/features/auth/auth.dart';
 import 'package:scounter_mobile/features/turnarounds/turnarounds.dart';
 
 import '../../features/auth/presentation/providers/auth_provider.dart';
+import '../../features/shared/shared.dart';
 import '../../features/turnarounds/domain/domain.dart';
 import 'app_router_notifier.dart';
 
@@ -104,6 +107,10 @@ final goRouterProvider = Provider((ref) {
         builder: (context, state) => AsignarDemorasScreen(),
       ),
       GoRoute(
+        path: '/finalizar-vuelo-screen',
+        builder: (context, state) => FinalizarVueloScreen(),
+      ),
+      GoRoute(
         path: '/cerrar-vuelo-screen',
         builder: (context, state) => CerrarVueloScreen(),
       ),
@@ -131,6 +138,22 @@ final goRouterProvider = Provider((ref) {
       GoRoute(
         path: '/servicios-miscelaneos-screen',
         builder: (context, state) => ServiciosMiscelaneosScreen(),
+      ),
+      GoRoute(
+        path: '/visor-pdf-screen',
+        builder: (context, state) => VisorPdfScreen( url: state.extra as String,),
+      ),
+      GoRoute(
+        path: '/visor-pdf-bytes-screen',
+        builder: (context, state) => VisorPdfBytesScreen( bytes: state.extra as Uint8List,),
+      ),
+      GoRoute(
+        path: '/vuelos-calendario-screen',
+        builder: (context, state) => VuelosCalendarioScreen(),
+      ),
+      GoRoute(
+        path: '/vuelos-workload-screen',
+        builder: (context, state) => VueloTimelineScreen(),
       ),
     ],
 

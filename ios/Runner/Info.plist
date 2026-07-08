@@ -9,6 +9,11 @@
 	<key>NSMicrophoneUsageDescription</key>
 	<string>En caso de subir video, necesitamos acceso al microfono.</string>
 
+	<key>NSMicrophoneUsageDescription</key>
+    <string>Necesitamos acceso al micrófono para transcribir tu comentario.</string>
+    <key>NSSpeechRecognitionUsageDescription</key>
+    <string>Necesitamos permiso de reconocimiento de voz para convertir tu audio a texto.</string>
+
 
 	<key>NSCameraUsageDescription</key>
 	<string>This app needs camera access to scan barcodes.</string>

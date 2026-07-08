@@ -18,6 +18,7 @@ export 'firma_supervisor_screen.dart';
 export 'demoras_screen.dart';
 export 'asignar_demoras_screen.dart';
 
+export 'finalizar_vuelo_screen.dart';
 export 'cerrar_vuelo_screen.dart';
 
 export 'asignar_equipos_it_control_actividades_screen.dart';
@@ -32,3 +33,6 @@ export 'control_actividades_servicios_miscelaneos.dart';
 export 'cerrar_vuelo_servicio_miscelaneo_screen.dart';
 
 export 'asignar_equipos_it_screen.dart';
+
+export 'vuelo_timeline_screen.dart';
+export 'vuelos_calendario_screen.dart';

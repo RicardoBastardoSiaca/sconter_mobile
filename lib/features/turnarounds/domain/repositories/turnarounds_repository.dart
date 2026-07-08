@@ -130,6 +130,9 @@ abstract class TurnaroundsRepository {
   // Asignar personal en main
   Future<SimpleApiResponse> asignarPersonal(Map<String, dynamic> body);
 
+  Future<SimpleApiResponse> finalizarVuelo(Map<String, Object?> body);
+  // Future<SimpleApiResponse> cerrarVueloGerente (Map<String, Object?> body);
+
   Future<SimpleApiResponse> cerrarVuelo(Map<String, Object?> body);
   
   Future<SimpleApiResponse> cerrarVueloervicioMiscelaneo(Map<String, Object?> body);
@@ -149,4 +152,15 @@ abstract class TurnaroundsRepository {
   Future<SimpleApiResponse> finalizarVueloServicioMiscelaneo(int id);
 
   Future<SimpleApiResponse> finalizarActividadesSinFirma(int id);
+
+
+  Future<List<VueloCalendario>> getVuelosCalendario(
+    VueloCalendarioRequest body,
+  );
+  
+  // Future<SimpleApiResponse> crearReporte(int id);
+
+  // Future<SimpleApiResponse> setTareasNoAplica(int id, bool noAplica);
+
+  // Future<MotivoRechazoResponse> getMotivoRechazoByTrcId(int id);
 }
