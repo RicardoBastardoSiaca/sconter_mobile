@@ -468,20 +468,11 @@ class _ListTileCardContainer extends StatelessWidget {
                   ),
                 ),
 
-                // Vuelo de llegada
-                turnaround.fkVuelo.lugarSalida == null
-                    ? Spacer(flex: 1)
-                    : Flexible(
+                // Datos del servicio
+                Flexible(
                         flex: 1,
                         child:
-                            // IF lugarSalida != null return _InboundView else empty
-                            turnaround.fkVuelo.lugarSalida == null
-                            // empty sizedbox that fill all the space available
-                            ? SizedBox(
-                                width: MediaQuery.of(context).size.width / 3.1,
-                                // height: 100,
-                              )
-                            : _InboundView(
+                             _ServicioView(
                                 lugarSalida:
                                     turnaround
                                         .fkVuelo
@@ -497,6 +488,12 @@ class _ListTileCardContainer extends StatelessWidget {
                                     turnaround.fkVuelo.stn?.ciudad ?? "",
                                 hora:
                                     turnaround.fkVuelo.etaIn?.substring(0, 5) ??
+                                    "",
+                                horaServicioInicio:
+                                    turnaround.horaServicioInicio?.substring(0, 5) ??
+                                    "",
+                                horaServicioFin:
+                                    turnaround.horaServicioFin?.substring(0, 5) ??
                                     "",
                                 numeroVuelo:
                                     "${turnaround.fkVuelo.fkAerolinea.codigoIata}-${turnaround.fkVuelo.numeroVueloIn} ",
@@ -1244,6 +1241,167 @@ class _TailView extends StatelessWidget {
     );
   }
 }
+
+class _ServicioView extends StatelessWidget {
+  final String lugarSalida;
+  final String lugarLlegada;
+  final String lugarSalidaLargo;
+  final String lugarLlegadaLargo;
+  final bool isInbound;
+
+  final String hora;
+  final String horaServicioInicio;
+  final String horaServicioFin;
+  final String numeroVuelo;
+  const _ServicioView({
+    required this.lugarSalida,
+    required this.lugarLlegada,
+    required this.lugarSalidaLargo,
+    required this.lugarLlegadaLargo,
+    required this.hora,
+    required this.horaServicioInicio,
+    required this.horaServicioFin,
+    required this.numeroVuelo,
+    required this.isInbound,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    // isLandscape() {
+    //   final size = MediaQuery.of(context).size;
+    //   return size.width > size.height;
+    // }
+
+     bool isMobile = MediaQuery.of(context).size.width < 500;
+
+    return Center(
+      child: Container(
+        constraints: BoxConstraints(
+          maxWidth: 140.0, // Sets the maximum width to 300 logical pixels
+        ),
+        child: Padding(
+          // padding: const EdgeInsets.only(left: 15, right: 15),
+          padding: const EdgeInsets.only(
+            top: 15,
+            bottom: 15,
+            left: 9,
+            right: 10,
+          ),
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Column(
+                crossAxisAlignment: CrossAxisAlignment.center,
+                // spacing: -3,
+                children: [
+                  Text(
+                    "Inicio:",
+                    style:isMobile
+                        ? Theme.of(context).textTheme.labelMedium?.copyWith(
+                          fontFamily: GoogleFonts.openSans(
+                            fontWeight: FontWeight.w600,
+                          ).fontFamily,
+                        )
+                        : Theme.of(context).textTheme.labelMedium?.copyWith(
+                          fontFamily: GoogleFonts.openSans(
+                            fontWeight: FontWeight.w600,
+                          ).fontFamily,
+                        ),
+                  ),
+                  Text(
+                    horaServicioInicio,
+                    style:isMobile
+                        ? Theme.of(context).textTheme.titleMedium?.copyWith(
+                          fontFamily: GoogleFonts.openSans(
+                            fontWeight: FontWeight.w700,
+
+                          ).fontFamily,
+                        )
+                        : Theme.of(context).textTheme.titleMedium?.copyWith(
+                          fontFamily: GoogleFonts.openSans(
+                            fontWeight: FontWeight.w700,
+                          ).fontFamily,
+                        ),
+                  ),
+                ],
+              ),
+              const SizedBox(height: 10),
+              Column(
+                crossAxisAlignment: CrossAxisAlignment.center,
+                // spacing: -3,
+                children: [
+                  Text(
+                    "Fin:",
+                    style:isMobile
+                        ? Theme.of(context).textTheme.labelMedium?.copyWith(
+                          fontFamily: GoogleFonts.openSans(
+                            fontWeight: FontWeight.w600,
+                          ).fontFamily,
+                        )
+                        : Theme.of(context).textTheme.labelMedium?.copyWith(
+                          fontFamily: GoogleFonts.openSans(
+                            fontWeight: FontWeight.w600,
+                          ).fontFamily,
+                        ),
+                  ),
+                  Text(
+                    horaServicioFin,
+                    style:isMobile
+                        ? Theme.of(context).textTheme.titleMedium?.copyWith(
+                          fontFamily: GoogleFonts.openSans(
+                            fontWeight: FontWeight.w700,
+                          ).fontFamily,
+                        )
+                        : Theme.of(context).textTheme.titleMedium?.copyWith(
+                          fontFamily: GoogleFonts.openSans(
+                            fontWeight: FontWeight.w700,
+                          ).fontFamily,
+                        ),
+                  ),
+                ],
+              ),
+              // isInbound
+              //     ? Text(
+              //         "LLEGADA",
+              //         style: Theme.of(context).textTheme.labelSmall?.copyWith(
+              //           fontFamily: GoogleFonts.openSans(
+              //             fontWeight: FontWeight.w500,
+              //           ).fontFamily,
+              //         ),
+              //       )
+              //     : Text(
+              //         "SALIDA",
+              //         style: Theme.of(context).textTheme.labelSmall?.copyWith(
+              //           fontFamily: GoogleFonts.openSans(
+              //             fontWeight: FontWeight.w500,
+              //           ).fontFamily,
+              //         ),
+              //       ),
+
+              // SizedBox(height: 10),
+              // Text(
+              //   numeroVuelo,
+              //   style: isMobile
+              //       ? Theme.of(context).textTheme.bodySmall?.copyWith(
+              //         fontFamily: GoogleFonts.openSans(
+              //           fontWeight: FontWeight.w700,
+              //         ).fontFamily,
+              //         color: Colors.black87
+              //       )
+              //       : Theme.of(context).textTheme.titleMedium?.copyWith(
+              //         fontFamily: GoogleFonts.openSans(
+              //           fontWeight: FontWeight.w700,
+              //         ).fontFamily,
+              //       ),
+              // ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+}
+
 
 class _InboundView extends StatelessWidget {
   final String lugarSalida;

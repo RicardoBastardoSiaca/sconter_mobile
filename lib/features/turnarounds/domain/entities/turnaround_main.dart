@@ -8,6 +8,11 @@
 
 // String turnaroundMainToJson(TurnaroundMain data) => json.encode(data.toJson());
 
+
+// fecha_servicio_inicio = models.DateField(blank=True,null=True)
+//         fecha_servicio_fin = models.DateField(blank=True,null=True)
+//         hora_servicio_inicio = models.TimeField(blank=True,null=True)
+//         hora_servicio_fin = models.TimeField(blank=True,null=True)
 class TurnaroundMain {
   int id;
   dynamic identificador;
@@ -21,6 +26,12 @@ class TurnaroundMain {
   dynamic fechaInicioReal;
   dynamic fechaFinReal;
   dynamic tiempoExtimado;
+
+  dynamic fechaServicioInicio;
+  dynamic fechaServicioFin;
+  dynamic horaServicioInicio;
+  dynamic horaServicioFin;
+
   dynamic comentario;
   int estatus;
   String nombreEstatus;
@@ -39,6 +50,10 @@ class TurnaroundMain {
     required this.fechaInicioReal,
     required this.fechaFinReal,
     required this.tiempoExtimado,
+    required this.fechaServicioInicio,
+    required this.fechaServicioFin,
+    required this.horaServicioInicio,
+    required this.horaServicioFin,
     required this.comentario,
     required this.estatus,
     required this.nombreEstatus,
