@@ -490,10 +490,10 @@ class _ListTileCardContainer extends StatelessWidget {
                                     turnaround.fkVuelo.etaIn?.substring(0, 5) ??
                                     "",
                                 horaServicioInicio:
-                                    turnaround.horaServicioInicio?.substring(0, 5) ??
+                                    turnaround.horaInicioServicio?.substring(0, 5) ??
                                     "",
                                 horaServicioFin:
-                                    turnaround.horaServicioFin?.substring(0, 5) ??
+                                    turnaround.horaFinServicio?.substring(0, 5) ??
                                     "",
                                 numeroVuelo:
                                     "${turnaround.fkVuelo.fkAerolinea.codigoIata}-${turnaround.fkVuelo.numeroVueloIn} ",
@@ -1295,7 +1295,7 @@ class _ServicioView extends StatelessWidget {
                 // spacing: -3,
                 children: [
                   Text(
-                    "Inicio:",
+                    "Apertura:",
                     style:isMobile
                         ? Theme.of(context).textTheme.labelMedium?.copyWith(
                           fontFamily: GoogleFonts.openSans(
@@ -1311,15 +1311,15 @@ class _ServicioView extends StatelessWidget {
                   Text(
                     horaServicioInicio,
                     style:isMobile
-                        ? Theme.of(context).textTheme.titleMedium?.copyWith(
+                        ? Theme.of(context).textTheme.titleLarge?.copyWith(
                           fontFamily: GoogleFonts.openSans(
-                            fontWeight: FontWeight.w700,
+                            fontWeight: FontWeight.w800,
 
                           ).fontFamily,
                         )
-                        : Theme.of(context).textTheme.titleMedium?.copyWith(
+                        : Theme.of(context).textTheme.titleLarge?.copyWith(
                           fontFamily: GoogleFonts.openSans(
-                            fontWeight: FontWeight.w700,
+                            fontWeight: FontWeight.w800,
                           ).fontFamily,
                         ),
                   ),
@@ -1331,7 +1331,7 @@ class _ServicioView extends StatelessWidget {
                 // spacing: -3,
                 children: [
                   Text(
-                    "Fin:",
+                    "Cierre:",
                     style:isMobile
                         ? Theme.of(context).textTheme.labelMedium?.copyWith(
                           fontFamily: GoogleFonts.openSans(
@@ -1347,14 +1347,14 @@ class _ServicioView extends StatelessWidget {
                   Text(
                     horaServicioFin,
                     style:isMobile
-                        ? Theme.of(context).textTheme.titleMedium?.copyWith(
+                        ? Theme.of(context).textTheme.titleLarge?.copyWith(
                           fontFamily: GoogleFonts.openSans(
-                            fontWeight: FontWeight.w700,
+                            fontWeight: FontWeight.w800,
                           ).fontFamily,
                         )
-                        : Theme.of(context).textTheme.titleMedium?.copyWith(
+                        : Theme.of(context).textTheme.titleLarge?.copyWith(
                           fontFamily: GoogleFonts.openSans(
-                            fontWeight: FontWeight.w700,
+                            fontWeight: FontWeight.w800,
                           ).fontFamily,
                         ),
                   ),
@@ -1454,50 +1454,54 @@ class _InboundView extends StatelessWidget {
                     lugarSalida,
                     style: 
                     isMobile
-                    ? Theme.of(context).textTheme.bodySmall?.copyWith(
+                    ? Theme.of(context).textTheme.labelMedium?.copyWith(
                       fontFamily: GoogleFonts.openSans(
-                        fontWeight: FontWeight.w700,
+                        fontWeight: FontWeight.w600,
                       ).fontFamily,
                       color: Colors.black87
                     )
                     : Theme.of(context).textTheme.titleMedium?.copyWith(
                       fontFamily: GoogleFonts.openSans(
-                        fontWeight: FontWeight.w700,
+                        fontWeight: FontWeight.w600,
                       ).fontFamily,
                     ),
                   ),
                   Text(
                     lugarLlegada,
                     style: isMobile
-                    ? Theme.of(context).textTheme.bodySmall?.copyWith(
+                    ? Theme.of(context).textTheme.labelMedium?.copyWith(
                       fontFamily: GoogleFonts.openSans(
-                        fontWeight: FontWeight.w700,
+                        fontWeight: FontWeight.w600,
                       ).fontFamily,
                       color: Colors.black87
                     )
                     : Theme.of(context).textTheme.titleMedium?.copyWith(
                       fontFamily: GoogleFonts.openSans(
-                        fontWeight: FontWeight.w700,
+                        fontWeight: FontWeight.w600,
                       ).fontFamily,
                     ),
                   ),
                 ],
               ),
+              const SizedBox(height: 10),
               isInbound
                   ? SvgPicture.asset("assets/icons/llegada.svg", height: 30)
                   : SvgPicture.asset("assets/icons/salida.svg", height: 30),
+              
+              // const SizedBox(height: 10),
+
               // hora
               Text(
                 hora,
                 style:isMobile
-                    ? Theme.of(context).textTheme.bodyLarge?.copyWith(
+                    ? Theme.of(context).textTheme.labelMedium?.copyWith(
                       fontFamily: GoogleFonts.openSans(
-                        fontWeight: FontWeight.w700,
+                        fontWeight: FontWeight.w600,
                       ).fontFamily,
                     )
                     : Theme.of(context).textTheme.titleMedium?.copyWith(
                       fontFamily: GoogleFonts.openSans(
-                        fontWeight: FontWeight.w700,
+                        fontWeight: FontWeight.w600,
                       ).fontFamily,
                     ),
               ),
@@ -1523,15 +1527,15 @@ class _InboundView extends StatelessWidget {
               Text(
                 numeroVuelo,
                 style: isMobile
-                    ? Theme.of(context).textTheme.bodySmall?.copyWith(
+                    ? Theme.of(context).textTheme.bodyMedium?.copyWith(
                       fontFamily: GoogleFonts.openSans(
-                        fontWeight: FontWeight.w700,
+                        fontWeight: FontWeight.w800,
                       ).fontFamily,
                       color: Colors.black87
                     )
                     : Theme.of(context).textTheme.titleMedium?.copyWith(
                       fontFamily: GoogleFonts.openSans(
-                        fontWeight: FontWeight.w700,
+                        fontWeight: FontWeight.w800,
                       ).fontFamily,
                     ),
               ),

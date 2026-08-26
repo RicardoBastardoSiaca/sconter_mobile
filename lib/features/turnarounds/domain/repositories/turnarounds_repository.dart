@@ -163,4 +163,6 @@ abstract class TurnaroundsRepository {
   // Future<SimpleApiResponse> setTareasNoAplica(int id, bool noAplica);
 
   // Future<MotivoRechazoResponse> getMotivoRechazoByTrcId(int id);
+
+  Future<List<Estacion>> getEstaciones();
 }

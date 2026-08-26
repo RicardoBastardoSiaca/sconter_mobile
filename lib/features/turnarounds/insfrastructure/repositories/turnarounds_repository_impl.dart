@@ -313,4 +313,9 @@ class TurnaroundsRepositoryImpl extends TurnaroundsRepository {
   Future<SimpleApiResponse> finalizarVuelo(Map<String, Object?> body) {
     return datasource.finalizarVuelo(body);
   }
+
+  @override
+  Future<List<Estacion>> getEstaciones() {
+    return datasource.getEstaciones();
+  }
 }

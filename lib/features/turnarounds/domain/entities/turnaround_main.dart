@@ -32,6 +32,9 @@ class TurnaroundMain {
   dynamic horaServicioInicio;
   dynamic horaServicioFin;
 
+  String? horaInicioServicio;
+  String horaFinServicio;
+
   dynamic comentario;
   int estatus;
   String nombreEstatus;
@@ -54,6 +57,8 @@ class TurnaroundMain {
     required this.fechaServicioFin,
     required this.horaServicioInicio,
     required this.horaServicioFin,
+    required this.horaInicioServicio,
+    required this.horaFinServicio,
     required this.comentario,
     required this.estatus,
     required this.nombreEstatus,
@@ -504,4 +509,23 @@ class Tipo {
   //     "id": id,
   //     "nombre": nombre,
   // };
+}
+class Estacion {
+  int id;
+  String nombre;
+  String? personaResponsable;
+  String? telefono;
+  String? correoResponsable;
+  bool? estatus;
+  int? aeropuerto;
+
+  Estacion({
+    required this.id,
+    required this.nombre,
+    required this.personaResponsable,
+    required this.telefono,
+    required this.correoResponsable,
+    required this.estatus,
+    required this.aeropuerto,
+  });
 }

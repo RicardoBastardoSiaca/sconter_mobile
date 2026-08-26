@@ -1409,5 +1409,26 @@ class TurnaroundsDatasourceImpl implements TurnaroundsDatasource {
     }
   }
 
+  @override
+  Future<List<Estacion>> getEstaciones() async {
+    
+    try {
+      final response = await dio.get(
+        '/sucursal/sucursal_api/?token=$accessToken',
+      );
+      print('Response from getEstaciones: $response');
+      if (response.statusCode == 200) {
+        final List<Estacion> estacionesResponse =
+            TurnaroundMainMapper.mapJsonToEstaciones(
+              response.data,
+            );
+        return estacionesResponse.toList();
+      } else {
+        throw Exception('Error al obtener el listado de estaciones.');
+      }
+    } catch (e) {
+      throw Exception('Error al obtener el listado de estaciones: $e');
+    }
+  }
   
 }

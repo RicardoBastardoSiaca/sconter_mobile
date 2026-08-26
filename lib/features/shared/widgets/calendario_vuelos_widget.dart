@@ -4,9 +4,9 @@ import 'package:table_calendar/table_calendar.dart';
 import 'package:scounter_mobile/features/turnarounds/domain/domain.dart';
 
 // import 'vuelo_calendario.dart'; // Tu modelo anterior
-
 class CalendarioVuelosWidget extends StatefulWidget {
   final List<VueloCalendario> vuelos;
+final List<Estacion> estaciones; 
 
   // Añadimos esta línea para notificar el cambio de mes
   final Function(DateTime)? onMonthChanged;
@@ -14,6 +14,7 @@ class CalendarioVuelosWidget extends StatefulWidget {
   const CalendarioVuelosWidget({
     super.key, 
     required this.vuelos, 
+    this.estaciones = const [],
     this.onMonthChanged
   });
 
@@ -27,8 +28,40 @@ class _CalendarioVuelosWidgetState extends State<CalendarioVuelosWidget> {
   DateTime? _selectedDay;
 
   int? _aerolineaFilter; // ID de aerolínea seleccionada (null = todas)
+  int? _estacionFilter;
 
-  // Obtener aerolíneas únicas para el filtro
+  @override
+  void didUpdateWidget(covariant CalendarioVuelosWidget oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    
+    // Validar aerolínea
+    if (_aerolineaFilter != null) {
+      final existe = widget.vuelos.any((v) => v.aerolineaId == _aerolineaFilter);
+      if (!existe) setState(() => _aerolineaFilter = null);
+    }
+  }
+
+  // Obtener estaciones ordenadas alfabéticamente
+  List<Estacion> get listadoEstaciones {
+    final lista = List<Estacion>.from(widget.estaciones);
+    lista.sort((a, b) => a.nombre.toLowerCase().compareTo(b.nombre.toLowerCase()));
+    return lista;
+  }
+
+  // Filtrado combinado por Aerolínea y Estación
+  List<VueloCalendario> get _vuelosFiltrados {
+    return widget.vuelos.where((v) {
+      // 1. Evalúa el filtro de aerolínea
+      final cumpleAerolinea = _aerolineaFilter == null || v.aerolineaId == _aerolineaFilter;
+      
+      // 2. Evalúa el filtro de estación comparando con v.estacionId
+      final cumpleEstacion = _estacionFilter == null || v.estacionId == _estacionFilter; 
+      
+      return cumpleAerolinea && cumpleEstacion;
+    }).toList();
+  }
+
+  // A continuación reemplazas tus dos getters actuales por estos:
   List<Map<String, dynamic>> get _listadoOriginalDeAerolineas {
     final seenIds = <int>{};
     return widget.vuelos
@@ -43,26 +76,52 @@ class _CalendarioVuelosWidgetState extends State<CalendarioVuelosWidget> {
   }
 
   List<Map<String, dynamic>> get listadoAerolineas {
-  // 1. Obtenemos la lista base (ej. de tu estado o variable interna)
-  final lista = _listadoOriginalDeAerolineas; 
+    final lista = _listadoOriginalDeAerolineas; 
 
-  // 2. Usamos .sort() comparando las cadenas de texto de 'aerolineaNombre'
-  lista.sort((a, b) {
-    final nameA = (a['aerolineaNombre'] as String? ?? '').toLowerCase();
-    final nameB = (b['aerolineaNombre'] as String? ?? '').toLowerCase();
-    return nameA.compareTo(nameB);
-  });
+    lista.sort((a, b) {
+      final nameA = (a['nombre'] as String? ?? '').toLowerCase();
+      final nameB = (b['nombre'] as String? ?? '').toLowerCase();
+      return nameA.compareTo(nameB);
+    });
 
-  return lista;
-}
+    return lista;
+  }
+
+  // Obtener aerolíneas únicas para el filtro
+  // List<Map<String, dynamic>> get _listadoOriginalDeAerolineas {
+  //   final seenIds = <int>{};
+  //   return widget.vuelos
+  //       .where((v) => v.aerolineaId != null && seenIds.add(v.aerolineaId!))
+  //       .map(
+  //         (v) => {
+  //           'id': v.aerolineaId,
+  //           'nombre': v.aerolineaNombre ?? 'Desconocida',
+  //         },
+  //       )
+  //       .toList();
+  // }
+
+//   List<Map<String, dynamic>> get listadoAerolineas {
+//   // 1. Obtenemos la lista base (ej. de tu estado o variable interna)
+//   final lista = _listadoOriginalDeAerolineas; 
+
+//   // 2. Usamos .sort() comparando las cadenas de texto de 'aerolineaNombre'
+//   lista.sort((a, b) {
+//     final nameA = (a['aerolineaNombre'] as String? ?? '').toLowerCase();
+//     final nameB = (b['aerolineaNombre'] as String? ?? '').toLowerCase();
+//     return nameA.compareTo(nameB);
+//   });
+
+//   return lista;
+// }
 
   // Filtrar vuelos por aerolínea seleccionada
-  List<VueloCalendario> get _vuelosFiltrados {
-    if (_aerolineaFilter == null) return widget.vuelos;
-    return widget.vuelos
-        .where((v) => v.aerolineaId == _aerolineaFilter)
-        .toList();
-  }
+  // List<VueloCalendario> get _vuelosFiltrados {
+  //   if (_aerolineaFilter == null) return widget.vuelos;
+  //   return widget.vuelos
+  //       .where((v) => v.aerolineaId == _aerolineaFilter)
+  //       .toList();
+  // }
 
   // Agrupar vuelos por la variable auxFecha para el calendario
 List<VueloCalendario> _getVuelosDelDia(DateTime day) {
@@ -305,42 +364,72 @@ List<VueloCalendario> _getVuelosDelDia(DateTime day) {
   // }
 
   Widget _buildFiltros() {
+    // Validar aerolínea seleccionada
+    final aerolineas = listadoAerolineas;
+    final bool aeroValueExists = aerolineas.any((aero) => aero['id'] == _aerolineaFilter);
+    final int? selectedAeroValue = aeroValueExists ? _aerolineaFilter : null;
+
+    // Validar estación seleccionada
+    final estaciones = listadoEstaciones;
+    final bool estValueExists = estaciones.any((e) => e.id == _estacionFilter);
+    final int? selectedEstValue = estValueExists ? _estacionFilter : null;
+
     return Padding(
-      padding: const EdgeInsets.all(8.0),
+      padding: const EdgeInsets.symmetric(horizontal: 12.0, vertical: 8.0),
       child: Row(
         children: [
-          // const Text("Filtrar: ", style: TextStyle(fontWeight: FontWeight.bold)),
-          const Text("Filtrar: ", style: TextStyle(fontSize: 16)),
-          const SizedBox(width: 10),
-          // Envolvemos en Expanded para que el Row le asigne un ancho definido
+          // Dropdown 1: Aerolínea
           Expanded(
-            child: DropdownButton<int?>(
-              value: _aerolineaFilter,
-              isExpanded:
-                  true, // <--- CRITICO: Esto hace que el contenido se ajuste al ancho del Expanded
-              hint: const Text("Aerolínea"),
-              style: const TextStyle(fontSize: 16, color: Colors.black54),
+            child: DropdownButtonFormField<int?>(
+              value: selectedAeroValue,
+              isExpanded: true,
+              decoration: const InputDecoration(
+                labelText: 'Aerolínea',
+                contentPadding: EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+                border: OutlineInputBorder(),
+              ),
+              style: const TextStyle(fontSize: 14, color: Colors.black87),
               items: [
                 const DropdownMenuItem(value: null, child: Text("Todas")),
-                ...listadoAerolineas.map(
-                  (aero) => DropdownMenuItem(
+                ...aerolineas.map(
+                  (aero) => DropdownMenuItem<int?>(
                     value: aero['id'],
-                    child: Text(
-                      aero['nombre'],
-                      overflow: TextOverflow
-                          .ellipsis, // Evita que el texto largo rompa el diseño
-                    ),
+                    child: Text(aero['nombre'], overflow: TextOverflow.ellipsis),
                   ),
                 ),
               ],
               onChanged: (val) => setState(() => _aerolineaFilter = val),
             ),
           ),
+          const SizedBox(width: 10),
+
+          // Dropdown 2: Estación
+          Expanded(
+            child: DropdownButtonFormField<int?>(
+              value: selectedEstValue,
+              isExpanded: true,
+              decoration: const InputDecoration(
+                labelText: 'Estación',
+                contentPadding: EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+                border: OutlineInputBorder(),
+              ),
+              style: const TextStyle(fontSize: 14, color: Colors.black87),
+              items: [
+                const DropdownMenuItem(value: null, child: Text("Todas")),
+                ...estaciones.map(
+                  (est) => DropdownMenuItem<int?>(
+                    value: est.id,
+                    child: Text(est.nombre, overflow: TextOverflow.ellipsis),
+                  ),
+                ),
+              ],
+              onChanged: (val) => setState(() => _estacionFilter = val),
+            ),
+          ),
         ],
       ),
     );
   }
-
   Widget _buildCustomCellContent(List<VueloCalendario> vuelos) {
     return Positioned(
       bottom: 1,

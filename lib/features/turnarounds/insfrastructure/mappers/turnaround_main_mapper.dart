@@ -22,6 +22,8 @@ class TurnaroundMainMapper {
       fechaServicioFin: json['fecha_servicio_fin'],
       horaServicioInicio: json['hora_servicio_inicio'],
       horaServicioFin: json['hora_servicio_fin'],
+      horaInicioServicio: json['hora_inicio_servicio'],
+      horaFinServicio: json['hora_fin_servicio'],
       comentario: json['comentario'],
       estatus: json['estatus'],
       nombreEstatus: json['nombre_estatus'],
@@ -114,6 +116,24 @@ class TurnaroundMainMapper {
     );
   }
 
+  // Estacion mapper
+  static Estacion mapJsonToEstacion(Map<String, dynamic> json) {
+    return Estacion(
+      id: json['sur_id'],
+      nombre: json['sur_nombre'],
+      personaResponsable: json['sur_persona_responsable'] ?? '',
+      telefono: json['sur_telefono'] ?? '',
+      correoResponsable: json['sur_correo_responsable'] ?? '',
+      estatus: json['sur_estatus'] ?? true,
+      aeropuerto: json['sur_aeropuerto'],
+    );
+  }
+
+  // Estaciones mapper
+  static List<Estacion> mapJsonToEstaciones(List<dynamic> json) {
+    return json.map((e) => mapJsonToEstacion(e)).toList();
+  }
+
   // FK Erolinea
   static FkAerolinea mapJsonToFkAerolinea(Map<String, dynamic> json) {
     return FkAerolinea(
@@ -165,4 +185,7 @@ class TurnaroundMainMapper {
       color: json['color'] ?? 'blanco', //json['color'],
     );
   }
+
+
+
 }

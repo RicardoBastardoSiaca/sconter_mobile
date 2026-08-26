@@ -16,3 +16,5 @@ export 'infrastructure/services/connectivity_service.dart';
 export 'infrastructure/infraestructure.dart';
 
 export 'presentation/presentation.dart';
+
+export 'helpers/helpers.dart';
