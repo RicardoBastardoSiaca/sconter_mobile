@@ -164,7 +164,7 @@ class _TuraroundMainView extends ConsumerStatefulWidget {
 class _TuraroundMainViewState extends ConsumerState {
   final ScrollController _scrollController = ScrollController();
 
-  final ConnectivityService _connectivityService = ConnectivityService();
+  // final ConnectivityService _connectivityService = ConnectivityService();
   // bool _isConnected = true;
 
    Future<void> _handleRefresh() async {
@@ -194,14 +194,14 @@ class _TuraroundMainViewState extends ConsumerState {
   @override
   void dispose() {
     _scrollController.dispose();
-    _connectivityService.dispose();
+    // _connectivityService.dispose();
     super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
     // final isConnected = ref.watch(isConnectedProvider);
-    final connectivityState = ref.watch(connectivityProvider);
+    // final connectivityState = ref.watch(connectivityProvider);
     final turnaroundsState = ref.watch(turnaroundProvider);
 
     if (turnaroundsState.isLoading) {
@@ -486,15 +486,9 @@ class _ListTileCardContainer extends StatelessWidget {
                                     "",
                                 lugarLlegadaLargo:
                                     turnaround.fkVuelo.stn?.ciudad ?? "",
-                                hora:
-                                    turnaround.fkVuelo.etaIn?.substring(0, 5) ??
-                                    "",
-                                horaServicioInicio:
-                                    turnaround.horaInicioServicio?.substring(0, 5) ??
-                                    "",
-                                horaServicioFin:
-                                    turnaround.horaFinServicio?.substring(0, 5) ??
-                                    "",
+                                hora: formatTime(turnaround.fkVuelo.etaIn),
+                                horaServicioInicio: formatTime(turnaround.horaInicioServicio_),
+                                horaServicioFin: formatTime(turnaround.horaFinServicio_),
                                 numeroVuelo:
                                     "${turnaround.fkVuelo.fkAerolinea.codigoIata}-${turnaround.fkVuelo.numeroVueloIn} ",
                                 isInbound: true,
@@ -1688,3 +1682,10 @@ class _InboundView extends StatelessWidget {
 //     // *********************************************************************************************************************
 //   };
 // }
+
+
+
+String formatTime(String? time) {
+  if (time == null || time.length < 5) return "";
+  return time.substring(0, 5);
+}

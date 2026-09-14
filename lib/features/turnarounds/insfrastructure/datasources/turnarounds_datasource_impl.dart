@@ -1,10 +1,33 @@
 import 'package:dio/dio.dart';
+import 'package:flutter/foundation.dart';
 import 'package:intl/intl.dart';
 import 'package:scounter_mobile/config/constants/environment.dart';
 import 'package:scounter_mobile/features/shared/shared.dart';
-
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 import '../../domain/domain.dart';
 import '../mappers/mappers.dart';
+
+// 1. DTO ligero para transferir los parámetros al Isolate
+// 1. DTO para transferir las variables de entorno y los datos
+class _ParseParams {
+  final dynamic rawData;
+  final Map<String, String> envMap;
+
+  _ParseParams(this.rawData, this.envMap);
+}
+
+// 2. Función Top-Level para el compute
+List<TurnaroundMain> _parseAndMapTurnarounds(_ParseParams params) {
+  if (params.rawData == null || params.rawData is! List) return [];
+
+  // Inyectamos las variables cargadas del hilo principal al Isolate actual
+  dotenv.testLoad(fileInput: params.envMap.entries.map((e) => '${e.key}=${e.value}').join('\n'));
+
+  return (params.rawData as List)
+      .map((item) => TurnaroundMainMapper.mapJsonToTurnaroundMain(item))
+      .toList();
+}
+
 
 class TurnaroundsDatasourceImpl implements TurnaroundsDatasource {
   late final Dio dio;
@@ -51,33 +74,34 @@ class TurnaroundsDatasourceImpl implements TurnaroundsDatasource {
 
   
 
-  @override
-  Future<List<TurnaroundMain>> getTurnaroundsByDate(
-    int year,
-    int month,
-    int day,
-  ) async {
-    final List<TurnaroundMain> turnarounds = [];
-    // Check internet connection
-    // if (!await _connectivityService.hasConnection) {
-    //   // throw Exception('No internet connection');
-    //   return turnarounds; // Return an empty list if no connection
-    // }
-    try {
-      final response = await dio.get(
-        '/turnarounds/$year-$month-$day/?token=$accessToken',
-      );
-      print ('Response from getTurnaroundsByDate: ${response.data}');
-      for (final item in response.data ?? []) {
-        turnarounds.add(TurnaroundMainMapper.mapJsonToTurnaroundMain(item));
-      }
+  // 2. Tu método original actualizado
+// 3. Método del Datasource
+@override
+Future<List<TurnaroundMain>> getTurnaroundsByDate(
+  int year,
+  int month,
+  int day,
+) async {
+  try {
+    final response = await dio.get(
+      '/turnarounds/$year-$month-$day/?token=$accessToken',
+    );
 
-      return turnarounds;
-    } catch (e) {
-      return turnarounds; // Return an empty list on error
-      // throw Exception('Error fetching turnarounds: $e');
-    }
+    // Copiamos las variables de entorno actuales del Isolate principal
+    final envMap = Map<String, String>.from(dotenv.env);
+
+    final List<TurnaroundMain> turnarounds = await compute(
+      _parseAndMapTurnarounds,
+      _ParseParams(response.data, envMap),
+    );
+
+    return turnarounds;
+  } catch (e, stackTrace) {
+    print('Error en getTurnaroundsByDate: $e');
+    print(stackTrace);
+    return [];
   }
+}
 
   @override
   Future<List<TurnaroundMain>> getServiciosMiscelaneosByDate(

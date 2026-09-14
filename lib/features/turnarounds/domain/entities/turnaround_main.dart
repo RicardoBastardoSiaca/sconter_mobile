@@ -33,7 +33,9 @@ class TurnaroundMain {
   dynamic horaServicioFin;
 
   String? horaInicioServicio;
-  String horaFinServicio;
+  String? horaInicioServicio_;
+  String? horaFinServicio;
+  String? horaFinServicio_;
 
   dynamic comentario;
   int estatus;
@@ -58,7 +60,9 @@ class TurnaroundMain {
     required this.horaServicioInicio,
     required this.horaServicioFin,
     required this.horaInicioServicio,
+    required this.horaInicioServicio_,
     required this.horaFinServicio,
+    required this.horaFinServicio_,
     required this.comentario,
     required this.estatus,
     required this.nombreEstatus,
