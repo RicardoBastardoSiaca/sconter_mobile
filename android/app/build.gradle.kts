@@ -12,6 +12,8 @@ android {
     ndkVersion = "28.2.13676358"
 
     compileOptions {
+        // 1. Activa la compatibilidad con Java 8+
+        isCoreLibraryDesugaringEnabled = true
         sourceCompatibility = JavaVersion.VERSION_11
         targetCompatibility = JavaVersion.VERSION_11
     }
@@ -38,8 +40,25 @@ android {
             signingConfig = signingConfigs.getByName("debug")
         }
     }
+
+    // Comenta el bloque splits si vas a compilar un App Bundle:
+    /*
+    splits {
+        abi {
+            isEnable = true
+            reset()
+            include("armeabi-v7a", "arm64-v8a", "x86_64")
+            isUniversalApk = true
+        }
+    }
+    */
 }
 
 flutter {
     source = "../.."
+}
+
+dependencies {
+    // Agrega esta línea para resolver la exigencia de ota_update
+    coreLibraryDesugaring("com.android.tools:desugar_jdk_libs:2.1.4")
 }

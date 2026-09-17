@@ -31,3 +31,4 @@ export 'calendario_vuelos_widget.dart';
 
 export 'visor_pdf_screen.dart';
 export 'visor_pdf_bytes_screen.dart';
+export 'dialogs/update_dialog.dart';

@@ -148,6 +148,10 @@ abstract class TurnaroundsDatasource {
   Future<List<VueloCalendario>> getVuelosCalendario(
     VueloCalendarioRequest body,
   );
+
+  Future<List<VueloLineup>> getVuelosLineup(
+    VueloLineupRequest body,
+  );
   
   // Future<SimpleApiResponse> crearReporte(int id);
 

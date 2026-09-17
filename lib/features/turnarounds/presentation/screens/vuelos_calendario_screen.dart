@@ -18,10 +18,14 @@ class _VuelosScreenState extends ConsumerState<VuelosCalendarioScreen> {
   @override
   void initState() {
     super.initState();
-    // Llamada inicial al cargar la pantalla
-    Future.microtask(() => ref.read(vuelosCalendarioProvider.notifier).fetchVuelos(getCurrentMonthDateRange(DateTime.now())));
+    Future.microtask(() {
+      // Disparar ambas peticiones en paralelo al cargar
+      ref.read(vuelosCalendarioProvider.notifier).fetchVuelos(
+        getCurrentMonthDateRange(DateTime.now()),
+      );
+      ref.read(ciudadesProvider.notifier).cargarEstaciones();
+    });
   }
-
 
   // funcion que devuelva el primer y el ultimo dia del mes actual
   VueloCalendarioRequest getCurrentMonthDateRange( DateTime? newDate) {
@@ -37,6 +41,7 @@ class _VuelosScreenState extends ConsumerState<VuelosCalendarioScreen> {
   Widget build(BuildContext context) {
 
     final state = ref.watch(vuelosCalendarioProvider);
+    final ciudadesState = ref.watch(ciudadesProvider);
 
     return Scaffold(
       key: scaffoldKey,
@@ -68,6 +73,7 @@ class _VuelosScreenState extends ConsumerState<VuelosCalendarioScreen> {
               Expanded(
                 child: CalendarioVuelosWidget(
                   vuelos: state.vuelos,
+                  estaciones: ciudadesState.estaciones,
                   // Al cambiar el mes, llamamos a la lógica de Riverpod
                   onMonthChanged: (newDate) {
                     ref.read(vuelosCalendarioProvider.notifier).fetchVuelos(getCurrentMonthDateRange(newDate));

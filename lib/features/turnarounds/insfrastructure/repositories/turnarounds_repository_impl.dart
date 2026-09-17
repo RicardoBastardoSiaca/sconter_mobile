@@ -318,4 +318,9 @@ class TurnaroundsRepositoryImpl extends TurnaroundsRepository {
   Future<List<Estacion>> getEstaciones() {
     return datasource.getEstaciones();
   }
+
+  @override
+  Future<List<VueloLineup>> getVuelosLineup(VueloLineupRequest body) {
+    return datasource.getVuelosLineup(body);
+  }
 }

@@ -36,3 +36,5 @@ export 'asignar_equipos_it_screen.dart';
 
 export 'vuelo_timeline_screen.dart';
 export 'vuelos_calendario_screen.dart';
+export 'vuelos_lineup_screen.dart';
+

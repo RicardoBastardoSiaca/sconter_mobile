@@ -10,3 +10,4 @@ export 'departamento_personal_response.dart';
 export 'categoria_equipos_it_limpieza.dart';
 export 'plantilla_detalle.dart';
 export 'vuelo_calendario.dart';
+export 'vuelo_lineup.dart';

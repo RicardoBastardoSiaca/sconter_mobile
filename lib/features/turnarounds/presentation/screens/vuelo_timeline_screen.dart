@@ -5,7 +5,6 @@ import 'package:linked_scroll_controller/linked_scroll_controller.dart';
 import 'package:scounter_mobile/features/shared/shared.dart';
 import 'package:scounter_mobile/features/turnarounds/domain/domain.dart';
 import 'package:scounter_mobile/features/turnarounds/presentation/providers/providers.dart';
-import 'package:scounter_mobile/features/turnarounds/presentation/widgets/widgets.dart';
 
 class VueloTimelineScreen extends ConsumerStatefulWidget {
   const VueloTimelineScreen({Key? key}) : super(key: key);
@@ -20,7 +19,7 @@ class _VueloTimelineScreenState extends ConsumerState<VueloTimelineScreen> {
 // 1. CONSTANTES DE DIMENSIONES COMPACTAS (Reducidas un 20% horizontalmente)
 static const double _rowHeight = 36.0;    
 static const double _sidebarWidth = 90.0;  
-static const double _headerHeight = 25.0;   
+static const double _headerHeight = 30.0;   
 static const double _hourWidth = 48.0;     // Reducido de 60.0 a 48.0 (-20%)     // Reducido de 80.0 a 60.0
 
 bool _mostrarFiltros = true; // Controla la visibilidad de la barra superior

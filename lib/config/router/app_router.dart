@@ -152,6 +152,10 @@ final goRouterProvider = Provider((ref) {
         builder: (context, state) => VuelosCalendarioScreen(),
       ),
       GoRoute(
+        path: '/vuelos-lineup-screen',
+        builder: (context, state) => VuelosLineupScreen(),
+      ),
+      GoRoute(
         path: '/vuelos-workload-screen',
         builder: (context, state) => VueloTimelineScreen(),
       ),

@@ -1454,5 +1454,58 @@ Future<List<TurnaroundMain>> getTurnaroundsByDate(
       throw Exception('Error al obtener el listado de estaciones: $e');
     }
   }
+
+   @override
+  Future<List<VueloLineup>> getVuelosLineup(
+    VueloLineupRequest body,
+  ) async {
+    final requestBody = {
+      // start date to 'YYYY-MM-DD' string without the T00:00:00.000 part
+      'start': DateFormat('yyyy-MM-dd').format(body.start).substring(0, 10),
+      'end': DateFormat('yyyy-MM-dd').format(body.end).substring(0, 10),
+    };
+    try {
+      final response = await dio.post(
+        // '/maquinarias/lista_categoria_maquinaria/$idPlantilla/?token=$accessToken',
+        // '/turnarounds/trc_rango_calendario/?token=$accessToken',
+        '/turnarounds/trc_rango_personal/?token=$accessToken',
+        data: requestBody,
+      );
+      print('Response from getVuelosLineup: $response');
+      if (response.statusCode == 200) {
+        final data = response.data;
+
+        // final CategoriasEquiposGseResponse vuelos =
+        //     CategoriasEquiposGseMapper(data);
+        final List<VueloLineup> vuelos = VuelosLineupListMapper.fromJsonList(data);
+
+        return vuelos;
+      } else {
+        throw Exception('Error al obtener Vuelos para el Lineup.');
+      }
+    } catch (e) {
+      throw Exception('Error al obtener Vuelos para el Lineup: $e');
+    }
+    // return dio
+    //     .post(
+    //       // '/maquinarias/lista_categoria_maquinaria/$idPlantilla/?token=$accessToken',
+    //       '/turnarounds/trc_rango_calendario/?token=$accessToken',
+    //       data: requestBody,
+    //     )
+    //     .then((response) {
+    //       print('Response from getVuelosCalendario: $response');
+    //       if (response.statusCode == 200) {
+    //         final data = response.data;
+
+    //         // final CategoriasEquiposGseResponse vuelos =
+    //         //     CategoriasEquiposGseMapper(data);
+    //         final List<VueloCalendario> vuelos =
+    //             VuelosCalendarioListMapper.fromJsonList(data);
+    //         return vuelos;
+    //       } else {
+    //         throw Exception('Error al obtener las categorias de equipos GSE.');
+    //       }
+    //     });
+  }
   
 }

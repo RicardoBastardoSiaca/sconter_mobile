@@ -13,18 +13,21 @@ import '../../../shared/shared.dart';
 import '../../domain/domain.dart';
 import '../providers/providers.dart';
 
-class TurnaroundMainScreen extends StatefulWidget {
+class TurnaroundMainScreen extends ConsumerStatefulWidget {
   const TurnaroundMainScreen({super.key});
 
   @override
-  State<TurnaroundMainScreen> createState() => _TurnaroundMainScreenState();
+  ConsumerState<TurnaroundMainScreen> createState() => _TurnaroundMainScreenState();
 }
 
-class _TurnaroundMainScreenState extends State<TurnaroundMainScreen> {
+class _TurnaroundMainScreenState extends ConsumerState<TurnaroundMainScreen> {
   // final scaffoldKey = GlobalKey<ScaffoldState>();
   final GlobalKey<ScaffoldState> scaffoldKey = GlobalKey<ScaffoldState>();
   @override
   Widget build(BuildContext context,) {
+
+    // 2. Escuchamos el estado del provider de actualización
+    final updateState = ref.watch(appUpdateProvider);
 
     // final isConnected = ref.watch(isConnectedProvider);
     // final connectivityState = ref.watch(connectivityProvider);
@@ -43,15 +46,21 @@ class _TurnaroundMainScreenState extends State<TurnaroundMainScreen> {
       //   },
       // ),
       appBar: AppBar(
-        // key: scaffoldKey,
+        // 3. Agregamos el Badge en el icono de los 3 puntos
         leading: IconButton(
-          icon: const Icon(Icons.more_vert),
+          icon: Badge(
+            isLabelVisible: updateState.hasUpdate,
+            backgroundColor: const Color(0xFF0FA45F),
+            label: const Text(
+              'UP', 
+              style: TextStyle(fontSize: 9, fontWeight: FontWeight.bold),
+            ),
+            offset: const Offset(6, -4),
+            child: const Icon(Icons.more_vert, color: Colors.black87),
+          ),
           onPressed: () {
-            // Open the SideMenu SideMenu(scaffoldKey: scaffoldKey),
-            // SideMenu(scaffoldKey: scaffoldKey);
             scaffoldKey.currentState?.openDrawer();
           },
-          //   // scaffoldKey.currentState?.openDrawer();
         ),
         // title: const Text('Turnaround 2'),
         title: Row(
@@ -180,6 +189,24 @@ class _TuraroundMainViewState extends ConsumerState {
   @override
   void initState() {
     super.initState();
+
+     WidgetsBinding.instance.addPostFrameCallback((_) async {
+    // 1. Disparamos la verificación de actualización vía Riverpod
+    await ref.read(appUpdateProvider.notifier).checkForUpdate();
+
+    // 2. Si hay actualización, leemos el estado global actualizado
+    if (!mounted) return;
+    final updateState = ref.read(appUpdateProvider);
+
+    if (updateState.hasUpdate) {
+      showDialog(
+        context: context,
+        barrierDismissible: !updateState.isMandatory,
+        builder: (context) => UpdateDialog(updateData: updateState.toMap()),
+      );
+    }
+  });
+
 
     // _scrollController.addListener(_scrollListener);
     ref.read(turnaroundProvider.notifier).getTurnarounds();

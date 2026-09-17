@@ -12,3 +12,5 @@ export 'categorias_equipos_it_limpieza_provider.dart';
 export 'plantilla_detalle_provider.dart';
 export 'vuelos_calendario_provider.dart';
 export 'vuelo_timeline_provider.dart';
+export 'vuelos_lineup_provider.dart';
+export 'ciudades_provider.dart';

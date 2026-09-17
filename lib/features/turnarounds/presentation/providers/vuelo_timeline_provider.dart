@@ -125,6 +125,7 @@ class VueloTimelineNotifier extends StateNotifier<VueloTimelineState> {
     try {
       final response = await turnaroundsRepository.getVuelosCalendario(body);
       setVuelos(response);
+      print(response[0].toJson());
     } catch (e) {
       state = state.copyWith(isLoading: false);
     }

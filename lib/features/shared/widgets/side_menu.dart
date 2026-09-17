@@ -31,7 +31,7 @@ class SideMenuState extends ConsumerState<SideMenu> {
           children: [
             // Header with user info
             _buildHeader(context, ref),
-      
+
             // Navigation items
             Expanded(
               child: ListView(
@@ -93,6 +93,24 @@ class SideMenuState extends ConsumerState<SideMenu> {
                       widget.scaffoldKey.currentState?.closeDrawer();
                     },
                   ),
+                  ListTile(
+                    leading: const Icon(
+                      Icons.group,
+                      color: Colors.black45,
+                      size: 22,
+                    ),
+                    title: Text(
+                      'LineUp',
+                      style: Theme.of(
+                        context,
+                      ).textTheme.bodySmall?.copyWith(color: Colors.black87),
+                    ),
+                    onTap: () {
+                      // Handle navigation to Home with GoRouter
+                      context.go('/vuelos-lineup-screen');
+                      widget.scaffoldKey.currentState?.closeDrawer();
+                    },
+                  ),
 
                   // Servicios miscelaneos
                   // ListTile(
@@ -114,7 +132,6 @@ class SideMenuState extends ConsumerState<SideMenu> {
                   //   },
                   // ),
 
-
                   // ListTile(
                   //   leading: Icon(Icons.person, color: Colors.black45, size: 22),
                   //   title: Text(
@@ -131,7 +148,7 @@ class SideMenuState extends ConsumerState<SideMenu> {
                 ],
               ),
             ),
-      
+
             // Sign out button at the bottom
             _buildSignOutButton(context, ref),
             // version
@@ -142,24 +159,110 @@ class SideMenuState extends ConsumerState<SideMenu> {
             //     style: theme.textTheme.labelMedium?.copyWith(color: Colors.grey),
             //   ),
             // ),
-            Padding(
-              padding: const EdgeInsets.only(bottom: 10.0),
-              child: FutureBuilder<PackageInfo>(
-              future: PackageInfo.fromPlatform(),
-              builder: (context, snapshot) {
-                if (snapshot.hasData) {
-                  final packageInfo = snapshot.data!;
-                  return Text(
-                    'Scounter v${packageInfo.version}',
-                    // 'App Version: ${packageInfo.version} (${packageInfo.buildNumber})',
-                    style: theme.textTheme.labelSmall?.copyWith(color: Colors.grey)
+
+            // Pie de página con indicador de versión / actualización
+            Consumer(
+              builder: (context, ref, child) {
+                final updateState = ref.watch(appUpdateProvider);
+
+                if (updateState.hasUpdate) {
+                  return Padding(
+                    padding: const EdgeInsets.only(
+                      bottom: 12.0,
+                      left: 16.0,
+                      right: 16.0,
+                    ),
+                    child: InkWell(
+                      onTap: () {
+                        widget.scaffoldKey.currentState?.closeDrawer();
+                        showDialog(
+                          context: context,
+                          barrierDismissible: !updateState.isMandatory,
+                          builder: (context) =>
+                              UpdateDialog(updateData: updateState.toMap()),
+                        );
+                      },
+                      borderRadius: BorderRadius.circular(10),
+                      child: Container(
+                        padding: const EdgeInsets.symmetric(
+                          vertical: 8,
+                          horizontal: 12,
+                        ),
+                        decoration: BoxDecoration(
+                          color: const Color(0xFF0FA45F).withOpacity(0.12),
+                          borderRadius: BorderRadius.circular(10),
+                          border: Border.all(color: const Color(0xFF0FA45F)),
+                        ),
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            const Icon(
+                              Icons.system_update_alt,
+                              color: Color(0xFF0FA45F),
+                              size: 18,
+                            ),
+                            const SizedBox(width: 8),
+                            Expanded(
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                mainAxisSize: MainAxisSize.min,
+                                children: [
+                                  Text(
+                                    'Actualización v${updateState.versionName ?? ''}',
+                                    style: const TextStyle(
+                                      color: Color(0xFF0FA45F),
+                                      fontWeight: FontWeight.bold,
+                                      fontSize: 12,
+                                    ),
+                                  ),
+                                  const Text(
+                                    'Toca para instalar',
+                                    style: TextStyle(
+                                      color: Colors.black54,
+                                      fontSize: 10,
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ),
+                            Container(
+                              width: 8,
+                              height: 8,
+                              decoration: const BoxDecoration(
+                                color: Colors.redAccent,
+                                shape: BoxShape.circle,
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ),
                   );
-                } else if (snapshot.hasError) {
-                  return Text('Error loading app info');
                 }
-                return CircularProgressIndicator(); // Show a loading indicator
+
+                // Si no hay actualización, se mantiene el texto informativo habitual
+                return Padding(
+                  padding: const EdgeInsets.only(bottom: 10.0),
+                  child: FutureBuilder<PackageInfo>(
+                    future: PackageInfo.fromPlatform(),
+                    builder: (context, snapshot) {
+                      if (snapshot.hasData) {
+                        final packageInfo = snapshot.data!;
+                        return Text(
+                          'Scounter v${packageInfo.version}',
+                          // 'App Version: ${packageInfo.version} (${packageInfo.buildNumber})',
+                          style: theme.textTheme.labelSmall?.copyWith(
+                            color: Colors.grey,
+                          ),
+                        );
+                      } else if (snapshot.hasError) {
+                        return Text('Error loading app info');
+                      }
+                      return CircularProgressIndicator(); // Show a loading indicator
+                    },
+                  ),
+                );
               },
-            ),
             ),
           ],
         ),
@@ -365,7 +468,6 @@ Widget _buildHeader(BuildContext context, WidgetRef ref) {
   final env = Environment.apiUrl;
   return UserAccountsDrawerHeader(
     // center
-    
     margin: EdgeInsets.zero,
     currentAccountPictureSize: Size(65, 65),
 
@@ -386,27 +488,26 @@ Widget _buildHeader(BuildContext context, WidgetRef ref) {
     currentAccountPicture: CircleAvatar(
       backgroundColor: Colors.white,
       child: ClipOval(
-        child: 
-          user?.imagen == null || user?.imagen == ""
-              ? Image.asset(
+        child: user?.imagen == null || user?.imagen == ""
+            ? Image.asset(
                 'assets/images/no-user-image.png',
                 width: 100,
                 height: 100,
                 fit: BoxFit.cover,
               )
-              // ?  Image.network(
-              //   "https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=150&h=150&fit=crop&crop=face",
-              //   width: 100,
-              //   height: 100,
-              //   fit: BoxFit.cover,
-              // )
-              // '$env/usuarios/media/${user!.imagen}'
-        : Image.network(
-          "https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=150&h=150&fit=crop&crop=face",
-          width: 100,
-          height: 100,
-          fit: BoxFit.cover,
-        ),
+            // ?  Image.network(
+            //   "https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=150&h=150&fit=crop&crop=face",
+            //   width: 100,
+            //   height: 100,
+            //   fit: BoxFit.cover,
+            // )
+            // '$env/usuarios/media/${user!.imagen}'
+            : Image.network(
+                "https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=150&h=150&fit=crop&crop=face",
+                width: 100,
+                height: 100,
+                fit: BoxFit.cover,
+              ),
       ),
     ),
     decoration: BoxDecoration(
@@ -421,7 +522,7 @@ Widget _buildHeader(BuildContext context, WidgetRef ref) {
       //     BlendMode.darken,
       //   ),
       // ),
-      
+
       // image: DecorationImage(
       //    SvgPicture.asset(
       //   'assets/icons/mapa-mundi-bg.svg',
@@ -430,17 +531,17 @@ Widget _buildHeader(BuildContext context, WidgetRef ref) {
       //   height: MediaQuery.sizeOf(context).height,
       // ),
 
-        // image: NetworkImage(
-        //   // "https://torontotouchfootball.com/wp-content/uploads/2017/02/grey-metal-sheet-texture-background-header.jpg",
-        //   // "https://static.vecteezy.com/system/resources/thumbnails/006/304/593/small/abstract-white-and-light-grey-geometric-square-overlapped-pattern-on-background-with-shadow-modern-silver-color-cube-shape-with-copy-space-simple-and-minimal-banner-design-eps10-vector.jpg",
-        //   "https://img.freepik.com/free-vector/smooth-neumorphic-backdrop-banner-beautiful-presentation_1017-43122.jpg?semt=ais_hybrid&w=740&q=80",
-        // ),
-        // fit: BoxFit.cover,
-        // colorFilter: ColorFilter.mode(
-        //   Colors.black.withOpacity(0.2),
-        //   BlendMode.darken,
-        // ),
-      ),
+      // image: NetworkImage(
+      //   // "https://torontotouchfootball.com/wp-content/uploads/2017/02/grey-metal-sheet-texture-background-header.jpg",
+      //   // "https://static.vecteezy.com/system/resources/thumbnails/006/304/593/small/abstract-white-and-light-grey-geometric-square-overlapped-pattern-on-background-with-shadow-modern-silver-color-cube-shape-with-copy-space-simple-and-minimal-banner-design-eps10-vector.jpg",
+      //   "https://img.freepik.com/free-vector/smooth-neumorphic-backdrop-banner-beautiful-presentation_1017-43122.jpg?semt=ais_hybrid&w=740&q=80",
+      // ),
+      // fit: BoxFit.cover,
+      // colorFilter: ColorFilter.mode(
+      //   Colors.black.withOpacity(0.2),
+      //   BlendMode.darken,
+      // ),
+    ),
     // ),
   );
 }
