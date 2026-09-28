@@ -7,6 +7,14 @@ class VueloCalendario {
   final String? trcFechaInicio;
   final String? trcHoraFin;
   final String? trcFechaFin;
+  // fecha_inicio_servicio_
+  // hora_inicio_servicio_
+  // fecha_fin_servicio_
+  // hora_fin_servicio_
+  final String? horaInicioServicio_;
+  final String? fechaInicioServicio_;
+  final String? horaFinServicio_;
+  final String? fechaFinServicio_;
   final int aerolineaId;
   final String aerolineaNombre;
   final String imagen;
@@ -39,6 +47,10 @@ class VueloCalendario {
     this.trcFechaInicio,
     this.trcHoraFin,
     this.trcFechaFin,
+    this.horaInicioServicio_,
+    this.fechaInicioServicio_,
+    this.fechaFinServicio_,
+    this.horaFinServicio_,
     required this.aerolineaId,
     required this.aerolineaNombre,
     required this.imagen,
@@ -74,6 +86,10 @@ class VueloCalendario {
       trcFechaInicio: json['trc_fecha_inicio'],
       trcHoraFin: json['trc_hora_fin'],
       trcFechaFin: json['trc_fecha_fin'],
+      horaInicioServicio_: json['hora_inicio_servicio_'],
+      fechaInicioServicio_: json['fecha_inicio_servicio_'],
+      fechaFinServicio_: json['fecha_fin_servicio_'],
+      horaFinServicio_: json['hora_fin_servicio_'],
       aerolineaId: json['aerolinea_id'] ?? 0,
       aerolineaNombre: json['aerolinea_nombre'] ?? '',
       imagen: json['imagen'] ?? '',
@@ -110,6 +126,10 @@ class VueloCalendario {
       'trc_fecha_inicio': trcFechaInicio,
       'trc_hora_fin': trcHoraFin,
       'trc_fecha_fin': trcFechaFin,
+      'hora_inicio_servicio_': horaInicioServicio_,
+      'fecha_inicio_servicio_': fechaInicioServicio_,
+      'fecha_fin_servicio_': fechaFinServicio_,
+      'hora_fin_servicio_': horaFinServicio_,
       'aerolinea_id': aerolineaId,
       'aerolinea_nombre': aerolineaNombre,
       'imagen': imagen,

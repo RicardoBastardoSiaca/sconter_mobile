@@ -48,16 +48,20 @@ class TurnaroundNotifier extends StateNotifier<TurnaroundState> {
     // out-of-order network responses don't clobber newer data.
     final DateTime requestDate = state.selectedDate;
 
-    final serviciosMiscelaneos = await turnaroundsRepository.getServiciosMiscelaneosByDate(
-      requestDate.year,
-      requestDate.month,
-      requestDate.day,
-    );
+    final serviciosMiscelaneos = await turnaroundsRepository
+        .getServiciosMiscelaneosByDate(
+          requestDate.year,
+          requestDate.month,
+          requestDate.day,
+        );
 
     if (state.selectedDate == requestDate) {
-      state = state.copyWith(isLoading: false, serviciosMiscelaneos: serviciosMiscelaneos);
+      state = state.copyWith(
+        isLoading: false,
+        serviciosMiscelaneos: serviciosMiscelaneos,
+      );
     }
-  } 
+  }
 
   // set new date and fetch turnarounds
   void setSelectedDate(DateTime date, [bool isServicioMiscelaneo = false]) {
@@ -93,9 +97,13 @@ class TurnaroundNotifier extends StateNotifier<TurnaroundState> {
 
     return response;
   }
+
   // iniciar operaciones
-  Future<SimpleApiResponse> iniciarOperacionesServiciosMiscelaneos(int id) async {
-    final response = await turnaroundsRepository.iniciarOperacionesServicioMiscelaneo(id);
+  Future<SimpleApiResponse> iniciarOperacionesServiciosMiscelaneos(
+    int id,
+  ) async {
+    final response = await turnaroundsRepository
+        .iniciarOperacionesServicioMiscelaneo(id);
 
     if (response.success) {
       getServiciosMiscelaneos();
@@ -109,8 +117,8 @@ class TurnaroundNotifier extends StateNotifier<TurnaroundState> {
 
     if (response.success) {
       getTurnarounds();
-    // snackbar to show message
-    
+      // snackbar to show message
+
       // ScaffoldMessenger.of(context).showSnackBar(
       //   SnackBar(content: Text(response.message)),
       // );
@@ -122,16 +130,21 @@ class TurnaroundNotifier extends StateNotifier<TurnaroundState> {
     final response = await turnaroundsRepository.cerrarVuelo(body);
     if (response.success) {
       getTurnarounds();
-    // snackbar to show message
-    
+      // snackbar to show message
+
       // ScaffoldMessenger.of(context).showSnackBar(
       //   SnackBar(content: Text(response.message)),
       // );
     }
     return response;
   }
-  Future<SimpleApiResponse> cerrarVueloervicioMiscelaneo(Map<String, Object?> body) async {
-    final response = await turnaroundsRepository.cerrarVueloervicioMiscelaneo(body);
+
+  Future<SimpleApiResponse> cerrarVueloervicioMiscelaneo(
+    Map<String, Object?> body,
+  ) async {
+    final response = await turnaroundsRepository.cerrarVueloervicioMiscelaneo(
+      body,
+    );
     if (response.success) {
       getServiciosMiscelaneos();
     }
@@ -139,12 +152,27 @@ class TurnaroundNotifier extends StateNotifier<TurnaroundState> {
   }
 
   Future<SimpleApiResponse> finalizarVueloServicioMiscelaneo(int id) async {
-    final response = await turnaroundsRepository.finalizarVueloServicioMiscelaneo(id);
+    final response = await turnaroundsRepository
+        .finalizarVueloServicioMiscelaneo(id);
     if (response.success) {
       getServiciosMiscelaneos();
     }
     return response;
   }
+
+  // get turnarounds by id (from current)
+
+  // set selectedTurnaroundProvider given id from trunarounds list
+  TurnaroundMain? getTurnaroundFromStateById(int id) {
+    for (final turnaround in state.turnarounds) {
+      if (turnaround.id == id) {
+        return turnaround;
+      }
+    }
+    return null;
+  }
+
+  
 }
 
 // STATE

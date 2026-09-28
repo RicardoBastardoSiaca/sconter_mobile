@@ -18,23 +18,31 @@ class _ParseParams {
 
 // 2. Función Top-Level para el compute
 List<TurnaroundMain> _parseAndMapTurnarounds(_ParseParams params) {
-  if (params.rawData == null || params.rawData is! List) return [];
+  final responseData = params.rawData;
 
-  // Inyectamos las variables cargadas del hilo principal al Isolate actual
-  dotenv.testLoad(fileInput: params.envMap.entries.map((e) => '${e.key}=${e.value}').join('\n'));
+  // Restaurar variables de entorno en el Isolate secundario si las necesitas
+  dotenv.testLoad(
+    fileInput: params.envMap.entries
+        .map((e) => '${e.key}=${e.value}')
+        .join('\n'),
+  );
 
-  return (params.rawData as List)
-      .map((item) => TurnaroundMainMapper.mapJsonToTurnaroundMain(item))
-      .toList();
+  if (responseData is! List) {
+    return [];
+  }
+
+  return responseData.map((item) {
+    return TurnaroundMainMapper.mapJsonToTurnaroundMain(
+      Map<String, dynamic>.from(item as Map),
+    );
+  }).toList();
 }
-
 
 class TurnaroundsDatasourceImpl implements TurnaroundsDatasource {
   late final Dio dio;
   final String accessToken;
 
   final ConnectivityService _connectivityService = ConnectivityService();
-
 
   TurnaroundsDatasourceImpl({required this.accessToken})
     : dio = Dio(
@@ -72,36 +80,34 @@ class TurnaroundsDatasourceImpl implements TurnaroundsDatasource {
     }
   }
 
-  
-
   // 2. Tu método original actualizado
-// 3. Método del Datasource
-@override
-Future<List<TurnaroundMain>> getTurnaroundsByDate(
-  int year,
-  int month,
-  int day,
-) async {
-  try {
-    final response = await dio.get(
-      '/turnarounds/$year-$month-$day/?token=$accessToken',
-    );
+  // 3. Método del Datasource
+  @override
+  Future<List<TurnaroundMain>> getTurnaroundsByDate(
+    int year,
+    int month,
+    int day,
+  ) async {
+    try {
+      final response = await dio.get(
+        '/turnarounds/$year-$month-$day/?token=$accessToken',
+      );
 
-    // Copiamos las variables de entorno actuales del Isolate principal
-    final envMap = Map<String, String>.from(dotenv.env);
+      // Copiamos las variables de entorno actuales del Isolate principal
+      final envMap = Map<String, String>.from(dotenv.env);
 
-    final List<TurnaroundMain> turnarounds = await compute(
-      _parseAndMapTurnarounds,
-      _ParseParams(response.data, envMap),
-    );
+      final List<TurnaroundMain> turnarounds = await compute(
+        _parseAndMapTurnarounds,
+        _ParseParams(response.data, envMap),
+      );
 
-    return turnarounds;
-  } catch (e, stackTrace) {
-    print('Error en getTurnaroundsByDate: $e');
-    print(stackTrace);
-    return [];
+      return turnarounds;
+    } catch (e, stackTrace) {
+      print('Error en getTurnaroundsByDate: $e');
+      print(stackTrace);
+      return [];
+    }
   }
-}
 
   @override
   Future<List<TurnaroundMain>> getServiciosMiscelaneosByDate(
@@ -126,9 +132,11 @@ Future<List<TurnaroundMain>> getTurnaroundsByDate(
       // if (!response.data['success']) {
       //   return serviciosMiscelaneos;
       // }
-      print ('Response from getServiciosMiscelaneosByDate: ${response.data}');
+      print('Response from getServiciosMiscelaneosByDate: ${response.data}');
       for (final item in response.data ?? []) {
-        serviciosMiscelaneos.add(TurnaroundMainMapper.mapJsonToTurnaroundMain(item));
+        serviciosMiscelaneos.add(
+          TurnaroundMainMapper.mapJsonToTurnaroundMain(item),
+        );
       }
 
       return serviciosMiscelaneos;
@@ -162,7 +170,9 @@ Future<List<TurnaroundMain>> getTurnaroundsByDate(
               );
             } else {
               return SimpleApiResponse(
-                message: response.data['mensaje'] ?? 'Algo salió mal, intente nuevamente.',
+                message:
+                    response.data['mensaje'] ??
+                    'Algo salió mal, intente nuevamente.',
                 success: false,
               );
             }
@@ -484,6 +494,7 @@ Future<List<TurnaroundMain>> getTurnaroundsByDate(
           }
         });
   }
+
   @override
   Future<SimpleApiResponse> setTexto(SetTextoRequest body) {
     final requestBody = {'id': body.id, 'texto': body.texto};
@@ -540,24 +551,26 @@ Future<List<TurnaroundMain>> getTurnaroundsByDate(
 
   @override
   Future<List<CategoriaServicioAdicional>> getServiciosAdicionales() {
-    return dio.get('/servicios_adicionales/?token=$accessToken')
-    .then((
-      response) {
-      print('Response from getServiciosAdicionales: $response');
-      if (response.statusCode == 200) {
-        // mapping to CategoriasServiciosAdicionalesMapper map
-        final List<CategoriaServicioAdicional> serviciosAdicionales =
-            CategoriasServiciosAdicionalesMapper.mapJsonListToCategoriasServiciosAdicionales(
-              response.data,
-            );
-        return serviciosAdicionales;
-      } else {
-        return [];
-      }
-    },
-    onError: (error) {
-      return [];
-    });
+    return dio
+        .get('/servicios_adicionales/?token=$accessToken')
+        .then(
+          (response) {
+            print('Response from getServiciosAdicionales: $response');
+            if (response.statusCode == 200) {
+              // mapping to CategoriasServiciosAdicionalesMapper map
+              final List<CategoriaServicioAdicional> serviciosAdicionales =
+                  CategoriasServiciosAdicionalesMapper.mapJsonListToCategoriasServiciosAdicionales(
+                    response.data,
+                  );
+              return serviciosAdicionales;
+            } else {
+              return [];
+            }
+          },
+          onError: (error) {
+            return [];
+          },
+        );
   }
 
   @override
@@ -867,26 +880,29 @@ Future<List<TurnaroundMain>> getTurnaroundsByDate(
   Future firmaSupervisor(FormData formData) {
     return dio
         .post('/turnarounds/firma_trc/?token=$accessToken', data: formData)
-        .then((response) {
-          print('Response from firmaSupervisor: $response');
-          if (response.statusCode == 201) {
+        .then(
+          (response) {
+            print('Response from firmaSupervisor: $response');
+            if (response.statusCode == 201) {
+              return SimpleApiResponse(
+                message: 'Firma registrada.',
+                success: true,
+              );
+            } else {
+              return SimpleApiResponse(
+                message: response.data['mensaje'],
+                success: false,
+              );
+            }
+          },
+          onError: (error) {
+            print('Error from firmaSupervisor: $error');
             return SimpleApiResponse(
-              message: 'Firma registrada.',
-              success: true,
-            );
-          } else {
-            return SimpleApiResponse(
-              message: response.data['mensaje'],
+              message: 'Error al registrar firma.',
               success: false,
             );
-          }
-        }, onError: (error) {
-          print('Error from firmaSupervisor: $error');
-          return SimpleApiResponse(
-            message: 'Error al registrar firma.',
-            success: false,
-          );
-        });
+          },
+        );
   }
 
   @override
@@ -1055,11 +1071,13 @@ Future<List<TurnaroundMain>> getTurnaroundsByDate(
   //           success: false,
   //         );
   //       }
-    
+
   // }
-  
+
   @override
-  Future<SimpleApiResponse> setCantidadServicioAdicional(Map<String, Object?> body) {
+  Future<SimpleApiResponse> setCantidadServicioAdicional(
+    Map<String, Object?> body,
+  ) {
     return dio
         .post('/servicios_adicionales/cantidad/?token=$accessToken', data: body)
         .then((response) {
@@ -1077,11 +1095,10 @@ Future<List<TurnaroundMain>> getTurnaroundsByDate(
           }
         });
   }
-  
+
   @override
   Future getCategoriasEquiposIt() {
-    return dio.get('/equipo/it_categoria/?token=$accessToken')
-    .then((response) {
+    return dio.get('/equipo/it_categoria/?token=$accessToken').then((response) {
       print('Response from getCategoriasEquiposIt: $response');
       if (response.statusCode == 200) {
         // mapping to CategoriasEquiposIt map
@@ -1095,9 +1112,11 @@ Future<List<TurnaroundMain>> getTurnaroundsByDate(
       }
     });
   }
-  
+
   @override
-  Future<SimpleApiResponse> asignarEquiposItLimpiezaTareas(Map<String, Object> body) {
+  Future<SimpleApiResponse> asignarEquiposItLimpiezaTareas(
+    Map<String, Object> body,
+  ) {
     return dio
         .put(
           '/control-actividades/asignacion_equipo/?token=$accessToken',
@@ -1118,25 +1137,28 @@ Future<List<TurnaroundMain>> getTurnaroundsByDate(
           }
         });
   }
-  
+
   @override
   Future getPlantillaDetalleById(int id) {
-    return dio.get('/plantillas/plantilla_tarea_subtarea_by_id/$id/?token=$accessToken')
-    .then((response) {
-      print('Response from getPlantillaDetalleById: $response');
-      if (response.statusCode == 200) {
-        // mapping to PlantillaDetalle map
-        final Plantilla plantillaDetalle =
-            PlantillaDetalleMapper.mapJsonToPlantillaDetalle(
-              response.data[0],
-            );
-        return plantillaDetalle;
-      } else {
-        throw Exception('Error al obtener la plantilla detalle.');
-      }
-    });
+    return dio
+        .get(
+          '/plantillas/plantilla_tarea_subtarea_by_id/$id/?token=$accessToken',
+        )
+        .then((response) {
+          print('Response from getPlantillaDetalleById: $response');
+          if (response.statusCode == 200) {
+            // mapping to PlantillaDetalle map
+            final Plantilla plantillaDetalle =
+                PlantillaDetalleMapper.mapJsonToPlantillaDetalle(
+                  response.data[0],
+                );
+            return plantillaDetalle;
+          } else {
+            throw Exception('Error al obtener la plantilla detalle.');
+          }
+        });
   }
-  
+
   @override
   Future<SimpleApiResponse> iniciarOperacionesServicioMiscelaneo(int id) async {
     // Check internet connection and return error message if no connection
@@ -1174,9 +1196,11 @@ Future<List<TurnaroundMain>> getTurnaroundsByDate(
       // throw Exception('Error al iniciar operaciones: $e');
     }
   }
-  
+
   @override
-  Future<ControlActividades> getControlDeActividadesServicioMiscelaneoById(int id) async {
+  Future<ControlActividades> getControlDeActividadesServicioMiscelaneoById(
+    int id,
+  ) async {
     // Check internet connection
     final hasConection = _connectivityService.hasInternet.value;
     if (!hasConection) {
@@ -1197,77 +1221,83 @@ Future<List<TurnaroundMain>> getTurnaroundsByDate(
       throw Exception('Error al obtener control de actividades: $e');
     }
   }
-  
+
   @override
   Future<SimpleApiResponse> finalizarVueloServicioMiscelaneo(int id) async {
     final body = {'id': id};
-    final response = await dio
-        .post('/turnarounds/finalizar_vuelo/?token=$accessToken', data: body);
-        if (response.statusCode == 201) {
-          return SimpleApiResponse(
-            message: 'Vuelo finalizado.',
-            success: true,
-          );
-        } else if (response.statusCode == 400) {
-          return SimpleApiResponse(
-            message: 'Error al finalizar vuelo',
-            success: false,
-          );
-        } else {
-          return SimpleApiResponse(
-            message: 'Error al finalizar vuelo.',
-            success: false,
-          );
-        }
+    final response = await dio.post(
+      '/turnarounds/finalizar_vuelo/?token=$accessToken',
+      data: body,
+    );
+    if (response.statusCode == 201) {
+      return SimpleApiResponse(message: 'Vuelo finalizado.', success: true);
+    } else if (response.statusCode == 400) {
+      return SimpleApiResponse(
+        message: 'Error al finalizar vuelo',
+        success: false,
+      );
+    } else {
+      return SimpleApiResponse(
+        message: 'Error al finalizar vuelo.',
+        success: false,
+      );
+    }
   }
-  
+
   @override
-  Future<SimpleApiResponse> cerrarVueloervicioMiscelaneo(Map<String, Object?> body) async{
-     final response = await dio
-        .post('/turnarounds/cerrar_vuelo_servicio/?token=$accessToken', data: body);
-        if (response.statusCode == 201) {
-          return SimpleApiResponse(
-            message: 'Vuelo cerrado.',
-            success: true,
-          );
-        } else if (response.statusCode == 400) {
-          return SimpleApiResponse(
-            message: 'Error. Asegurese de llenar los datos del vuelo',
-            success: false,
-          );
-        } else {
-          return SimpleApiResponse(
-            message: 'Error al cerrar vuelo.',
-            success: false,
-          );
-        }
+  Future<SimpleApiResponse> cerrarVueloervicioMiscelaneo(
+    Map<String, Object?> body,
+  ) async {
+    final response = await dio.post(
+      '/turnarounds/cerrar_vuelo_servicio/?token=$accessToken',
+      data: body,
+    );
+    if (response.statusCode == 201) {
+      return SimpleApiResponse(message: 'Vuelo cerrado.', success: true);
+    } else if (response.statusCode == 400) {
+      return SimpleApiResponse(
+        message: 'Error. Asegurese de llenar los datos del vuelo',
+        success: false,
+      );
+    } else {
+      return SimpleApiResponse(
+        message: 'Error al cerrar vuelo.',
+        success: false,
+      );
+    }
   }
-  
+
   @override
   Future<SimpleApiResponse> finalizarActividadesSinFirma(int id) async {
-    final response = await dio
-        .post('/turnarounds/finalizar_vuelo/?token=$accessToken', data: {'id': id});
-        if (response.statusCode == 201) {
-          return SimpleApiResponse(
-            message: 'Turnaround finalizado.',
-            success: true,
-          );
-        } else if (response.statusCode == 400) {
-          return SimpleApiResponse(
-            message: response.data['mensaje'] ?? 'Error al finalizar vuelo',
-            success: false,
-          );
-        } else {
-          return SimpleApiResponse(
-            message: 'Error al finalizar vuelo.',
-            success: false,
-          );
-        }
+    final response = await dio.post(
+      '/turnarounds/finalizar_vuelo/?token=$accessToken',
+      data: {'id': id},
+    );
+    if (response.statusCode == 201) {
+      return SimpleApiResponse(
+        message: 'Turnaround finalizado.',
+        success: true,
+      );
+    } else if (response.statusCode == 400) {
+      return SimpleApiResponse(
+        message: response.data['mensaje'] ?? 'Error al finalizar vuelo',
+        success: false,
+      );
+    } else {
+      return SimpleApiResponse(
+        message: 'Error al finalizar vuelo.',
+        success: false,
+      );
+    }
   }
-  
+
   @override
   Future<SimpleApiResponse> setInternetSpeed(SetInternetTareaRequest body) {
-    final requestBody = {'id': body.id, 'numero': body.numero, 'tipo': body.tipo};
+    final requestBody = {
+      'id': body.id,
+      'numero': body.numero,
+      'tipo': body.tipo,
+    };
     return dio
         .post(
           '/control-actividades/updown/?token=$accessToken',
@@ -1288,7 +1318,7 @@ Future<List<TurnaroundMain>> getTurnaroundsByDate(
           }
         });
   }
-  
+
   @override
   Future<SimpleApiResponse> asignarEquipoIt(Map<String, dynamic> body) {
     return dio
@@ -1311,7 +1341,6 @@ Future<List<TurnaroundMain>> getTurnaroundsByDate(
           }
         });
   }
-
 
   @override
   Future<List<VueloCalendario>> getVuelosCalendario(
@@ -1365,7 +1394,7 @@ Future<List<TurnaroundMain>> getTurnaroundsByDate(
     //       }
     //     });
   }
-  
+
   @override
   Future<SimpleApiResponse> cerrarVuelo(Map<String, Object?> body) async {
     final response = await dio.post(
@@ -1386,9 +1415,9 @@ Future<List<TurnaroundMain>> getTurnaroundsByDate(
             'Error. Asegurese de llenar los datos del vuelo',
         success: false,
         statusCode: response.statusCode,
-        errorList: response.data['errores'] != null 
-          ? List<String>.from(response.data['errores']) 
-          : null,
+        errorList: response.data['errores'] != null
+            ? List<String>.from(response.data['errores'])
+            : null,
       );
     } else {
       return SimpleApiResponse(
@@ -1397,9 +1426,8 @@ Future<List<TurnaroundMain>> getTurnaroundsByDate(
         statusCode: response.statusCode,
       );
     }
-    
   }
-  
+
   @override
   Future<SimpleApiResponse> finalizarVuelo(Map<String, Object?> body) async {
     final response = await dio.post(
@@ -1420,9 +1448,9 @@ Future<List<TurnaroundMain>> getTurnaroundsByDate(
             'Error. Asegurese de llenar los datos del vuelo',
         success: false,
         statusCode: response.statusCode,
-        errorList: response.data['errores'] != null 
-          ? List<String>.from(response.data['errores']) 
-          : null,
+        errorList: response.data['errores'] != null
+            ? List<String>.from(response.data['errores'])
+            : null,
       );
     } else {
       return SimpleApiResponse(
@@ -1435,7 +1463,6 @@ Future<List<TurnaroundMain>> getTurnaroundsByDate(
 
   @override
   Future<List<Estacion>> getEstaciones() async {
-    
     try {
       final response = await dio.get(
         '/sucursal/sucursal_api/?token=$accessToken',
@@ -1443,9 +1470,7 @@ Future<List<TurnaroundMain>> getTurnaroundsByDate(
       print('Response from getEstaciones: $response');
       if (response.statusCode == 200) {
         final List<Estacion> estacionesResponse =
-            TurnaroundMainMapper.mapJsonToEstaciones(
-              response.data,
-            );
+            TurnaroundMainMapper.mapJsonToEstaciones(response.data);
         return estacionesResponse.toList();
       } else {
         throw Exception('Error al obtener el listado de estaciones.');
@@ -1455,10 +1480,8 @@ Future<List<TurnaroundMain>> getTurnaroundsByDate(
     }
   }
 
-   @override
-  Future<List<VueloLineup>> getVuelosLineup(
-    VueloLineupRequest body,
-  ) async {
+  @override
+  Future<List<VueloLineup>> getVuelosLineup(VueloLineupRequest body) async {
     final requestBody = {
       // start date to 'YYYY-MM-DD' string without the T00:00:00.000 part
       'start': DateFormat('yyyy-MM-dd').format(body.start).substring(0, 10),
@@ -1477,7 +1500,9 @@ Future<List<TurnaroundMain>> getTurnaroundsByDate(
 
         // final CategoriasEquiposGseResponse vuelos =
         //     CategoriasEquiposGseMapper(data);
-        final List<VueloLineup> vuelos = VuelosLineupListMapper.fromJsonList(data);
+        final List<VueloLineup> vuelos = VuelosLineupListMapper.fromJsonList(
+          data,
+        );
 
         return vuelos;
       } else {
@@ -1507,5 +1532,58 @@ Future<List<TurnaroundMain>> getTurnaroundsByDate(
     //       }
     //     });
   }
-  
+
+  @override
+  Future<List<Counter>> getCountersList(int idTerminal) async {
+    // TODO: implement getCountersList
+
+    // return dio.get('/terminal/posiciones/1/?token=$accessToken')
+    try {
+      return dio
+          .get('/terminal/posiciones/$idTerminal/?token=$accessToken')
+          .then((response) {
+            print('Response from getCountersList: $response');
+            if (response.statusCode == 200) {
+              // mapping to CategoriasEquiposIt map
+              final List<Counter> countersList =
+                  TurnaroundMainMapper.mapJsonToCounters(response.data);
+              return countersList;
+            } else {
+              return <Counter>[];
+            }
+          });
+    } catch (e) {
+      print(e);
+      return <Counter>[];
+    }
+  }
+
+  @override
+  Future<SimpleApiResponse> asignarCounters(Map<String, Object?> body) async {
+    try {
+      return dio
+          .post('/turnarounds/trc_posicion/?token=$accessToken', data: body)
+          .then((response) {
+            print('Response: $response');
+            if (response.statusCode == 200) {
+              // final data = response.data;
+              // print('Response from setHoraInicio: $data');
+              return SimpleApiResponse(
+                message: 'Hora de inicio actualizada correctamente.',
+                success: true,
+              );
+            } else {
+              return SimpleApiResponse(
+                message: 'Algo salió mal, intente nuevamente.',
+                success: false,
+              );
+            }
+          });
+    } catch (e) {
+      return SimpleApiResponse(
+        message: 'Algo salió mal, intente nuevamente.',
+        success: false,
+      );
+    }
+  }
 }

@@ -27,7 +27,8 @@ export 'show_snackbar.dart';
 
 export 'scanner/scanner.dart';
 
-export 'calendario_vuelos_widget.dart';
+export 'calendario/calendario_vuelos_widget.dart';
+export 'calendario/consultar_vuelo_calendario.dart';
 
 export 'visor_pdf_screen.dart';
 export 'visor_pdf_bytes_screen.dart';

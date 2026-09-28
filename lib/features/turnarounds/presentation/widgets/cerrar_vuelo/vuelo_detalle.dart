@@ -22,8 +22,9 @@ class VueloDetalle extends StatelessWidget {
             acReg: controlActividades?.acReg ?? '',
             acType: turnaround?.fkVuelo.acType ?? '',
             puerta: turnaround?.fkVuelo.gate?.toString() ?? '',
-            tipoVuelo: turnaround!.fkVuelo.tipoVuelo.nombre,
-            tipoServicio: turnaround!.fkVuelo.tipoServicio?.nombre ?? 'N/A',
+            // tipoVuelo: turnaround!.fkVuelo.tipoVuelo.nombre,
+            tipoVuelo: turnaround?.fkVuelo.tipoVuelo?.nombre ?? 'N/A',
+            tipoServicio: turnaround?.fkVuelo.tipoServicio?.nombre ?? 'N/A',
             nroVuelo: turnaround?.fkVuelo.numeroVueloOut ?? '',
             estacion: turnaround?.fkVuelo.stn?.aka ?? '',
             hora: turnaround?.fkVuelo.etdOut?.substring(0, 5) ?? '',
@@ -37,10 +38,10 @@ class VueloDetalle extends StatelessWidget {
               : FlightInfoCard(
                   titulo: 'Vuelo de llegada',
                   flightNumber:
-                      '${turnaround?.fkVuelo.fkAerolinea.codigoIata}-${controlActividades?.numeroVueloIn}' ??
+                      '${turnaround?.fkVuelo.fkAerolinea.codigoIata}-${turnaround?.fkVuelo.numeroVueloIn}' ??
                       '',
                   routing:
-                      '${controlActividades?.lugarSalidaIata}-${turnaround?.fkVuelo.stn?.codigoIata} ' ??
+                      '${turnaround?.fkVuelo.lugarSalida?.codigoIata}-${turnaround?.fkVuelo.stn?.codigoIata} ' ??
                       '',
                   etd: '${turnaround?.fkVuelo.etdIn?.substring(0, 5)}' ?? '',
                   eta: '${turnaround?.fkVuelo.etaIn?.substring(0, 5)}' ?? '',
@@ -64,10 +65,10 @@ class VueloDetalle extends StatelessWidget {
               : FlightInfoCard(
                   titulo: 'Vuelo de salida',
                   flightNumber:
-                      '${turnaround?.fkVuelo.fkAerolinea.codigoIata}-${controlActividades?.numeroVueloOut}' ??
+                      '${turnaround?.fkVuelo.fkAerolinea.codigoIata}-${turnaround?.fkVuelo.numeroVueloOut}' ??
                       '',
                   routing:
-                      '${turnaround?.fkVuelo.stn?.codigoIata}-${controlActividades?.lugarDestinoIata}' ??
+                      '${turnaround?.fkVuelo.stn?.codigoIata}-${turnaround?.fkVuelo.lugarDestino?.codigoIata}' ??
                       '',
                   etd: '${turnaround?.fkVuelo.etdOut?.substring(0, 5)}' ?? '',
                   eta: '${turnaround?.fkVuelo.etaOut?.substring(0, 5)}' ?? '',

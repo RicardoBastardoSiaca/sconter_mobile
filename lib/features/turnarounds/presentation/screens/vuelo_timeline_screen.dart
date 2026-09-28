@@ -14,13 +14,17 @@ class VueloTimelineScreen extends ConsumerStatefulWidget {
 }
 
 class _VueloTimelineScreenState extends ConsumerState<VueloTimelineScreen> {
+
+  // 🔑 Key global para identificar el widget del día actual
+  final GlobalKey _hoyHeaderKey = GlobalKey();
+
   // Dimensiones
   // 1. CONSTANTES DE DIMENSIONES COMPACTAS
 // 1. CONSTANTES DE DIMENSIONES COMPACTAS (Reducidas un 20% horizontalmente)
 static const double _rowHeight = 36.0;    
 static const double _sidebarWidth = 90.0;  
 static const double _headerHeight = 30.0;   
-static const double _hourWidth = 48.0;     // Reducido de 60.0 a 48.0 (-20%)     // Reducido de 80.0 a 60.0
+// static const double _hourWidth = 48.0;     // Reducido de 60.0 a 48.0 (-20%)     // Reducido de 80.0 a 60.0
 
 bool _mostrarFiltros = true; // Controla la visibilidad de la barra superior
 
@@ -61,57 +65,103 @@ void initState() {
 
   // --- MÉTODOS DE SCROLL CON HORA VENEZUELA (UTC-4) ---
 
-  void _scrollToCurrentTime(double hourWidth, List<dynamic> uiRows) {
-    final ahoraVenezuela = DateTime.now().toUtc().subtract(const Duration(hours: 4));
+  // void _scrollToCurrentTime(double hourWidth, List<dynamic> uiRows) {
+  //   final ahoraVenezuela = DateTime.now().toUtc().subtract(const Duration(hours: 4));
 
-    final String hoyFormateado = DateFormat('yyyy-MM-dd').format(ahoraVenezuela);
-    bool laSemanaContieneAHoy = uiRows.any((item) => item is String && item == hoyFormateado);
-    if (!laSemanaContieneAHoy) return;
+  //   final String hoyFormateado = DateFormat('yyyy-MM-dd').format(ahoraVenezuela);
+  //   bool laSemanaContieneAHoy = uiRows.any((item) => item is String && item == hoyFormateado);
+  //   if (!laSemanaContieneAHoy) return;
 
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      if (_horizontalBodyController.hasClients) {
-        final double horaDecimal = ahoraVenezuela.hour + (ahoraVenezuela.minute / 60.0);
-        final double positionXLineaRoja = horaDecimal * hourWidth;
+  //   WidgetsBinding.instance.addPostFrameCallback((_) {
+  //     if (_horizontalBodyController.hasClients) {
+  //       final double horaDecimal = ahoraVenezuela.hour + (ahoraVenezuela.minute / 60.0);
+  //       final double positionXLineaRoja = horaDecimal * hourWidth;
 
-        final double screenWidth = MediaQuery.of(context).size.width;
-        final double offsetAl20PorCiento = screenWidth * 0.20;
+  //       final double screenWidth = MediaQuery.of(context).size.width;
+  //       final double offsetAl20PorCiento = screenWidth * 0.20;
 
-        final double targetScrollX = (positionXLineaRoja - offsetAl20PorCiento).clamp(
-          0.0,
-          _horizontalBodyController.position.maxScrollExtent,
-        );
+  //       final double targetScrollX = (positionXLineaRoja - offsetAl20PorCiento).clamp(
+  //         0.0,
+  //         _horizontalBodyController.position.maxScrollExtent,
+  //       );
 
-        _horizontalBodyController.animateTo(
-          targetScrollX,
-          duration: const Duration(milliseconds: 800),
-          curve: Curves.easeInOutCubic,
-        );
-      }
-    });
+  //       _horizontalBodyController.animateTo(
+  //         targetScrollX,
+  //         duration: const Duration(milliseconds: 800),
+  //         curve: Curves.easeInOutCubic,
+  //       );
+  //     }
+  //   });
+  // }
+
+  // Mover la llamada del scroll a un método con reintento activo si no hay dimensiones
+// Mover la llamada del scroll a un método con reintento activo si no hay dimensiones
+void _scrollToCurrentDay(List<dynamic> uiRows) {
+  void ejecutarScroll() {
+    if (!mounted) return;
+
+    // Buscamos el BuildContext del Header Verde del día actual
+    final currentContext = _hoyHeaderKey.currentContext;
+
+    if (currentContext != null) {
+      // ensureVisible alineará el widget exacto en la parte SUPERIOR (alignment: 0.0)
+      Scrollable.ensureVisible(
+        currentContext,
+        alignment: 0.0, // 👈 0.0 fuerza que el día quede pegado arriba del todo
+        duration: const Duration(milliseconds: 400),
+        curve: Curves.easeInOut,
+      );
+    } else {
+      // Si aún no se ha montado en el árbol, esperamos un frame y reintentamos
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        Future.delayed(const Duration(milliseconds: 50), () => ejecutarScroll());
+      });
+    }
   }
 
-  void _scrollToCurrentDay(List<dynamic> uiRows) {
-    final ahoraVenezuela = DateTime.now().toUtc().subtract(const Duration(hours: 4));
-    final String hoyFormateado = DateFormat('yyyy-MM-dd').format(ahoraVenezuela);
+  WidgetsBinding.instance.addPostFrameCallback((_) {
+    Future.delayed(const Duration(milliseconds: 150), () => ejecutarScroll());
+  });
+}
 
-    int indexHoy = uiRows.indexWhere((item) => item is String && item == hoyFormateado);
+void _scrollToCurrentTime(double hourWidth, List<dynamic> uiRows) {
+  final ahoraVenezuela = DateTime.now().toUtc().subtract(const Duration(hours: 4));
 
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      if (_verticalSideController.hasClients) {
-        if (indexHoy != -1) {
-          final double targetOffset = indexHoy * _rowHeight;
-          _verticalSideController.animateTo(
-            targetOffset,
-            duration: const Duration(milliseconds: 600),
-            curve: Curves.easeInOutCubic,
-          );
-        } else {
-          _verticalSideController.jumpTo(0.0);
-        }
-      }
-    });
+  final String hoyFormateado = DateFormat('yyyy-MM-dd').format(ahoraVenezuela);
+  bool laSemanaContieneAHoy = uiRows.any((item) => item is String && item == hoyFormateado);
+  if (!laSemanaContieneAHoy) return;
+
+  void intentarScrollHoriz([int intentos = 0]) {
+    if (!mounted) return;
+
+    if (_horizontalBodyController.hasClients && 
+        _horizontalBodyController.position.hasContentDimensions &&
+        _horizontalBodyController.position.maxScrollExtent > 0) {
+
+      final double horaDecimal = ahoraVenezuela.hour + (ahoraVenezuela.minute / 60.0);
+      final double positionXLineaRoja = horaDecimal * hourWidth;
+      final double screenWidth = MediaQuery.of(context).size.width;
+      final double offsetAl20PorCiento = screenWidth * 0.20;
+
+      final double targetScrollX = (positionXLineaRoja - offsetAl20PorCiento).clamp(
+        0.0,
+        _horizontalBodyController.position.maxScrollExtent,
+      );
+
+      _horizontalBodyController.animateTo(
+        targetScrollX,
+        duration: const Duration(milliseconds: 600),
+        curve: Curves.easeInOutCubic,
+      );
+    } else if (intentos < 15) {
+      Future.delayed(const Duration(milliseconds: 50), () {
+        intentarScrollHoriz(intentos + 1);
+      });
+    }
   }
 
+  WidgetsBinding.instance.addPostFrameCallback((_) => intentarScrollHoriz());
+}
   List<dynamic> _prepararRowsUi(Map<String, List<VueloCalendario>> vuelosPorDia) {
     final List<dynamic> rows = [];
     vuelosPorDia.forEach((fecha, listaVuelos) {
@@ -245,6 +295,19 @@ void initState() {
   );
 }
 
+void _ejecutarScrollInicialConGarantia(List<dynamic> uiRows, double currentHourWidth) {
+  // PostFrameCallback + micro-task para dar tiempo a que los SingleChildScrollView midan su altura total
+  WidgetsBinding.instance.addPostFrameCallback((_) {
+    Future.delayed(const Duration(milliseconds: 300), () {
+      if (mounted) {
+        _scrollToCurrentDay(uiRows);
+        _scrollToCurrentTime(currentHourWidth, uiRows);
+      }
+    });
+  });
+}
+
+
 // 1. Mover la key aquí afuera para que persista durante todo el ciclo de vida
   final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
 
@@ -258,6 +321,21 @@ void initState() {
     final uiRows = _prepararRowsUi(state.vuelosPorDia);
 
     // Escuchar cambios para scroll automático
+    // ref.listen<VueloTimelineState>(
+    //   vuelosTimelineProvider,
+    //   (previous, next) {
+    //     final terminoDeCargar = (previous?.isLoading ?? true) && !next.isLoading;
+    //     final requiereScroll = !next.scrollInicialRealizado;
+
+    //     if ((terminoDeCargar || requiereScroll) && uiRows.isNotEmpty) {
+    //       notifier.marcarScrollComoRealizado();
+    //       _scrollToCurrentDay(uiRows);
+    //       _scrollToCurrentTime(currentHourWidth, uiRows);
+    //     }
+    //   },
+    // );
+
+    // Escuchar cambios para scroll automático
     ref.listen<VueloTimelineState>(
       vuelosTimelineProvider,
       (previous, next) {
@@ -265,26 +343,32 @@ void initState() {
         final requiereScroll = !next.scrollInicialRealizado;
 
         if ((terminoDeCargar || requiereScroll) && uiRows.isNotEmpty) {
-          WidgetsBinding.instance.addPostFrameCallback((_) {
-            if (mounted) {
-              notifier.marcarScrollComoRealizado();
-              _scrollToCurrentDay(uiRows);
-              _scrollToCurrentTime(currentHourWidth, uiRows);
-            }
-          });
-        }
-      },
-    );
-
-    if (uiRows.isNotEmpty && !state.scrollInicialRealizado && !state.isLoading) {
-      WidgetsBinding.instance.addPostFrameCallback((_) {
-        if (mounted) {
           notifier.marcarScrollComoRealizado();
           _scrollToCurrentDay(uiRows);
           _scrollToCurrentTime(currentHourWidth, uiRows);
         }
-      });
-    }
+      },
+    );
+
+    // if (uiRows.isNotEmpty && !state.scrollInicialRealizado && !state.isLoading) {
+    //   notifier.marcarScrollComoRealizado();
+    //   _scrollToCurrentDay(uiRows);
+    //   _scrollToCurrentTime(currentHourWidth, uiRows);
+    // }
+    // if (uiRows.isNotEmpty && !state.scrollInicialRealizado && !state.isLoading) {
+    //   WidgetsBinding.instance.addPostFrameCallback((_) {
+    //     if (mounted) {
+    //       notifier.marcarScrollComoRealizado();
+    //       // Retardo para asegurar que la rejilla tenga su altura final calculada
+    //       Future.delayed(const Duration(milliseconds: 150), () {
+    //         if (mounted) {
+    //           _scrollToCurrentDay(uiRows);
+    //           _scrollToCurrentTime(currentHourWidth, uiRows);
+    //         }
+    //       });
+    //     }
+    //   });
+    // }
 
     // final GlobalKey<ScaffoldState> scaffoldKey = GlobalKey<ScaffoldState>();
     return Scaffold(
@@ -452,7 +536,7 @@ Widget _buildHeaderHours(double hourWidth, double totalWidth) {
         final horaStr = index.toString().padLeft(2, '0');
         return Container(
           width: hourWidth,
-          alignment: Alignment.center, // Centramos la hora para optimizar el espacio de 48px
+          alignment: Alignment.center,
           decoration: const BoxDecoration(
             border: Border(left: BorderSide(color: Color(0xFFE0E0E0), width: 1)),
           ),
@@ -460,7 +544,7 @@ Widget _buildHeaderHours(double hourWidth, double totalWidth) {
             "$horaStr:00",
             style: const TextStyle(
               color: Colors.black87,
-              fontSize: 11.0, 
+              fontSize: 10.0, // Disminuido a 10.0 para mejor legibilidad visual
               fontWeight: FontWeight.w600,
             ),
           ),
@@ -473,11 +557,10 @@ Widget _buildHeaderHours(double hourWidth, double totalWidth) {
   final ahoraVenezuela = DateTime.now().toUtc().subtract(const Duration(hours: 4));
 
   return Column(
-    mainAxisAlignment: MainAxisAlignment.start, // Alinea las filas al inicio (arriba)
+    mainAxisAlignment: MainAxisAlignment.start,
     crossAxisAlignment: CrossAxisAlignment.start,
     children: uiRows.map((item) {
       if (item is String) {
-        // Encabezado de Fecha
         bool esHoy = false;
         String diaSemana = "";
         String fechaFormateada = item;
@@ -495,6 +578,7 @@ Widget _buildHeaderHours(double hourWidth, double totalWidth) {
         }
 
         return Container(
+          key: esHoy ? _hoyHeaderKey : null, // 👈 ASIGNAMOS LA KEY AQUÍ
           height: _rowHeight,
           width: _sidebarWidth,
           padding: const EdgeInsets.symmetric(horizontal: 2),
@@ -504,8 +588,8 @@ Widget _buildHeaderHours(double hourWidth, double totalWidth) {
             "$diaSemana $fechaFormateada",
             style: const TextStyle(
               color: Colors.white,
-              fontSize: 11.5, // +2px
-              fontWeight: FontWeight.w800, // Mayor peso visual
+              fontSize: 11.5,
+              fontWeight: FontWeight.w800,
             ),
             textAlign: TextAlign.center,
             maxLines: 1,
@@ -617,37 +701,69 @@ List<Widget> _buildTarjetasVuelos(List<dynamic> uiRows, double hourWidth) {
     if (item is VueloCalendario) {
       final double topOffset = index * _rowHeight;
 
-      // Cálculo de horas inicio y fin
-      final DateTime? inicio = item.trcFechaInicio != null && item.trcHoraInicio != null
-          ? DateTime.tryParse("${item.trcFechaInicio} ${item.trcHoraInicio}")
-          : (item.fechaInicio != null ? DateTime.tryParse(item.fechaInicio!) : null);
+      // 1. OBTENER FECHA Y HORA DE INICIO (con múltiples respaldos)
+      DateTime? inicio;
 
-      final DateTime? fin = item.trcFechaFin != null && item.trcHoraFin != null
-          ? DateTime.tryParse("${item.trcFechaFin} ${item.trcHoraFin}")
-          : (item.fechaFin != null ? DateTime.tryParse(item.fechaFin!) : null);
+      // Intento A: Servicio
+      if (item.fechaInicioServicio_ != null && item.horaInicioServicio_ != null &&
+          item.fechaInicioServicio_!.isNotEmpty && item.horaInicioServicio_!.isNotEmpty) {
+        inicio = DateTime.tryParse("${item.fechaInicioServicio_} ${item.horaInicioServicio_}");
+      }
+      
+      // Intento B: TRC
+      if (inicio == null && item.trcFechaInicio != null && item.trcHoraInicio != null &&
+          item.trcFechaInicio!.isNotEmpty && item.trcHoraInicio!.isNotEmpty) {
+        inicio = DateTime.tryParse("${item.trcFechaInicio} ${item.trcHoraInicio}");
+      }
 
+      // Intento C: fechaInicio o combinación auxFecha + horaInicio
+      if (inicio == null && item.fechaInicio != null && item.fechaInicio!.isNotEmpty) {
+        inicio = DateTime.tryParse(item.fechaInicio!);
+      } else if (inicio == null && item.auxFecha.isNotEmpty && item.horaInicio.isNotEmpty) {
+        inicio = DateTime.tryParse("${item.auxFecha} ${item.horaInicio}");
+      }
+
+      // Si después de todos los intentos no hay fecha de inicio válida, saltamos
       if (inicio == null) continue;
 
+      // 2. OBTENER FECHA Y HORA DE FIN
+      DateTime? fin;
+
+      if (item.fechaFinServicio_ != null && item.horaFinServicio_ != null &&
+          item.fechaFinServicio_!.isNotEmpty && item.horaFinServicio_!.isNotEmpty) {
+        fin = DateTime.tryParse("${item.fechaFinServicio_} ${item.horaFinServicio_}");
+      }
+
+      if (fin == null && item.trcFechaFin != null && item.trcHoraFin != null &&
+          item.trcFechaFin!.isNotEmpty && item.trcHoraFin!.isNotEmpty) {
+        fin = DateTime.tryParse("${item.trcFechaFin} ${item.trcHoraFin}");
+      }
+
+      if (fin == null && item.fechaFin != null && item.fechaFin!.isNotEmpty) {
+        fin = DateTime.tryParse(item.fechaFin!);
+      } else if (fin == null && item.auxFecha.isNotEmpty && item.horaFin.isNotEmpty) {
+        fin = DateTime.tryParse("${item.auxFecha} ${item.horaFin}");
+      }
+
+      // 3. CÁLCULOS DE POSICIÓN HORIZONTAL
       final double horaDecimalInicio = inicio.hour + (inicio.minute / 60.0);
       final double horaDecimalFin = fin != null 
           ? fin.hour + (fin.minute / 60.0) 
-          : horaDecimalInicio + 1.5; // Duración por defecto si no viene fin
+          : horaDecimalInicio + 1.5; // Duración por defecto (1h 30m)
 
       double duracionHoras = horaDecimalFin - horaDecimalInicio;
-      if (duracionHoras <= 0) duracionHoras = 1.0; // Evita anchos negativos
+      if (duracionHoras <= 0) duracionHoras = 1.0; // Evita duraciones nulas o negativas
 
       final double leftX = horaDecimalInicio * hourWidth;
       final double width = duracionHoras * hourWidth;
 
-      // Definir color de la tarjeta según estatus/color de la API
-      // Obtiene el Color directamente según el nombre recibido en estatusColor
       final Color cardColor = obtenerColorPorEstatus(item);
 
       tarjetas.add(
         Positioned(
           top: topOffset + 3,
           left: leftX,
-          width: width.clamp(40.0, double.infinity), // Ancho mínimo para legibilidad
+          width: width.clamp(40.0, double.infinity),
           height: _rowHeight - 6,
           child: Container(
             padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
@@ -658,11 +774,11 @@ List<Widget> _buildTarjetasVuelos(List<dynamic> uiRows, double hourWidth) {
             ),
             alignment: Alignment.center,
             child: Text(
-              item.numeroVuelo,
+              item.numeroVuelo.isNotEmpty ? item.numeroVuelo : "N/A",
               style: const TextStyle(
                 color: Colors.black87,
                 fontSize: 11,
-                fontWeight: FontWeight.w800, // Negrita marcada para resaltar la matrícula/número
+                fontWeight: FontWeight.w800,
               ),
               maxLines: 1,
               overflow: TextOverflow.ellipsis,

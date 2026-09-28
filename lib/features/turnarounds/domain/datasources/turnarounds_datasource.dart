@@ -160,5 +160,9 @@ abstract class TurnaroundsDatasource {
   // Future<MotivoRechazoResponse> getMotivoRechazoByTrcId(int id);
 
   Future<List<Estacion>> getEstaciones();
+
+  Future<List<Counter>> getCountersList(int idTerminal);
+
+  Future<SimpleApiResponse> asignarCounters(Map<String, Object?> body);
   
 }

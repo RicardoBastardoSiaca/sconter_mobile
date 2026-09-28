@@ -17,21 +17,20 @@ class TurnaroundMainScreen extends ConsumerStatefulWidget {
   const TurnaroundMainScreen({super.key});
 
   @override
-  ConsumerState<TurnaroundMainScreen> createState() => _TurnaroundMainScreenState();
+  ConsumerState<TurnaroundMainScreen> createState() =>
+      _TurnaroundMainScreenState();
 }
 
 class _TurnaroundMainScreenState extends ConsumerState<TurnaroundMainScreen> {
   // final scaffoldKey = GlobalKey<ScaffoldState>();
   final GlobalKey<ScaffoldState> scaffoldKey = GlobalKey<ScaffoldState>();
   @override
-  Widget build(BuildContext context,) {
-
+  Widget build(BuildContext context) {
     // 2. Escuchamos el estado del provider de actualización
     final updateState = ref.watch(appUpdateProvider);
 
     // final isConnected = ref.watch(isConnectedProvider);
     // final connectivityState = ref.watch(connectivityProvider);
-
 
     // final theme = Theme.of(context);
     // final ConnectivityService _connectivityService = ConnectivityService();
@@ -52,7 +51,7 @@ class _TurnaroundMainScreenState extends ConsumerState<TurnaroundMainScreen> {
             isLabelVisible: updateState.hasUpdate,
             backgroundColor: const Color(0xFF0FA45F),
             label: const Text(
-              'UP', 
+              'UP',
               style: TextStyle(fontSize: 9, fontWeight: FontWeight.bold),
             ),
             offset: const Offset(6, -4),
@@ -139,16 +138,12 @@ class _TurnaroundMainScreenState extends ConsumerState<TurnaroundMainScreen> {
           //   icon: const Icon(Icons.manage_accounts),
           // ),
 
-
-          
-
           // no intertnet icon
           // if not connected show wifi_off icon
-         
+
           // NoInternetIcon(),
 
           // leyenda de colores icon dialog
-
           LeyendaColoresStatusDialog(),
 
           // const SizedBox(width: 10),
@@ -176,7 +171,7 @@ class _TuraroundMainViewState extends ConsumerState {
   // final ConnectivityService _connectivityService = ConnectivityService();
   // bool _isConnected = true;
 
-   Future<void> _handleRefresh() async {
+  Future<void> _handleRefresh() async {
     // Get Turnarounds
     await ref.read(turnaroundProvider.notifier).getTurnarounds();
     // Simulate a network call or data fetching delay
@@ -190,23 +185,22 @@ class _TuraroundMainViewState extends ConsumerState {
   void initState() {
     super.initState();
 
-     WidgetsBinding.instance.addPostFrameCallback((_) async {
-    // 1. Disparamos la verificación de actualización vía Riverpod
-    await ref.read(appUpdateProvider.notifier).checkForUpdate();
+    WidgetsBinding.instance.addPostFrameCallback((_) async {
+      // 1. Disparamos la verificación de actualización vía Riverpod
+      await ref.read(appUpdateProvider.notifier).checkForUpdate();
 
-    // 2. Si hay actualización, leemos el estado global actualizado
-    if (!mounted) return;
-    final updateState = ref.read(appUpdateProvider);
+      // 2. Si hay actualización, leemos el estado global actualizado
+      if (!mounted) return;
+      final updateState = ref.read(appUpdateProvider);
 
-    if (updateState.hasUpdate) {
-      showDialog(
-        context: context,
-        barrierDismissible: !updateState.isMandatory,
-        builder: (context) => UpdateDialog(updateData: updateState.toMap()),
-      );
-    }
-  });
-
+      if (updateState.hasUpdate) {
+        showDialog(
+          context: context,
+          barrierDismissible: !updateState.isMandatory,
+          builder: (context) => UpdateDialog(updateData: updateState.toMap()),
+        );
+      }
+    });
 
     // _scrollController.addListener(_scrollListener);
     ref.read(turnaroundProvider.notifier).getTurnarounds();
@@ -246,57 +240,57 @@ class _TuraroundMainViewState extends ConsumerState {
         // ),
         child: RefreshIndicator(
           onRefresh: _handleRefresh,
-          child: 
-          
-              ListView(
-                    controller: _scrollController,
-                    physics: const AlwaysScrollableScrollPhysics(), // Key change here
-                    children: [
-                      // if (!_isConnected) NoInternetBanner(),
-                      const SizedBox(height: 3),
-                      Center(
-                        child: Text(
-                          'Check-In',
-                          style: Theme.of(context).textTheme.headlineMedium?.copyWith(
-                            color: Theme.of(context).colorScheme.primary,
-                            fontWeight: FontWeight.w900,
-                            fontFamily: GoogleFonts.openSans(
-                              fontWeight: FontWeight.w900,
-                            ).fontFamily,
+          child: ListView(
+            controller: _scrollController,
+            physics: const AlwaysScrollableScrollPhysics(), // Key change here
+            children: [
+              // if (!_isConnected) NoInternetBanner(),
+              const SizedBox(height: 3),
+              Center(
+                child: Text(
+                  'Check-In',
+                  style: Theme.of(context).textTheme.headlineMedium?.copyWith(
+                    color: Theme.of(context).colorScheme.primary,
+                    fontWeight: FontWeight.w900,
+                    fontFamily: GoogleFonts.openSans(
+                      fontWeight: FontWeight.w900,
+                    ).fontFamily,
+                  ),
+                ),
+              ),
+              const SizedBox(height: 2),
+              _DateFilter(),
+              turnaroundsState.turnarounds.isEmpty
+                  ? Column(
+                      children: [
+                        const SizedBox(height: 20),
+                        Center(
+                          child: Text(
+                            'No hay turnarounds',
+                            // overflow: TextOverflow.ellipsis,
+                            style: Theme.of(context).textTheme.bodyMedium,
                           ),
                         ),
-                      ),
-                      const SizedBox(height: 2),
-                      _DateFilter(),
-                      turnaroundsState.turnarounds.isEmpty
-                ? Column(
-                  children: [
-                    const SizedBox(height: 20),
-                    Center(
-                        child: Text(
-                          'No hay turnarounds',
-                          // overflow: TextOverflow.ellipsis,
-                          style: Theme.of(context).textTheme.bodyMedium
+                        Center(
+                          child: Text(
+                            'registrados.',
+                            // overflow: TextOverflow.ellipsis,
+                            style: Theme.of(context).textTheme.bodyMedium,
+                          ),
                         ),
-                      ),
-                    Center(
-                        child: Text(
-                          'registrados.',
-                          // overflow: TextOverflow.ellipsis,
-                          style: Theme.of(context).textTheme.bodyMedium
-                        ),
-                      ),
-                  ],
-                )
-                : SizedBox(),
-                      ...turnaroundsState.turnarounds.map((turnaround) => _ListTileCardContainer(turnaround: turnaround)),
-                      
-                      // Leyenda de colores moved inside the scrollable list so it appears after all items
-                      // const SizedBox(height: 20),
-                      // const LeyendaColoresTurnarounds(),
-                      const SizedBox(height: 30),
-                    ],
-                  ),
+                      ],
+                    )
+                  : SizedBox(),
+              ...turnaroundsState.turnarounds.map(
+                (turnaround) => _ListTileCardContainer(turnaround: turnaround),
+              ),
+
+              // Leyenda de colores moved inside the scrollable list so it appears after all items
+              // const SizedBox(height: 20),
+              // const LeyendaColoresTurnarounds(),
+              const SizedBox(height: 30),
+            ],
+          ),
         ),
       ),
     );
@@ -400,7 +394,7 @@ class _DateFilter extends ConsumerWidget {
 //   Widget build(BuildContext context) {
 //     return Builder(
 //       builder: (context) {
-//         return 
+//         return
 //         ListView.builder(
 //           physics:
 //               const NeverScrollableScrollPhysics(), // disable scrolling of the ListView
@@ -459,7 +453,6 @@ class _ListTileCardContainer extends StatelessWidget {
                 //   _ => 'assets/layouts/contenedor-blanco.svg', // default case
                 // },
 
-
                 // 'assets/layouts/contenedor-blanco.svg',
                 semanticsLabel: 'Image',
                 fit: BoxFit.fill,
@@ -497,30 +490,24 @@ class _ListTileCardContainer extends StatelessWidget {
 
                 // Datos del servicio
                 Flexible(
-                        flex: 1,
-                        child:
-                             _ServicioView(
-                                lugarSalida:
-                                    turnaround
-                                        .fkVuelo
-                                        .lugarSalida
-                                        ?.codigoIata ??
-                                    "",
-                                lugarLlegada:
-                                    turnaround.fkVuelo.stn?.codigoIata ?? "",
-                                lugarSalidaLargo:
-                                    turnaround.fkVuelo.lugarSalida?.ciudad ??
-                                    "",
-                                lugarLlegadaLargo:
-                                    turnaround.fkVuelo.stn?.ciudad ?? "",
-                                hora: formatTime(turnaround.fkVuelo.etaIn),
-                                horaServicioInicio: formatTime(turnaround.horaInicioServicio_),
-                                horaServicioFin: formatTime(turnaround.horaFinServicio_),
-                                numeroVuelo:
-                                    "${turnaround.fkVuelo.fkAerolinea.codigoIata}-${turnaround.fkVuelo.numeroVueloIn} ",
-                                isInbound: true,
-                              ),
-                      ),
+                  flex: 1,
+                  child: _ServicioView(
+                    lugarSalida:
+                        turnaround.fkVuelo.lugarSalida?.codigoIata ?? "",
+                    lugarLlegada: turnaround.fkVuelo.stn?.codigoIata ?? "",
+                    lugarSalidaLargo:
+                        turnaround.fkVuelo.lugarSalida?.ciudad ?? "",
+                    lugarLlegadaLargo: turnaround.fkVuelo.stn?.ciudad ?? "",
+                    hora: formatTime(turnaround.fkVuelo.etaIn),
+                    horaServicioInicio: formatTime(
+                      turnaround.horaInicioServicio_,
+                    ),
+                    horaServicioFin: formatTime(turnaround.horaFinServicio_),
+                    numeroVuelo:
+                        "${turnaround.fkVuelo.fkAerolinea.codigoIata}-${turnaround.fkVuelo.numeroVueloIn} ",
+                    isInbound: true,
+                  ),
+                ),
 
                 // Vuelo de Salida
                 turnaround.fkVuelo.lugarDestino == null
@@ -580,7 +567,9 @@ class _MenuDialog extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    DepartamentoPersonalState departamentoPersonal = ref.watch(departamentoPersonalProvider(turnaround.id));
+    DepartamentoPersonalState departamentoPersonal = ref.watch(
+      departamentoPersonalProvider(turnaround.id),
+    );
     return AlertDialog(
       // Border Color
       shape: RoundedRectangleBorder(
@@ -592,559 +581,620 @@ class _MenuDialog extends ConsumerWidget {
       ),
       // title: const Text('Menu'),
       backgroundColor: Colors.grey.shade100,
-      content: 
-      departamentoPersonal.isLoading
-        ? 
-        SizedBox(
-          height: 100.0,
-          width: 100.0,
-          child: Center(
-            child: CircularProgressIndicator(
-              color: Theme.of(context).colorScheme.primary,
-              strokeWidth: 4.0,
-            )
-          ),
-        )
-        : Column(
-            mainAxisSize: MainAxisSize.min,
-            mainAxisAlignment: MainAxisAlignment.spaceAround,
-            children: [
-          // Show list tile conditionally based on turnaround status
-          // MenuListTile(
-          //   leading: Icon(Icons.airplane_ticket),
-          //   title: 'Detalles del Vuelo',
-          //   onTap: () {
-          //     print("onItemTap");
-          //     // push
-          //     context.push('/detalles-vuelo/${turnaround.id}');
-          //     // close bottom sheet
-          //     Navigator.pop(context);
-          //   },
-          // ),
-          
-
-
-          if (turnaround.estatus == 1 ||
-              turnaround.estatus == 2 ||
-              turnaround.estatus == 3)
-            MenuListTile(
-              leading: Icon(Icons.person_2),
-              title: 'Asignar Personal',
-              onTap: () async {
-
-                print("onItemTap");
-                
-                // If User has no permission show snackbar and return
-                // bool puedeBorrar = user.rolesList.contains(Roles.eliminarUsuario);
-                if (!ref.read(authProvider).loginResponse!.hasPermission( Roles.asignarPersonal)) {
-                  showCustomErrorSnackbar(  context, 'No tienes permiso para asignar personal.');
-                  return;
-                }
-                // hasPermission(Roles.crearPersonal);
-
-
-                // set trcIdProvider
-                ref.read(trcIdProvider.notifier).state = turnaround.id;
-                // set selectedTurnaroundProvider
-                ref.read(selectedTurnaroundProvider.notifier).state =
-                    turnaround;
-
-                // Wrong code
-                // final response = await ref
-                //     .read(departamentoPersonalProvider(turnaround.id).notifier)
-                //     .getDepartamentosConPersonal(turnaround.id);
-                // if (response.success) {
-                // print(response);
-                //   context.push('/asignar-personal');
-                //   Navigator.pop(context);
-                // }
-                ref
-                .read(departamentoPersonalProvider(turnaround.id).notifier)
-                .getDepartamentosConPersonal(turnaround.id)
-                .then((response) {
-                  if (response.success) {
-                    // Hacer las asginaciones AQUI y no en el init del widget
-                    context.push('/asignar-personal');
-                    Navigator.pop(context);
-                  }
-                });
-
-                
-                // close bottom sheet
-              },
-            ),
-
-          // if (turnaround.estatus == 1 ||
-          //     turnaround.estatus == 2 ||
-          //     turnaround.estatus == 3)
-          //   MenuListTile(
-          //     leading: Icon(Icons.agriculture),
-          //     title: 'Asignar equipos GSE',
-          //     onTap: () {
-          //       // print("onItemTap");
-
-          //       // Rol Ckeck
-          //       if (!ref.read(authProvider).loginResponse!.hasPermission( Roles.asignarMaquinaria)) {
-          //         showCustomErrorSnackbar(  context, 'No tienes permiso para asignar equipos GSE.');
-          //         return;
-          //       }
-          // if (turnaround.estatus == 1 ||
-          //     turnaround.estatus == 2 ||
-          //     turnaround.estatus == 3)
-          //   MenuListTile(
-          //     leading: Icon(Icons.agriculture),
-          //     title: 'Asignar equipos GSE',
-          //     onTap: () {
-          //       // print("onItemTap");
-
-          //       // Rol Ckeck
-          //       if (!ref.read(authProvider).loginResponse!.hasPermission( Roles.asignarMaquinaria)) {
-          //         showCustomErrorSnackbar(  context, 'No tienes permiso para asignar equipos GSE.');
-          //         return;
-          //       }
-
-          //       // set selectedTurnaroundProvider
-          //       ref.read(selectedTurnaroundProvider.notifier).state =
-          //           turnaround;
-
-          //       print("selectedTurnaroundProvider: $turnaround");
-          //       // push
-          //       context.push('/asignar-equipos-gse');
-          //       // close bottom sheet
-          //       Navigator.pop(context);
-          //     },
-          //   ),
-          
-          if (turnaround.estatus == 1 ||
-              turnaround.estatus == 2 ||
-              turnaround.estatus == 3)
-            MenuListTile(
-              leading: Icon(Icons.computer),
-              title: 'Asignar equipos IT',
-              onTap: () {
-                // print("onItemTap");
-
-                // Rol Ckeck
-                if (!ref.read(authProvider).loginResponse!.hasPermission( Roles.asignarMaquinaria)) {
-                  showCustomErrorSnackbar(  context, 'No tienes permiso para asignar equipos IT.');
-                  return;
-                }
-
-                // set selectedTurnaroundProvider
-                ref.read(selectedTurnaroundProvider.notifier).state =
-                    turnaround;
-
-                print("selectedTurnaroundProvider: $turnaround");
-                // push
-                context.push('/asignar-equipos-it');
-                // close bottom sheet
-                Navigator.pop(context);
-              },
-            ),
-
-          // scanner test
-          // MenuListTile(
-          //     leading: Icon(Icons.start),
-          //     title: 'QR Scanner',
-          //     onTap: () async {
-          //       print("onItemTap");
-
-          //       // void _onScanPressed() async {
-          //         // 1. Llamar al servicio y esperar el resultado
-          //         final String? result = await ScannerService.scanCode(
-          //           context, 
-          //           title: "Escanear Producto"
-          //         );
-
-          //         // 2. Si el resultado no es nulo, procesar el código
-          //         if (result != null) {
-          //           debugPrint("Código QR/Barras detectado: $result");
-                    
-          //           // Aquí puedes mostrar un mensaje, navegar a otra pantalla o 
-          //           // usar el resultado para buscar en una base de datos.
-          //           ScaffoldMessenger.of(context).showSnackBar(
-          //             SnackBar(content: Text("Código detectado: $result")),
-          //           );
-          //         } else {
-          //           debugPrint("El usuario canceló el escaneo.");
-          //         }
-          //       // }
-          //       // Rol Ckeck
-          //       // if (!ref.read(authProvider).loginResponse!.hasPermission( Roles.empezarOperaciones)) {
-          //       //   showCustomErrorSnackbar(  context, 'No tienes permiso para iniciar operaciones.');
-          //       //   return;
-          //       // }
-
-          //       // push
-          //       // await iniciarOperaciones(context, ref, turnaround.id);
-          //       // close bottom sheet
-          //       // Navigator.pop(context);
-          //     },
-          //   ),
-
-
-          if (turnaround.estatus == 1)
-            MenuListTile(
-              leading: Icon(Icons.start),
-              title: 'Iniciar Operaciones',
-              onTap: () async {
-                print("onItemTap");
-
-                // Rol Ckeck
-                if (!ref.read(authProvider).loginResponse!.hasPermission( Roles.empezarOperaciones)) {
-                  showCustomErrorSnackbar(  context, 'No tienes permiso para iniciar operaciones.');
-                  return;
-                }
-
-                // push
-                await iniciarOperaciones(context, ref, turnaround.id);
-                // close bottom sheet
-                Navigator.pop(context);
-              },
-            ),
-
-          if (turnaround.estatus == 2 ||
-              turnaround.estatus == 3 ||
-              turnaround.estatus == 7)
-            MenuListTile(
-              leading: Icon(Icons.assignment),
-              title: 'Control de actividades',
-              onTap: () {
-                print("onItemTap");
-                // push
-                // context.push('/control-actividades');
-
-                // Rol Ckeck
-                if (!ref.read(authProvider).loginResponse!.hasPermission( Roles.modificarControlDeActividades)) {
-                  showCustomErrorSnackbar(  context, 'No tienes permiso para modificar control de actividades.');
-                  return;
-                }
-
-                // set trcIdProvider
-                ref.read(trcIdProvider.notifier).state = turnaround.id;
-                // set selectedTurnaroundProvider
-                ref.read(selectedTurnaroundProvider.notifier).state =
-                    turnaround;
-
-                // get control de actividades by trc id
-                ref.read(controlActividadesProvider(turnaround.id).notifier).getControlDeActividadesByTrcId();
-                // push with turnaround id
-                context.push('/control-actividades/${turnaround.id}');
-                // close bottom sheet
-                Navigator.pop(context);
-              },
-            ),
-
-
-          // **********************************************************************************************************
-          // **********************************************************************************************************
-
-          if (turnaround.estatus == 2)
-              MenuListTile(
-                leading: Icon(Icons.lock),
-                title: 'Finalizar Vuelo',
-                onTap: () async {
-                  print("onItemTap");
-
-                  // Rol Ckeck
-                  if (!ref.read(authProvider).loginResponse!.hasPermission( Roles.modificarVuelo)) {
-                    showCustomErrorSnackbar(  context, 'No tienes permiso para finalizar el vuelo.');
-                    return;
-                  }
-
-                  // set trcIdProvider
-                  ref.read(trcIdProvider.notifier).state = turnaround.id;
-                  // set selectedTurnaroundProvider
-                  ref.read(selectedTurnaroundProvider.notifier).state =
-                      turnaround;
-
-                  // Api calls
-                  // getcerrar_operacionesById
-                  // Control de actividades
-                  ref.read(controlActividadesProvider(turnaround.id).notifier).getControlDeActividadesByTrcId();
-
-                  // getCodigosMoraByTrc
-                  ref
-                      .read(demorasProvider.notifier)
-                      .getDemorasByTrc(turnaround.id);
-
-                  // Personal
-                  ref
-                      .read(departamentoPersonalProvider(turnaround.id).notifier)
-                      .getDepartamentosConPersonal(turnaround.id);
-
-
-                  // push
-                  context.push('/finalizar-vuelo-screen');
-                  // close bottom sheet
-                  Navigator.pop(context);
-
-                },
+      content: departamentoPersonal.isLoading
+          ? SizedBox(
+              height: 100.0,
+              width: 100.0,
+              child: Center(
+                child: CircularProgressIndicator(
+                  color: Theme.of(context).colorScheme.primary,
+                  strokeWidth: 4.0,
+                ),
               ),
+            )
+          : Column(
+              mainAxisSize: MainAxisSize.min,
+              mainAxisAlignment: MainAxisAlignment.spaceAround,
+              children: [
+                // Show list tile conditionally based on turnaround status
+                // MenuListTile(
+                //   leading: Icon(Icons.airplane_ticket),
+                //   title: 'Detalles del Vuelo',
+                //   onTap: () {
+                //     print("onItemTap");
+                //     // push
+                //     context.push('/detalles-vuelo/${turnaround.id}');
+                //     // close bottom sheet
+                //     Navigator.pop(context);
+                //   },
+                // ),
+                if (turnaround.estatus == 1 ||
+                    turnaround.estatus == 2 ||
+                    turnaround.estatus == 3)
+                  MenuListTile(
+                    leading: Icon(Icons.person_2),
+                    title: 'Asignar Personal',
+                    onTap: () async {
+                      print("onItemTap");
 
+                      // If User has no permission show snackbar and return
+                      // bool puedeBorrar = user.rolesList.contains(Roles.eliminarUsuario);
+                      if (!ref
+                          .read(authProvider)
+                          .loginResponse!
+                          .hasPermission(Roles.asignarPersonal)) {
+                        showCustomErrorSnackbar(
+                          context,
+                          'No tienes permiso para asignar personal.',
+                        );
+                        return;
+                      }
+                      // hasPermission(Roles.crearPersonal);
 
-              if (turnaround.estatus == 3 
+                      // set trcIdProvider
+                      ref.read(trcIdProvider.notifier).state = turnaround.id;
+                      // set selectedTurnaroundProvider
+                      ref.read(selectedTurnaroundProvider.notifier).state =
+                          turnaround;
+
+                      // Wrong code
+                      // final response = await ref
+                      //     .read(departamentoPersonalProvider(turnaround.id).notifier)
+                      //     .getDepartamentosConPersonal(turnaround.id);
+                      // if (response.success) {
+                      // print(response);
+                      //   context.push('/asignar-personal');
+                      //   Navigator.pop(context);
+                      // }
+                      ref
+                          .read(
+                            departamentoPersonalProvider(
+                              turnaround.id,
+                            ).notifier,
+                          )
+                          .getDepartamentosConPersonal(turnaround.id)
+                          .then((response) {
+                            if (response.success) {
+                              // Hacer las asginaciones AQUI y no en el init del widget
+                              context.push('/asignar-personal');
+                              Navigator.pop(context);
+                            }
+                          });
+
+                      // close bottom sheet
+                    },
+                  ),
+
+                if (turnaround.estatus == 2 || turnaround.estatus == 3)
+                  MenuListTile(
+                    leading: const Icon(Icons.person_2),
+                    title: 'Asignar Counters',
+                    onTap: () async {
+                      ref.read(trcIdProvider.notifier).state = turnaround.id;
+                      ref.read(selectedTurnaroundProvider.notifier).state = turnaround;
+
+                      final terminalId = turnaround.fkVuelo.terminal ?? -1;
+
+                      if (terminalId != -1) {
+                        // Cargar counters desde el backend para esa terminal
+                        ref.read(counterProvider.notifier).getCounters(terminalId);
+
+                        Navigator.pop(context);
+
+                        // Mostrar el diálogo pasando tanto el id como el objeto de posicion
+                        showDialog(
+                          context: context,
+                          barrierDismissible: false,
+                          builder: (context) => AsignarCountersDialog(
+                            turnaroundId: turnaround.id,
+                            posicion: turnaround.posiciones is List<PosicionCounter>
+                              ? turnaround.posiciones as List<PosicionCounter>
+                              : null, // Pass de la posición actual
+                          ),
+                        );
+                      } else {
+                        showCustomErrorSnackbar(
+                          context,
+                          'El vuelo no tiene una terminal asignada.',
+                        );
+                      }
+                    },
+                  ),
+                // if (turnaround.estatus == 1 ||
+                //     turnaround.estatus == 2 ||
+                //     turnaround.estatus == 3)
+                //   MenuListTile(
+                //     leading: Icon(Icons.agriculture),
+                //     title: 'Asignar equipos GSE',
+                //     onTap: () {
+                //       // print("onItemTap");
+
+                //       // Rol Ckeck
+                //       if (!ref.read(authProvider).loginResponse!.hasPermission( Roles.asignarMaquinaria)) {
+                //         showCustomErrorSnackbar(  context, 'No tienes permiso para asignar equipos GSE.');
+                //         return;
+                //       }
+                // if (turnaround.estatus == 1 ||
+                //     turnaround.estatus == 2 ||
+                //     turnaround.estatus == 3)
+                //   MenuListTile(
+                //     leading: Icon(Icons.agriculture),
+                //     title: 'Asignar equipos GSE',
+                //     onTap: () {
+                //       // print("onItemTap");
+
+                //       // Rol Ckeck
+                //       if (!ref.read(authProvider).loginResponse!.hasPermission( Roles.asignarMaquinaria)) {
+                //         showCustomErrorSnackbar(  context, 'No tienes permiso para asignar equipos GSE.');
+                //         return;
+                //       }
+
+                //       // set selectedTurnaroundProvider
+                //       ref.read(selectedTurnaroundProvider.notifier).state =
+                //           turnaround;
+
+                //       print("selectedTurnaroundProvider: $turnaround");
+                //       // push
+                //       context.push('/asignar-equipos-gse');
+                //       // close bottom sheet
+                //       Navigator.pop(context);
+                //     },
+                //   ),
+                if (turnaround.estatus == 1 ||
+                    turnaround.estatus == 2 ||
+                    turnaround.estatus == 3)
+                  MenuListTile(
+                    leading: Icon(Icons.computer),
+                    title: 'Asignar equipos IT',
+                    onTap: () {
+                      // print("onItemTap");
+
+                      // Rol Ckeck
+                      if (!ref
+                          .read(authProvider)
+                          .loginResponse!
+                          .hasPermission(Roles.asignarMaquinaria)) {
+                        showCustomErrorSnackbar(
+                          context,
+                          'No tienes permiso para asignar equipos IT.',
+                        );
+                        return;
+                      }
+
+                      // set selectedTurnaroundProvider
+                      ref.read(selectedTurnaroundProvider.notifier).state =
+                          turnaround;
+
+                      print("selectedTurnaroundProvider: $turnaround");
+                      // push
+                      context.push('/asignar-equipos-it');
+                      // close bottom sheet
+                      Navigator.pop(context);
+                    },
+                  ),
+
+                // scanner test
+                // MenuListTile(
+                //     leading: Icon(Icons.start),
+                //     title: 'QR Scanner',
+                //     onTap: () async {
+                //       print("onItemTap");
+
+                //       // void _onScanPressed() async {
+                //         // 1. Llamar al servicio y esperar el resultado
+                //         final String? result = await ScannerService.scanCode(
+                //           context,
+                //           title: "Escanear Producto"
+                //         );
+
+                //         // 2. Si el resultado no es nulo, procesar el código
+                //         if (result != null) {
+                //           debugPrint("Código QR/Barras detectado: $result");
+
+                //           // Aquí puedes mostrar un mensaje, navegar a otra pantalla o
+                //           // usar el resultado para buscar en una base de datos.
+                //           ScaffoldMessenger.of(context).showSnackBar(
+                //             SnackBar(content: Text("Código detectado: $result")),
+                //           );
+                //         } else {
+                //           debugPrint("El usuario canceló el escaneo.");
+                //         }
+                //       // }
+                //       // Rol Ckeck
+                //       // if (!ref.read(authProvider).loginResponse!.hasPermission( Roles.empezarOperaciones)) {
+                //       //   showCustomErrorSnackbar(  context, 'No tienes permiso para iniciar operaciones.');
+                //       //   return;
+                //       // }
+
+                //       // push
+                //       // await iniciarOperaciones(context, ref, turnaround.id);
+                //       // close bottom sheet
+                //       // Navigator.pop(context);
+                //     },
+                //   ),
+                if (turnaround.estatus == 1)
+                  MenuListTile(
+                    leading: Icon(Icons.start),
+                    title: 'Iniciar Operaciones',
+                    onTap: () async {
+                      print("onItemTap");
+
+                      // Rol Ckeck
+                      if (!ref
+                          .read(authProvider)
+                          .loginResponse!
+                          .hasPermission(Roles.empezarOperaciones)) {
+                        showCustomErrorSnackbar(
+                          context,
+                          'No tienes permiso para iniciar operaciones.',
+                        );
+                        return;
+                      }
+
+                      // push
+                      await iniciarOperaciones(context, ref, turnaround.id);
+                      // close bottom sheet
+                      Navigator.pop(context);
+                    },
+                  ),
+
+                if (turnaround.estatus == 2 ||
+                    turnaround.estatus == 3 ||
+                    turnaround.estatus == 7)
+                  MenuListTile(
+                    leading: Icon(Icons.assignment),
+                    title: 'Control de actividades',
+                    onTap: () {
+                      print("onItemTap");
+                      // push
+                      // context.push('/control-actividades');
+
+                      // Rol Ckeck
+                      if (!ref
+                          .read(authProvider)
+                          .loginResponse!
+                          .hasPermission(Roles.modificarControlDeActividades)) {
+                        showCustomErrorSnackbar(
+                          context,
+                          'No tienes permiso para modificar control de actividades.',
+                        );
+                        return;
+                      }
+
+                      // set trcIdProvider
+                      ref.read(trcIdProvider.notifier).state = turnaround.id;
+                      // set selectedTurnaroundProvider
+                      ref.read(selectedTurnaroundProvider.notifier).state =
+                          turnaround;
+
+                      // get control de actividades by trc id
+                      ref
+                          .read(
+                            controlActividadesProvider(turnaround.id).notifier,
+                          )
+                          .getControlDeActividadesByTrcId();
+                      // push with turnaround id
+                      context.push('/control-actividades/${turnaround.id}');
+                      // close bottom sheet
+                      Navigator.pop(context);
+                    },
+                  ),
+
+                // **********************************************************************************************************
+                // **********************************************************************************************************
+                if (turnaround.estatus == 2)
+                  MenuListTile(
+                    leading: Icon(Icons.lock),
+                    title: 'Finalizar Vuelo',
+                    onTap: () async {
+                      print("onItemTap");
+
+                      // Rol Ckeck
+                      if (!ref
+                          .read(authProvider)
+                          .loginResponse!
+                          .hasPermission(Roles.modificarVuelo)) {
+                        showCustomErrorSnackbar(
+                          context,
+                          'No tienes permiso para finalizar el vuelo.',
+                        );
+                        return;
+                      }
+
+                      // set trcIdProvider
+                      ref.read(trcIdProvider.notifier).state = turnaround.id;
+                      // set selectedTurnaroundProvider
+                      ref.read(selectedTurnaroundProvider.notifier).state =
+                          turnaround;
+
+                      // Api calls
+                      // getcerrar_operacionesById
+                      // Control de actividades
+                      ref
+                          .read(
+                            controlActividadesProvider(turnaround.id).notifier,
+                          )
+                          .getControlDeActividadesByTrcId();
+
+                      // getCodigosMoraByTrc
+                      ref
+                          .read(demorasProvider.notifier)
+                          .getDemorasByTrc(turnaround.id);
+
+                      // Personal
+                      ref
+                          .read(
+                            departamentoPersonalProvider(
+                              turnaround.id,
+                            ).notifier,
+                          )
+                          .getDepartamentosConPersonal(turnaround.id);
+
+                      // push
+                      context.push('/finalizar-vuelo-screen');
+                      // close bottom sheet
+                      Navigator.pop(context);
+                    },
+                  ),
+
+                if (turnaround.estatus == 3
                 // && turnaround.fkVuelo.fkAerolinea.hasSupervisor
                 )
-            MenuListTile(
-                leading: Icon(Icons.lock),
-                title: 'Cerrar Vuelo',
-                onTap: () async {
-                  print("onItemTap");
+                  MenuListTile(
+                    leading: Icon(Icons.lock),
+                    title: 'Cerrar Vuelo',
+                    onTap: () async {
+                      print("onItemTap");
 
-                  // Rol Ckeck
-                  // if (!ref.read(authProvider).loginResponse!.hasPermission( Roles.modificarVuelo)) {
-                  //   showCustomErrorSnackbar(  context, 'No tienes permiso para cerrar el vuelo.');
-                  //   return;
-                  // }
+                      // Rol Ckeck
+                      // if (!ref.read(authProvider).loginResponse!.hasPermission( Roles.modificarVuelo)) {
+                      //   showCustomErrorSnackbar(  context, 'No tienes permiso para cerrar el vuelo.');
+                      //   return;
+                      // }
 
-                  // Rol Ckeck
+                      // Rol Ckeck
+                      if (!ref
+                          .read(authProvider)
+                          .loginResponse!
+                          .hasPermission(Roles.firmaDeSupervisor)) {
+                        showCustomErrorSnackbar(
+                          context,
+                          'No tienes permiso para realizar esta accion.',
+                        );
+                        return;
+                      }
+
+                      // set trcIdProvider
+                      ref.read(trcIdProvider.notifier).state = turnaround.id;
+                      // set selectedTurnaroundProvider
+                      ref.read(selectedTurnaroundProvider.notifier).state =
+                          turnaround;
+
+                      // Api calls
+                      // getcerrar_operacionesById
+                      // Control de actividades
+                      await ref
+                          .read(
+                            controlActividadesProvider(turnaround.id).notifier,
+                          )
+                          .getControlDeActividadesByTrcId();
+
+                      // getCodigosMoraByTrc
+                      //  ref
+                      //     .read(demorasProvider.notifier)
+                      //     .getDemorasByTrc(turnaround.id);
+
+                      // Personal
+                      // ref
+                      //     .read(departamentoPersonalProvider(turnaround.id).notifier)
+                      //     .getDepartamentosConPersonal(turnaround.id);
+
+                      // TODO: procedimiento de las firmas
+
+                      await ref
+                          .read(supervisorAerolineaProvider.notifier)
+                          .getSupervisores();
+                      context.push('/cerrar-vuelo-screen');
+                      // close bottom sheet
+                      Navigator.pop(context);
+                      // // push
+                      // context.push('/finalizar-vuelo-screen');
+                      // // close bottom sheet
+                      // Navigator.pop(context);
+                    },
+                  ),
+
+                // **********************************************************************************************************
+                // **********************************************************************************************************
+
+                // if (turnaround.estatus == 3)
+                //   MenuListTile(
+                //     leading: Icon(Icons.lock),
+                //     title: 'Cerrar Chech-In',
+                //     onTap: () {
+                //       print("onItemTap");
+
+                //       // Rol Ckeck
+                //       if (!ref.read(authProvider).loginResponse!.hasPermission( Roles.modificarVuelo)) {
+                //         showCustomErrorSnackbar(  context, 'No tienes permiso para cerrar el check-in.');
+                //         return;
+                //       }
+
+                //       // set trcIdProvider
+                //       ref.read(trcIdProvider.notifier).state = turnaround.id;
+                //       // set selectedTurnaroundProvider
+                //       ref.read(selectedTurnaroundProvider.notifier).state =
+                //           turnaround;
+
+                //       // Api calls
+                //       // getcerrar_operacionesById
+                //       // Control de actividades
+                //       ref.read(controlActividadesProvider(turnaround.id).notifier).getControlDeActividadesByTrcId();
+
+                //       // getCodigosMoraByTrc
+                //        ref
+                //           .read(demorasProvider.notifier)
+                //           .getDemorasByTrc(turnaround.id);
+
+                //       // Personal
+                //       ref
+                //           .read(departamentoPersonalProvider(turnaround.id).notifier)
+                //           .getDepartamentosConPersonal(turnaround.id);
+
+                //       // push
+                //       context.push('/cerrar-vuelo-screen');
+                //       // close bottom sheet
+                //       Navigator.pop(context);
+
+                //       // show snackbar if push return true
+                //       // if (result == true) {
+                //       //   ScaffoldMessenger.of(context).showSnackBar(
+                //       //     SnackBar(content: Text('Vuelo cerrado correctamente')),
+                //       //   );
+                //       // }
+                //     },
+                //   ),
+
+                // Consultar Control de actividades
+                // if (turnaround.estatus == 4 ||
+                //     turnaround.estatus == 5 ||
+                //     turnaround.estatus == 6 ||
+                //     turnaround.estatus == 7)
+                MenuListTile(
+                  leading: Icon(Icons.list),
+                  title: 'Consultar',
+                  onTap: () {
+                    print("onItemTap");
+
+                    // Rol Ckeck
                     if (!ref
                         .read(authProvider)
                         .loginResponse!
-                        .hasPermission(Roles.firmaDeSupervisor)) {
+                        .hasPermission(Roles.consultarControlDeActividades)) {
                       showCustomErrorSnackbar(
                         context,
-                        'No tienes permiso para realizar esta accion.',
+                        'No tienes permiso para consultar el control de actividades.',
                       );
                       return;
                     }
 
-                  // set trcIdProvider
-                  ref.read(trcIdProvider.notifier).state = turnaround.id;
-                  // set selectedTurnaroundProvider
-                  ref.read(selectedTurnaroundProvider.notifier).state =
-                      turnaround;
+                    // set trcIdProvider
+                    ref.read(trcIdProvider.notifier).state = turnaround.id;
+                    // set selectedTurnaroundProvider
+                    ref.read(selectedTurnaroundProvider.notifier).state =
+                        turnaround;
 
-                  // Api calls
-                  // getcerrar_operacionesById
-                  // Control de actividades
-                  await ref.read(controlActividadesProvider(turnaround.id).notifier).getControlDeActividadesByTrcId();
+                    // Api calls
+                    // getcerrar_operacionesById
+                    // Control de actividades
+                    ref
+                        .read(
+                          controlActividadesProvider(turnaround.id).notifier,
+                        )
+                        .getControlDeActividadesByTrcId();
 
-                  // getCodigosMoraByTrc
-                  //  ref
-                  //     .read(demorasProvider.notifier)
-                  //     .getDemorasByTrc(turnaround.id);
+                    ref
+                        .read(plantillaDetalleProvider.notifier)
+                        .getPlantillaDetalleById(
+                          turnaround.fkVuelo.fkPlantilla?.id ?? 0,
+                        );
 
-                  // Personal
-                  // ref
-                  //     .read(departamentoPersonalProvider(turnaround.id).notifier)
-                  //     .getDepartamentosConPersonal(turnaround.id);
+                    // getCodigosMoraByTrc
+                    ref
+                        .read(demorasProvider.notifier)
+                        .getDemorasByTrc(turnaround.id);
 
-                  // TODO: procedimiento de las firmas
-                  
+                    // Personal
+                    ref
+                        .read(
+                          departamentoPersonalProvider(turnaround.id).notifier,
+                        )
+                        .getDepartamentosConPersonal(turnaround.id);
 
-                  await ref
-                      .read(supervisorAerolineaProvider.notifier)
-                      .getSupervisores();
-                  context.push('/cerrar-vuelo-screen');
-                  // close bottom sheet
-                  Navigator.pop(context);
-                  // // push
-                  // context.push('/finalizar-vuelo-screen');
-                  // // close bottom sheet
-                  // Navigator.pop(context);
+                    // push
+                    context.push('/consultar-control-actividades-screen');
+                    // close bottom sheet
+                    Navigator.pop(context);
+                  },
+                ),
 
-                },
-              ),
+                // Generar reportes
+                if (turnaround.estatus == 3 ||
+                    (turnaround.estatus != 1 &&
+                        turnaround.estatus != 2 &&
+                        turnaround.estatus != 3 &&
+                        turnaround.estatus != 7))
+                  SizedBox(height: 0),
 
+                // MenuListTile(
+                //   leading: Icon(Icons.report),
+                //   title: 'Generar reportes',
+                //   onTap: () {
+                //     print("Generar reportes");
+                //     // push
+                //     context.push('/generar-reportes');
+                //     // close bottom sheet
+                //     Navigator.pop(context);
+                //   },
+                // ),
+                SizedBox(height: 10),
+                // Row with status of the turnaround in his respective color
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Container(
+                      width: 13,
+                      height: 13,
+                      decoration: BoxDecoration(
+                        color: switch (turnaround.fkVuelo.estatus.id) {
+                          "2" => Colors.yellow,
+                          "3" => Colors.green,
+                          "4" => Colors.blue,
+                          "6" => Colors.grey,
+                          "7" => Colors.red,
+                          "8" => Colors.orange,
+                          _ => Colors.white, // default case
+                        },
 
-
-
-          // **********************************************************************************************************
-          // **********************************************************************************************************
-
-
-
-          // if (turnaround.estatus == 3)
-          //   MenuListTile(
-          //     leading: Icon(Icons.lock),
-          //     title: 'Cerrar Chech-In',
-          //     onTap: () {
-          //       print("onItemTap");
-
-          //       // Rol Ckeck
-          //       if (!ref.read(authProvider).loginResponse!.hasPermission( Roles.modificarVuelo)) {
-          //         showCustomErrorSnackbar(  context, 'No tienes permiso para cerrar el check-in.');
-          //         return;
-          //       }
-                
-          //       // set trcIdProvider
-          //       ref.read(trcIdProvider.notifier).state = turnaround.id;
-          //       // set selectedTurnaroundProvider
-          //       ref.read(selectedTurnaroundProvider.notifier).state =
-          //           turnaround;
-
-          //       // Api calls
-          //       // getcerrar_operacionesById
-          //       // Control de actividades
-          //       ref.read(controlActividadesProvider(turnaround.id).notifier).getControlDeActividadesByTrcId();
-
-
-          //       // getCodigosMoraByTrc
-          //        ref
-          //           .read(demorasProvider.notifier)
-          //           .getDemorasByTrc(turnaround.id);
-
-          //       // Personal
-          //       ref
-          //           .read(departamentoPersonalProvider(turnaround.id).notifier)
-          //           .getDepartamentosConPersonal(turnaround.id);
-                
-
-
-          //       // push
-          //       context.push('/cerrar-vuelo-screen');
-          //       // close bottom sheet
-          //       Navigator.pop(context);
-
-          //       // show snackbar if push return true
-          //       // if (result == true) {
-          //       //   ScaffoldMessenger.of(context).showSnackBar(
-          //       //     SnackBar(content: Text('Vuelo cerrado correctamente')),
-          //       //   );
-          //       // }
-          //     },
-          //   ),
-            
-            // Consultar Control de actividades
-          // if (turnaround.estatus == 4 ||
-          //     turnaround.estatus == 5 ||
-          //     turnaround.estatus == 6 ||
-          //     turnaround.estatus == 7)
-            MenuListTile(
-              leading: Icon(Icons.list),
-              title: 'Consultar',
-              onTap: () {
-                print("onItemTap");
-
-                // Rol Ckeck
-                if (!ref.read(authProvider).loginResponse!.hasPermission( Roles.consultarControlDeActividades)) {
-                  showCustomErrorSnackbar(  context, 'No tienes permiso para consultar el control de actividades.');
-                  return;
-                }
-                
-                // set trcIdProvider
-                ref.read(trcIdProvider.notifier).state = turnaround.id;
-                // set selectedTurnaroundProvider
-                ref.read(selectedTurnaroundProvider.notifier).state =
-                    turnaround;
-
-                // Api calls
-                // getcerrar_operacionesById
-                // Control de actividades
-                ref.read(controlActividadesProvider(turnaround.id).notifier).getControlDeActividadesByTrcId();
-
-                ref.read(plantillaDetalleProvider.notifier).getPlantillaDetalleById(turnaround.fkVuelo.fkPlantilla?.id ?? 0);
-
-
-
-                // getCodigosMoraByTrc
-                 ref
-                    .read(demorasProvider.notifier)
-                    .getDemorasByTrc(turnaround.id);
-
-                // Personal
-                ref
-                    .read(departamentoPersonalProvider(turnaround.id).notifier)
-                    .getDepartamentosConPersonal(turnaround.id);
-                
-
-
-                // push
-                context.push('/consultar-control-actividades-screen');
-                // close bottom sheet
-                Navigator.pop(context);
-              },
-            ),
-            
-          // Generar reportes
-          if (turnaround.estatus == 3 ||
-              (turnaround.estatus != 1 &&
-                  turnaround.estatus != 2 &&
-                  turnaround.estatus != 3 &&
-                  turnaround.estatus != 7))
-                  SizedBox(height: 0,),
-            // MenuListTile(
-            //   leading: Icon(Icons.report),
-            //   title: 'Generar reportes',
-            //   onTap: () {
-            //     print("Generar reportes");
-            //     // push
-            //     context.push('/generar-reportes');
-            //     // close bottom sheet
-            //     Navigator.pop(context);
-            //   },
-            // ),
-
-            SizedBox(height: 10),
-            // Row with status of the turnaround in his respective color 
-            Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-
-                 Container(
-                  width: 13,
-                  height: 13,
-                  decoration: BoxDecoration(
-                    color: 
-                    switch (turnaround.fkVuelo.estatus.id) {
-                      "2" => Colors.yellow,
-                      "3" => Colors.green,
-                      "4" => Colors.blue,
-                      "6" => Colors.grey,
-                      "7" => Colors.red,
-                      "8" => Colors.orange,
-                      _ => Colors.white, // default case
-                    },
-                    
-
-                    // switch (turnaround.fkVuelo.estatus.color) {
-                    //   "verde" => Colors.green,
-                    //   "amarillo" => Colors.yellow,
-                    //   "rojo" => Colors.red,
-                    //   "azul" => Colors.blue,
-                    //   "gris" => Colors.grey,
-                    //   _ => Colors.white, // default case
-                    // },
-                    shape: BoxShape.rectangle,
-                    borderRadius: BorderRadius.circular(4),
-                    border: Border.all(
-                      color: Colors.black26,
-                      width: 1,
+                        // switch (turnaround.fkVuelo.estatus.color) {
+                        //   "verde" => Colors.green,
+                        //   "amarillo" => Colors.yellow,
+                        //   "rojo" => Colors.red,
+                        //   "azul" => Colors.blue,
+                        //   "gris" => Colors.grey,
+                        //   _ => Colors.white, // default case
+                        // },
+                        shape: BoxShape.rectangle,
+                        borderRadius: BorderRadius.circular(4),
+                        border: Border.all(color: Colors.black26, width: 1),
+                      ),
                     ),
-                  ),
+                    SizedBox(width: 10),
+
+                    Text(
+                      turnaround.fkVuelo.estatus.nombre.toUpperCase(),
+                      overflow: TextOverflow.ellipsis,
+                      // uppercase
+                      style: Theme.of(context).textTheme.labelMedium?.copyWith(
+                        fontWeight: FontWeight.w900,
+                        // italic
+                        color: Colors.black54,
+                        // fontStyle: FontStyle.italic,
+                        // color: switch (turnaround.fkVuelo.estatus.color) {
+                        //   "verde" => Colors.green,
+                        //   "amarillo" => Colors.yellow,
+                        //   "rojo" => Colors.red,
+                        //   "azul" => Colors.blue,
+                        //   "gris" => Colors.grey,
+                        //   _ => Colors.black, // default case
+                        // },
+                      ),
+                      // color based on status
+                    ),
+                  ],
                 ),
-                SizedBox(width: 10),
-                
-                Text(
-                  turnaround.fkVuelo.estatus.nombre.toUpperCase(),
-                  overflow: TextOverflow.ellipsis,
-                  // uppercase
-                  style: Theme.of(context).textTheme.labelMedium?.copyWith(
-                    fontWeight: FontWeight.w900,
-                    // italic
-                    color: Colors.black54
-                    // fontStyle: FontStyle.italic,
-                  // color: switch (turnaround.fkVuelo.estatus.color) {
-                  //   "verde" => Colors.green,
-                  //   "amarillo" => Colors.yellow,
-                  //   "rojo" => Colors.red,
-                  //   "azul" => Colors.blue,
-                  //   "gris" => Colors.grey,
-                  //   _ => Colors.black, // default case
-                  // },
-                  ),
-                  // color based on status
-                ),
-                
-               
               ],
-            )
-
-
-        ],
-      ),
+            ),
     );
   }
 
@@ -1221,40 +1271,38 @@ class _TailView extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.center,
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            SizedBox(height: 10,),
+            SizedBox(height: 10),
             SizedBox(
               height: 90,
-              child: 
-              // Image.network(image, fit: BoxFit.contain),
-              CachedNetworkImage(
-                imageUrl: image,
-                fit: BoxFit.contain,
-                placeholder: (context, url) => 
-                Placeholder(
-                  strokeWidth: 2,
-                  color: Colors.transparent) ,
-                errorWidget: (context, url, error) => Icon(Icons.error),
-              )
+              child:
+                  // Image.network(image, fit: BoxFit.contain),
+                  CachedNetworkImage(
+                    imageUrl: image,
+                    fit: BoxFit.contain,
+                    placeholder: (context, url) =>
+                        Placeholder(strokeWidth: 2, color: Colors.transparent),
+                    errorWidget: (context, url, error) => Icon(Icons.error),
+                  ),
             ),
-            SizedBox(height: 5,),
+            SizedBox(height: 5),
             // Uppercase
             Text(
               name.toUpperCase(),
               style: isMobile
-              ? Theme.of(context).textTheme.labelSmall?.copyWith(
-                letterSpacing: 0,
-                  wordSpacing: 0.3,
-                  fontSize: 14,
-                fontFamily: GoogleFonts.openSans(
-                  fontWeight: FontWeight.w700,
-                ).fontFamily,
-                color: Colors.black87,
-              )
-              : Theme.of(context).textTheme.labelMedium?.copyWith(
-                fontFamily: GoogleFonts.openSans(
-                  fontWeight: FontWeight.w700,
-                ).fontFamily,
-              ),
+                  ? Theme.of(context).textTheme.labelSmall?.copyWith(
+                      letterSpacing: 0,
+                      wordSpacing: 0.3,
+                      fontSize: 14,
+                      fontFamily: GoogleFonts.openSans(
+                        fontWeight: FontWeight.w700,
+                      ).fontFamily,
+                      color: Colors.black87,
+                    )
+                  : Theme.of(context).textTheme.labelMedium?.copyWith(
+                      fontFamily: GoogleFonts.openSans(
+                        fontWeight: FontWeight.w700,
+                      ).fontFamily,
+                    ),
             ),
           ],
         ),
@@ -1293,7 +1341,7 @@ class _ServicioView extends StatelessWidget {
     //   return size.width > size.height;
     // }
 
-     bool isMobile = MediaQuery.of(context).size.width < 500;
+    bool isMobile = MediaQuery.of(context).size.width < 500;
 
     return Center(
       child: Container(
@@ -1317,32 +1365,31 @@ class _ServicioView extends StatelessWidget {
                 children: [
                   Text(
                     "Apertura:",
-                    style:isMobile
+                    style: isMobile
                         ? Theme.of(context).textTheme.labelMedium?.copyWith(
-                          fontFamily: GoogleFonts.openSans(
-                            fontWeight: FontWeight.w600,
-                          ).fontFamily,
-                        )
+                            fontFamily: GoogleFonts.openSans(
+                              fontWeight: FontWeight.w600,
+                            ).fontFamily,
+                          )
                         : Theme.of(context).textTheme.labelMedium?.copyWith(
-                          fontFamily: GoogleFonts.openSans(
-                            fontWeight: FontWeight.w600,
-                          ).fontFamily,
-                        ),
+                            fontFamily: GoogleFonts.openSans(
+                              fontWeight: FontWeight.w600,
+                            ).fontFamily,
+                          ),
                   ),
                   Text(
                     horaServicioInicio,
-                    style:isMobile
+                    style: isMobile
                         ? Theme.of(context).textTheme.titleLarge?.copyWith(
-                          fontFamily: GoogleFonts.openSans(
-                            fontWeight: FontWeight.w800,
-
-                          ).fontFamily,
-                        )
+                            fontFamily: GoogleFonts.openSans(
+                              fontWeight: FontWeight.w600,
+                            ).fontFamily,
+                          )
                         : Theme.of(context).textTheme.titleLarge?.copyWith(
-                          fontFamily: GoogleFonts.openSans(
-                            fontWeight: FontWeight.w800,
-                          ).fontFamily,
-                        ),
+                            fontFamily: GoogleFonts.openSans(
+                              fontWeight: FontWeight.w600,
+                            ).fontFamily,
+                          ),
                   ),
                 ],
               ),
@@ -1353,31 +1400,31 @@ class _ServicioView extends StatelessWidget {
                 children: [
                   Text(
                     "Cierre:",
-                    style:isMobile
+                    style: isMobile
                         ? Theme.of(context).textTheme.labelMedium?.copyWith(
-                          fontFamily: GoogleFonts.openSans(
-                            fontWeight: FontWeight.w600,
-                          ).fontFamily,
-                        )
+                            fontFamily: GoogleFonts.openSans(
+                              fontWeight: FontWeight.w600,
+                            ).fontFamily,
+                          )
                         : Theme.of(context).textTheme.labelMedium?.copyWith(
-                          fontFamily: GoogleFonts.openSans(
-                            fontWeight: FontWeight.w600,
-                          ).fontFamily,
-                        ),
+                            fontFamily: GoogleFonts.openSans(
+                              fontWeight: FontWeight.w600,
+                            ).fontFamily,
+                          ),
                   ),
                   Text(
                     horaServicioFin,
-                    style:isMobile
+                    style: isMobile
                         ? Theme.of(context).textTheme.titleLarge?.copyWith(
-                          fontFamily: GoogleFonts.openSans(
-                            fontWeight: FontWeight.w800,
-                          ).fontFamily,
-                        )
+                            fontFamily: GoogleFonts.openSans(
+                              fontWeight: FontWeight.w600,
+                            ).fontFamily,
+                          )
                         : Theme.of(context).textTheme.titleLarge?.copyWith(
-                          fontFamily: GoogleFonts.openSans(
-                            fontWeight: FontWeight.w800,
-                          ).fontFamily,
-                        ),
+                            fontFamily: GoogleFonts.openSans(
+                              fontWeight: FontWeight.w600,
+                            ).fontFamily,
+                          ),
                   ),
                 ],
               ),
@@ -1423,7 +1470,6 @@ class _ServicioView extends StatelessWidget {
   }
 }
 
-
 class _InboundView extends StatelessWidget {
   final String lugarSalida;
   final String lugarLlegada;
@@ -1450,7 +1496,7 @@ class _InboundView extends StatelessWidget {
     //   return size.width > size.height;
     // }
 
-     bool isMobile = MediaQuery.of(context).size.width < 500;
+    bool isMobile = MediaQuery.of(context).size.width < 500;
 
     return Center(
       child: Container(
@@ -1473,34 +1519,33 @@ class _InboundView extends StatelessWidget {
                 children: [
                   Text(
                     lugarSalida,
-                    style: 
-                    isMobile
-                    ? Theme.of(context).textTheme.labelMedium?.copyWith(
-                      fontFamily: GoogleFonts.openSans(
-                        fontWeight: FontWeight.w600,
-                      ).fontFamily,
-                      color: Colors.black87
-                    )
-                    : Theme.of(context).textTheme.titleMedium?.copyWith(
-                      fontFamily: GoogleFonts.openSans(
-                        fontWeight: FontWeight.w600,
-                      ).fontFamily,
-                    ),
+                    style: isMobile
+                        ? Theme.of(context).textTheme.labelMedium?.copyWith(
+                            fontFamily: GoogleFonts.openSans(
+                              fontWeight: FontWeight.w600,
+                            ).fontFamily,
+                            color: Colors.black87,
+                          )
+                        : Theme.of(context).textTheme.titleMedium?.copyWith(
+                            fontFamily: GoogleFonts.openSans(
+                              fontWeight: FontWeight.w600,
+                            ).fontFamily,
+                          ),
                   ),
                   Text(
                     lugarLlegada,
                     style: isMobile
-                    ? Theme.of(context).textTheme.labelMedium?.copyWith(
-                      fontFamily: GoogleFonts.openSans(
-                        fontWeight: FontWeight.w600,
-                      ).fontFamily,
-                      color: Colors.black87
-                    )
-                    : Theme.of(context).textTheme.titleMedium?.copyWith(
-                      fontFamily: GoogleFonts.openSans(
-                        fontWeight: FontWeight.w600,
-                      ).fontFamily,
-                    ),
+                        ? Theme.of(context).textTheme.labelMedium?.copyWith(
+                            fontFamily: GoogleFonts.openSans(
+                              fontWeight: FontWeight.w600,
+                            ).fontFamily,
+                            color: Colors.black87,
+                          )
+                        : Theme.of(context).textTheme.titleMedium?.copyWith(
+                            fontFamily: GoogleFonts.openSans(
+                              fontWeight: FontWeight.w600,
+                            ).fontFamily,
+                          ),
                   ),
                 ],
               ),
@@ -1508,23 +1553,23 @@ class _InboundView extends StatelessWidget {
               isInbound
                   ? SvgPicture.asset("assets/icons/llegada.svg", height: 30)
                   : SvgPicture.asset("assets/icons/salida.svg", height: 30),
-              
+
               // const SizedBox(height: 10),
 
               // hora
               Text(
                 hora,
-                style:isMobile
+                style: isMobile
                     ? Theme.of(context).textTheme.labelMedium?.copyWith(
-                      fontFamily: GoogleFonts.openSans(
-                        fontWeight: FontWeight.w600,
-                      ).fontFamily,
-                    )
+                        fontFamily: GoogleFonts.openSans(
+                          fontWeight: FontWeight.w600,
+                        ).fontFamily,
+                      )
                     : Theme.of(context).textTheme.titleMedium?.copyWith(
-                      fontFamily: GoogleFonts.openSans(
-                        fontWeight: FontWeight.w600,
-                      ).fontFamily,
-                    ),
+                        fontFamily: GoogleFonts.openSans(
+                          fontWeight: FontWeight.w600,
+                        ).fontFamily,
+                      ),
               ),
               // isInbound
               //     ? Text(
@@ -1549,16 +1594,16 @@ class _InboundView extends StatelessWidget {
                 numeroVuelo,
                 style: isMobile
                     ? Theme.of(context).textTheme.bodyMedium?.copyWith(
-                      fontFamily: GoogleFonts.openSans(
-                        fontWeight: FontWeight.w800,
-                      ).fontFamily,
-                      color: Colors.black87
-                    )
+                        fontFamily: GoogleFonts.openSans(
+                          fontWeight: FontWeight.w600,
+                        ).fontFamily,
+                        color: Colors.black87,
+                      )
                     : Theme.of(context).textTheme.titleMedium?.copyWith(
-                      fontFamily: GoogleFonts.openSans(
-                        fontWeight: FontWeight.w800,
-                      ).fontFamily,
-                    ),
+                        fontFamily: GoogleFonts.openSans(
+                          fontWeight: FontWeight.w600,
+                        ).fontFamily,
+                      ),
               ),
             ],
           ),
@@ -1709,8 +1754,6 @@ class _InboundView extends StatelessWidget {
 //     // *********************************************************************************************************************
 //   };
 // }
-
-
 
 String formatTime(String? time) {
   if (time == null || time.length < 5) return "";

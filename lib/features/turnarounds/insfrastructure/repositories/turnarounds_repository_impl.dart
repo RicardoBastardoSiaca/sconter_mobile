@@ -108,6 +108,7 @@ class TurnaroundsRepositoryImpl extends TurnaroundsRepository {
   Future<SimpleApiResponse> setNumero(SetNumeroTareaRequest body) {
     return datasource.setNumero(body);
   }
+
   @override
   Future<SimpleApiResponse> setTexto(SetTextoRequest body) {
     return datasource.setTexto(body);
@@ -229,8 +230,6 @@ class TurnaroundsRepositoryImpl extends TurnaroundsRepository {
     return datasource.asignarPersonal(body);
   }
 
-  
-
   @override
   Future<SimpleApiResponse> cerrarVuelo(Map<String, Object?> body) {
     return datasource.cerrarVuelo(body);
@@ -288,27 +287,28 @@ class TurnaroundsRepositoryImpl extends TurnaroundsRepository {
   Future<SimpleApiResponse> finalizarActividadesSinFirma(int id) {
     return datasource.finalizarActividadesSinFirma(id);
   }
-  
+
   @override
   Future<SimpleApiResponse> setInternetSpeed(SetInternetTareaRequest body) {
     return datasource.setInternetSpeed(body);
   }
-  
+
   @override
   Future<SimpleApiResponse> asignarEquipoIt(Map<String, dynamic> body) {
     return datasource.asignarEquipoIt(body);
   }
-  
+
   @override
-  Future<List<VueloCalendario>> getVuelosCalendario(VueloCalendarioRequest body) {
+  Future<List<VueloCalendario>> getVuelosCalendario(
+    VueloCalendarioRequest body,
+  ) {
     return datasource.getVuelosCalendario(body);
   }
-  
+
   @override
   // Future<SimpleApiResponse> cerrarVueloGerente(Map<String, Object?> body) {
   //   return datasource.cerrarVueloGerente(body);
   // }
-  
   @override
   Future<SimpleApiResponse> finalizarVuelo(Map<String, Object?> body) {
     return datasource.finalizarVuelo(body);
@@ -322,5 +322,15 @@ class TurnaroundsRepositoryImpl extends TurnaroundsRepository {
   @override
   Future<List<VueloLineup>> getVuelosLineup(VueloLineupRequest body) {
     return datasource.getVuelosLineup(body);
+  }
+
+  @override
+  Future<List<Counter>> getCountersList(int idTerminal) {
+    return datasource.getCountersList(idTerminal);
+  }
+
+  @override
+  Future<SimpleApiResponse> asignarCounters(Map<String, Object?> body) {
+    return datasource.asignarCounters(body);
   }
 }

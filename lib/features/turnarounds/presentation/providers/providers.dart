@@ -14,3 +14,4 @@ export 'vuelos_calendario_provider.dart';
 export 'vuelo_timeline_provider.dart';
 export 'vuelos_lineup_provider.dart';
 export 'ciudades_provider.dart';
+export 'counter_provider.dart';

@@ -50,7 +50,7 @@ class VueloCompactCard extends StatelessWidget {
     final String baseUrl = Environment.apiUrl; 
     final String urlImagen = '$baseUrl/aerolineas${vuelo.imagen ?? ''}';
 
-    final ordenDepartamentos = ['OPS', 'DES'];
+    final ordenDepartamentos = ['OPS', 'DES', 'IT'];
     final personalMap = vuelo.personal;
 
     return Container(

@@ -8,11 +8,12 @@
 
 // String turnaroundMainToJson(TurnaroundMain data) => json.encode(data.toJson());
 
-
 // fecha_servicio_inicio = models.DateField(blank=True,null=True)
 //         fecha_servicio_fin = models.DateField(blank=True,null=True)
 //         hora_servicio_inicio = models.TimeField(blank=True,null=True)
 //         hora_servicio_fin = models.TimeField(blank=True,null=True)
+import 'package:scounter_mobile/features/turnarounds/domain/domain.dart';
+
 class TurnaroundMain {
   int id;
   dynamic identificador;
@@ -42,6 +43,9 @@ class TurnaroundMain {
   String nombreEstatus;
   dynamic charter;
 
+  List<PosicionCounter>? posiciones;
+  Puerta? puerta;
+
   TurnaroundMain({
     required this.id,
     required this.identificador,
@@ -67,6 +71,8 @@ class TurnaroundMain {
     required this.estatus,
     required this.nombreEstatus,
     required this.charter,
+    this.posiciones,
+    this.puerta,
   });
 
   // factory TurnaroundMain.fromJson(Map<String, dynamic> json) => TurnaroundMain(
@@ -212,6 +218,14 @@ class FkVuelo {
   int estado;
   String? comentarioCancelado;
   Estatus estatus;
+  String? horaFinServicio;
+  String? horaFinServicio_;
+  String? horaInicioServicio;
+  String? horaInicioServicio_;
+  String? matricula;
+  int? operadoPor;
+  int? terminal;
+  bool? vistaIaim;
 
   FkVuelo({
     required this.id,
@@ -241,6 +255,14 @@ class FkVuelo {
     required this.estado,
     this.comentarioCancelado,
     required this.estatus,
+    this.horaFinServicio,
+    this.horaFinServicio_,
+    this.horaInicioServicio,
+    this.horaInicioServicio_,
+    this.matricula,
+    this.operadoPor,
+    this.terminal,
+    this.vistaIaim,
   });
 
   // factory FkVuelo.fromJson(Map<String, dynamic> json) => FkVuelo(
@@ -302,6 +324,57 @@ class FkVuelo {
   //     "comentario_cancelado": comentarioCancelado,
   //     "estatus": estatus.toJson(),
   // };
+}
+
+class PosicionCounter {
+  int id;
+  int posicion;
+
+  PosicionCounter({required this.id, required this.posicion});
+
+  // class counter
+  // "pos_id": 1,
+  //       "terminal": "Nacional",
+  //       "pos_nombre": "Posición 1",
+  //       "pos_numero": "01",
+  //       "pos_terminal_fk": 1
+
+  // factory PosicionCounter.fromJson(Map<String, dynamic> json) => PosicionCounter(
+  //     id: json["id"],
+  //     nombre: json["nombre"],
+  //     descripcion: json["descripcion"],
+  //     estatus: json["estatus"],
+  // );
+
+  // Map<String, dynamic> toJson() => {
+  //     "id": id,
+  //     "nombre": nombre,
+  //     "descripcion": descripcion,
+  //     "estatus": estatus,
+  // };
+}
+
+class Puerta {
+  int id;
+  int puerta;
+
+  Puerta({required this.id, required this.puerta});
+}
+
+class Counter {
+  int id;
+  String? terminal;
+  String? nombre;
+  String? numero;
+  int fkTerminal;
+
+  Counter({
+    required this.id,
+    this.terminal,
+    this.nombre,
+    this.numero,
+    required this.fkTerminal,
+  });
 }
 
 class Estatus {
@@ -514,6 +587,7 @@ class Tipo {
   //     "nombre": nombre,
   // };
 }
+
 class Estacion {
   int id;
   String nombre;

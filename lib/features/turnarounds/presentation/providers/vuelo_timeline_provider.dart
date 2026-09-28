@@ -28,7 +28,7 @@ class VueloTimelineState {
   // --- GETTERS DEDUCIDOS DE COMPATIBILIDAD CON LA UI ---
 
   /// Devuelve el ancho por hora escalado según el zoomLevel
-  double get anchoHora => 80.0 * zoomLevel;
+  double get anchoHora => 64.0 * zoomLevel;
 
   /// Retorna lista vacía para mantener compatibilidad si la UI evalúa excepciones
   List<String> get fechasOmitidas => const [];
