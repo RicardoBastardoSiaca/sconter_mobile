@@ -172,7 +172,13 @@ abstract class TurnaroundsRepository {
   
   Future<List<Counter>> getCountersList(int idTerminal);
 
+  Future<List<Puerta>> getPuertasList(int idTerminal);
+
+  Future<List<Terminal>> getTerminalesList();
+
   Future<SimpleApiResponse> asignarCounters(Map<String, Object?> body);
+  
+  Future<SimpleApiResponse> asignarPuerta(Map<String, Object?> body);
   
   
 }

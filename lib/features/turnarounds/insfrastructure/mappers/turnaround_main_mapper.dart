@@ -39,34 +39,52 @@ class TurnaroundMainMapper {
   }
 
   // Método auxiliar para parsear el arreglo/objeto de puerta
-  static Puerta? _parsePuerta(dynamic rawPuerta) {
+  static PuertaResponse? _parsePuerta(dynamic rawPuerta) {
     if (rawPuerta == null) return null;
 
     // Si viene como una lista/arreglo (e.g. [{ "id": 1, "puerta": 1 }])
     if (rawPuerta is List && rawPuerta.isNotEmpty) {
       final firstItem = rawPuerta.first;
       if (firstItem is Map<String, dynamic>) {
-        return mapJsonToPuerta(firstItem);
+        return mapJsonToPuertaResponse(firstItem);
       }
     }
 
     // Por retrocompatibilidad, si en algún momento llega como un solo Map
     if (rawPuerta is Map<String, dynamic>) {
-      return mapJsonToPuerta(rawPuerta);
+      return mapJsonToPuertaResponse(rawPuerta);
     }
 
     return null;
   }
 
   // Mapper individual para Puerta
-  static Puerta mapJsonToPuerta(Map<String, dynamic> json) {
-    return Puerta(
+  static PuertaResponse mapJsonToPuertaResponse(Map<String, dynamic> json) {
+    return PuertaResponse(
       id: json['id'],
       puerta: json['puerta'],
     );
   }
 
   // ...resto del mapper
+
+  // Mapea la lista completa recibida de la API a una lista de objetos Puerta
+static List<Puerta> mapJsonToPuertas(List<dynamic> json) {
+  return json.map((e) => mapJsonToPuerta(e)).toList();
+}
+
+// Mapea un solo elemento del JSON al objeto Puerta
+static Puerta mapJsonToPuerta(Map<String, dynamic> json) {
+  return Puerta(
+    id: json['pue_equ_id'],
+    terminal: json['terminal'],
+    nombre: json['pue_nombre'],
+    fkTerminal: json['pue_terminal_fk'],
+  );
+}
+
+
+
   // Método auxiliar adaptado para retornar List<PosicionCounter>?
   static List<PosicionCounter>? _parsePosicionesCounter(dynamic rawPosicion) {
     if (rawPosicion == null) return null;
@@ -112,11 +130,11 @@ class TurnaroundMainMapper {
   static FkVuelo mapJsonToFkVuelo(Map<String, dynamic> json) {
     return FkVuelo(
       id: json['id'],
-      acReg: json['ac_reg'],
-      acType: json['ac_type'],
+      acReg: json['ac_reg'] ?? '',
+      acType: json['ac_type'] ?? '',
       icaoHex: json['icao_hex'],
-      entePagador: json['ente_pagador'],
-      numeroVueloIn: json['numero_vuelo_in'],
+      entePagador: json['ente_pagador'] ?? '',
+      numeroVueloIn: json['numero_vuelo_in'] ?? '',
       etdIn: json['ETD_in'],
       etaIn: json['ETA_in'],
       etaFechaIn: json['ETA_fecha_in'],
@@ -249,6 +267,15 @@ class TurnaroundMainMapper {
   // TIPO
   static Tipo mapJsonToTipo(Map<String, dynamic> json) {
     return Tipo(id: json['id'], nombre: json['nombre']);
+  }
+
+// TERMINALES mapper
+  static List<Terminal> mapJsonToTerminales(List<dynamic> json) {
+    return json.map((e) => mapJsonToTerminal(e)).toList();
+  }
+  // TERMINAL
+  static Terminal mapJsonToTerminal(Map<String, dynamic> json) {
+    return Terminal(id: json['ter_id'], nombre: json['ter_nombre']);
   }
 
   // Estatus

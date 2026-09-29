@@ -329,8 +329,26 @@ class TurnaroundsRepositoryImpl extends TurnaroundsRepository {
     return datasource.getCountersList(idTerminal);
   }
 
+  
+  @override
+  Future<List<Puerta>> getPuertasList(int idTerminal) {
+    return datasource.getPuertasList(idTerminal);
+  }
+
+  @override
+  Future<List<Terminal>> getTerminalesList() {
+    return datasource.getTerminalesList();
+    
+  }
+
   @override
   Future<SimpleApiResponse> asignarCounters(Map<String, Object?> body) {
     return datasource.asignarCounters(body);
   }
+  @override
+  Future<SimpleApiResponse> asignarPuerta(Map<String, Object?> body) {
+    return datasource.asignarPuerta(body);
+  }
+
+  
 }

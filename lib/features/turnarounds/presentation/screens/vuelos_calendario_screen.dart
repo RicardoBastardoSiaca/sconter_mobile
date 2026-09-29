@@ -4,6 +4,7 @@ import 'package:scounter_mobile/features/shared/domain/domain.dart';
 import 'package:scounter_mobile/features/shared/shared.dart';
 import 'package:scounter_mobile/features/turnarounds/domain/domain.dart';
 import 'package:scounter_mobile/features/turnarounds/presentation/providers/providers.dart';
+import 'package:scounter_mobile/features/turnarounds/presentation/widgets/widgets.dart';
 // import 'vuelos_provider.dart';
 // import 'calendario_vuelos_widget.dart';
 
@@ -55,101 +56,115 @@ class _VuelosScreenState extends ConsumerState<VuelosCalendarioScreen> {
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
       color: const Color(0xFFF8F9FA),
-      child: Row(
+      child: Column(
         children: [
-          // 1. SELECTOR DE AEROLÍNEA
-          Expanded(
-            child: Container(
-              padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
-              decoration: BoxDecoration(
-                color: const Color(0xFFEEEEEE),
-                borderRadius: BorderRadius.circular(12),
-                border: Border.all(color: Colors.black12),
-              ),
-              child: Row(
-                children: [
-                  const Icon(Icons.flight, size: 14, color: Colors.black54),
-                  const SizedBox(width: 4),
-                  Expanded(
-                    child: DropdownButtonHideUnderline(
-                      child: DropdownButton<String>(
-                        isDense: true,
-                        isExpanded: true,
-                        value: _aerolineaSeleccionada,
-                        hint: const Text(
-                          "Aerolínea",
-                          style: TextStyle(fontSize: 11, color: Colors.black87),
-                        ),
-                        items: [
-                          const DropdownMenuItem<String>(
-                            value: null,
-                            child: Text("Todas las Aerolíneas", style: TextStyle(fontSize: 11)),
-                          ),
-                          ...aerolineasDisponibles.map((a) => DropdownMenuItem(
-                                value: a,
-                                child: Text(a, style: const TextStyle(fontSize: 11), overflow: TextOverflow.ellipsis),
-                              )),
-                        ],
-                        onChanged: (val) {
-                          setState(() {
-                            _aerolineaSeleccionada = val;
-                          });
-                        },
-                      ),
-                    ),
+          Row(
+            children: [
+              // 1. SELECTOR DE AEROLÍNEA
+              Expanded(
+                child: Container(
+                  padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
+                  decoration: BoxDecoration(
+                    // color: const Color(0xFFEEEEEE),
+                    borderRadius: BorderRadius.circular(12),
+                    border: Border.all(color: Colors.black12),
                   ),
-                ],
-              ),
-            ),
-          ),
-
-          const SizedBox(width: 8),
-
-          // 2. SELECTOR DE ESTACIÓN
-          Expanded(
-            child: Container(
-              padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
-              decoration: BoxDecoration(
-                color: const Color(0xFFEEEEEE),
-                borderRadius: BorderRadius.circular(12),
-                border: Border.all(color: Colors.black12),
-              ),
-              child: Row(
-                children: [
-                  const Icon(Icons.location_on, size: 14, color: Colors.black54),
-                  const SizedBox(width: 4),
-                  Expanded(
-                    child: DropdownButtonHideUnderline(
-                      child: DropdownButton<String>(
-                        isDense: true,
-                        isExpanded: true,
-                        value: _estacionSeleccionada,
-                        hint: const Text(
-                          "Estación",
-                          style: TextStyle(fontSize: 11, color: Colors.black87),
-                        ),
-                        items: [
-                          const DropdownMenuItem<String>(
-                            value: null,
-                            child: Text("Todas las Estaciones", style: TextStyle(fontSize: 11)),
+                  child: Row(
+                    children: [
+                      // const Icon(Icons.flight, size: 14, color: Colors.black54),
+                      const SizedBox(width: 8),
+                      Expanded(
+                        child: DropdownButtonHideUnderline(
+                          child: DropdownButton<String>(
+                            isDense: true,
+                            isExpanded: true,
+                            value: _aerolineaSeleccionada,
+                            hint: const Text(
+                              "Aerolínea",
+                              style: TextStyle(fontSize: 16, ),
+                            ),
+                            items: [
+                              const DropdownMenuItem<String>(
+                                value: null,
+                                child: Text("Aerolíneas", style: TextStyle(fontSize: 16, fontWeight: FontWeight.w500)),
+                              ),
+                              ...aerolineasDisponibles.map((a) => DropdownMenuItem(
+                                    value: a,
+                                    child: Text(a, style: const TextStyle(fontSize: 14, fontWeight: FontWeight.w500), overflow: TextOverflow.ellipsis),
+                                  )),
+                            ],
+                            onChanged: (val) {
+                              setState(() {
+                                _aerolineaSeleccionada = val;
+                              });
+                            },
                           ),
-                          ...estaciones.map((e) => DropdownMenuItem(
-                                value: e.id.toString(),
-                                child: Text(e.nombre ?? '', style: const TextStyle(fontSize: 11), overflow: TextOverflow.ellipsis),
-                              )),
-                        ],
-                        onChanged: (val) {
-                          setState(() {
-                            _estacionSeleccionada = val;
-                          });
-                        },
+                        ),
                       ),
-                    ),
+                    ],
                   ),
-                ],
+                ),
               ),
-            ),
+          
+              const SizedBox(width: 8),
+          
+              // 2. SELECTOR DE ESTACIÓN
+              Expanded(
+                child: Container(
+                  padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
+                  decoration: BoxDecoration(
+                    // color: const Color(0xFFEEEEEE),
+                    borderRadius: BorderRadius.circular(12),
+                    border: Border.all(color: Colors.black12),
+                  ),
+                  child: Row(
+                    children: [
+                      // const Icon(Icons.location_on, size: 14, color: Colors.black54),
+                      const SizedBox(width: 4),
+                      Expanded(
+                        child: DropdownButtonHideUnderline(
+                          child: DropdownButton<String>(
+                            isDense: true,
+                            isExpanded: true,
+                            value: _estacionSeleccionada,
+                            hint: const Text(
+                              "Estación",
+                              style: TextStyle(fontSize:16),
+                            ),
+                            items: [
+                              const DropdownMenuItem<String>(
+                                value: null,
+                                child: Text("Estaciones", style: TextStyle(fontSize: 16, fontWeight: FontWeight.w500)),
+                              ),
+                              ...estaciones.map((e) => DropdownMenuItem(
+                                    value: e.id.toString(),
+                                    child: Text(e.nombre ?? '', style: const TextStyle(fontSize: 14, fontWeight: FontWeight.w500), overflow: TextOverflow.ellipsis),
+                                  )),
+                            ],
+                            onChanged: (val) {
+                              setState(() {
+                                _estacionSeleccionada = val;
+                              });
+                            },
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+            ],
           ),
+        
+        const SizedBox(height: 4,),
+          Row(
+            children: [
+              // TerminalFilterDropdown()
+              Expanded(child: TerminalFilterDropdown()),
+              Expanded(child: SizedBox())
+            ],
+          )
+        
         ],
       ),
     );

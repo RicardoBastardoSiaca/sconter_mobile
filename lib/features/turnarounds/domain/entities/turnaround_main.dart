@@ -44,7 +44,7 @@ class TurnaroundMain {
   dynamic charter;
 
   List<PosicionCounter>? posiciones;
-  Puerta? puerta;
+  PuertaResponse? puerta;
 
   TurnaroundMain({
     required this.id,
@@ -354,12 +354,16 @@ class PosicionCounter {
   // };
 }
 
-class Puerta {
+class PuertaResponse {
   int id;
   int puerta;
 
-  Puerta({required this.id, required this.puerta});
+  PuertaResponse({required this.id, required this.puerta});
 }
+
+
+
+
 
 class Counter {
   int id;
@@ -373,6 +377,21 @@ class Counter {
     this.terminal,
     this.nombre,
     this.numero,
+    required this.fkTerminal,
+  });
+}
+class Puerta {
+  int id;
+  String? terminal;
+  String? nombre;
+  // String? numero;
+  int fkTerminal;
+
+  Puerta({
+    required this.id,
+    this.terminal,
+    this.nombre,
+    // this.numero,
     required this.fkTerminal,
   });
 }
@@ -606,4 +625,22 @@ class Estacion {
     required this.estatus,
     required this.aeropuerto,
   });
+}
+
+
+class Terminal {
+  int id;
+  String nombre;
+
+  Terminal({required this.id, required this.nombre});
+
+  // factory Tipo.fromJson(Map<String, dynamic> json) => Tipo(
+  //     id: json["id"],
+  //     nombre: json["nombre"],
+  // );
+
+  // Map<String, dynamic> toJson() => {
+  //     "id": id,
+  //     "nombre": nombre,
+  // };
 }

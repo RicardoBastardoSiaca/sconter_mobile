@@ -3,6 +3,8 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:scounter_mobile/features/turnarounds/domain/domain.dart';
 import 'package:scounter_mobile/features/turnarounds/presentation/providers/providers.dart';
 
+import '../../../../shared/shared.dart';
+
 class AsignarCountersDialog extends ConsumerStatefulWidget {
   final int turnaroundId;
   final List<PosicionCounter>? posicion;
@@ -158,22 +160,31 @@ class _AsignarCountersDialogState extends ConsumerState<AsignarCountersDialog> {
           onPressed: () => Navigator.of(context).pop(),
           child: const Text('Cancelar'),
         ),
-        ElevatedButton(
-          onPressed: () async {
-            final response = await ref.read(counterProvider.notifier).asignarCounters(
-                  turnaroundId: widget.turnaroundId,
-                  posicionIds: _selectedCounterIds,
-                );
-
-            if (mounted) {
-              Navigator.of(context).pop();
-              ScaffoldMessenger.of(context).showSnackBar(
-                SnackBar(content: Text(response.message)),
-              );
-            }
-          },
-          child: const Text('Guardar'),
+       ElevatedButton(
+        style: ElevatedButton.styleFrom(
+          padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 8),
         ),
+        onPressed: () async {
+          final response = await ref.read(counterProvider.notifier).asignarCounters(
+                turnaroundId: widget.turnaroundId,
+                posicionIds: _selectedCounterIds,
+              );
+
+          if (mounted) {
+            Navigator.of(context).pop();
+            showCustomSuccessSnackbar(
+              context,
+              response.message.isNotEmpty
+                  ? response.message
+                  : 'Counters asignados.',
+            );
+          }
+        },
+        child: const Text(
+          'Guardar',
+          style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+        ),
+      )
       ],
     );
   }

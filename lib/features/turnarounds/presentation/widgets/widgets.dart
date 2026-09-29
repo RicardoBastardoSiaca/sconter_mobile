@@ -22,3 +22,5 @@ export 'dialogs/dialog_utils.dart';
 
 export 'lineup/vuelo_card_compacto.dart';
 export 'dialogs/asignar_counters_dialog.dart';
+export 'dialogs/asignar_puerta_dialog.dart';
+export 'terminal_filter_dropdown.dart';

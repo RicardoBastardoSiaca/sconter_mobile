@@ -15,3 +15,5 @@ export 'vuelo_timeline_provider.dart';
 export 'vuelos_lineup_provider.dart';
 export 'ciudades_provider.dart';
 export 'counter_provider.dart';
+export 'puerta_provider.dart';
+export 'terminal_provider.dart';

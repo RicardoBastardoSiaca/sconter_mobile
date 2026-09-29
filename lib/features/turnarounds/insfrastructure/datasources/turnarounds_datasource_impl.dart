@@ -1569,7 +1569,7 @@ class TurnaroundsDatasourceImpl implements TurnaroundsDatasource {
               // final data = response.data;
               // print('Response from setHoraInicio: $data');
               return SimpleApiResponse(
-                message: 'Hora de inicio actualizada correctamente.',
+                message: 'Counters asignados.',
                 success: true,
               );
             } else {
@@ -1586,4 +1586,80 @@ class TurnaroundsDatasourceImpl implements TurnaroundsDatasource {
       );
     }
   }
+
+  @override
+  Future<List<Puerta>> getPuertasList(int idTerminal) async {
+    try {
+      return dio
+          .get('/terminal/puertas/$idTerminal/?token=$accessToken')
+          .then((response) {
+            print('Response from getCountersList: $response');
+            if (response.statusCode == 200) {
+              // mapping to CategoriasEquiposIt map
+              final List<Puerta> puertas =
+                  TurnaroundMainMapper.mapJsonToPuertas(response.data);
+              return puertas;
+            } else {
+              return <Puerta>[];
+            }
+          });
+    } catch (e) {
+      print(e);
+      return <Puerta>[];
+    }
+  }
+
+  @override
+  Future<List<Terminal>> getTerminalesList() async {
+    try {
+      return dio
+          .get('/terminal/terminales/?token=$accessToken')
+          .then((response) {
+            print('Response from getCountersList: $response');
+            if (response.statusCode == 200) {
+              // mapping to CategoriasEquiposIt map
+              final List<Terminal> terminales =
+                  TurnaroundMainMapper.mapJsonToTerminales(response.data);
+              return terminales;
+            } else {
+              return <Terminal>[];
+            }
+          });
+    } catch (e) {
+      print(e);
+      return <Terminal>[];
+    }
+  }
+
+
+  @override
+  Future<SimpleApiResponse> asignarPuerta(Map<String, Object?> body) async{
+    try {
+      return dio
+          .post('/turnarounds/trc_puerta/?token=$accessToken', data: body)
+          .then((response) {
+            print('Response: $response');
+            if (response.statusCode == 200) {
+              // final data = response.data;
+              // print('Response from setHoraInicio: $data');
+              return SimpleApiResponse(
+                message: 'Puerta asignada.',
+                success: true,
+              );
+            } else {
+              return SimpleApiResponse(
+                message: 'Algo salió mal, intente nuevamente.',
+                success: false,
+              );
+            }
+          });
+    } catch (e) {
+      return SimpleApiResponse(
+        message: 'Algo salió mal, intente nuevamente.',
+        success: false,
+      );
+    }
+  }
+
+  
 }

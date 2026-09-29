@@ -200,11 +200,16 @@ class _TuraroundMainViewState extends ConsumerState {
           builder: (context) => UpdateDialog(updateData: updateState.toMap()),
         );
       }
-    });
 
-    // _scrollController.addListener(_scrollListener);
+       // _scrollController.addListener(_scrollListener);
     ref.read(turnaroundProvider.notifier).getTurnarounds();
 
+    ref.read(terminalProvider.notifier).getTerminales(); 
+
+
+    });
+
+   
     //  _connectivityService.connectionChange.listen((isConnected) {
     //   setState(() {
     //     // _isConnected = isConnected;
@@ -220,81 +225,76 @@ class _TuraroundMainViewState extends ConsumerState {
   }
 
   @override
-  Widget build(BuildContext context) {
-    // final isConnected = ref.watch(isConnectedProvider);
-    // final connectivityState = ref.watch(connectivityProvider);
-    final turnaroundsState = ref.watch(turnaroundProvider);
+Widget build(BuildContext context) {
+  final turnaroundsState = ref.watch(turnaroundProvider);
+  final selectedTerminal = ref.watch(selectedTerminalFilterProvider);
 
-    if (turnaroundsState.isLoading) {
-      return const Center(child: CircularProgressIndicator());
-    }
-    return SafeArea(
-      // BackgroundImg()
-      child: Container(
-        // decoration: BoxDecoration(
-        //   image: DecorationImage(
-        //     alignment: Alignment.bottomCenter,
-        //     image: AssetImage("assets/icons/mapa-mundi-bg.jpg"),
-        //     fit: BoxFit.contain,
-        //   ),
-        // ),
-        child: RefreshIndicator(
-          onRefresh: _handleRefresh,
-          child: ListView(
-            controller: _scrollController,
-            physics: const AlwaysScrollableScrollPhysics(), // Key change here
-            children: [
-              // if (!_isConnected) NoInternetBanner(),
-              const SizedBox(height: 3),
-              Center(
-                child: Text(
-                  'Check-In',
-                  style: Theme.of(context).textTheme.headlineMedium?.copyWith(
-                    color: Theme.of(context).colorScheme.primary,
+  if (turnaroundsState.isLoading) {
+    return const Center(child: CircularProgressIndicator());
+  }
+
+  // Filtrado de turnarounds según la terminal seleccionada
+  final filteredTurnarounds = turnaroundsState.turnarounds.where((turnaround) {
+    if (selectedTerminal == null) return true; // Muestra todos si no hay terminal seleccionada
+    return turnaround.fkVuelo.terminal == selectedTerminal.id;
+  }).toList();
+
+  return SafeArea(
+    child: Container(
+      child: RefreshIndicator(
+        onRefresh: _handleRefresh,
+        child: ListView(
+          controller: _scrollController,
+          physics: const AlwaysScrollableScrollPhysics(),
+          children: [
+            const SizedBox(height: 3),
+            Center(
+              child: Text(
+                'Check-In',
+                style: Theme.of(context).textTheme.headlineMedium?.copyWith(
+                  color: Theme.of(context).colorScheme.primary,
+                  fontWeight: FontWeight.w900,
+                  fontFamily: GoogleFonts.openSans(
                     fontWeight: FontWeight.w900,
-                    fontFamily: GoogleFonts.openSans(
-                      fontWeight: FontWeight.w900,
-                    ).fontFamily,
-                  ),
+                  ).fontFamily,
                 ),
               ),
-              const SizedBox(height: 2),
-              _DateFilter(),
-              turnaroundsState.turnarounds.isEmpty
-                  ? Column(
-                      children: [
-                        const SizedBox(height: 20),
-                        Center(
-                          child: Text(
-                            'No hay turnarounds',
-                            // overflow: TextOverflow.ellipsis,
-                            style: Theme.of(context).textTheme.bodyMedium,
-                          ),
-                        ),
-                        Center(
-                          child: Text(
-                            'registrados.',
-                            // overflow: TextOverflow.ellipsis,
-                            style: Theme.of(context).textTheme.bodyMedium,
-                          ),
-                        ),
-                      ],
-                    )
-                  : SizedBox(),
-              ...turnaroundsState.turnarounds.map(
+            ),
+            const SizedBox(height: 2),
+
+            // Fila contenedora para ambos filtros
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 12.0),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: const [
+                  _DateFilter(),
+                  TerminalFilterDropdown(), // <-- Reemplazo directo(),
+                ],
+              ),
+            ),
+
+            const SizedBox(height: 8),
+
+            // Muestras un mensaje si la lista filtrada está vacía
+            if (filteredTurnarounds.isEmpty)
+              const Padding(
+                padding: EdgeInsets.all(20.0),
+                child: Center(
+                  child: Text('No hay turnarounds disponibles.'),
+                ),
+              )
+            else
+              // O mapeas la lista de tarjetas usando 'filteredTurnarounds'
+              ...filteredTurnarounds.map(
                 (turnaround) => _ListTileCardContainer(turnaround: turnaround),
               ),
-
-              // Leyenda de colores moved inside the scrollable list so it appears after all items
-              // const SizedBox(height: 20),
-              // const LeyendaColoresTurnarounds(),
-              const SizedBox(height: 30),
-            ],
-          ),
+          ],
         ),
       ),
-    );
-  }
+    ),
+  );
+}
 }
 
 class _DateFilter extends ConsumerWidget {
@@ -304,34 +304,25 @@ class _DateFilter extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final selectedDate = ref.watch(datetimeProvider);
     final inputFormat = DateFormat('dd/MM/yyyy HH:mm');
-    return Row(
-      mainAxisAlignment: MainAxisAlignment.center,
 
-      // mainAxisSize: MainAxisSize.min,
+    return Row(
+      mainAxisSize: MainAxisSize.min,
       children: [
-        // calendar green icon
-        // IconButton(
-        //   onPressed: () {},
-        //   icon: Icon(
-        //     Icons.calendar_month_sharp,
-        //     color: Theme.of(context).colorScheme.primary,
-        //   ),
-        // ),
         IconButton(
+          visualDensity: VisualDensity.compact,
+          padding: EdgeInsets.zero,
+          constraints: const BoxConstraints(),
           onPressed: () {
-            // subtract one day from selectedDate
             final newDate = selectedDate.subtract(const Duration(days: 1));
             ref.read(datetimeProvider.notifier).state = newDate;
-
-            // setSelectedDate
             ref.read(turnaroundProvider.notifier).setSelectedDate(newDate);
           },
-          icon: Icon(
+          icon: const Icon(
             Icons.arrow_back_ios_new,
             size: 18,
-            // color: Theme.of(context).colorScheme.primary,
           ),
         ),
+        const SizedBox(width: 4),
         GestureDetector(
           onTap: () async {
             final DateTime? dateTime = await showDatePicker(
@@ -342,50 +333,35 @@ class _DateFilter extends ConsumerWidget {
             );
             if (dateTime != null) {
               ref.read(datetimeProvider.notifier).state = dateTime;
-              // Get the turnarounds for the selected date
-
-              // setSelectedDate
               ref.read(turnaroundProvider.notifier).setSelectedDate(dateTime);
-
-              // ref.read(turnaroundProvider.notifier).state = ref
-              //     .read(turnaroundProvider.notifier)
-              //     .state
-              //     .copyWith(selectedDate: dateTime);
-              // ref.read(turnaroundProvider.notifier).getTurnarounds();
             }
           },
           child: Text(
-            // "${selectedDate.toLocal()}".split(' ')[0],
             inputFormat.format(selectedDate).split(' ')[0],
-            style: Theme.of(context).textTheme.bodyMedium,
+            style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                  fontSize: 16, // Aumentado un par de px
+                ),
           ),
         ),
+        const SizedBox(width: 4),
         IconButton(
-          icon: Icon(
+          visualDensity: VisualDensity.compact,
+          padding: EdgeInsets.zero,
+          constraints: const BoxConstraints(),
+          icon: const Icon(
             Icons.arrow_forward_ios_rounded,
             size: 18,
-            // color: Theme.of(context).colorScheme.primary,
           ),
           onPressed: () {
-            // add one day to selectedDate
             final newDate = selectedDate.add(const Duration(days: 1));
             ref.read(datetimeProvider.notifier).state = newDate;
-
-            // setSelectedDate
             ref.read(turnaroundProvider.notifier).setSelectedDate(newDate);
-
-            // ref.read(turnaroundProvider.notifier).state = ref
-            //     .read(turnaroundProvider.notifier)
-            //     .state
-            //     .copyWith(selectedDate: newDate);
-            // ref.read(turnaroundProvider.notifier).getTurnarounds();
           },
         ),
       ],
     );
   }
 }
-
 // class _TurnaroundsListView extends StatelessWidget {
 //   final List<TurnaroundMain> turnarounds;
 //   const _TurnaroundsListView({required this.turnarounds});
@@ -667,17 +643,20 @@ class _MenuDialog extends ConsumerWidget {
 
                 if (turnaround.estatus == 2 || turnaround.estatus == 3)
                   MenuListTile(
-                    leading: const Icon(Icons.person_2),
+                    leading: const Icon(Icons.desk),
                     title: 'Asignar Counters',
                     onTap: () async {
                       ref.read(trcIdProvider.notifier).state = turnaround.id;
-                      ref.read(selectedTurnaroundProvider.notifier).state = turnaround;
+                      ref.read(selectedTurnaroundProvider.notifier).state =
+                          turnaround;
 
                       final terminalId = turnaround.fkVuelo.terminal ?? -1;
 
                       if (terminalId != -1) {
                         // Cargar counters desde el backend para esa terminal
-                        ref.read(counterProvider.notifier).getCounters(terminalId);
+                        ref
+                            .read(counterProvider.notifier)
+                            .getCounters(terminalId);
 
                         Navigator.pop(context);
 
@@ -687,9 +666,10 @@ class _MenuDialog extends ConsumerWidget {
                           barrierDismissible: false,
                           builder: (context) => AsignarCountersDialog(
                             turnaroundId: turnaround.id,
-                            posicion: turnaround.posiciones is List<PosicionCounter>
-                              ? turnaround.posiciones as List<PosicionCounter>
-                              : null, // Pass de la posición actual
+                            posicion:
+                                turnaround.posiciones is List<PosicionCounter>
+                                ? turnaround.posiciones as List<PosicionCounter>
+                                : null, // Pass de la posición actual
                           ),
                         );
                       } else {
@@ -700,6 +680,45 @@ class _MenuDialog extends ConsumerWidget {
                       }
                     },
                   ),
+
+                if (turnaround.estatus == 2 || turnaround.estatus == 3)
+                  MenuListTile(
+                    leading: const Icon(Icons.sensor_door_outlined),
+                    title: 'Asignar Puerta',
+                    onTap: () async {
+                      ref.read(trcIdProvider.notifier).state = turnaround.id;
+                      ref.read(selectedTurnaroundProvider.notifier).state =
+                          turnaround;
+
+                      final terminalId = turnaround.fkVuelo.terminal ?? -1;
+
+                      if (terminalId != -1) {
+                        // Cargar puertas desde el backend para esa terminal
+                        ref
+                            .read(puertaProvider.notifier)
+                            .getPuertas(terminalId);
+
+                        Navigator.pop(context);
+
+                        // Mostrar el diálogo pasando el id y el objeto de posición/puerta
+                        showDialog(
+                          context: context,
+                          barrierDismissible: false,
+                          builder: (context) => AsignarPuertaDialog(
+                            turnaroundId: turnaround.id,
+                            puerta: turnaround
+                                .puerta, // Ajusta con la propiedad o campo que contenga la puerta actual
+                          ),
+                        );
+                      } else {
+                        showCustomErrorSnackbar(
+                          context,
+                          'El vuelo no tiene una terminal asignada.',
+                        );
+                      }
+                    },
+                  ),
+
                 // if (turnaround.estatus == 1 ||
                 //     turnaround.estatus == 2 ||
                 //     turnaround.estatus == 3)
@@ -1507,9 +1526,9 @@ class _InboundView extends StatelessWidget {
           // padding: const EdgeInsets.only(left: 15, right: 15),
           padding: const EdgeInsets.only(
             top: 15,
-            bottom: 15,
-            left: 9,
-            right: 10,
+            bottom: 12,
+            left: 8,
+            right: 14,
           ),
           child: Column(
             children: [
@@ -1549,7 +1568,7 @@ class _InboundView extends StatelessWidget {
                   ),
                 ],
               ),
-              const SizedBox(height: 10),
+              const SizedBox(height: 8),
               isInbound
                   ? SvgPicture.asset("assets/icons/llegada.svg", height: 30)
                   : SvgPicture.asset("assets/icons/salida.svg", height: 30),
@@ -1759,3 +1778,5 @@ String formatTime(String? time) {
   if (time == null || time.length < 5) return "";
   return time.substring(0, 5);
 }
+
+
