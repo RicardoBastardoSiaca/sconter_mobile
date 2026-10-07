@@ -116,40 +116,88 @@ class _ControlActividadesScreenState
             if (turnaround?.estatus == 2 &&
                 !turnaround!.fkVuelo.fkAerolinea.hasSupervisor)
               GestureDetector(
+                behavior: HitTestBehavior.opaque, // <-- Permite hacer tap en toda la fila (incluyendo el espacio intermedio)
                 onTap: () async {
-                  print('Finalizar Turnaround pressed');
+                  print("onItemTap");
 
-                  // Rol Ckeck
-                  if (!ref
-                      .read(authProvider)
-                      .loginResponse!
-                      .hasPermission(Roles.firmaDeSupervisor)) {
-                    showCustomErrorSnackbar(
-                      context,
-                      'No tienes permiso para realizar esta accion.',
-                    );
-                    return;
-                  }
+                      // Rol Ckeck
+                      if (!ref
+                          .read(authProvider)
+                          .loginResponse!
+                          .hasPermission(Roles.modificarVuelo)) {
+                        showCustomErrorSnackbar(
+                          context,
+                          'No tienes permiso para finalizar el vuelo.',
+                        );
+                        return;
+                      }
 
-                  final response = await ref
-                      .read(controlActividadesProvider(widget.trcId).notifier)
-                      .finalizarActividadesSinFirma(widget.trcId);
-                  // context.push('/firma-supervisor-screen');
+                      // set trcIdProvider
+                      ref.read(trcIdProvider.notifier).state = turnaround.id;
+                      // set selectedTurnaroundProvider
+                      ref.read(selectedTurnaroundProvider.notifier).state =
+                          turnaround;
 
-                  CustomSnackbar.showResponseSnackbar(
-                    response.message,
-                    response.success,
-                    // ignore: use_build_context_synchronously
-                    context,
-                    isFixed: true,
-                  );
+                      // Api calls
+                      // getcerrar_operacionesById
+                      // Control de actividades
+                      ref
+                          .read(
+                            controlActividadesProvider(turnaround.id).notifier,
+                          )
+                          .getControlDeActividadesByTrcId();
 
-                  if (response.success) {
-                    // get turnarounds
-                    ref.read(turnaroundProvider.notifier).getTurnarounds();
-                    // Close
-                    Navigator.pop(context);
-                  }
+                      // getCodigosMoraByTrc
+                      ref
+                          .read(demorasProvider.notifier)
+                          .getDemorasByTrc(turnaround.id);
+
+                      // Personal
+                      ref
+                          .read(
+                            departamentoPersonalProvider(
+                              turnaround.id,
+                            ).notifier,
+                          )
+                          .getDepartamentosConPersonal(turnaround.id);
+
+                      // push
+                      context.push('/finalizar-vuelo-screen');
+                      // close bottom sheet
+                      // Navigator.pop(context);
+                  // print('Finalizar Turnaround pressed');
+
+                  // // Rol Ckeck
+                  // if (!ref
+                  //     .read(authProvider)
+                  //     .loginResponse!
+                  //     .hasPermission(Roles.firmaDeSupervisor)) {
+                  //   showCustomErrorSnackbar(
+                  //     context,
+                  //     'No tienes permiso para realizar esta accion.',
+                  //   );
+                  //   return;
+                  // }
+
+                  // final response = await ref
+                  //     .read(controlActividadesProvider(widget.trcId).notifier)
+                  //     .finalizarActividadesSinFirma(widget.trcId);
+                  // // context.push('/firma-supervisor-screen');
+
+                  // CustomSnackbar.showResponseSnackbar(
+                  //   response.message,
+                  //   response.success,
+                  //   // ignore: use_build_context_synchronously
+                  //   context,
+                  //   isFixed: true,
+                  // );
+
+                  // if (response.success) {
+                  //   // get turnarounds
+                  //   ref.read(turnaroundProvider.notifier).getTurnarounds();
+                  //   // Close
+                  //   Navigator.pop(context);
+                  // }
                 },
                 child: Row(
                   children: [
@@ -166,12 +214,7 @@ class _ControlActividadesScreenState
                     FloatingActionButton.small(
                       heroTag: null,
                       backgroundColor: primaryColor,
-                      onPressed: () {
-                        print('Finalizar Turnaround pressed - BUTTON');
-                        context.push('/firma-supervisor-screen');
-                        // close bottom sheet
-                        key.currentState?.close();
-                      },
+                      onPressed: null, // <-- Cambiar () {} por null para deshabilitarlo
                       child: const Icon(Icons.done, color: Colors.white),
                     ),
                   ],
@@ -179,9 +222,11 @@ class _ControlActividadesScreenState
               ),
 
             // Firma del Supervisor
-            if (turnaround?.estatus == 2 &&
-                turnaround!.fkVuelo.fkAerolinea.hasSupervisor)
+            if (turnaround?.estatus == 3 
+                  // && turnaround!.fkVuelo.fkAerolinea.hasSupervisor
+                )
               GestureDetector(
+                behavior: HitTestBehavior.opaque, // <-- Permite hacer tap en toda la fila (incluyendo el espacio intermedio)
                 onTap: () async {
                   print('Firma del Supervisor pressed');
 
@@ -217,12 +262,13 @@ class _ControlActividadesScreenState
                     FloatingActionButton.small(
                       heroTag: null,
                       backgroundColor: primaryColor,
-                      onPressed: () {
-                        print('Firma del Supervisor pressed - BUTTON');
-                        context.push('/firma-supervisor-screen');
-                        // close bottom sheet
-                        // Navigator.pop(context);
-                      },
+                      onPressed: null, // <-- Pasa null aquí para eliminar la segunda función ontap
+                      // onPressed: () {
+                      //   print('Firma del Supervisor pressed - BUTTON');
+                      //   context.push('/firma-supervisor-screen');
+                      //   // close bottom sheet
+                      //   // Navigator.pop(context);
+                      // },
                       shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(50),
                       ),

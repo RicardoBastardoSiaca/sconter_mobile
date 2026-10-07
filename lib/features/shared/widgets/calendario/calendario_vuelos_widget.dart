@@ -295,35 +295,37 @@ class _CalendarioVuelosWidgetState
                 ),
 
                 // 4. Tu markerBuilder existente
-                markerBuilder: (context, date, events) {
-                  if (events.isEmpty) return const SizedBox();
-                  return Positioned(
-                    top: 35, // Asegúrate de que empiece debajo del número
-                    left: 0,
-                    right: 0,
-                    child: Column(
-                      children: [
-                        ...events
-                            .take(2)
-                            .map((v) => _vueloItemMini(v))
-                            .toList(),
-                        if (events.length > 2)
-                          const SizedBox(
-                            height: 2,
-                          ), // Espacio antes del "+X más"
-                        if (events.length > 2)
-                          Text(
-                            "+${events.length - 2} más...",
-                            style: const TextStyle(
-                              fontSize: 10,
-                              fontWeight: FontWeight.bold,
-                              color: Colors.grey,
-                            ),
-                          ),
-                      ],
-                    ),
-                  );
-                },
+               markerBuilder: (context, date, events) {
+                if (events.isEmpty) return const SizedBox();
+                
+                final int totalVuelos = events.length;
+                final String textoTotal = totalVuelos == 1 ? '1 vuelo' : '$totalVuelos vuelos';
+
+                return Positioned(
+                  top: 35, // Se posiciona debajo del número del día
+                  left: 0,
+                  right: 0,
+                  child: Column(
+                    children: [
+                      // Muestra hasta 2 vuelos como vista previa en la celda
+                      ...events
+                          .take(2)
+                          .map((v) => _vueloItemMini(v))
+                          .toList(),
+                      const SizedBox(height: 2),
+                      // Texto con el total de vuelos del día
+                      Text(
+                        textoTotal,
+                        style: const TextStyle(
+                          fontSize: 10,
+                          fontWeight: FontWeight.bold,
+                          color: Colors.grey,
+                        ),
+                      ),
+                    ],
+                  ),
+                );
+              },
               ),
 
               // Personalización de la celda
@@ -537,33 +539,53 @@ class _CalendarioVuelosWidgetState
   }
 
   void _mostrarDetallesDia(DateTime date, List<VueloCalendario> vuelos) {
-    String fechaFormateada = DateFormat("d 'de' MMMM, y", "es_ES").format(date);
+  String fechaFormateada = DateFormat("d 'de' MMMM, y", "es_ES").format(date);
+  final int totalVuelos = vuelos.length;
+  final String textoTotal = totalVuelos == 1 ? '1 vuelo' : '$totalVuelos vuelos';
 
-    showDialog(
-      context: context,
-      builder: (context) => AlertDialog(
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
-        titlePadding: EdgeInsets.zero,
-        title: Container(
-          padding: const EdgeInsets.all(20),
-          decoration: BoxDecoration(
-            color: Colors.blueGrey.shade50,
-            borderRadius: const BorderRadius.vertical(top: Radius.circular(16)),
-          ),
-          child: Row(
-            children: [
-              const Icon(Icons.calendar_month, color: Colors.blueGrey),
-              const SizedBox(width: 12),
-              Text(
+  showDialog(
+    context: context,
+    builder: (context) => AlertDialog(
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+      titlePadding: EdgeInsets.zero,
+      title: Container(
+        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
+        decoration: BoxDecoration(
+          color: Colors.blueGrey.shade50,
+          borderRadius: const BorderRadius.vertical(top: Radius.circular(16)),
+        ),
+        child: Row(
+          children: [
+            const Icon(Icons.calendar_month, color: Colors.blueGrey),
+            const SizedBox(width: 10),
+            Expanded(
+              child: Text(
                 fechaFormateada,
                 style: const TextStyle(
-                  fontSize: 18,
+                  fontSize: 16,
                   fontWeight: FontWeight.bold,
                 ),
               ),
-            ],
-          ),
+            ),
+            // --- BADGE CON EL TOTAL DE VUELOS ---
+            Container(
+              padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+              decoration: BoxDecoration(
+                color: Colors.blueGrey.shade700,
+                borderRadius: BorderRadius.circular(12),
+              ),
+              child: Text(
+                textoTotal,
+                style: const TextStyle(
+                  color: Colors.white,
+                  fontSize: 12,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+            ),
+          ],
         ),
+      ),
         content: SizedBox(
           width: MediaQuery.of(context).size.width * 0.9,
           child: ListView.separated(
@@ -586,7 +608,12 @@ class _CalendarioVuelosWidgetState
   return InkWell(
     onTap: () async {
       Navigator.of(context).pop();
-      await _cargarYMostrarDetalleVuelo(context, vuelo);
+      // Invocación limpia del diálogo extraído:
+      await VueloCalendarioDetalleDialog.mostrar(
+        context: context,
+        ref: ref,
+        vuelo: vuelo,
+      );
     },
     child: Container(
       decoration: BoxDecoration(

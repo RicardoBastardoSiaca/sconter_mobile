@@ -17,6 +17,21 @@ class VuelosCalendarioMapper {
       trcFechaInicio: json['trc_fecha_inicio'],
       trcHoraFin: json['trc_hora_fin'],
       trcFechaFin: json['trc_fecha_fin'],
+
+      // Parsing de strings ISO 8601 a DateTime (permite nulos de forma segura)
+      horaInicioServicio: json['hora_inicio_servicio'] != null
+          ? DateTime.tryParse(json['hora_inicio_servicio'])
+          : null,
+      horaInicioServicioReal: json['hora_inicio_servicio_real'] != null
+          ? DateTime.tryParse(json['hora_inicio_servicio_real'])
+          : null,
+      horaFinServicio: json['hora_fin_servicio'] != null
+          ? DateTime.tryParse(json['hora_fin_servicio'])
+          : null,
+      horaFinServicioReal: json['hora_fin_servicio_real'] != null
+          ? DateTime.tryParse(json['hora_fin_servicio_real'])
+          : null,
+
       aerolineaId: json['aerolinea_id'] ?? 0,
       aerolineaNombre: json['aerolinea_nombre'] ?? '',
       imagen: json['imagen'] ?? '',
@@ -40,6 +55,9 @@ class VuelosCalendarioMapper {
       estacionNombre: json['estacion_nombre'] ?? '',
       auxHoraInicioReal: json['aux_hora_inicio_real'] ?? '',
       auxHoraFinReal: json['aux_hora_fin_real'] ?? '',
+      terminal: json['terminal'] != null
+          ? Terminal.fromJson(json['terminal'])
+          : null,
     );
   }
 

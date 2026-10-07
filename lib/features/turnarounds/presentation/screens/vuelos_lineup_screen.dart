@@ -102,10 +102,18 @@ class _VuelosLineupScreenState extends ConsumerState<VuelosLineupScreen> {
   final ScrollController _scrollController = ScrollController();
   final Map<String, GlobalKey> _dayKeys = {};
 
+  bool _mostrarFiltros = true; // Controla la visibilidad de los filtros (visible al iniciar)
+
+  // Filtros locales
+  String? _aerolineaSeleccionada;
+  String? _estacionSeleccionada;
+
   @override
   void initState() {
     super.initState();
     WidgetsBinding.instance.addPostFrameCallback((_) {
+      ref.read(ciudadesProvider.notifier).cargarEstaciones();
+      
       final state = ref.read(vuelosLineupProvider);
       if (state.vuelos.isEmpty) {
         final now = DateTime.now();
@@ -163,18 +171,45 @@ class _VuelosLineupScreenState extends ConsumerState<VuelosLineupScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final state = ref.watch(vuelosLineupProvider);
+    final ciudadesState = ref.watch(ciudadesProvider);
+    final selectedTerminal = ref.watch(selectedTerminalFilterProvider);
+
+    // Obtener aerolíneas disponibles del estado actual
+    final aerolineasDisponibles = state.vuelos
+        .map((v) => v.aerolineaNombre)
+        .where((a) => a != null && a.isNotEmpty)
+        .cast<String>()
+        .toSet()
+        .toList();
+
+    // --- APLICACIÓN DE LOS FILTROS SOBRE LOS VUELOS ---
+    final vuelosFiltrados = state.vuelos.where((vuelo) {
+      final cumpleAerolinea = _aerolineaSeleccionada == null || vuelo.aerolineaNombre == _aerolineaSeleccionada;
+      final cumpleEstacion = _estacionSeleccionada == null || vuelo.estacionId.toString() == _estacionSeleccionada;
+      final cumpleTerminal = selectedTerminal == null || vuelo.terminal?.id == selectedTerminal.id;
+
+      return cumpleAerolinea && cumpleEstacion && cumpleTerminal;
+    }).toList();
+
     ref.listen(vuelosLineupProvider, (previous, next) {
       if (previous?.isLoading == true && !next.isLoading && next.vuelos.isNotEmpty) {
         WidgetsBinding.instance.addPostFrameCallback((_) {
-          final vuelosAgrupados = agruparVuelosPorDia(next.vuelos);
+          final filtradosOnListen = next.vuelos.where((vuelo) {
+            final cumpleAerolinea = _aerolineaSeleccionada == null || vuelo.aerolineaNombre == _aerolineaSeleccionada;
+            final cumpleEstacion = _estacionSeleccionada == null || vuelo.estacionId.toString() == _estacionSeleccionada;
+            final cumpleTerminal = selectedTerminal == null || vuelo.terminal?.id == selectedTerminal.id;
+            return cumpleAerolinea && cumpleEstacion && cumpleTerminal;
+          }).toList();
+
+          final vuelosAgrupados = agruparVuelosPorDia(filtradosOnListen);
           final diasDeLaSemana = List.generate(7, (index) => next.startDate.add(Duration(days: index)));
           _scrollToCurrentDay(diasDeLaSemana, vuelosAgrupados);
         });
       }
     });
 
-    final state = ref.watch(vuelosLineupProvider);
-    final vuelosAgrupados = agruparVuelosPorDia(state.vuelos);
+    final vuelosAgrupados = agruparVuelosPorDia(vuelosFiltrados);
     final diasDeLaSemana = List.generate(7, (index) => state.startDate.add(Duration(days: index)));
 
     return Scaffold(
@@ -192,6 +227,21 @@ class _VuelosLineupScreenState extends ConsumerState<VuelosLineupScreen> {
           foregroundColor: Colors.black,
           actions: [
             IconButton(
+              padding: EdgeInsets.zero,
+              constraints: const BoxConstraints(minWidth: 36, minHeight: 36),
+              icon: Icon(
+                Icons.filter_alt,
+                size: 20,
+                color: _mostrarFiltros ? const Color(0xFF0FA45F) : Colors.grey,
+              ),
+              tooltip: "Mostrar/Ocultar Filtros",
+              onPressed: () {
+                setState(() {
+                  _mostrarFiltros = !_mostrarFiltros;
+                });
+              },
+            ),
+            IconButton(
               icon: const Icon(Icons.refresh),
               onPressed: () {
                 ref.read(vuelosLineupProvider.notifier).fetchVuelos(
@@ -199,14 +249,110 @@ class _VuelosLineupScreenState extends ConsumerState<VuelosLineupScreen> {
                 );
               },
             ),
+            const SizedBox(width: 8),
           ]),
       body: Column(
         children: [
           const _DatePickerHeader(),
+
+          // --- BARRA DE FILTROS (MOSTRAR / OCULTAR) ---
+          if (_mostrarFiltros)
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 12.0, vertical: 4.0),
+              child: Column(
+                children: [
+                  Row(
+                    children: [
+                      // DROPDOWN AEROLÍNEA
+                      Expanded(
+                        child: Container(
+                          padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
+                          decoration: BoxDecoration(
+                            borderRadius: BorderRadius.circular(12),
+                            border: Border.all(color: Colors.black12),
+                          ),
+                          child: DropdownButtonHideUnderline(
+                            child: DropdownButton<String>(
+                              isDense: true,
+                              isExpanded: true,
+                              value: _aerolineaSeleccionada,
+                              hint: const Text("Aerolíneas", style: TextStyle(fontSize: 14)),
+                              items: [
+                                const DropdownMenuItem<String>(
+                                  value: null,
+                                  child: Text("Todas las Aerolíneas", style: TextStyle(fontSize: 14, fontWeight: FontWeight.w500)),
+                                ),
+                                ...aerolineasDisponibles.map((a) => DropdownMenuItem(
+                                      value: a,
+                                      child: Text(a, style: const TextStyle(fontSize: 14, fontWeight: FontWeight.w500), overflow: TextOverflow.ellipsis),
+                                    )),
+                              ],
+                              onChanged: (val) {
+                                setState(() {
+                                  _aerolineaSeleccionada = val;
+                                });
+                              },
+                            ),
+                          ),
+                        ),
+                      ),
+
+                      const SizedBox(width: 8),
+
+                      // DROPDOWN ESTACIÓN
+                      Expanded(
+                        child: Container(
+                          padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
+                          decoration: BoxDecoration(
+                            borderRadius: BorderRadius.circular(12),
+                            border: Border.all(color: Colors.black12),
+                          ),
+                          child: DropdownButtonHideUnderline(
+                            child: DropdownButton<String>(
+                              isDense: true,
+                              isExpanded: true,
+                              value: _estacionSeleccionada,
+                              hint: const Text("Estaciones", style: TextStyle(fontSize: 14)),
+                              items: [
+                                const DropdownMenuItem<String>(
+                                  value: null,
+                                  child: Text("Todas las Estaciones", style: TextStyle(fontSize: 13, fontWeight: FontWeight.w500)),
+                                ),
+                                ...ciudadesState.estaciones.map((e) => DropdownMenuItem(
+                                      value: e.id.toString(),
+                                      child: Text(e.nombre ?? '', style: const TextStyle(fontSize: 13, fontWeight: FontWeight.w500), overflow: TextOverflow.ellipsis),
+                                    )),
+                              ],
+                              onChanged: (val) {
+                                setState(() {
+                                  _estacionSeleccionada = val;
+                                });
+                              },
+                            ),
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                  const SizedBox(height: 6),
+                  Row(
+                    children: [
+                      Expanded(child: const TerminalFilterDropdown(
+                        menuFontSize: 14.0,
+                        selectedFontSize: 14.0,
+                      )),
+                      const Expanded(child: SizedBox()),
+                    ],
+                  ),
+                ],
+              ),
+            ),
+
+          const SizedBox(height: 4),
           const Divider(height: 1, thickness: 0.5, color: Color(0xFFE0E0E0)),
           if (state.isLoading)
             const Expanded(child: Center(child: CircularProgressIndicator.adaptive(valueColor: AlwaysStoppedAnimation(Color(0xFF0FA45F)))))
-          else if (state.vuelos.isEmpty)
+          else if (vuelosFiltrados.isEmpty)
             const Expanded(child: Center(child: Text('No hay vuelos programados para esta semana.', style: TextStyle(color: Colors.grey))))
           else
             Expanded(

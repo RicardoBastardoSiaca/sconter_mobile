@@ -628,19 +628,27 @@ class Estacion {
 }
 
 
+// Clase Terminal mapeada desde el JSON del backend
 class Terminal {
-  int id;
-  String nombre;
+  final int id;
+  final String nombre;
 
-  Terminal({required this.id, required this.nombre});
+  Terminal({
+    required this.id,
+    required this.nombre,
+  });
 
-  // factory Tipo.fromJson(Map<String, dynamic> json) => Tipo(
-  //     id: json["id"],
-  //     nombre: json["nombre"],
-  // );
+  factory Terminal.fromJson(Map<String, dynamic> json) {
+    return Terminal(
+      id: json['ter_id'] ?? 0,
+      nombre: json['ter_nombre'] ?? '',
+    );
+  }
 
-  // Map<String, dynamic> toJson() => {
-  //     "id": id,
-  //     "nombre": nombre,
-  // };
+  Map<String, dynamic> toJson() {
+    return {
+      'ter_id': id,
+      'ter_nombre': nombre,
+    };
+  }
 }

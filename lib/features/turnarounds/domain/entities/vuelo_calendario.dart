@@ -1,5 +1,7 @@
 import 'dart:convert';
 
+import '../domain.dart';
+
 class VueloCalendario {
   final int id;
   final String auxFecha; // Nuevo campo
@@ -7,10 +9,14 @@ class VueloCalendario {
   final String? trcFechaInicio;
   final String? trcHoraFin;
   final String? trcFechaFin;
-  // fecha_inicio_servicio_
-  // hora_inicio_servicio_
-  // fecha_fin_servicio_
-  // hora_fin_servicio_
+
+  // Usar estas
+  final DateTime? horaInicioServicio;
+  final DateTime? horaInicioServicioReal;
+  final DateTime? horaFinServicio;
+  final DateTime? horaFinServicioReal;
+
+
   final String? horaInicioServicio_;
   final String? fechaInicioServicio_;
   final String? horaFinServicio_;
@@ -39,6 +45,7 @@ class VueloCalendario {
   final String auxHoraInicioReal;
   final String auxHoraFinReal;
   final int? gate;
+  final Terminal? terminal; // <-- Atributo para almacenar el objeto Terminal
 
   VueloCalendario({
     required this.id,
@@ -47,6 +54,11 @@ class VueloCalendario {
     this.trcFechaInicio,
     this.trcHoraFin,
     this.trcFechaFin,
+    this.horaInicioServicio,
+    this.horaInicioServicioReal,
+    this.horaFinServicio,
+    this.horaFinServicioReal,
+
     this.horaInicioServicio_,
     this.fechaInicioServicio_,
     this.fechaFinServicio_,
@@ -75,6 +87,7 @@ class VueloCalendario {
     required this.auxHoraInicioReal,
     required this.auxHoraFinReal,
     this.gate,
+    this.terminal, // <-- Agregar al constructor
   });
 
   /// Mapper Externo: Convierte un Map (JSON) a una instancia de VueloCalendario
@@ -115,6 +128,10 @@ class VueloCalendario {
       auxHoraInicioReal: json['aux_hora_inicio_real'] ?? '',
       auxHoraFinReal: json['aux_hora_fin_real'] ?? '',
       gate: json['gate'] ,
+      terminal: json['terminal'] != null
+          ? Terminal.fromJson(json['terminal'])
+          : null,
+
     );
   }
 

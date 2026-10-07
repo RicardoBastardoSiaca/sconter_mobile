@@ -165,20 +165,18 @@ class _TuraroundMainView extends ConsumerStatefulWidget {
   _TuraroundMainViewState createState() => _TuraroundMainViewState();
 }
 
-class _TuraroundMainViewState extends ConsumerState {
+class _TuraroundMainViewState extends ConsumerState<_TuraroundMainView> {
   final ScrollController _scrollController = ScrollController();
 
-  // final ConnectivityService _connectivityService = ConnectivityService();
-  // bool _isConnected = true;
+  // Estado local para la aerolínea seleccionada
+  String? _aerolineaSeleccionada;
+
+  // 1. Controlador de texto y variable de estado para el filtro por número de vuelo
+  final TextEditingController _numeroVueloController = TextEditingController();
+  String _numeroVueloFiltro = '';
 
   Future<void> _handleRefresh() async {
-    // Get Turnarounds
     await ref.read(turnaroundProvider.notifier).getTurnarounds();
-    // Simulate a network call or data fetching delay
-    // await Future.delayed(const Duration(seconds: 2));
-    // setState(() {
-    //   _items.add('New Item ${DateTime.now().second}'); // Add a new item for demonstration
-    // });
   }
 
   @override
@@ -186,10 +184,8 @@ class _TuraroundMainViewState extends ConsumerState {
     super.initState();
 
     WidgetsBinding.instance.addPostFrameCallback((_) async {
-      // 1. Disparamos la verificación de actualización vía Riverpod
       await ref.read(appUpdateProvider.notifier).checkForUpdate();
 
-      // 2. Si hay actualización, leemos el estado global actualizado
       if (!mounted) return;
       final updateState = ref.read(appUpdateProvider);
 
@@ -201,100 +197,221 @@ class _TuraroundMainViewState extends ConsumerState {
         );
       }
 
-       // _scrollController.addListener(_scrollListener);
-    ref.read(turnaroundProvider.notifier).getTurnarounds();
-
-    ref.read(terminalProvider.notifier).getTerminales(); 
-
-
+      ref.read(turnaroundProvider.notifier).getTurnarounds();
+      ref.read(terminalProvider.notifier).getTerminales();
     });
-
-   
-    //  _connectivityService.connectionChange.listen((isConnected) {
-    //   setState(() {
-    //     // _isConnected = isConnected;
-    //   });
-    // });
   }
 
   @override
   void dispose() {
+    // Liberar el controlador de texto al destruir el widget
+    _numeroVueloController.dispose();
     _scrollController.dispose();
-    // _connectivityService.dispose();
     super.dispose();
   }
 
   @override
-Widget build(BuildContext context) {
-  final turnaroundsState = ref.watch(turnaroundProvider);
-  final selectedTerminal = ref.watch(selectedTerminalFilterProvider);
+  Widget build(BuildContext context) {
+    final turnaroundsState = ref.watch(turnaroundProvider);
+    final selectedTerminal = ref.watch(selectedTerminalFilterProvider);
 
-  if (turnaroundsState.isLoading) {
-    return const Center(child: CircularProgressIndicator());
-  }
+    if (turnaroundsState.isLoading) {
+      return const Center(child: CircularProgressIndicator());
+    }
 
-  // Filtrado de turnarounds según la terminal seleccionada
-  final filteredTurnarounds = turnaroundsState.turnarounds.where((turnaround) {
-    if (selectedTerminal == null) return true; // Muestra todos si no hay terminal seleccionada
-    return turnaround.fkVuelo.terminal == selectedTerminal.id;
-  }).toList();
+    // 1. Extraer lista única de aerolíneas disponibles
+    final aerolineasDisponibles = turnaroundsState.turnarounds
+        .map((t) => t.fkVuelo.fkAerolinea.aka)
+        .where((nombre) => nombre.isNotEmpty)
+        .toSet()
+        .toList();
 
-  return SafeArea(
-    child: Container(
-      child: RefreshIndicator(
-        onRefresh: _handleRefresh,
-        child: ListView(
-          controller: _scrollController,
-          physics: const AlwaysScrollableScrollPhysics(),
-          children: [
-            const SizedBox(height: 3),
-            Center(
-              child: Text(
-                'Check-In',
-                style: Theme.of(context).textTheme.headlineMedium?.copyWith(
-                  color: Theme.of(context).colorScheme.primary,
-                  fontWeight: FontWeight.w900,
-                  fontFamily: GoogleFonts.openSans(
+    // 2. Filtrado de turnarounds por terminal, aerolínea y búsqueda de texto (Número de vuelo IN/OUT, IATA y AKA)
+    final filteredTurnarounds = turnaroundsState.turnarounds.where((turnaround) {
+      final cumpleTerminal = selectedTerminal == null ||
+          turnaround.fkVuelo.terminal == selectedTerminal.id;
+
+      final cumpleAerolinea = _aerolineaSeleccionada == null ||
+          turnaround.fkVuelo.fkAerolinea.aka == _aerolineaSeleccionada;
+
+      // Texto de búsqueda ingresado por el usuario
+      final query = _numeroVueloFiltro.trim().toLowerCase();
+
+      // Búsqueda en: numeroVueloIn, numeroVueloOut, codigoIata y aka
+      final cumpleTextoBusqueda = query.isEmpty ||
+          (turnaround.fkVuelo.numeroVueloIn.toLowerCase().contains(query)) ||
+          (turnaround.fkVuelo.numeroVueloOut?.toLowerCase().contains(query) ?? false) ||
+          (turnaround.fkVuelo.fkAerolinea.codigoIata.toLowerCase().contains(query)) ||
+          (turnaround.fkVuelo.fkAerolinea.aka.toLowerCase().contains(query));
+
+      return cumpleTerminal && cumpleAerolinea && cumpleTextoBusqueda;
+    }).toList();
+    return SafeArea(
+      child: Container(
+        child: RefreshIndicator(
+          onRefresh: _handleRefresh,
+          child: ListView(
+            controller: _scrollController,
+            physics: const AlwaysScrollableScrollPhysics(),
+            children: [
+              const SizedBox(height: 3),
+              Center(
+                child: Text(
+                  'Check-In',
+                  style: Theme.of(context).textTheme.headlineMedium?.copyWith(
+                    color: Theme.of(context).colorScheme.primary,
                     fontWeight: FontWeight.w900,
-                  ).fontFamily,
+                    fontFamily: GoogleFonts.openSans(
+                      fontWeight: FontWeight.w900,
+                    ).fontFamily,
+                  ),
                 ),
               ),
-            ),
-            const SizedBox(height: 2),
+              const SizedBox(height: 4),
 
-            // Fila contenedora para ambos filtros
-            Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 12.0),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: const [
-                  _DateFilter(),
-                  TerminalFilterDropdown(), // <-- Reemplazo directo(),
-                ],
-              ),
-            ),
+              // Contenedor principal de Filtros
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 12.0),
+                child: Column(
+                  children: [
+                    // --- FILA 1: Filtro de Fecha ---
+                    const Center(
+                      child: _DateFilter(),
+                    ),
 
-            const SizedBox(height: 8),
+                    const SizedBox(height: 8),
 
-            // Muestras un mensaje si la lista filtrada está vacía
-            if (filteredTurnarounds.isEmpty)
-              const Padding(
-                padding: EdgeInsets.all(20.0),
-                child: Center(
-                  child: Text('No hay turnarounds disponibles.'),
+                    // --- FILA 2: Campo de entrada para Número de Vuelo ---
+                    Container(
+                      height: 40,
+                      decoration: BoxDecoration(
+                        color: Colors.white,
+                        borderRadius: BorderRadius.circular(12),
+                        border: Border.all(color: Colors.black12),
+                      ),
+                      child: TextField(
+                        controller: _numeroVueloController,
+                        // Define explícitamente los controles de selección para evitar el error de RenderEditable
+                        selectionControls: MaterialTextSelectionControls(),
+                        onChanged: (val) {
+                          setState(() {
+                            _numeroVueloFiltro = val;
+                          });
+                        },
+                        style: const TextStyle(fontSize: 14),
+                        decoration: InputDecoration(
+                        hintText: "Buscar por N° Vuelo / Aerolínea",
+                        hintStyle: const TextStyle(fontSize: 14, color: Colors.grey),
+                        prefixIcon: const Icon(Icons.search, size: 20, color: Colors.grey),
+                        suffixIcon: _numeroVueloFiltro.isNotEmpty
+                            ? IconButton(
+                                icon: const Icon(Icons.clear, size: 18),
+                                onPressed: () {
+                                  _numeroVueloController.clear();
+                                  setState(() {
+                                    _numeroVueloFiltro = '';
+                                  });
+                                },
+                              )
+                            : null,
+                        border: InputBorder.none,
+                        contentPadding: const EdgeInsets.symmetric(vertical: 10),
+                      ),
+                      ),
+                    ),
+
+                    const SizedBox(height: 8),
+
+                    // --- FILA 3: Aerolínea primero, Terminales segundo ---
+                    Row(
+                      children: [
+                        // 1. Selector de Aerolínea
+                        Expanded(
+                          child: Container(
+                            padding: const EdgeInsets.symmetric(
+                              horizontal: 8,
+                              vertical: 2,
+                            ),
+                            decoration: BoxDecoration(
+                              borderRadius: BorderRadius.circular(12),
+                              border: Border.all(color: Colors.black12),
+                            ),
+                            child: DropdownButtonHideUnderline(
+                              child: DropdownButton<String>(
+                                isDense: true,
+                                isExpanded: true,
+                                value: _aerolineaSeleccionada,
+                                hint: const Text(
+                                  "Aerolínea",
+                                  style: TextStyle(fontSize: 16),
+                                ),
+                                items: [
+                                  const DropdownMenuItem<String>(
+                                    value: null,
+                                    child: Text(
+                                      "Aerolíneas",
+                                      style: TextStyle(
+                                        fontSize: 16,
+                                        fontWeight: FontWeight.w500,
+                                      ),
+                                    ),
+                                  ),
+                                  ...aerolineasDisponibles.map(
+                                    (a) => DropdownMenuItem(
+                                      value: a,
+                                      child: Text(
+                                        a,
+                                        style: const TextStyle(
+                                          fontSize: 14,
+                                          fontWeight: FontWeight.w500,
+                                        ),
+                                        overflow: TextOverflow.ellipsis,
+                                      ),
+                                    ),
+                                  ),
+                                ],
+                                onChanged: (val) {
+                                  setState(() {
+                                    _aerolineaSeleccionada = val;
+                                  });
+                                },
+                              ),
+                            ),
+                          ),
+                        ),
+
+                        const SizedBox(width: 8),
+
+                        // 2. Selector de Terminales
+                        const Expanded(
+                          child: TerminalFilterDropdown(),
+                        ),
+                      ],
+                    ),
+                  ],
                 ),
-              )
-            else
-              // O mapeas la lista de tarjetas usando 'filteredTurnarounds'
-              ...filteredTurnarounds.map(
-                (turnaround) => _ListTileCardContainer(turnaround: turnaround),
               ),
-          ],
+
+              const SizedBox(height: 8),
+
+              // Lista filtrada de turnarounds
+              if (filteredTurnarounds.isEmpty)
+                const Padding(
+                  padding: EdgeInsets.all(20.0),
+                  child: Center(
+                    child: Text('No hay turnarounds disponibles.'),
+                  ),
+                )
+              else
+                ...filteredTurnarounds.map(
+                  (turnaround) => _ListTileCardContainer(turnaround: turnaround),
+                ),
+            ],
+          ),
         ),
       ),
-    ),
-  );
-}
+    );
+  }
 }
 
 class _DateFilter extends ConsumerWidget {
@@ -339,7 +456,7 @@ class _DateFilter extends ConsumerWidget {
           child: Text(
             inputFormat.format(selectedDate).split(' ')[0],
             style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                  fontSize: 16, // Aumentado un par de px
+                  fontSize: 18, // Aumentado un par de px
                 ),
           ),
         ),
@@ -956,12 +1073,80 @@ class _MenuDialog extends ConsumerWidget {
                     },
                   ),
 
+
+              
+                // if (turnaround.estatus == 3
+                // // && turnaround.fkVuelo.fkAerolinea.hasSupervisor
+                // )
+                //   MenuListTile(
+                //     leading: Icon(Icons.lock),
+                //     title: 'Cerrar Vuelo',
+                //     onTap: () async {
+                //       print("onItemTap");
+
+                //       // Rol Ckeck
+                //       // if (!ref.read(authProvider).loginResponse!.hasPermission( Roles.modificarVuelo)) {
+                //       //   showCustomErrorSnackbar(  context, 'No tienes permiso para cerrar el vuelo.');
+                //       //   return;
+                //       // }
+
+                //       // Rol Ckeck
+                //       if (!ref
+                //           .read(authProvider)
+                //           .loginResponse!
+                //           .hasPermission(Roles.firmaDeSupervisor)) {
+                //         showCustomErrorSnackbar(
+                //           context,
+                //           'No tienes permiso para realizar esta accion.',
+                //         );
+                //         return;
+                //       }
+
+                //       // set trcIdProvider
+                //       ref.read(trcIdProvider.notifier).state = turnaround.id;
+                //       // set selectedTurnaroundProvider
+                //       ref.read(selectedTurnaroundProvider.notifier).state =
+                //           turnaround;
+
+                //       // Api calls
+                //       // getcerrar_operacionesById
+                //       // Control de actividades
+                //       await ref
+                //           .read(
+                //             controlActividadesProvider(turnaround.id).notifier,
+                //           )
+                //           .getControlDeActividadesByTrcId();
+
+                //       // getCodigosMoraByTrc
+                //       //  ref
+                //       //     .read(demorasProvider.notifier)
+                //       //     .getDemorasByTrc(turnaround.id);
+
+                //       // Personal
+                //       // ref
+                //       //     .read(departamentoPersonalProvider(turnaround.id).notifier)
+                //       //     .getDepartamentosConPersonal(turnaround.id);
+
+                //       // TODO: procedimiento de las firmas
+
+                //       await ref
+                //           .read(supervisorAerolineaProvider.notifier)
+                //           .getSupervisores();
+                //       context.push('/cerrar-vuelo-screen');
+                //       // close bottom sheet
+                //       Navigator.pop(context);
+                //       // // push
+                //       // context.push('/finalizar-vuelo-screen');
+                //       // // close bottom sheet
+                //       // Navigator.pop(context);
+                //     },
+                //   ),
                 if (turnaround.estatus == 3
                 // && turnaround.fkVuelo.fkAerolinea.hasSupervisor
                 )
                   MenuListTile(
                     leading: Icon(Icons.lock),
-                    title: 'Cerrar Vuelo',
+                    title: 'Firma de supervisor',
                     onTap: () async {
                       print("onItemTap");
 
@@ -983,37 +1168,16 @@ class _MenuDialog extends ConsumerWidget {
                         return;
                       }
 
-                      // set trcIdProvider
+                        // set trcIdProvider
                       ref.read(trcIdProvider.notifier).state = turnaround.id;
                       // set selectedTurnaroundProvider
                       ref.read(selectedTurnaroundProvider.notifier).state =
                           turnaround;
 
-                      // Api calls
-                      // getcerrar_operacionesById
-                      // Control de actividades
                       await ref
-                          .read(
-                            controlActividadesProvider(turnaround.id).notifier,
-                          )
-                          .getControlDeActividadesByTrcId();
-
-                      // getCodigosMoraByTrc
-                      //  ref
-                      //     .read(demorasProvider.notifier)
-                      //     .getDemorasByTrc(turnaround.id);
-
-                      // Personal
-                      // ref
-                      //     .read(departamentoPersonalProvider(turnaround.id).notifier)
-                      //     .getDepartamentosConPersonal(turnaround.id);
-
-                      // TODO: procedimiento de las firmas
-
-                      await ref
-                          .read(supervisorAerolineaProvider.notifier)
-                          .getSupervisores();
-                      context.push('/cerrar-vuelo-screen');
+                      .read(supervisorAerolineaProvider.notifier)
+                      .getSupervisores();
+                  context.push('/firma-supervisor-screen');
                       // close bottom sheet
                       Navigator.pop(context);
                       // // push

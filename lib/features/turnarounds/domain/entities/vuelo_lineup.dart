@@ -1,3 +1,5 @@
+import '../domain.dart';
+
 class VueloLineup {
   final int id;
   final String? auxHora;
@@ -28,8 +30,16 @@ class VueloLineup {
   final String? lugarDestinoIata;
   final String? horaInicio;
   final String? horaFin;
+
+  // Usar estas
+  final DateTime? horaInicioServicio;
+  final DateTime? horaInicioServicioReal;
+  final DateTime? horaFinServicio;
+  final DateTime? horaFinServicioReal;
+
   final int? tipoServicio;
   final Map<String, AreaPersonal>? personal;
+  final Terminal? terminal; // <-- Atributo para almacenar el objeto Terminal
 
   VueloLineup({
     required this.id,
@@ -61,8 +71,15 @@ class VueloLineup {
     this.lugarDestinoIata,
     this.horaInicio,
     this.horaFin,
+    
+    this.horaInicioServicio,
+    this.horaInicioServicioReal,
+    this.horaFinServicio,
+    this.horaFinServicioReal,
+
     this.tipoServicio,
     this.personal,
+    this.terminal,
   });
 
   factory VueloLineup.fromJson(Map<String, dynamic> json) {
@@ -94,8 +111,18 @@ class VueloLineup {
       lugarSalidaIata: json['lugar_salida_iata'],
       lugarDestinoOaci: json['lugar_destino_oaci'],
       lugarDestinoIata: json['lugar_destino_iata'],
-      horaInicio: json['hora_inicio'],
-      horaFin: json['hora_fin'],
+      horaInicioServicio: json['hora_inicio_servicio'] != null
+          ? DateTime.tryParse(json['hora_inicio_servicio'])
+          : null,
+      horaInicioServicioReal: json['hora_inicio_servicio_real'] != null
+          ? DateTime.tryParse(json['hora_inicio_servicio_real'])
+          : null,
+      horaFinServicio: json['hora_fin_servicio'] != null
+          ? DateTime.tryParse(json['hora_fin_servicio'])
+          : null,
+      horaFinServicioReal: json['hora_fin_servicio_real'] != null
+          ? DateTime.tryParse(json['hora_fin_servicio_real'])
+          : null,
       tipoServicio: json['tipo_servicio'],
       personal: json['personal'] != null
           ? (json['personal'] as Map<String, dynamic>).map(
@@ -105,6 +132,9 @@ class VueloLineup {
               ),
             )
           : null,
+      terminal: json['terminal'] != null
+        ? Terminal.fromJson(json['terminal'])
+        : null,
     );
   }
 }

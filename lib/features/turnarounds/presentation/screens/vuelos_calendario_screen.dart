@@ -22,6 +22,17 @@ class _VuelosScreenState extends ConsumerState<VuelosCalendarioScreen> {
   String? _aerolineaSeleccionada;
   String? _estacionSeleccionada;
 
+  // 1. CONTROLADOR DE TEXTO Y VARIABLE DE ESTADO
+  final TextEditingController _numeroVueloController = TextEditingController();
+  String _numeroVueloFiltro = '';
+
+  @override
+    void dispose() {
+      // Es importante liberar el controlador cuando el widget se destruye
+      _numeroVueloController.dispose();
+      super.dispose();
+    }
+
   @override
   void initState() {
     super.initState();
@@ -46,6 +57,7 @@ class _VuelosScreenState extends ConsumerState<VuelosCalendarioScreen> {
 
   // Componente visual para la barra de filtros
   Widget _buildBarraFiltros(List<VueloCalendario> vuelos, List<Estacion> estaciones) {
+  // Widget _buildBarraFiltros(VueloTimelineState state, VueloTimelineNotifier notifier, List<dynamic> estaciones) {
     // Extraer aerolíneas únicas disponibles en los vuelos
     final aerolineasDisponibles = vuelos
         .map((v) => v.aerolineaNombre)
@@ -65,13 +77,11 @@ class _VuelosScreenState extends ConsumerState<VuelosCalendarioScreen> {
                 child: Container(
                   padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
                   decoration: BoxDecoration(
-                    // color: const Color(0xFFEEEEEE),
                     borderRadius: BorderRadius.circular(12),
                     border: Border.all(color: Colors.black12),
                   ),
                   child: Row(
                     children: [
-                      // const Icon(Icons.flight, size: 14, color: Colors.black54),
                       const SizedBox(width: 8),
                       Expanded(
                         child: DropdownButtonHideUnderline(
@@ -81,7 +91,7 @@ class _VuelosScreenState extends ConsumerState<VuelosCalendarioScreen> {
                             value: _aerolineaSeleccionada,
                             hint: const Text(
                               "Aerolínea",
-                              style: TextStyle(fontSize: 16, ),
+                              style: TextStyle(fontSize: 16),
                             ),
                             items: [
                               const DropdownMenuItem<String>(
@@ -113,13 +123,11 @@ class _VuelosScreenState extends ConsumerState<VuelosCalendarioScreen> {
                 child: Container(
                   padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
                   decoration: BoxDecoration(
-                    // color: const Color(0xFFEEEEEE),
                     borderRadius: BorderRadius.circular(12),
                     border: Border.all(color: Colors.black12),
                   ),
                   child: Row(
                     children: [
-                      // const Icon(Icons.location_on, size: 14, color: Colors.black54),
                       const SizedBox(width: 4),
                       Expanded(
                         child: DropdownButtonHideUnderline(
@@ -129,7 +137,7 @@ class _VuelosScreenState extends ConsumerState<VuelosCalendarioScreen> {
                             value: _estacionSeleccionada,
                             hint: const Text(
                               "Estación",
-                              style: TextStyle(fontSize:16),
+                              style: TextStyle(fontSize: 16),
                             ),
                             items: [
                               const DropdownMenuItem<String>(
@@ -156,33 +164,99 @@ class _VuelosScreenState extends ConsumerState<VuelosCalendarioScreen> {
             ],
           ),
         
-        const SizedBox(height: 4,),
+          const SizedBox(height: 6),
+
           Row(
             children: [
-              // TerminalFilterDropdown()
+              // 3. SELECTOR DE TERMINAL
               Expanded(child: TerminalFilterDropdown()),
-              Expanded(child: SizedBox())
+              const SizedBox(width: 8),
+              
+              // 4. CAMPO DE BÚSQUEDA POR NÚMERO DE VUELO (Borde unificado)
+              Expanded(
+                child: SizedBox(
+                  height: 40,
+                  child: TextField(
+                    controller: _numeroVueloController,
+                    onChanged: (val) {
+                      setState(() {
+                        _numeroVueloFiltro = val;
+                      });
+                    },
+                    style: const TextStyle(fontSize: 14),
+                    decoration: InputDecoration(
+                      hintText: "Nº de vuelo",
+                      hintStyle: const TextStyle(fontSize: 14, color: Colors.black38),
+                      prefixIcon: const Icon(Icons.search, size: 18, color: Colors.black54),
+                      suffixIcon: _numeroVueloFiltro.isNotEmpty
+                          ? GestureDetector(
+                              onTap: () {
+                                setState(() {
+                                  _numeroVueloController.clear();
+                                  _numeroVueloFiltro = '';
+                                });
+                              },
+                              child: const Icon(Icons.clear, size: 16, color: Colors.black54),
+                            )
+                          : null,
+                      contentPadding: const EdgeInsets.symmetric(vertical: 8),
+                      
+                      // Bordes unificados con los demás controles
+                      enabledBorder: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(12),
+                        borderSide: const BorderSide(color: Colors.black12),
+                      ),
+                      focusedBorder: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(12),
+                        borderSide: const BorderSide(color: Colors.black38, width: 1.2),
+                      ),
+                    ),
+                  ),
+                ),
+              ),
             ],
-          )
-        
+          ),
         ],
       ),
     );
   }
+
 
   @override
   Widget build(BuildContext context) {
     final state = ref.watch(vuelosCalendarioProvider);
     final ciudadesState = ref.watch(ciudadesProvider);
 
+    // 1. Obtener la terminal seleccionada del provider
+    final selectedTerminal = ref.watch(selectedTerminalFilterProvider);
+
+    // 2. Aplicar el filtro de terminal en la lista
+  final vuelosFiltrados = state.vuelos.where((vuelo) {
+    final cumpleAerolinea = _aerolineaSeleccionada == null ||
+        vuelo.aerolineaNombre == _aerolineaSeleccionada;
+        
+    final cumpleEstacion = _estacionSeleccionada == null ||
+        vuelo.estacionId?.toString() == _estacionSeleccionada;
+
+        final cumpleNumeroVuelo = _numeroVueloFiltro.isEmpty ||
+          vuelo.numeroVuelo.toLowerCase().contains(_numeroVueloFiltro.toLowerCase().trim());
+
+    // Condición para filtrar por terminal
+    // (Asegúrate de ajustar la propiedad de la clase Vuelo con el nombre o ID real, p. ej. vuelo.terminalId o vuelo.terminalNombre)
+    final cumpleTerminal = selectedTerminal == null ||
+      vuelo.terminal?.id == selectedTerminal.id;
+
+    return cumpleAerolinea && cumpleEstacion && cumpleTerminal && cumpleNumeroVuelo;
+  }).toList();
+
     // Filtrado de la lista local de vuelos según los selects elegidos
-    final vuelosFiltrados = state.vuelos.where((vuelo) {
-      final cumpleAerolinea = _aerolineaSeleccionada == null ||
-          vuelo.aerolineaNombre == _aerolineaSeleccionada;
-      final cumpleEstacion = _estacionSeleccionada == null ||
-          vuelo.estacionId?.toString() == _estacionSeleccionada;
-      return cumpleAerolinea && cumpleEstacion;
-    }).toList();
+    // final vuelosFiltrados = state.vuelos.where((vuelo) {
+    //   final cumpleAerolinea = _aerolineaSeleccionada == null ||
+    //       vuelo.aerolineaNombre == _aerolineaSeleccionada;
+    //   final cumpleEstacion = _estacionSeleccionada == null ||
+    //       vuelo.estacionId?.toString() == _estacionSeleccionada;
+    //   return cumpleAerolinea && cumpleEstacion;
+    // }).toList();
 
     return Scaffold(
       key: scaffoldKey,

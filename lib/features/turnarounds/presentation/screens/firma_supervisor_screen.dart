@@ -26,6 +26,7 @@ class _FirmaSupervisorScreenState extends ConsumerState<FirmaSupervisorScreen> {
 
   // Password controller
   final TextEditingController _passwordController = TextEditingController();
+  bool _isObscured = true; // <-- Agregar esta línea
 
   // Signature controller
   final SignatureController _signatureController = SignatureController(
@@ -56,14 +57,15 @@ class _FirmaSupervisorScreenState extends ConsumerState<FirmaSupervisorScreen> {
             // 1. Dropdown Button
             Text(
               'Supervisor de la aerolinea:',
-              style: theme.textTheme.titleSmall,
+              style: theme.textTheme.labelLarge,
             ),
             const SizedBox(height: 8),
             DropdownButtonFormField<SupervisorUser>(
               value: selectedValue,
-              decoration: InputDecoration(
+              decoration: const InputDecoration(
                 border: OutlineInputBorder(),
-                // hintText: 'Selccione el supervisor',
+                isDense: true, // <-- Reduce la altura predeterminada
+                contentPadding: EdgeInsets.symmetric(horizontal: 12, vertical: 12), // <-- Ajusta el espacio interno
               ),
               items: supervisores.map((SupervisorUser supervisor) {
                 return DropdownMenuItem<SupervisorUser>(
@@ -71,12 +73,6 @@ class _FirmaSupervisorScreenState extends ConsumerState<FirmaSupervisorScreen> {
                   child: Text(supervisor.nombre),
                 );
               }).toList(),
-              // items: dropdownItems.map((String value) {
-              //   return DropdownMenuItem<String>(
-              //     value: value,
-              //     child: Text(value),
-              //   );
-              // }).toList(),
               onChanged: (newValue) {
                 setState(() {
                   selectedValue = newValue;
@@ -86,36 +82,45 @@ class _FirmaSupervisorScreenState extends ConsumerState<FirmaSupervisorScreen> {
                   value == null ? 'Seleccione una opción' : null,
             ),
 
-            const SizedBox(height: 24),
+            const SizedBox(height: 20),
 
             // 2. Numeric Password Input
-            Text('Codigo de autorizacion:', style: theme.textTheme.titleSmall),
+            // 2. Numeric Password Input
+            Text('Codigo de autorizacion:', style: theme.textTheme.labelLarge),
             const SizedBox(height: 8),
             TextFormField(
               controller: _passwordController,
-              decoration: const InputDecoration(
-                // labelText: 'Ingrese su código',
-                border: OutlineInputBorder(),
-                hintText: 'Ingrese su código',
-                // hintText: 'Enter numbers only',
-              ),
+              obscureText: _isObscured,
               keyboardType: TextInputType.text,
-              obscureText: true,
+              decoration: InputDecoration(
+                border: const OutlineInputBorder(),
+                hintText: 'Ingrese su código',
+                isDense: true, // <-- Reduce la altura predeterminada
+                contentPadding: const EdgeInsets.symmetric(horizontal: 12, vertical: 12), // <-- Ajusta el espacio interno
+                suffixIcon: IconButton(
+                  constraints: const BoxConstraints(), // <-- Opcional: ajusta el espacio alrededor del icono
+                  icon: Icon(
+                    _isObscured ? Icons.visibility_off : Icons.visibility,
+                  ),
+                  onPressed: () {
+                    setState(() {
+                      _isObscured = !_isObscured;
+                    });
+                  },
+                ),
+              ),
               validator: (value) {
                 if (value == null || value.isEmpty) {
                   return 'Debe ingresar un código';
                 }
-                // if (!RegExp(r'^[0-9]+$').hasMatch(value)) {
-                //   return 'Only numbers are allowed';
-                // }
                 return null;
               },
             ),
 
-            const SizedBox(height: 24),
+            const SizedBox(height: 20),
 
             // 3. Signature Canvas
-            const Text('Firma:', style: TextStyle(fontSize: 16)),
+            Text('Firma:', style: theme.textTheme.labelLarge),
             const SizedBox(height: 8),
             Container(
               decoration: BoxDecoration(
@@ -244,6 +249,7 @@ class _FirmaSupervisorScreenState extends ConsumerState<FirmaSupervisorScreen> {
                           selectedValue = null;
                           _passwordController.clear();
                           _signatureController.clear();
+                          _isObscured = true; // <-- Restablecer a oculto
                         });
 
                         // get turnarounds

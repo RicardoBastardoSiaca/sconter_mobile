@@ -4,7 +4,14 @@ import 'package:scounter_mobile/features/turnarounds/domain/domain.dart';
 import 'package:scounter_mobile/features/turnarounds/presentation/providers/providers.dart';
 
 class TerminalFilterDropdown extends ConsumerWidget {
-  const TerminalFilterDropdown({super.key});
+  final double menuFontSize;
+  final double selectedFontSize;
+
+  const TerminalFilterDropdown({
+    super.key,
+    this.menuFontSize = 16.0,
+    this.selectedFontSize = 16.0,
+  });
 
   static const int allTerminalsValue = -1;
 
@@ -39,16 +46,19 @@ class TerminalFilterDropdown extends ConsumerWidget {
       },
       itemBuilder: (BuildContext context) {
         return [
-          const PopupMenuItem<int>(
+          PopupMenuItem<int>(
             value: allTerminalsValue,
-            child: Text("Todas", style: TextStyle(fontSize: 14)),
+            child: Text(
+              "Todas",
+              style: TextStyle(fontSize: menuFontSize),
+            ),
           ),
           ...terminals.map((terminal) {
             return PopupMenuItem<int>(
               value: terminal.id,
               child: Text(
                 terminal.nombre,
-                style: const TextStyle(fontSize: 14),
+                style: TextStyle(fontSize: menuFontSize),
                 overflow: TextOverflow.ellipsis,
               ),
             );
@@ -56,10 +66,9 @@ class TerminalFilterDropdown extends ConsumerWidget {
         ];
       },
       child: Container(
-        width: 140, // <-- Define un ancho fijo adecuado para el botón
+        width: 140,
         padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 6),
         decoration: BoxDecoration(
-          // color: const Color(0xFFEEEEEE),
           borderRadius: BorderRadius.circular(12),
           border: Border.all(color: Colors.black12),
         ),
@@ -71,8 +80,7 @@ class TerminalFilterDropdown extends ConsumerWidget {
               child: Text(
                 selectedTerminal?.nombre ?? 'Terminales',
                 style: TextStyle(
-                  fontSize: 16,
-                  // color: selectedTerminal == null ? Colors.black54 : Colors.black87,
+                  fontSize: selectedFontSize,
                 ),
                 overflow: TextOverflow.ellipsis,
               ),
