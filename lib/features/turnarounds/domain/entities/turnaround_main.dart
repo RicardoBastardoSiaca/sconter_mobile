@@ -222,7 +222,7 @@ class FkVuelo {
   String? horaFinServicio_;
   String? horaInicioServicio;
   String? horaInicioServicio_;
-  String? matricula;
+  dynamic matricula;
   int? operadoPor;
   int? terminal;
   bool? vistaIaim;

@@ -34,7 +34,11 @@ dart run change_app_package_name:main com.siaca.scounter --android
 
 ```
 <!-- Generar app de produccion -->
+flutter build apk --release
+
+<!-- Pruebas -->
 flutter build appbundle
 
+<!-- Para despues -->
 flutter build apk --split-per-abi
 ```

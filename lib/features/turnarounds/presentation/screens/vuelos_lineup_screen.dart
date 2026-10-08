@@ -137,6 +137,127 @@ class _VuelosLineupScreenState extends ConsumerState<VuelosLineupScreen> {
     super.dispose();
   }
 
+  void _mostrarBuscadorAerolineas(BuildContext context, List<String> aerolineas) {
+    showModalBottomSheet(
+      context: context,
+      isScrollControlled: true,
+      shape: const RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
+      ),
+      builder: (context) {
+        String filtro = '';
+
+        return StatefulBuilder(
+          builder: (BuildContext context, StateSetter setStateModal) {
+            // Filtrar y ordenar alfabéticamente de la A a la Z
+            final filtradas = aerolineas
+                .where((a) => a.toLowerCase().contains(filtro.toLowerCase()))
+                .toList()
+              ..sort((a, b) => a.toLowerCase().compareTo(b.toLowerCase()));
+
+            return Padding(
+              padding: EdgeInsets.only(
+                bottom: MediaQuery.of(context).viewInsets.bottom,
+                top: 16,
+                left: 16,
+                right: 16,
+              ),
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  // Indicador visual superior
+                  Container(
+                    width: 40,
+                    height: 4,
+                    decoration: BoxDecoration(
+                      color: Colors.grey[300],
+                      borderRadius: BorderRadius.circular(2),
+                    ),
+                  ),
+                  const SizedBox(height: 12),
+
+                  // Campo de búsqueda dentro del modal
+                  TextField(
+                    autofocus: true,
+                    decoration: InputDecoration(
+                      hintText: 'Buscar aerolínea...',
+                      prefixIcon: const Icon(Icons.search),
+                      contentPadding: const EdgeInsets.symmetric(vertical: 10),
+                      border: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(12),
+                      ),
+                    ),
+                    onChanged: (val) {
+                      setStateModal(() {
+                        filtro = val;
+                      });
+                    },
+                  ),
+                  const SizedBox(height: 10),
+
+                  // Lista de aerolíneas filtradas y ordenadas
+                  ConstrainedBox(
+                    constraints: BoxConstraints(
+                      maxHeight: MediaQuery.of(context).size.height * 0.4,
+                    ),
+                    child: ListView.builder(
+                      shrinkWrap: true,
+                      itemCount: filtradas.length + 1, // +1 para la opción "Todas"
+                      itemBuilder: (context, index) {
+                        if (index == 0) {
+                          return ListTile(
+                            dense: true,
+                            visualDensity: const VisualDensity(vertical: -2),
+                            contentPadding: const EdgeInsets.symmetric(horizontal: 8, vertical: 0),
+                            title: const Text(
+                              'Todas las Aerolíneas',
+                              style: TextStyle(
+                                fontSize: 14,
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
+                            selected: _aerolineaSeleccionada == null,
+                            onTap: () {
+                              setState(() {
+                                _aerolineaSeleccionada = null;
+                              });
+                              Navigator.pop(context);
+                            },
+                          );
+                        }
+
+                        final aerolinea = filtradas[index - 1];
+                        return ListTile(
+                          dense: true,
+                          visualDensity: const VisualDensity(vertical: -2),
+                          contentPadding: const EdgeInsets.symmetric(horizontal: 8, vertical: 0),
+                          title: Text(
+                            aerolinea,
+                            style: const TextStyle(
+                              fontSize: 14,
+                            ),
+                          ),
+                          selected: _aerolineaSeleccionada == aerolinea,
+                          onTap: () {
+                            setState(() {
+                              _aerolineaSeleccionada = aerolinea;
+                            });
+                            Navigator.pop(context);
+                          },
+                        );
+                      },
+                    ),
+                  ),
+                  const SizedBox(height: 12),
+                ],
+              ),
+            );
+          },
+        );
+      },
+    );
+  }
+
   void _scrollToCurrentDay(List<DateTime> diasDeLaSemana, Map<String, List<VueloLineup>> vuelosAgrupados) async {
     final hoy = DateFormat('yyyy-MM-dd').format(DateTime.now());
 
@@ -263,35 +384,43 @@ class _VuelosLineupScreenState extends ConsumerState<VuelosLineupScreen> {
                 children: [
                   Row(
                     children: [
-                      // DROPDOWN AEROLÍNEA
+                      // SELECTOR DE AEROLÍNEA (Modal con Búsqueda)
                       Expanded(
-                        child: Container(
-                          padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
-                          decoration: BoxDecoration(
-                            borderRadius: BorderRadius.circular(12),
-                            border: Border.all(color: Colors.black12),
-                          ),
-                          child: DropdownButtonHideUnderline(
-                            child: DropdownButton<String>(
-                              isDense: true,
-                              isExpanded: true,
-                              value: _aerolineaSeleccionada,
-                              hint: const Text("Aerolíneas", style: TextStyle(fontSize: 14)),
-                              items: [
-                                const DropdownMenuItem<String>(
-                                  value: null,
-                                  child: Text("Todas las Aerolíneas", style: TextStyle(fontSize: 14, fontWeight: FontWeight.w500)),
+                        child: InkWell(
+                          onTap: () => _mostrarBuscadorAerolineas(context, aerolineasDisponibles),
+                          borderRadius: BorderRadius.circular(12),
+                          child: Container(
+                            padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
+                            decoration: BoxDecoration(
+                              borderRadius: BorderRadius.circular(12),
+                              border: Border.all(color: Colors.black12),
+                            ),
+                            child: Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              children: [
+                                Expanded(
+                                  child: Text(
+                                    _aerolineaSeleccionada ?? "Aerolíneas",
+                                    style: TextStyle(
+                                      fontSize: 14,
+                                      fontWeight: FontWeight.w500,
+                                      color: _aerolineaSeleccionada == null ? Colors.black54 : Colors.black,
+                                    ),
+                                    overflow: TextOverflow.ellipsis,
+                                  ),
                                 ),
-                                ...aerolineasDisponibles.map((a) => DropdownMenuItem(
-                                      value: a,
-                                      child: Text(a, style: const TextStyle(fontSize: 14, fontWeight: FontWeight.w500), overflow: TextOverflow.ellipsis),
-                                    )),
+                                if (_aerolineaSeleccionada != null)
+                                  GestureDetector(
+                                    onTap: () {
+                                      setState(() {
+                                        _aerolineaSeleccionada = null;
+                                      });
+                                    },
+                                    child: const Icon(Icons.clear, size: 18, color: Colors.grey),
+                                  )
+                                else
+                                  const Icon(Icons.arrow_drop_down, color: Colors.grey),
                               ],
-                              onChanged: (val) {
-                                setState(() {
-                                  _aerolineaSeleccionada = val;
-                                });
-                              },
                             ),
                           ),
                         ),
@@ -335,13 +464,15 @@ class _VuelosLineupScreenState extends ConsumerState<VuelosLineupScreen> {
                     ],
                   ),
                   const SizedBox(height: 6),
-                  Row(
+                  const Row(
                     children: [
-                      Expanded(child: const TerminalFilterDropdown(
-                        menuFontSize: 14.0,
-                        selectedFontSize: 14.0,
-                      )),
-                      const Expanded(child: SizedBox()),
+                      Expanded(
+                        child: TerminalFilterDropdown(
+                          menuFontSize: 14.0,
+                          selectedFontSize: 14.0,
+                        ),
+                      ),
+                      Expanded(child: SizedBox()),
                     ],
                   ),
                 ],

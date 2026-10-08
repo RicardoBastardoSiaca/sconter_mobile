@@ -5,8 +5,6 @@ import 'package:scounter_mobile/features/shared/shared.dart';
 import 'package:scounter_mobile/features/turnarounds/domain/domain.dart';
 import 'package:scounter_mobile/features/turnarounds/presentation/providers/providers.dart';
 import 'package:scounter_mobile/features/turnarounds/presentation/widgets/widgets.dart';
-// import 'vuelos_provider.dart';
-// import 'calendario_vuelos_widget.dart';
 
 class VuelosCalendarioScreen extends ConsumerStatefulWidget {
   const VuelosCalendarioScreen({super.key});
@@ -22,16 +20,16 @@ class _VuelosScreenState extends ConsumerState<VuelosCalendarioScreen> {
   String? _aerolineaSeleccionada;
   String? _estacionSeleccionada;
 
-  // 1. CONTROLADOR DE TEXTO Y VARIABLE DE ESTADO
+  // CONTROLADOR DE TEXTO Y VARIABLE DE ESTADO
   final TextEditingController _numeroVueloController = TextEditingController();
   String _numeroVueloFiltro = '';
 
   @override
-    void dispose() {
-      // Es importante liberar el controlador cuando el widget se destruye
-      _numeroVueloController.dispose();
-      super.dispose();
-    }
+  void dispose() {
+    // Liberar el controlador cuando el widget se destruye
+    _numeroVueloController.dispose();
+    super.dispose();
+  }
 
   @override
   void initState() {
@@ -55,9 +53,129 @@ class _VuelosScreenState extends ConsumerState<VuelosCalendarioScreen> {
 
   final GlobalKey<ScaffoldState> scaffoldKey = GlobalKey<ScaffoldState>();
 
+  void _mostrarBuscadorAerolineas(BuildContext context, List<String> aerolineas) {
+    showModalBottomSheet(
+      context: context,
+      isScrollControlled: true,
+      shape: const RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
+      ),
+      builder: (context) {
+        String filtro = '';
+
+        return StatefulBuilder(
+          builder: (BuildContext context, StateSetter setStateModal) {
+            // Filtrar y ordenar alfabéticamente de la A a la Z
+            final filtradas = aerolineas
+                .where((a) => a.toLowerCase().contains(filtro.toLowerCase()))
+                .toList()
+              ..sort((a, b) => a.toLowerCase().compareTo(b.toLowerCase()));
+
+            return Padding(
+              padding: EdgeInsets.only(
+                bottom: MediaQuery.of(context).viewInsets.bottom,
+                top: 16,
+                left: 16,
+                right: 16,
+              ),
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  // Indicador visual superior
+                  Container(
+                    width: 40,
+                    height: 4,
+                    decoration: BoxDecoration(
+                      color: Colors.grey[300],
+                      borderRadius: BorderRadius.circular(2),
+                    ),
+                  ),
+                  const SizedBox(height: 12),
+
+                  // Campo de búsqueda dentro del modal
+                  TextField(
+                    autofocus: true,
+                    decoration: InputDecoration(
+                      hintText: 'Buscar aerolínea...',
+                      prefixIcon: const Icon(Icons.search),
+                      contentPadding: const EdgeInsets.symmetric(vertical: 10),
+                      border: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(12),
+                      ),
+                    ),
+                    onChanged: (val) {
+                      setStateModal(() {
+                        filtro = val;
+                      });
+                    },
+                  ),
+                  const SizedBox(height: 10),
+
+                  // Lista de aerolíneas filtradas y ordenadas
+                  ConstrainedBox(
+                    constraints: BoxConstraints(
+                      maxHeight: MediaQuery.of(context).size.height * 0.4,
+                    ),
+                    child: ListView.builder(
+                      shrinkWrap: true,
+                      itemCount: filtradas.length + 1, // +1 para la opción "Todas"
+                      itemBuilder: (context, index) {
+                        if (index == 0) {
+                          return ListTile(
+                            dense: true,
+                            visualDensity: const VisualDensity(vertical: -2),
+                            contentPadding: const EdgeInsets.symmetric(horizontal: 8, vertical: 0),
+                            title: const Text(
+                              'Todas las Aerolíneas',
+                              style: TextStyle(
+                                fontSize: 14,
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
+                            selected: _aerolineaSeleccionada == null,
+                            onTap: () {
+                              setState(() {
+                                _aerolineaSeleccionada = null;
+                              });
+                              Navigator.pop(context);
+                            },
+                          );
+                        }
+
+                        final aerolinea = filtradas[index - 1];
+                        return ListTile(
+                          dense: true,
+                          visualDensity: const VisualDensity(vertical: -2),
+                          contentPadding: const EdgeInsets.symmetric(horizontal: 8, vertical: 0),
+                          title: Text(
+                            aerolinea,
+                            style: const TextStyle(
+                              fontSize: 14,
+                            ),
+                          ),
+                          selected: _aerolineaSeleccionada == aerolinea,
+                          onTap: () {
+                            setState(() {
+                              _aerolineaSeleccionada = aerolinea;
+                            });
+                            Navigator.pop(context);
+                          },
+                        );
+                      },
+                    ),
+                  ),
+                  const SizedBox(height: 12),
+                ],
+              ),
+            );
+          },
+        );
+      },
+    );
+  }
+
   // Componente visual para la barra de filtros
   Widget _buildBarraFiltros(List<VueloCalendario> vuelos, List<Estacion> estaciones) {
-  // Widget _buildBarraFiltros(VueloTimelineState state, VueloTimelineNotifier notifier, List<dynamic> estaciones) {
     // Extraer aerolíneas únicas disponibles en los vuelos
     final aerolineasDisponibles = vuelos
         .map((v) => v.aerolineaNombre)
@@ -72,52 +190,50 @@ class _VuelosScreenState extends ConsumerState<VuelosCalendarioScreen> {
         children: [
           Row(
             children: [
-              // 1. SELECTOR DE AEROLÍNEA
+              // 1. SELECTOR DE AEROLÍNEA (Modal con Búsqueda)
               Expanded(
-                child: Container(
-                  padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
-                  decoration: BoxDecoration(
-                    borderRadius: BorderRadius.circular(12),
-                    border: Border.all(color: Colors.black12),
-                  ),
-                  child: Row(
-                    children: [
-                      const SizedBox(width: 8),
-                      Expanded(
-                        child: DropdownButtonHideUnderline(
-                          child: DropdownButton<String>(
-                            isDense: true,
-                            isExpanded: true,
-                            value: _aerolineaSeleccionada,
-                            hint: const Text(
-                              "Aerolínea",
-                              style: TextStyle(fontSize: 16),
+                child: InkWell(
+                  onTap: () => _mostrarBuscadorAerolineas(context, aerolineasDisponibles),
+                  borderRadius: BorderRadius.circular(12),
+                  child: Container(
+                    padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
+                    decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(12),
+                      border: Border.all(color: Colors.black12),
+                    ),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Expanded(
+                          child: Text(
+                            _aerolineaSeleccionada ?? "Aerolínea",
+                            style: TextStyle(
+                              fontSize: 14,
+                              fontWeight: FontWeight.w500,
+                              color: _aerolineaSeleccionada == null ? Colors.grey[700] : Colors.black,
                             ),
-                            items: [
-                              const DropdownMenuItem<String>(
-                                value: null,
-                                child: Text("Aerolíneas", style: TextStyle(fontSize: 16, fontWeight: FontWeight.w500)),
-                              ),
-                              ...aerolineasDisponibles.map((a) => DropdownMenuItem(
-                                    value: a,
-                                    child: Text(a, style: const TextStyle(fontSize: 14, fontWeight: FontWeight.w500), overflow: TextOverflow.ellipsis),
-                                  )),
-                            ],
-                            onChanged: (val) {
-                              setState(() {
-                                _aerolineaSeleccionada = val;
-                              });
-                            },
+                            overflow: TextOverflow.ellipsis,
                           ),
                         ),
-                      ),
-                    ],
+                        if (_aerolineaSeleccionada != null)
+                          GestureDetector(
+                            onTap: () {
+                              setState(() {
+                                _aerolineaSeleccionada = null;
+                              });
+                            },
+                            child: const Icon(Icons.clear, size: 18, color: Colors.grey),
+                          )
+                        else
+                          const Icon(Icons.arrow_drop_down, color: Colors.grey),
+                      ],
+                    ),
                   ),
                 ),
               ),
-          
+
               const SizedBox(width: 8),
-          
+
               // 2. SELECTOR DE ESTACIÓN
               Expanded(
                 child: Container(
@@ -163,16 +279,16 @@ class _VuelosScreenState extends ConsumerState<VuelosCalendarioScreen> {
               ),
             ],
           ),
-        
+
           const SizedBox(height: 6),
 
           Row(
             children: [
               // 3. SELECTOR DE TERMINAL
-              Expanded(child: TerminalFilterDropdown()),
+              const Expanded(child: TerminalFilterDropdown()),
               const SizedBox(width: 8),
-              
-              // 4. CAMPO DE BÚSQUEDA POR NÚMERO DE VUELO (Borde unificado)
+
+              // 4. CAMPO DE BÚSQUEDA POR NÚMERO DE VUELO
               Expanded(
                 child: SizedBox(
                   height: 40,
@@ -200,8 +316,6 @@ class _VuelosScreenState extends ConsumerState<VuelosCalendarioScreen> {
                             )
                           : null,
                       contentPadding: const EdgeInsets.symmetric(vertical: 8),
-                      
-                      // Bordes unificados con los demás controles
                       enabledBorder: OutlineInputBorder(
                         borderRadius: BorderRadius.circular(12),
                         borderSide: const BorderSide(color: Colors.black12),
@@ -221,7 +335,6 @@ class _VuelosScreenState extends ConsumerState<VuelosCalendarioScreen> {
     );
   }
 
-
   @override
   Widget build(BuildContext context) {
     final state = ref.watch(vuelosCalendarioProvider);
@@ -231,32 +344,21 @@ class _VuelosScreenState extends ConsumerState<VuelosCalendarioScreen> {
     final selectedTerminal = ref.watch(selectedTerminalFilterProvider);
 
     // 2. Aplicar el filtro de terminal en la lista
-  final vuelosFiltrados = state.vuelos.where((vuelo) {
-    final cumpleAerolinea = _aerolineaSeleccionada == null ||
-        vuelo.aerolineaNombre == _aerolineaSeleccionada;
-        
-    final cumpleEstacion = _estacionSeleccionada == null ||
-        vuelo.estacionId?.toString() == _estacionSeleccionada;
+    final vuelosFiltrados = state.vuelos.where((vuelo) {
+      final cumpleAerolinea = _aerolineaSeleccionada == null ||
+          vuelo.aerolineaNombre == _aerolineaSeleccionada;
 
-        final cumpleNumeroVuelo = _numeroVueloFiltro.isEmpty ||
+      final cumpleEstacion = _estacionSeleccionada == null ||
+          vuelo.estacionId?.toString() == _estacionSeleccionada;
+
+      final cumpleNumeroVuelo = _numeroVueloFiltro.isEmpty ||
           vuelo.numeroVuelo.toLowerCase().contains(_numeroVueloFiltro.toLowerCase().trim());
 
-    // Condición para filtrar por terminal
-    // (Asegúrate de ajustar la propiedad de la clase Vuelo con el nombre o ID real, p. ej. vuelo.terminalId o vuelo.terminalNombre)
-    final cumpleTerminal = selectedTerminal == null ||
-      vuelo.terminal?.id == selectedTerminal.id;
+      final cumpleTerminal = selectedTerminal == null ||
+          vuelo.terminal?.id == selectedTerminal.id;
 
-    return cumpleAerolinea && cumpleEstacion && cumpleTerminal && cumpleNumeroVuelo;
-  }).toList();
-
-    // Filtrado de la lista local de vuelos según los selects elegidos
-    // final vuelosFiltrados = state.vuelos.where((vuelo) {
-    //   final cumpleAerolinea = _aerolineaSeleccionada == null ||
-    //       vuelo.aerolineaNombre == _aerolineaSeleccionada;
-    //   final cumpleEstacion = _estacionSeleccionada == null ||
-    //       vuelo.estacionId?.toString() == _estacionSeleccionada;
-    //   return cumpleAerolinea && cumpleEstacion;
-    // }).toList();
+      return cumpleAerolinea && cumpleEstacion && cumpleTerminal && cumpleNumeroVuelo;
+    }).toList();
 
     return Scaffold(
       key: scaffoldKey,

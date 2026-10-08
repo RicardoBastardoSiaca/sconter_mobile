@@ -191,32 +191,21 @@ class _CalendarioVuelosWidgetState
           child: SingleChildScrollView(
             physics: const BouncingScrollPhysics(),
             child: TableCalendar<VueloCalendario>(
-              locale:
-                  'es', // <--- Esto cambiará "May" por "Mayo", "Mon" por "Lun", etc.
-              // rowHeight: 110, // Mantenemos la altura para que se vea bien
+              locale: 'es',
               firstDay: DateTime.utc(2020, 1, 1),
               lastDay: DateTime.utc(2030, 12, 31),
               focusedDay: _focusedDay,
-              // ESTA ES LA PROPIEDAD: Cambia el inicio al lunes
               startingDayOfWeek: StartingDayOfWeek.monday,
-
-              // 1. Aumenta la altura de la fila (ajusta según necesites, 100-120 suele ser ideal para eventos)
-              rowHeight:
-                  125, // Aumentamos un poco más para que quepan los textos de 12px
-              // ESTA ES LA CLAVE: Desactiva el cambio de formato por gesto vertical
+              rowHeight: 125,
               availableGestures: AvailableGestures.horizontalSwipe,
               calendarFormat: _calendarFormat,
               selectedDayPredicate: (day) => isSameDay(_selectedDay, day),
               eventLoader: _getVuelosDelDia,
-              onFormatChanged: (format) =>
-                  setState(() => _calendarFormat = format),
+              onFormatChanged: (format) => setState(() => _calendarFormat = format),
               onDaySelected: (selectedDay, focusedDay) {
                 final vuelosDelDia = _getVuelosDelDia(selectedDay);
                 if (vuelosDelDia.isNotEmpty) {
-                  // Usamos el 'ref' expuesto por ConsumerState
-                  ref
-                      .read(turnaroundProvider.notifier)
-                      .setSelectedDate(selectedDay);
+                  ref.read(turnaroundProvider.notifier).setSelectedDate(selectedDay);
                   _mostrarDetallesDia(selectedDay, vuelosDelDia);
                 }
                 setState(() {
@@ -225,116 +214,133 @@ class _CalendarioVuelosWidgetState
                 });
               },
 
-              // 1. Forzamos a que el formato siempre sea mensual
-              // calendarFormat: CalendarFormat.month,
-
-              // 2. Personalizamos el encabezado para ocultar el botón
+              // 1. Ocultar el botón de formato y la etiqueta de título por defecto
               headerStyle: const HeaderStyle(
-                formatButtonVisible: false, // <--- ESTO OCULTA EL BOTÓN
-                titleCentered: true, // Opcional: Centra el título "Mayo 2026"
-                titleTextStyle: TextStyle(
-                  fontSize: 22,
-                  fontWeight: FontWeight.bold,
-                ),
+                formatButtonVisible: false,
+                titleCentered: true,
               ),
 
-              // 2. Ajusta la altura del header de los días de la semana (Sun, Mon...)
               daysOfWeekHeight: 24,
-              // 3. Estilo para mover el número del día hacia arriba y que no choque con los vuelos
               calendarStyle: CalendarStyle(
-                cellAlignment:
-                    Alignment.topCenter, // Alinea el número del día arriba
-                cellMargin: EdgeInsets.all(4),
+                cellAlignment: Alignment.topCenter,
+                cellMargin: const EdgeInsets.all(4),
                 selectedDecoration: BoxDecoration(
                   color: Colors.grey[200],
                   shape: BoxShape.circle,
-                  border: null,
                 ),
-                todayDecoration: BoxDecoration(
+                todayDecoration: const BoxDecoration(
                   color: Colors.blueGrey,
                   shape: BoxShape.circle,
-                  border: null,
                 ),
               ),
 
-              // ESTA ES LA CLAVE: Se dispara al deslizar o usar flechas
               onPageChanged: (focusedDay) {
                 setState(() {
                   _focusedDay = focusedDay;
                 });
-                // Notificamos al padre para que dispare la carga de la API
                 if (widget.onMonthChanged != null) {
                   widget.onMonthChanged!(focusedDay);
                 }
               },
 
               calendarBuilders: CalendarBuilders(
-                // Días del mes normal
-                defaultBuilder: (context, day, focusedDay) =>
-                    _buildDayCell(day, Colors.transparent, Colors.black87),
+  // --- TÍTULO CON MES Y TOTAL DE VUELOS DEBAJO ---
+  headerTitleBuilder: (context, day) {
+    final String mesAno = DateFormat.yMMMM('es_ES').format(day);
+    final String mesAnoCapitalizado =
+        mesAno[0].toUpperCase() + mesAno.substring(1);
+    final int totalVuelos = _vuelosFiltrados.length;
+    final String textoTotal =
+        totalVuelos == 1 ? '1 vuelo' : '$totalVuelos vuelos';
 
-                // Días fuera del mes (el cambio que pediste)
-                outsideBuilder: (context, day, focusedDay) => _buildDayCell(
-                  day,
-                  Colors.transparent,
-                  Colors.grey.shade400,
-                ),
+    return Column(
+      mainAxisSize: MainAxisSize.min,
+      children: [
+        Text(
+          mesAnoCapitalizado,
+          style: const TextStyle(
+            fontSize: 18,
+            fontWeight: FontWeight.bold,
+            color: Colors.black87,
+          ),
+          overflow: TextOverflow.ellipsis,
+        ),
+        const SizedBox(height: 2),
+        Container(
+          padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 2),
+          decoration: BoxDecoration(
+            color: Colors.blueGrey.shade100,
+            borderRadius: BorderRadius.circular(10),
+            border: Border.all(color: Colors.blueGrey.shade300, width: 0.8),
+          ),
+          child: Text(
+            textoTotal,
+            style: TextStyle(
+              fontSize: 12,
+              fontWeight: FontWeight.bold,
+              color: Colors.blueGrey.shade900,
+            ),
+          ),
+        ),
+      ],
+    );
+  },
 
-                // Día actual
-                todayBuilder: (context, day, focusedDay) => _buildDayCell(
-                  day,
-                  Colors.blueGrey.shade50,
-                  Colors.blueGrey.shade900,
-                ),
+  // Días del mes normal
+  defaultBuilder: (context, day, focusedDay) =>
+      _buildDayCell(day, Colors.transparent, Colors.black87),
 
-                // Día seleccionado
-                selectedBuilder: (context, day, focusedDay) => _buildDayCell(
-                  day,
-                  Colors.blue.shade50,
-                  Colors.blue.shade900,
-                ),
+  // Días fuera del mes
+  outsideBuilder: (context, day, focusedDay) => _buildDayCell(
+    day,
+    Colors.transparent,
+    Colors.grey.shade400,
+  ),
 
-                // 4. Tu markerBuilder existente
-               markerBuilder: (context, date, events) {
-                if (events.isEmpty) return const SizedBox();
-                
-                final int totalVuelos = events.length;
-                final String textoTotal = totalVuelos == 1 ? '1 vuelo' : '$totalVuelos vuelos';
+  // Día actual
+  todayBuilder: (context, day, focusedDay) => _buildDayCell(
+    day,
+    Colors.blueGrey.shade50,
+    Colors.blueGrey.shade900,
+  ),
 
-                return Positioned(
-                  top: 35, // Se posiciona debajo del número del día
-                  left: 0,
-                  right: 0,
-                  child: Column(
-                    children: [
-                      // Muestra hasta 2 vuelos como vista previa en la celda
-                      ...events
-                          .take(2)
-                          .map((v) => _vueloItemMini(v))
-                          .toList(),
-                      const SizedBox(height: 2),
-                      // Texto con el total de vuelos del día
-                      Text(
-                        textoTotal,
-                        style: const TextStyle(
-                          fontSize: 10,
-                          fontWeight: FontWeight.bold,
-                          color: Colors.grey,
-                        ),
-                      ),
-                    ],
-                  ),
-                );
-              },
-              ),
+  // Día seleccionado
+  selectedBuilder: (context, day, focusedDay) => _buildDayCell(
+    day,
+    Colors.blue.shade50,
+    Colors.blue.shade900,
+  ),
 
-              // Personalización de la celda
-              // calendarBuilders: CalendarBuilders(
-              //   markerBuilder: (context, date, events) {
-              //     if (events.isEmpty) return const SizedBox();
-              //     return _buildCustomCellContent(events);
-              //   },
-              // ),
+  // Marcador de eventos
+  markerBuilder: (context, date, events) {
+    if (events.isEmpty) return const SizedBox();
+
+    final int totalVuelos = events.length;
+    final String textoTotal =
+        totalVuelos == 1 ? '1 vuelo' : '$totalVuelos vuelos';
+
+    return Positioned(
+      top: 35,
+      left: 0,
+      right: 0,
+      child: Column(
+        children: [
+          ...events.take(2).map((v) => _vueloItemMini(v)),
+          const SizedBox(height: 2),
+          Text(
+            textoTotal,
+            style: const TextStyle(
+              fontSize: 10,
+              fontWeight: FontWeight.bold,
+              color: Colors.grey,
+            ),
+          ),
+        ],
+      ),
+    );
+  },
+),
+            
             ),
           ),
         ),
