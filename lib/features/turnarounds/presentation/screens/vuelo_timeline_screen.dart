@@ -171,6 +171,7 @@ Widget _buildBarraFiltros(
             // BUSCADOR AEROLÍNEA
             Expanded(
               child: Container(
+                height: 40, // <- altura fija
                 decoration: BoxDecoration(
                   borderRadius: BorderRadius.circular(12),
                   border: Border.all(color: Colors.black12),
@@ -186,7 +187,7 @@ Widget _buildBarraFiltros(
                           right: Radius.circular(_aerolineaSeleccionada == null ? 12 : 0),
                         ),
                         child: Padding(
-                          padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+                          padding: const EdgeInsets.symmetric(horizontal: 12), // <- sin padding vertical
                           child: Row(
                             mainAxisAlignment: MainAxisAlignment.spaceBetween,
                             children: [
@@ -279,7 +280,8 @@ Widget _buildBarraFiltros(
         Row(
           children: [
             const Expanded(
-              child: TerminalFilterDropdown(
+              child: const TerminalFilterDropdown(
+                height: 40,
                 menuFontSize: 14.0,
                 selectedFontSize: 14.0,
               ),

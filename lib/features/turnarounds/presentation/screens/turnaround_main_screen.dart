@@ -372,7 +372,9 @@ class _TuraroundMainViewState extends ConsumerState<_TuraroundMainView> {
                             onTap: () => _mostrarBuscadorAerolineas(context, aerolineasDisponibles),
                             borderRadius: BorderRadius.circular(12),
                             child: Container(
-                              padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
+                              height: 40, // <- altura fija
+                              padding: const EdgeInsets.symmetric(horizontal: 12), // <- sin vertical
+                              alignment: Alignment.centerLeft, // <- centra el contenido
                               decoration: BoxDecoration(
                                 borderRadius: BorderRadius.circular(12),
                                 border: Border.all(color: Colors.black12),
@@ -412,7 +414,9 @@ class _TuraroundMainViewState extends ConsumerState<_TuraroundMainView> {
 
                         // 2. Selector de Terminales
                         const Expanded(
-                          child: TerminalFilterDropdown(),
+                          child: TerminalFilterDropdown(
+                            height: 40,
+                          ),
                         ),
                       ],
                     ),

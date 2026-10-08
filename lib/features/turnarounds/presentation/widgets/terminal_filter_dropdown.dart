@@ -6,11 +6,13 @@ import 'package:scounter_mobile/features/turnarounds/presentation/providers/prov
 class TerminalFilterDropdown extends ConsumerWidget {
   final double menuFontSize;
   final double selectedFontSize;
+  final double? height; // <- nuevo parámetro opcional
 
   const TerminalFilterDropdown({
     super.key,
     this.menuFontSize = 16.0,
     this.selectedFontSize = 16.0,
+    this.height,
   });
 
   static const int allTerminalsValue = -1;
@@ -21,10 +23,10 @@ class TerminalFilterDropdown extends ConsumerWidget {
     final selectedTerminal = ref.watch(selectedTerminalFilterProvider);
 
     if (terminalState.isLoading) {
-      return const SizedBox(
-        height: 24,
+      return SizedBox(
+        height: height ?? 24, // <- respeta la altura si se define
         width: 24,
-        child: CircularProgressIndicator(strokeWidth: 2),
+        child: const CircularProgressIndicator(strokeWidth: 2),
       );
     }
 
@@ -67,7 +69,9 @@ class TerminalFilterDropdown extends ConsumerWidget {
       },
       child: Container(
         width: 140,
-        padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 6),
+        height: height, // <- altura fija opcional
+        padding: const EdgeInsets.symmetric(horizontal: 8),
+        alignment: Alignment.centerLeft, // <- centra el contenido verticalmente
         decoration: BoxDecoration(
           borderRadius: BorderRadius.circular(12),
           border: Border.all(color: Colors.black12),
@@ -75,7 +79,6 @@ class TerminalFilterDropdown extends ConsumerWidget {
         child: Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
-            const SizedBox(width: 4),
             Expanded(
               child: Text(
                 selectedTerminal?.nombre ?? 'Terminales',

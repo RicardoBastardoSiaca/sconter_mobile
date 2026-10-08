@@ -6,8 +6,10 @@ import 'package:scounter_mobile/features/turnarounds/domain/domain.dart';
 import 'package:scounter_mobile/features/turnarounds/presentation/providers/providers.dart';
 import 'package:scounter_mobile/features/turnarounds/presentation/widgets/widgets.dart';
 
+
 class _DatePickerHeader extends ConsumerWidget {
-  const _DatePickerHeader();
+  final int totalVuelos;
+  const _DatePickerHeader({required this.totalVuelos});
 
   DateTime _calcularInicioSemana(DateTime fecha) {
     return fecha.subtract(Duration(days: fecha.weekday - 1));
@@ -64,15 +66,29 @@ class _DatePickerHeader extends ConsumerWidget {
             borderRadius: BorderRadius.circular(8),
             child: Padding(
               padding: const EdgeInsets.symmetric(horizontal: 8.0, vertical: 4.0),
-              child: Row(
+              child: Column(
                 mainAxisSize: MainAxisSize.min,
                 children: [
-                  Text(
-                    '${formatter.format(state.startDate)} - ${formatter.format(state.endDate)}',
-                    style: const TextStyle(fontWeight: FontWeight.w700, fontSize: 15, color: Colors.black87),
+                  Row(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      Text(
+                        '${formatter.format(state.startDate)} - ${formatter.format(state.endDate)}',
+                        style: const TextStyle(fontWeight: FontWeight.w700, fontSize: 15, color: Colors.black87),
+                      ),
+                      const SizedBox(width: 6),
+                      const Icon(Icons.calendar_month_outlined, size: 18, color: colorVerde),
+                    ],
                   ),
-                  const SizedBox(width: 6),
-                  const Icon(Icons.calendar_month_outlined, size: 18, color: colorVerde),
+                  Text(
+                    '$totalVuelos vuelo${totalVuelos == 1 ? '' : 's'}',
+                    style: const TextStyle(
+                      fontSize: 12,
+                      fontWeight: FontWeight.bold,
+                      color: Colors.black54,
+                      // color: colorVerde,
+                    ),
+                  ),
                 ],
               ),
             ),
@@ -374,110 +390,118 @@ class _VuelosLineupScreenState extends ConsumerState<VuelosLineupScreen> {
           ]),
       body: Column(
         children: [
-          const _DatePickerHeader(),
+          _DatePickerHeader(totalVuelos: vuelosFiltrados.length),
 
           // --- BARRA DE FILTROS (MOSTRAR / OCULTAR) ---
-          if (_mostrarFiltros)
-            Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 12.0, vertical: 4.0),
-              child: Column(
-                children: [
-                  Row(
-                    children: [
-                      // SELECTOR DE AEROLÍNEA (Modal con Búsqueda)
-                      Expanded(
-                        child: InkWell(
-                          onTap: () => _mostrarBuscadorAerolineas(context, aerolineasDisponibles),
-                          borderRadius: BorderRadius.circular(12),
-                          child: Container(
-                            padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
-                            decoration: BoxDecoration(
-                              borderRadius: BorderRadius.circular(12),
-                              border: Border.all(color: Colors.black12),
-                            ),
-                            child: Row(
-                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                              children: [
-                                Expanded(
-                                  child: Text(
-                                    _aerolineaSeleccionada ?? "Aerolíneas",
-                                    style: TextStyle(
-                                      fontSize: 14,
-                                      fontWeight: FontWeight.w500,
-                                      color: _aerolineaSeleccionada == null ? Colors.black54 : Colors.black,
-                                    ),
-                                    overflow: TextOverflow.ellipsis,
-                                  ),
-                                ),
-                                if (_aerolineaSeleccionada != null)
-                                  GestureDetector(
-                                    onTap: () {
-                                      setState(() {
-                                        _aerolineaSeleccionada = null;
-                                      });
-                                    },
-                                    child: const Icon(Icons.clear, size: 18, color: Colors.grey),
-                                  )
-                                else
-                                  const Icon(Icons.arrow_drop_down, color: Colors.grey),
-                              ],
-                            ),
-                          ),
-                        ),
-                      ),
-
-                      const SizedBox(width: 8),
-
-                      // DROPDOWN ESTACIÓN
-                      Expanded(
-                        child: Container(
-                          padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
-                          decoration: BoxDecoration(
-                            borderRadius: BorderRadius.circular(12),
-                            border: Border.all(color: Colors.black12),
-                          ),
-                          child: DropdownButtonHideUnderline(
-                            child: DropdownButton<String>(
-                              isDense: true,
-                              isExpanded: true,
-                              value: _estacionSeleccionada,
-                              hint: const Text("Estaciones", style: TextStyle(fontSize: 14)),
-                              items: [
-                                const DropdownMenuItem<String>(
-                                  value: null,
-                                  child: Text("Todas las Estaciones", style: TextStyle(fontSize: 13, fontWeight: FontWeight.w500)),
-                                ),
-                                ...ciudadesState.estaciones.map((e) => DropdownMenuItem(
-                                      value: e.id.toString(),
-                                      child: Text(e.nombre ?? '', style: const TextStyle(fontSize: 13, fontWeight: FontWeight.w500), overflow: TextOverflow.ellipsis),
-                                    )),
-                              ],
-                              onChanged: (val) {
-                                setState(() {
-                                  _estacionSeleccionada = val;
-                                });
-                              },
-                            ),
-                          ),
-                        ),
-                      ),
-                    ],
+if (_mostrarFiltros)
+  Padding(
+    padding: const EdgeInsets.symmetric(horizontal: 12.0, vertical: 4.0),
+    child: Column(
+      children: [
+        Row(
+          children: [
+            // SELECTOR DE AEROLÍNEA (Modal con Búsqueda)
+            Expanded(
+              child: InkWell(
+                onTap: () => _mostrarBuscadorAerolineas(context, aerolineasDisponibles),
+                borderRadius: BorderRadius.circular(12),
+                child: Container(
+                  height: 40, // <- altura fija
+                  padding: const EdgeInsets.symmetric(horizontal: 12),
+                  alignment: Alignment.centerLeft, // <- alinear contenido
+                  decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(12),
+                    border: Border.all(color: Colors.black12),
                   ),
-                  const SizedBox(height: 6),
-                  const Row(
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
                       Expanded(
-                        child: TerminalFilterDropdown(
-                          menuFontSize: 14.0,
-                          selectedFontSize: 14.0,
+                        child: Text(
+                          _aerolineaSeleccionada ?? "Aerolíneas",
+                          style: TextStyle(
+                            fontSize: 14,
+                            fontWeight: FontWeight.w500,
+                            color: _aerolineaSeleccionada == null ? Colors.black54 : Colors.black,
+                          ),
+                          overflow: TextOverflow.ellipsis,
                         ),
                       ),
-                      Expanded(child: SizedBox()),
+                      if (_aerolineaSeleccionada != null)
+                        GestureDetector(
+                          onTap: () {
+                            setState(() {
+                              _aerolineaSeleccionada = null;
+                            });
+                          },
+                          child: const Icon(Icons.clear, size: 18, color: Colors.grey),
+                        )
+                      else
+                        const Icon(Icons.arrow_drop_down, color: Colors.grey),
                     ],
                   ),
-                ],
+                ),
               ),
             ),
+
+            const SizedBox(width: 8),
+
+            // DROPDOWN ESTACIÓN
+            Expanded(
+              child: Container(
+                height: 40, // <- altura fija
+                padding: const EdgeInsets.symmetric(horizontal: 8),
+                alignment: Alignment.centerLeft, // <- alinear contenido
+                decoration: BoxDecoration(
+                  borderRadius: BorderRadius.circular(12),
+                  border: Border.all(color: Colors.black12),
+                ),
+                child: DropdownButtonHideUnderline(
+                  child: DropdownButton<String>(
+                    isDense: true,
+                    isExpanded: true,
+                    value: _estacionSeleccionada,
+                    hint: const Text("Estaciones", style: TextStyle(fontSize: 14)),
+                    items: [
+                      const DropdownMenuItem<String>(
+                        value: null,
+                        child: Text("Todas las Estaciones", style: TextStyle(fontSize: 13, fontWeight: FontWeight.w500)),
+                      ),
+                      ...ciudadesState.estaciones.map((e) => DropdownMenuItem(
+                            value: e.id.toString(),
+                            child: Text(e.nombre ?? '', style: const TextStyle(fontSize: 13, fontWeight: FontWeight.w500), overflow: TextOverflow.ellipsis),
+                          )),
+                    ],
+                    onChanged: (val) {
+                      setState(() {
+                        _estacionSeleccionada = val;
+                      });
+                    },
+                  ),
+                ),
+              ),
+            ),
+          ],
+        ),
+        const SizedBox(height: 6),
+        const Row(
+          children: [
+            Expanded(
+              child: SizedBox(
+                height: 40, // <- misma altura para el dropdown de terminales
+                child: TerminalFilterDropdown(
+                  height: 40,
+                  menuFontSize: 14.0,
+                  selectedFontSize: 14.0,
+                ),
+              ),
+            ),
+            Expanded(child: SizedBox()),
+          ],
+        ),
+      ],
+    ),
+  ),
 
           const SizedBox(height: 4),
           const Divider(height: 1, thickness: 0.5, color: Color(0xFFE0E0E0)),
